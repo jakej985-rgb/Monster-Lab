@@ -1,1 +1,211 @@
-# Monster-Lab
+# Monster Lab
+
+Monster Lab is a kid-focused, hands-on robotics learning app built around the Monster Arduino kit.
+
+The goal is not to turn the kit manual into an app. The goal is to turn the kit into a guided learning experience where kids learn a concept, find the physical parts, build something, experiment with code, solve problems, and earn progress for understanding what they are doing.
+
+## End Product
+
+Monster Lab will take a learner from **"What is Arduino?"** to building real robotics projects with the Monster kit.
+
+The finished product will provide:
+- Kid learner profiles.
+- A beginner-friendly robotics curriculum.
+- Interactive Arduino lessons.
+- A complete Monster kit component library.
+- Guided physical build instructions.
+- Step-by-step wiring guidance.
+- Arduino code explanations and coding challenges.
+- Troubleshooting and debugging lessons.
+- Quizzes and engineering challenges.
+- XP, levels, badges, and project milestones.
+- Parent progress tracking.
+- Offline-first curriculum access.
+- Interactive wiring practice.
+- A code lab for learning Arduino programming.
+- Optional communication with physical Arduino hardware.
+- A curriculum architecture that can grow beyond the original kit.
+
+## Learning Philosophy
+
+Monster Lab is designed around **learn -> build -> test -> change -> explain**.
+
+A learner should not have to blindly copy a wiring diagram or paste code without understanding it.
+
+Each activity should answer:
+1. What are we learning?
+2. What part are we using?
+3. How does the part work?
+4. How do we connect it?
+5. What should happen?
+6. What actually happened?
+7. How can we change it?
+8. Can we solve a new challenge using the same idea?
+
+## Main Areas
+
+### Learn Lab
+- Arduino fundamentals.
+- Digital and analog signals.
+- Pins and power.
+- Breadboards.
+- Arduino IDE basics.
+- Libraries.
+- Variables, conditions, and loops.
+- Inputs and outputs.
+- Sensors, motors, displays, and communication.
+
+### Parts Lab
+The Monster kit becomes an interactive component encyclopedia.
+
+Each component can include:
+- Picture or illustration.
+- What it does.
+- Pin information.
+- Wiring guidance.
+- Safe-use information.
+- Common mistakes.
+- Mini experiment.
+- Related lessons.
+- Related projects.
+
+The initial curriculum covers the kit's 38 listed peripherals and supporting electronic components.
+
+### Build Lab
+Monster projects become guided builds instead of static instructions.
+
+Initial project families include:
+- Monster Autopilot.
+- Smart Monster Door.
+- Monster Alarm Clock.
+- Sentry Guard Monster.
+- Beat Detector Monster.
+- Oil Drill Rig Monster.
+- Intruder Alarm Monster.
+- RFID Smart Door Monster.
+- NRF24L01 Wireless Monster.
+- Weather and Water Reservoir Station.
+- Gas Leak Detection and Warning Monster.
+- Electric Motor Control Monster.
+
+Each build should guide the learner through:
+**Gather -> Wire -> Check -> Code -> Upload -> Test -> Troubleshoot -> Experiment -> Complete**
+
+### Challenges
+Challenges test whether the learner understands the concept.
+
+Examples:
+- Identify a component.
+- Predict a sensor result.
+- Fix incorrect wiring.
+- Change a program.
+- Debug a condition.
+- Modify a motor behavior.
+- Combine two sensors.
+- Build something from a goal instead of instructions.
+
+Difficulty progresses from:
+**Rookie -> Builder -> Engineer -> Monster Master**
+
+### Progress
+Progress is based on exploration and learning.
+
+The app tracks:
+- Lessons completed.
+- Components discovered.
+- Projects completed.
+- Challenges attempted.
+- Skills practiced.
+- XP.
+- Levels.
+- Badges.
+- Recent activity.
+
+### Parent Mode
+Parents can quickly see what was learned, built, explored, and practiced.
+
+Parent Mode should support learning without turning the app into a pressure-heavy grading system.
+
+## Offline First
+
+The core learning experience should work without an internet connection.
+
+Curriculum, lessons, component information, project instructions, progress, and challenges should be stored locally.
+
+Internet access should only be required for optional features such as updates, cloud services, or future integrations.
+
+## Hardware Companion
+
+Hardware integration is a later capability, not a requirement for the basic app.
+
+The architecture will eventually support:
+- Arduino detection.
+- Serial communication.
+- Live sensor readings.
+- Hardware test commands.
+- Guided hardware diagnostics.
+- Interactive project verification.
+
+The app must remain useful when no Arduino is connected.
+
+## Technology Direction
+
+The application is planned as a Flutter project with a data-driven curriculum architecture.
+
+The intended structure separates UI, application logic, domain models, local data, curriculum content, hardware services, and shared components.
+
+Curriculum content should be data-driven so lessons, parts, projects, and challenges can be added without rewriting the application UI.
+
+## Curriculum Source
+
+The original Monster kit materials are the source for the curriculum.
+
+They are treated as reference material rather than as the final learner experience.
+
+Monster Lab will verify the source material, organize it into a progression, rewrite explanations for kids, add prerequisites, add physical activities, add checkpoints, add challenges, add troubleshooting, and connect components to projects.
+
+## Project Roadmap
+
+All implementation plans live in the `plan/` directory.
+
+The project begins at **Phase 0** with no application work completed.
+
+| Phase | Area |
+|---|---|
+| 00 | Start Project |
+| 01 | Curriculum Audit |
+| 02 | Product Architecture |
+| 03 | Visual Design System |
+| 04 | App Foundation |
+| 05 | Curriculum Data Engine |
+| 06 | Learner Profiles and Progress |
+| 07 | Learn Lab |
+| 08 | Parts Lab |
+| 09 | Build Lab |
+| 10 | Challenges and Quizzes |
+| 11 | Troubleshooting Lab |
+| 12 | Parent Mode |
+| 13 | Hardware Companion |
+| 14 | Interactive Wiring and Code Lab |
+| 15 | Content Expansion |
+| 16 | Quality and Accessibility |
+| 17 | Release Engineering |
+| 18 | Final Product and Launch |
+
+Each phase has its own Markdown plan under `plan/`.
+
+## Guiding Rule
+
+Every feature should answer one question:
+
+> **Does this help a kid understand robotics by actually building, testing, changing, or explaining something?**
+
+If it does not, it should not become core complexity in Monster Lab.
+
+## Project Status
+
+**Phase 0 — Start Project**
+
+The repository starts intentionally minimal. No application implementation is assumed to be complete.
+
+The roadmap and product definition establish the foundation before feature development begins.
