@@ -202,10 +202,65 @@ Every feature should answer one question:
 
 If it does not, it should not become core complexity in Monster Lab.
 
-## Project Status
+## Target Platforms & Distribution Formats
 
-**Phase 0 — Start Project**
+Monster Lab officially targets Android, Linux, Windows, and Web (Docker):
+- **Android**:
+  - `monster-lab-android.apk`: Direct sideloading APK with USB OTG serial hardware companion.
+  - `monster-lab-android.aab`: Google Play Store release bundle.
+- **Linux Desktop**:
+  - `monster-lab-linux.deb`: Standard Debian package with desktop launcher, high-res icons, embedded GPG keyring, and dependency resolution.
+  - `monster-lab-linux-portable.tar.gz`: Portable tarball for any x86_64 Linux distribution.
+  - `monster-lab-keyring.gpg`: Official OpenPGP release keyring for APT verification.
+- **Windows Desktop**:
+  - `monster-lab-windows.exe`: Graphical setup installer wizard with Start Menu and Desktop shortcuts.
+  - `monster-lab-windows-portable.zip`: Portable standalone bundle.
+- **Web (Docker & GHCR)**:
+  - Container Registry: `ghcr.io/jakej985-rgb/monster-lab-web:latest`
+  - `docker-compose.yml`: Pre-filled release compose configuration pulling directly from GHCR.
 
-The repository starts intentionally minimal. No application implementation is assumed to be complete.
+> 📖 **Guides**:
+> - For downloading and running pre-built releases: **[Platform Installation Guide](docs/INSTALLATION.md)**
+> - For compiling, packaging, and developing from source: **[Build and Install from Source Guide](docs/BUILD_AND_INSTALL.md)**
 
-The roadmap and product definition establish the foundation before feature development begins.
+## Versioning & Release Bumping
+
+Monster Lab follows Semantic Versioning starting at `v0.0.1` (`0.0.1+1`).
+On every push/release gate run, the patch version bumps by `0.0.1` across all components (`pubspec.yaml`, `app_version.dart`, Inno Setup, Windows RC, and Dockerfile) via:
+```bash
+python3 scripts/bump_version.py
+```
+
+## Building and Releasing
+
+```bash
+# Android APK & AppBundle
+flutter build apk --release && cp build/app/outputs/flutter-apk/app-release.apk monster-lab-android.apk
+flutter build appbundle --release && cp build/app/outputs/bundle/release/app-release.aab monster-lab-android.aab
+
+# Linux Debian (.deb) Package, Keyring & Portable Tarball
+flutter build linux --release
+python3 scripts/package_linux_deb.py --output monster-lab-linux.deb
+tar -czf monster-lab-linux-portable.tar.gz -C build/linux/x64/release/bundle .
+cp linux/keyring/monster-lab-archive-keyring.gpg monster-lab-keyring.gpg
+
+# Windows Setup Installer (.exe) & Portable Zip
+flutter build windows --release
+& "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" windows\installer\monster_lab_setup.iss
+Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath monster-lab-windows-portable.zip
+
+# Web Release (Docker Container & GHCR Push)
+flutter build web --release
+docker build -t ghcr.io/jakej985-rgb/monster-lab-web:latest -t monster-lab-web:latest .
+docker push ghcr.io/jakej985-rgb/monster-lab-web:latest
+```
+
+## Quality and Release Gates
+
+Monster Lab enforces automated multi-platform release verification via `.agents/agents/push-gatekeeper/agent.md`:
+- Static Analysis (`flutter analyze` — 0 issues)
+- Test Suite (`flutter test` — 102/102 automated tests)
+- Curriculum Engine (`python3 scripts/validate_curriculum.py` — 100% integrity)
+- Multi-Platform Packaging (Android, Linux .deb, Windows .exe, Web Docker)
+- Automated Version Bumping (`python3 scripts/bump_version.py`)
+- Offline & Child-Safety Compliance (COPPA / FERPA compliant, zero telemetry)

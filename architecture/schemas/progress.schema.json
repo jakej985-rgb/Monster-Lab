@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LearnerProgressSchema",
+  "type": "object",
+  "required": ["learnerId", "totalXp", "currentLevel", "completedLessonIds", "discoveredComponentIds", "completedProjectIds", "projectStepBookmarks", "earnedBadgeIds", "lastSessionDate"],
+  "properties": {
+    "learnerId": { "type": "string" },
+    "totalXp": { "type": "integer", "minimum": 0 },
+    "currentLevel": { "type": "integer", "minimum": 1 },
+    "completedLessonIds": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "discoveredComponentIds": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "completedProjectIds": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "projectStepBookmarks": {
+      "type": "object",
+      "additionalProperties": { "type": "integer" }
+    },
+    "solvedChallengeIds": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "earnedBadgeIds": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "quizBestScores": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0, "maximum": 100 }
+    },
+    "lastSessionDate": { "type": "string", "format": "date-time" }
+  }
+}

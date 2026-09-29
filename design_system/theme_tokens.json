@@ -1,0 +1,104 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MonsterLabThemeTokens",
+  "version": "1.0.0",
+  "colors": {
+    "brand": {
+      "primaryViolet": "#6C5CE7",
+      "primaryVioletDark": "#4834D4",
+      "accentCyan": "#00CEC9",
+      "accentCyanDark": "#0984E3",
+      "energyAmber": "#FFA502",
+      "energyGold": "#FDCB6E"
+    },
+    "surfaces": {
+      "light": {
+        "surface": "#FFFFFF",
+        "background": "#F8F9FD",
+        "container": "#EDF2F7",
+        "textPrimary": "#2D3436",
+        "textSecondary": "#636E72"
+      },
+      "dark": {
+        "surface": "#1E1E2E",
+        "background": "#12121C",
+        "container": "#2A2A3C",
+        "textPrimary": "#F8F9FD",
+        "textSecondary": "#A4B0BE"
+      }
+    },
+    "semantic": {
+      "success": "#00B894",
+      "warning": "#FFA502",
+      "danger": "#D63031",
+      "info": "#0984E3"
+    },
+    "wires": {
+      "power5v": "#FF4757",
+      "ground": "#2F3542",
+      "analog": "#ECCC68",
+      "digital": "#2ED573",
+      "i2c": "#1E90FF",
+      "spi": "#FFA502",
+      "signalAlt": "#CED6E0"
+    },
+    "tiers": {
+      "rookie": "#00B894",
+      "builder": "#0984E3",
+      "engineer": "#6C5CE7",
+      "monsterMaster": "#E84393"
+    },
+    "codeSyntax": {
+      "keyword": "#FF7675",
+      "function": "#00CEC9",
+      "constant": "#FDCB6E",
+      "string": "#55EFC4",
+      "comment": "#A4B0BE",
+      "preprocessor": "#A29BFE"
+    }
+  },
+  "typography": {
+    "fontFamilies": {
+      "heading": "Fredoka",
+      "body": "Plus Jakarta Sans",
+      "code": "JetBrains Mono"
+    },
+    "scale": {
+      "displayLarge": { "fontSize": 34, "lineHeight": 42, "fontWeight": 700 },
+      "displayMedium": { "fontSize": 28, "lineHeight": 36, "fontWeight": 700 },
+      "headlineLarge": { "fontSize": 24, "lineHeight": 32, "fontWeight": 600 },
+      "headlineMedium": { "fontSize": 20, "lineHeight": 28, "fontWeight": 600 },
+      "titleLarge": { "fontSize": 18, "lineHeight": 24, "fontWeight": 500 },
+      "bodyLarge": { "fontSize": 16, "lineHeight": 24, "fontWeight": 400 },
+      "bodyMedium": { "fontSize": 14, "lineHeight": 20, "fontWeight": 400 },
+      "labelLarge": { "fontSize": 16, "lineHeight": 22, "fontWeight": 700 },
+      "labelMedium": { "fontSize": 13, "lineHeight": 18, "fontWeight": 600 },
+      "codeLarge": { "fontSize": 15, "lineHeight": 22, "fontWeight": 500 },
+      "codeMedium": { "fontSize": 13, "lineHeight": 18, "fontWeight": 400 }
+    }
+  },
+  "spacing": {
+    "space2": 2,
+    "space4": 4,
+    "space8": 8,
+    "space12": 12,
+    "space16": 16,
+    "space24": 24,
+    "space32": 32,
+    "space48": 48
+  },
+  "radii": {
+    "radiusSmall": 8,
+    "radiusMedium": 16,
+    "radiusLarge": 24,
+    "radiusPill": 999
+  },
+  "touchTargets": {
+    "minTargetMobile": 48,
+    "minTargetTablet": 56
+  },
+  "breakpoints": {
+    "compactMobile": 600,
+    "mediumTablet": 1024
+  }
+}

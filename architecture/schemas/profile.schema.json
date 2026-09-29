@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "LearnerProfileSchema",
+  "type": "object",
+  "required": ["id", "nickname", "avatarId", "ageBracket", "createdAt", "lastActiveAt"],
+  "properties": {
+    "id": { "type": "string" },
+    "nickname": { "type": "string", "minLength": 2, "maxLength": 20 },
+    "avatarId": { "type": "string" },
+    "ageBracket": {
+      "type": "string",
+      "enum": ["ages7_9", "ages10_12", "ages13Plus"]
+    },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "lastActiveAt": { "type": "string", "format": "date-time" },
+    "settings": {
+      "type": "object",
+      "properties": {
+        "soundEffectsEnabled": { "type": "boolean" },
+        "voiceNarrationEnabled": { "type": "boolean" },
+        "textScalingFactor": { "type": "number", "minimum": 0.8, "maximum": 2.0 },
+        "highContrastMode": { "type": "boolean" }
+      }
+    }
+  }
+}

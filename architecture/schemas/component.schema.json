@@ -1,0 +1,64 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ComponentSchema",
+  "type": "object",
+  "required": ["id", "peripheralNumber", "name", "partNumber", "category", "description", "realWorldAnalogy", "voltage", "pinout", "safety", "projectIds"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^comp_[0-9]{2,3}$" },
+    "peripheralNumber": { "type": "integer", "minimum": 1, "maximum": 38 },
+    "name": { "type": "string", "minLength": 2 },
+    "partNumber": { "type": "string" },
+    "category": {
+      "type": "string",
+      "enum": ["sensor", "actuator", "display", "communication", "passive", "power", "switch"]
+    },
+    "description": { "type": "string" },
+    "realWorldAnalogy": { "type": "string" },
+    "voltage": { "type": "string", "enum": ["v3_3", "v5", "dual"] },
+    "pinout": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["pinName", "type", "description"],
+        "properties": {
+          "pinName": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["power", "ground", "digitalIn", "digitalOut", "analogIn", "i2c", "spi", "uart", "passive"]
+          },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "datasheetRef": { "type": "string" },
+    "safety": {
+      "type": "object",
+      "required": ["level", "hazards", "requiresParentUnlock"],
+      "properties": {
+        "level": { "type": "string", "enum": ["safe", "caution", "restrictedAdultSupervision"] },
+        "hazards": { "type": "array", "items": { "type": "string" } },
+        "childSafeAlternative": { "type": "string" },
+        "requiresParentUnlock": { "type": "boolean" }
+      }
+    },
+    "projectIds": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "wiringGuidance": { "type": "string" },
+    "commonMistakes": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "miniExperiment": {
+      "type": "object",
+      "required": ["title", "circuit", "code", "expectedOutput"],
+      "properties": {
+        "title": { "type": "string" },
+        "circuit": { "type": "string" },
+        "code": { "type": "string" },
+        "expectedOutput": { "type": "string" }
+      }
+    }
+  }
+}

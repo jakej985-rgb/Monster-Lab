@@ -1,0 +1,86 @@
+# Universal SDK / tool path discovery registry for Monster Lab
+#
+# PRE-APPROVED CANDIDATE LOCATIONS ONLY.
+# Discovery order: environment variables -> PATH -> these candidates.
+# Never add machine-specific usernames, drive letters, or absolute home paths.
+# This file never authorizes installation.
+
+flutter:
+  environment: [FLUTTER_ROOT]
+  executables: [flutter, flutter.bat]
+  candidates:
+    linux: [/opt/flutter, /usr/bin, $HOME/flutter, $HOME/development/flutter, $HOME/sdk/flutter, $HOME/.flutter, /usr/local/flutter, /snap/flutter/current]
+    macos: [$HOME/flutter, $HOME/development/flutter, $HOME/.flutter, /opt/flutter, /usr/local/flutter, /opt/homebrew/opt/flutter, /opt/homebrew/Caskroom/flutter]
+    windows: [$USERPROFILE/flutter, $USERPROFILE/development/flutter, $LOCALAPPDATA/flutter, $PROGRAMFILES/flutter, $PROGRAMFILES_X86/flutter, C:/src/flutter]
+
+dart:
+  environment: [DART_SDK]
+  executables: [dart, dart.bat]
+  candidates:
+    linux: [/opt/flutter/bin/cache/dart-sdk, /opt/flutter, /usr/bin, $HOME/.dart-sdk, $HOME/dart-sdk, /opt/dart-sdk, /usr/local/dart-sdk, $HOME/flutter/bin/cache/dart-sdk, $HOME/sdk/flutter/bin/cache/dart-sdk]
+    macos: [$HOME/.dart-sdk, $HOME/dart-sdk, /opt/dart-sdk, /usr/local/dart-sdk, /opt/homebrew/opt/dart, $HOME/flutter/bin/cache/dart-sdk]
+    windows: [$USERPROFILE/dart-sdk, $LOCALAPPDATA/dart-sdk, $PROGRAMFILES/dart-sdk, $USERPROFILE/flutter/bin/cache/dart-sdk]
+
+python:
+  environment: [PYTHONHOME, VIRTUAL_ENV]
+  executables: [python, python3, python.exe, py.exe]
+  candidates:
+    linux: [/usr/bin, $HOME/.pyenv, $HOME/.local, /usr/local, /opt/python]
+    macos: [$HOME/.pyenv, $HOME/.local, /usr/local, /opt/homebrew]
+    windows: [$USERPROFILE/.pyenv, $LOCALAPPDATA/Programs/Python, $LOCALAPPDATA/pypa, $PROGRAMFILES/Python]
+
+git:
+  environment: []
+  executables: [git, git.exe]
+  candidates:
+    linux: [/usr/bin, /usr/local/bin, $HOME/.local/bin]
+    macos: [/usr/bin, /usr/local/bin, /opt/homebrew/bin]
+    windows: [$PROGRAMFILES/Git/bin, $PROGRAMFILES/Git/cmd, $LOCALAPPDATA/Programs/Git/bin]
+
+gh:
+  environment: []
+  executables: [gh, gh.exe]
+  candidates:
+    linux: [/usr/bin, /usr/local/bin, $HOME/.local/bin]
+    macos: [/usr/bin, /usr/local/bin, /opt/homebrew/bin]
+    windows: [$PROGRAMFILES/GitHub CLI, $LOCALAPPDATA/Programs/GitHub CLI]
+
+chrome:
+  environment: [CHROME_EXECUTABLE]
+  executables: [google-chrome, google-chrome-stable, chromium, chromium-browser, chrome, chrome.exe]
+  candidates:
+    linux: [/usr/bin, /usr/local/bin, /snap/bin, /opt/google/chrome]
+    macos: [/Applications/Google Chrome.app/Contents/MacOS, /Applications/Chromium.app/Contents/MacOS]
+    windows: [$PROGRAMFILES/Google/Chrome/Application, $PROGRAMFILES_X86/Google/Chrome/Application, $LOCALAPPDATA/Google/Chrome/Application]
+
+java:
+  environment: [JAVA_HOME, JDK_HOME]
+  executables: [java, java.exe, javac, javac.exe]
+  candidates:
+    linux: [/usr/lib/jvm/java-21-openjdk-amd64, /usr/lib/jvm/java-17-openjdk-amd64, /usr/lib/jvm, /usr/bin, $HOME/.jdks, $HOME/.sdkman/candidates/java, /usr/lib64/jvm, /opt/java]
+    macos: [$HOME/.jdks, $HOME/.sdkman/candidates/java, /Library/Java/JavaVirtualMachines, /opt/java, /opt/homebrew/opt/openjdk]
+    windows: [$USERPROFILE/.jdks, $USERPROFILE/.sdkman/candidates/java, $PROGRAMFILES/Java, $PROGRAMFILES/Eclipse Adoptium, $PROGRAMFILES/Microsoft]
+
+android_sdk:
+  environment: [ANDROID_HOME, ANDROID_SDK_ROOT]
+  executables: [adb, adb.exe, sdkmanager, sdkmanager.bat]
+  candidates:
+    linux: [$ANDROID_HOME, $ANDROID_SDK_ROOT, $HOME/Android/Sdk, $HOME/Android/sdk, $HOME/.android/sdk, /opt/android-sdk, /opt/android-sdk-linux]
+    macos: [$ANDROID_HOME, $ANDROID_SDK_ROOT, $HOME/Library/Android/sdk, /opt/android-sdk, /opt/homebrew/share/android-commandlinetools]
+    windows: [$ANDROID_HOME, $ANDROID_SDK_ROOT, $LOCALAPPDATA/Android/Sdk, $USERPROFILE/AppData/Local/Android/Sdk, $PROGRAMFILES/Android/sdk]
+
+node:
+  environment: [NVM_HOME, NODE_PATH]
+  executables: [node, node.exe, npm, npm.cmd]
+  candidates:
+    linux: [/usr/bin, $HOME/.nvm, $HOME/.volta, $HOME/.local, /usr/local, /opt/node]
+    macos: [$HOME/.nvm, $HOME/.volta, $HOME/.local, /usr/local, /opt/homebrew]
+    windows: [$USERPROFILE/.nvm, $USERPROFILE/.volta, $LOCALAPPDATA/Programs/node, $PROGRAMFILES/nodejs]
+
+docker:
+  environment: [DOCKER_HOST]
+  executables: [docker, docker.exe]
+  candidates:
+    linux: [/usr/bin, /usr/local/bin, $HOME/.docker]
+    macos: [/usr/local/bin, /opt/homebrew/bin, /Applications/Docker.app]
+    windows: [$PROGRAMFILES/Docker/Docker, $LOCALAPPDATA/Docker]

@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ChallengeSchema",
+  "type": "object",
+  "required": ["id", "title", "type", "difficulty", "prompt", "challengeData", "hint", "xpAward"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^chal_[a-z0-9_]+$" },
+    "title": { "type": "string", "minLength": 3 },
+    "type": {
+      "type": "string",
+      "enum": [
+        "identifyPart",
+        "predictOutput",
+        "fixWiring",
+        "changeCode",
+        "debugLogic",
+        "combineComponents",
+        "buildFromGoal",
+        "explainWhatHappened"
+      ]
+    },
+    "difficulty": { "type": "string", "enum": ["rookie", "builder", "engineer", "monsterMaster"] },
+    "prompt": { "type": "string" },
+    "challengeData": { "type": "object" },
+    "hint": { "type": "string" },
+    "hints": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "explanation": { "type": "string" },
+    "codeSnippet": { "type": "string" },
+    "circuitSnippet": { "type": "string" },
+    "solutionValidation": { "type": "object" },
+    "xpAward": { "type": "integer", "minimum": 25 }
+  }
+}

@@ -1,0 +1,163 @@
+# Monster Lab - Platform Installation Guide
+
+This guide covers downloading, installing, and deploying pre-built releases of **Monster Lab** across supported platforms.
+
+> If you want to compile and package Monster Lab from source code, see the [Build and Install from Source Guide](BUILD_AND_INSTALL.md).
+
+---
+
+## System Requirements
+
+- **Supported Platforms**:
+  - **Android**: Android 5.0 (Lollipop, API Level 21) or newer; tablets and phones.
+  - **Web**: Modern Evergreen browsers (Chrome 89+, Edge 89+, Safari 16+, Firefox 100+) supporting WebAssembly and CanvasKit.
+  - **Linux Desktop**: 64-bit Linux (Debian 11+, Ubuntu 20.04+, Linux Mint, Fedora, Arch).
+  - **Windows Desktop**: 64-bit Windows 10 or Windows 11.
+
+---
+
+## 1. Web Deployment (Docker Compose & GHCR)
+
+Monster Lab provides an official container image on GitHub Container Registry (GHCR) powered by Nginx Alpine, configured with Single Page Application (SPA) fallback routing, WASM headers, and health checks.
+
+### Quick Start with Docker Compose (Recommended)
+
+1. Download the pre-configured `docker-compose.yml` directly from the [Latest GitHub Release](https://github.com/jakej985-rgb/Monster-Lab/releases/latest):
+   ```bash
+   curl -fsSLO https://github.com/jakej985-rgb/Monster-Lab/releases/latest/download/docker-compose.yml
+   ```
+
+2. Start the container in detached mode:
+   ```bash
+   docker compose up -d
+   ```
+   Docker will automatically pull `ghcr.io/jakej985-rgb/monster-lab-web:latest` and start serving on port `8080`.
+
+3. Open **`http://localhost:8080`** in any modern web browser.
+
+### Running Directly via Docker CLI
+
+```bash
+docker run -d \
+  --name monster-lab-web \
+  -p 8080:80 \
+  --restart unless-stopped \
+  ghcr.io/jakej985-rgb/monster-lab-web:latest
+```
+
+### Health Check Endpoint
+
+The container includes a built-in health probe:
+```bash
+curl http://localhost:8080/healthz
+# Returns: 200 OK
+```
+
+---
+
+## 2. Android Installation
+
+Monster Lab distributes official Android binaries for direct sideloading and Google Play installation.
+
+### Sideloading APK
+
+1. Download **`monster-lab-android.apk`** from the [GitHub Releases](https://github.com/jakej985-rgb/Monster-Lab/releases) page.
+2. Transfer the APK to your Android device or install directly via ADB:
+   ```bash
+   adb install -r monster-lab-android.apk
+   ```
+3. If installing directly on the device, allow *Install from Unknown Sources* when prompted by Android.
+
+### Hardware Companion Permissions (USB OTG)
+
+When connecting an Arduino Uno/Nano via USB OTG cable:
+1. Android will display a system prompt:
+   *"Allow Monster Lab to access this USB device?"*
+2. Tap **OK** (and check *"Always allow"*).
+3. The app will automatically connect and stream live telemetry in the Hardware Companion tab.
+
+---
+
+## 3. Linux Desktop Installation
+
+Monster Lab provides a Debian package (`.deb`) and a standalone portable tarball (`.tar.gz`).
+
+### Installing via Debian Package (`.deb`)
+
+1. Download **`monster-lab-linux.deb`** from [GitHub Releases](https://github.com/jakej985-rgb/Monster-Lab/releases).
+2. Install with `apt` (which automatically resolves system dependencies):
+   ```bash
+   sudo apt install ./monster-lab-linux.deb
+   ```
+   *(Or using dpkg: `sudo dpkg -i monster-lab-linux.deb && sudo apt-get install -f`)*
+
+The package automatically sets up:
+- Executable binary in `/usr/lib/monster-lab/` and launcher at `/usr/bin/monster-lab`.
+- Desktop menu item in `/usr/share/applications/monster-lab.desktop`.
+- High-resolution application icons in `/usr/share/icons/hicolor/256x256/apps/`.
+- Official OpenPGP archive signing keyring at `/etc/apt/keyrings/monster-lab-archive-keyring.gpg` and `/usr/share/keyrings/`.
+- Repository configuration at `/etc/apt/sources.list.d/monster-lab.list`.
+
+### Manual GPG Keyring Setup (For APT Verification)
+
+If configuring APT repository verification manually:
+```bash
+sudo install -d -m 0755 /etc/apt/keyrings
+curl -fsSL https://github.com/jakej985-rgb/Monster-Lab/releases/latest/download/monster-lab-keyring.gpg \
+  | sudo tee /etc/apt/keyrings/monster-lab-archive-keyring.gpg > /dev/null
+```
+
+### Running the Portable Tarball
+
+1. Download **`monster-lab-linux-portable.tar.gz`**.
+2. Extract and launch:
+   ```bash
+   tar -xzf monster-lab-linux-portable.tar.gz
+   ./monster_lab
+   ```
+
+### Hardware Serial Access (Linux Dialout Group)
+
+To allow Monster Lab to communicate with an Arduino over `/dev/ttyUSB*` or `/dev/ttyACM*`, add your user to the `dialout` group:
+```bash
+sudo usermod -a -G dialout $USER
+```
+*(Log out and log back in for changes to take effect).*
+
+---
+
+## 4. Windows Desktop Installation
+
+Monster Lab provides a graphical setup installer (`.exe`) and a standalone portable zip archive.
+
+### Graphical Setup Installer (`.exe`)
+
+1. Download **`monster-lab-windows.exe`** from [GitHub Releases](https://github.com/jakej985-rgb/Monster-Lab/releases).
+2. Double-click `monster-lab-windows.exe` to start the installation wizard.
+3. Follow the wizard steps:
+   - Choose destination directory (default: `C:\Program Files\Monster Lab` or `%LOCALAPPDATA%`).
+   - Choose whether to create a Desktop shortcut.
+   - Click **Install**.
+4. Launch Monster Lab from the Start Menu or Desktop shortcut.
+5. Clean uninstallation is available at any time via Windows *Add or Remove Programs*.
+
+### Portable ZIP Archive
+
+1. Download **`monster-lab-windows-portable.zip`**.
+2. Extract the ZIP archive to any folder (e.g. `C:\MonsterLab` or a USB drive).
+3. Double-click **`monster_lab.exe`** to run immediately without administrative privileges.
+
+---
+
+## Release Asset Quick Reference
+
+| Platform | Official Asset | Format |
+| :--- | :--- | :--- |
+| **Android** | `monster-lab-android.apk` | Sideload APK |
+| **Android** | `monster-lab-android.aab` | Google Play Store Bundle |
+| **Linux** | `monster-lab-linux.deb` | Debian Package with GPG Keyring |
+| **Linux** | `monster-lab-linux-portable.tar.gz` | Standalone Portable Archive |
+| **Linux** | `monster-lab-keyring.gpg` | OpenPGP 4096-bit Public Keyring |
+| **Windows** | `monster-lab-windows.exe` | Graphical Setup Wizard Installer |
+| **Windows** | `monster-lab-windows-portable.zip` | Standalone Portable ZIP |
+| **Web** | `docker-compose.yml` | Pre-configured GHCR Compose File |

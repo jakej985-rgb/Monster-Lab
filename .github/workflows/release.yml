@@ -1,0 +1,289 @@
+name: Monster Lab Release Packaging
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build-ubuntu-targets:
+    name: Build Android, Linux & Web Releases
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Linux build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev libserialport-dev dpkg-dev
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.3'
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze code
+        run: flutter analyze
+
+      - name: Run automated test suite
+        run: flutter test
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: pip install Pillow
+
+      - name: Generate release branding assets
+        run: python3 scripts/generate_release_assets.py
+
+      - name: Validate curriculum integrity
+        run: python3 scripts/validate_curriculum.py
+
+      # -------------------------------------------------------------
+      # Linux Builds: [app]-[os].[ext], [app]-[os]-portable.[ext] & Keyring
+      # -------------------------------------------------------------
+      - name: Build Linux Desktop Release
+        run: flutter build linux --release
+
+      - name: Package Linux Debian Installer (monster-lab-linux.deb)
+        run: python3 scripts/package_linux_deb.py --bundle-dir build/linux/x64/release/bundle --output monster-lab-linux.deb
+
+      - name: Package Linux Portable Bundle (monster-lab-linux-portable.tar.gz)
+        run: tar -czf monster-lab-linux-portable.tar.gz -C build/linux/x64/release/bundle .
+
+      - name: Prepare Linux GPG Keyring Asset
+        run: cp linux/keyring/monster-lab-archive-keyring.gpg monster-lab-keyring.gpg
+
+      # -------------------------------------------------------------
+      # Android Builds: [app]-[os].[ext]
+      # -------------------------------------------------------------
+      - name: Build Android Release APK
+        run: flutter build apk --release
+
+      - name: Copy Android APK (monster-lab-android.apk)
+        run: cp build/app/outputs/flutter-apk/app-release.apk monster-lab-android.apk
+
+      - name: Build Android Release AppBundle
+        run: flutter build appbundle --release
+
+      - name: Copy Android AppBundle (monster-lab-android.aab)
+        run: cp build/app/outputs/bundle/release/app-release.aab monster-lab-android.aab
+
+      # -------------------------------------------------------------
+      # Web Builds: Docker Container Image [app]-[os]-docker.[ext] & GHCR
+      # -------------------------------------------------------------
+      - name: Build Web PWA Release
+        run: flutter build web --release
+
+      - name: Log in to GitHub Container Registry (GHCR)
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build, Tag and Push Web Docker Image to GHCR
+        run: |
+          OWNER_LOWER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          GHCR_IMAGE="ghcr.io/${OWNER_LOWER}/monster-lab-web"
+
+          echo "Building and pushing container image: ${GHCR_IMAGE}:${{ github.ref_name }}"
+          docker build \
+            -t "${GHCR_IMAGE}:${{ github.ref_name }}" \
+            -t "${GHCR_IMAGE}:latest" \
+            -t monster-lab-web:latest .
+
+          docker push "${GHCR_IMAGE}:${{ github.ref_name }}"
+          docker push "${GHCR_IMAGE}:latest"
+
+      - name: Generate Pre-filled Docker Compose Release File
+        run: |
+          OWNER_LOWER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          cat <<EOF > docker-compose.yml
+          services:
+            monster-lab-web:
+              image: ghcr.io/${OWNER_LOWER}/monster-lab-web:${{ github.ref_name }}
+              container_name: monster-lab-web
+              restart: unless-stopped
+              ports:
+                - "8080:80"
+              healthcheck:
+                test: ["CMD", "curl", "-f", "http://localhost/healthz"]
+                interval: 30s
+                timeout: 5s
+                retries: 3
+                start_period: 5s
+          EOF
+          echo "Generated docker-compose.yml:"
+          cat docker-compose.yml
+
+      # -------------------------------------------------------------
+      # Upload Ubuntu Job Artifacts
+      # -------------------------------------------------------------
+      - name: Upload Linux Debian Package
+        uses: actions/upload-artifact@v4
+        with:
+          name: monster-lab-linux-deb
+          path: monster-lab-linux.deb
+
+      - name: Upload Linux Portable Bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: monster-lab-linux-portable
+          path: monster-lab-linux-portable.tar.gz
+
+      - name: Upload Linux Keyring
+        uses: actions/upload-artifact@v4
+        with:
+          name: monster-lab-keyring
+          path: monster-lab-keyring.gpg
+
+      - name: Upload Android APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: monster-lab-android-apk
+          path: monster-lab-android.apk
+
+      - name: Upload Android AppBundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: monster-lab-android-aab
+          path: monster-lab-android.aab
+
+      - name: Upload Pre-filled Docker Compose File
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-compose-release
+          path: docker-compose.yml
+
+  build-windows-target:
+    name: Build Windows Desktop Releases
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Inno Setup
+        run: choco install innosetup -y
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.3'
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: pip install Pillow
+
+      - name: Generate release branding assets
+        run: python scripts/generate_release_assets.py
+
+      # -------------------------------------------------------------
+      # Windows Builds: [app]-[os].[ext] & [app]-[os]-portable.[ext]
+      # -------------------------------------------------------------
+      - name: Build Windows Release Binary
+        run: flutter build windows --release
+
+      - name: Build Windows Setup Installer EXE (monster-lab-windows.exe)
+        shell: pwsh
+        run: |
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" windows\installer\monster_lab_setup.iss
+
+      - name: Package Windows Portable Bundle (monster-lab-windows-portable.zip)
+        shell: pwsh
+        run: Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath monster-lab-windows-portable.zip
+
+      # -------------------------------------------------------------
+      # Upload Windows Job Artifacts
+      # -------------------------------------------------------------
+      - name: Upload Windows Installer EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: monster-lab-windows-installer-exe
+          path: monster-lab-windows.exe
+
+      - name: Upload Windows Portable Bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: monster-lab-windows-portable
+          path: monster-lab-windows-portable.zip
+
+  publish-release:
+    name: Publish GitHub Release
+    needs: [build-ubuntu-targets, build-windows-target]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download all release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-artifacts
+          merge-multiple: true
+
+      - name: Verify release asset naming format
+        run: |
+          echo "Release artifacts downloaded:"
+          ls -la release-artifacts/
+
+          # Expected naming schema:
+          # [app]-[os].[ext] or [app]-[os]-portable.[ext]
+          test -f release-artifacts/monster-lab-android.apk
+          test -f release-artifacts/monster-lab-android.aab
+          test -f release-artifacts/monster-lab-linux.deb
+          test -f release-artifacts/monster-lab-linux-portable.tar.gz
+          test -f release-artifacts/monster-lab-windows.exe
+          test -f release-artifacts/monster-lab-windows-portable.zip
+          test -f release-artifacts/docker-compose.yml
+          test -f release-artifacts/monster-lab-keyring.gpg
+          echo "All release artifacts conform to [app]-[os].[ext] and [app]-[os]-portable.[ext] naming schema!"
+
+      - name: Create or Update GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release-artifacts/monster-lab-android.apk
+            release-artifacts/monster-lab-android.aab
+            release-artifacts/monster-lab-linux.deb
+            release-artifacts/monster-lab-linux-portable.tar.gz
+            release-artifacts/monster-lab-keyring.gpg
+            release-artifacts/monster-lab-windows.exe
+            release-artifacts/monster-lab-windows-portable.zip
+            release-artifacts/docker-compose.yml
+          generate_release_notes: true
+          draft: false
+          prerelease: false
