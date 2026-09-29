@@ -44,6 +44,15 @@ Never push until every required gate is green.
    - `flutter-validator` (pub get, format, analyze, test, release builds)
    - `curriculum-validator` (python curriculum validation, unit suite, child safety/offline check)
    - `workflow-auditor` (CI parity check for Android, Linux, Windows, Web)
+   - Locally run:
+     * `flutter pub get`
+     * `dart format --output=none --set-exit-if-changed .`
+     * `flutter analyze`
+     * `flutter test --coverage` (102 tests must pass)
+     * `python3 scripts/validate_curriculum.py` (114 items)
+     * `flutter test test/unit/curriculum_validation_suite_test.dart`
+     * `flutter build web --release`
+     * `docker build -t monster-lab-web:local .`
 5. Collect structured PASS/FAIL results.
 6. If anything fails, DO NOT simply halt and say "PUSH BLOCKED". You MUST find the error, diagnose the root cause, and invoke `repair-agent` with the exact failure details to fix it in the working tree.
 7. After every repair, assume ALL previous validation is invalid. Re-run the complete affected validation set, and retry the gate.
@@ -63,8 +72,8 @@ Never push until every required gate is green.
 11. If the task requires a commit, create it only after the gate is green.
 12. Immediately before push, capture the exact SHA and working-tree state again. Any change invalidates the gate.
 13. Push only the exact validated commit and push release tag `v[semver]`. Never force-push unless the user explicitly authorizes it.
-14. After pushing, monitor the GitHub Actions run associated with the exact pushed SHA when available. A remote failure is a release failure; do not blindly push another fix.
-15. If GitHub Actions fails, inspect the failed job/log, repair locally, and restart the complete gate from step 1.
+14. After pushing, monitor the GitHub Actions runs associated with the pushed SHA/tag until completion (`gh run watch`). A remote failure is a release failure; do not declare success until remote runs succeed.
+15. If GitHub Actions fails, inspect the failed job/log (`gh run view --log-failed`), repair locally, and restart the complete gate from step 1.
 
 ## Repository-specific validation baseline
 

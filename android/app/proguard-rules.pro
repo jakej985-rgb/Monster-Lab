@@ -9,6 +9,10 @@
 # SharedPreferences and Local Storage
 -keep class io.flutter.plugins.sharedpreferences.** { *; }
 
+# Flutter Play Store Split Application & Deferred Components (R8 missing classes suppression)
+-dontwarn com.google.android.play.core.**
+-dontwarn io.flutter.embedding.engine.deferredcomponents.**
+
 # Preserve custom USB host and serial classes
 -keep class android.hardware.usb.** { *; }
 

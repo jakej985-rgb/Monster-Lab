@@ -6,12 +6,22 @@ Monster Lab officially targets **Android, Linux, and Windows** (along with a str
 
 ## Mandatory behavior
 
-- Do not push code directly after making changes.
-- Before any push, use the `push-gatekeeper` custom agent or follow its complete validation protocol.
+- **Local Execution First**: Before any push, the Push Gatekeeper MUST execute all tests, static analysis, curriculum validation, and local platform release builds in the working tree. Never push assuming remote CI will catch or pass untested changes.
+- **Complete Test & CI Suite**:
+  1. `flutter pub get`
+  2. `dart format --output=none --set-exit-if-changed .`
+  3. `flutter analyze`
+  4. `flutter test --coverage` (100% of unit, widget, and integration tests must pass)
+  5. `python3 scripts/validate_curriculum.py` (all 114 curriculum items must validate)
+  6. `flutter test test/unit/curriculum_validation_suite_test.dart`
+  7. `flutter build web --release`
+  8. `docker build -t monster-lab-web:local .`
+  9. Strict platform configuration verification: Android ProGuard rules (`android/app/proguard-rules.pro` including R8 `-dontwarn`), AGP release setup, Linux desktop setup, and Windows Inno Setup wizard.
 - Only the Push Gatekeeper is authorized to execute `git push`.
 - Validation results are tied to the exact working-tree/commit state that was tested.
 - Any code, configuration, platform runner (`android/`, `linux/`, `windows/`), dependency, generated-source, curriculum dataset, or workflow change after validation invalidates the previous result.
-- If any check fails, do not simply halt and say "PUSH BLOCKED". Actively diagnose the error, repair it (or invoke repair-agent), and retry validation up to 3 repair cycles. A push is only permanently blocked if errors persist after all 3 repair cycles are exhausted.
+- **Active Diagnostics & Auto-Repair**: If any check fails (locally or remotely), do not simply halt and say "PUSH BLOCKED". Actively diagnose the error, repair it (or invoke `repair-agent`), and retry validation up to 3 repair cycles.
+- **Mandatory Remote CI/Release Monitoring**: After pushing, the Push Gatekeeper MUST immediately monitor the remote GitHub Actions workflow runs (`gh run watch`). If any remote job fails (e.g. Android R8, Linux packaging, Windows compilation, Docker GHCR push, or GitHub Release asset publishing), the gatekeeper must immediately inspect the failure log (`gh run view --log-failed`), apply the fix locally, re-run all local validation, and ensure the release is completely green.
 - Never bypass a failing test, analyzer, formatter, curriculum integrity check, platform build, or CI-equivalent build to make the gate green.
 - Never force-push unless the user explicitly authorizes it.
 - Never commit secrets, credentials, signing keys, keystores, generated build output (`build/`, `.dart_tool/`, `*.apk`, `*.aab`, `*.deb`, `*.exe`, `*.tar.gz`, `*.zip`), or temporary test artifacts.
