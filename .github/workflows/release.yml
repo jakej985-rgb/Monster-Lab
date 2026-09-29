@@ -29,9 +29,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -141,43 +138,34 @@ jobs:
           cat docker-compose.yml
 
       # -------------------------------------------------------------
-      # Upload Ubuntu Job Artifacts
+      # Verify & Publish Ubuntu Assets Directly to GitHub Release
+      # (Bypasses Actions artifact storage quota)
       # -------------------------------------------------------------
-      - name: Upload Linux Debian Package
-        uses: actions/upload-artifact@v4
-        with:
-          name: monster-lab-linux-deb
-          path: monster-lab-linux.deb
+      - name: Verify Ubuntu release asset naming format
+        run: |
+          echo "Verifying generated release assets:"
+          test -f monster-lab-android.apk
+          test -f monster-lab-android.aab
+          test -f monster-lab-linux.deb
+          test -f monster-lab-linux-portable.tar.gz
+          test -f monster-lab-keyring.gpg
+          test -f docker-compose.yml
+          echo "All Ubuntu release assets conform to naming schema!"
 
-      - name: Upload Linux Portable Bundle
-        uses: actions/upload-artifact@v4
+      - name: Publish Ubuntu Release Assets to GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
         with:
-          name: monster-lab-linux-portable
-          path: monster-lab-linux-portable.tar.gz
-
-      - name: Upload Linux Keyring
-        uses: actions/upload-artifact@v4
-        with:
-          name: monster-lab-keyring
-          path: monster-lab-keyring.gpg
-
-      - name: Upload Android APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: monster-lab-android-apk
-          path: monster-lab-android.apk
-
-      - name: Upload Android AppBundle
-        uses: actions/upload-artifact@v4
-        with:
-          name: monster-lab-android-aab
-          path: monster-lab-android.aab
-
-      - name: Upload Pre-filled Docker Compose File
-        uses: actions/upload-artifact@v4
-        with:
-          name: docker-compose-release
-          path: docker-compose.yml
+          files: |
+            monster-lab-android.apk
+            monster-lab-android.aab
+            monster-lab-linux.deb
+            monster-lab-linux-portable.tar.gz
+            monster-lab-keyring.gpg
+            docker-compose.yml
+          generate_release_notes: true
+          draft: false
+          prerelease: false
 
   build-windows-target:
     name: Build Windows Desktop Releases
@@ -226,64 +214,22 @@ jobs:
         run: Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath monster-lab-windows-portable.zip
 
       # -------------------------------------------------------------
-      # Upload Windows Job Artifacts
+      # Verify & Publish Windows Assets Directly to GitHub Release
+      # (Bypasses Actions artifact storage quota)
       # -------------------------------------------------------------
-      - name: Upload Windows Installer EXE
-        uses: actions/upload-artifact@v4
-        with:
-          name: monster-lab-windows-installer-exe
-          path: monster-lab-windows.exe
-
-      - name: Upload Windows Portable Bundle
-        uses: actions/upload-artifact@v4
-        with:
-          name: monster-lab-windows-portable
-          path: monster-lab-windows-portable.zip
-
-  publish-release:
-    name: Publish GitHub Release
-    needs: [build-ubuntu-targets, build-windows-target]
-    runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Download all release artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: release-artifacts
-          merge-multiple: true
-
-      - name: Verify release asset naming format
+      - name: Verify Windows release asset naming format
+        shell: pwsh
         run: |
-          echo "Release artifacts downloaded:"
-          ls -la release-artifacts/
+          if (-not (Test-Path monster-lab-windows.exe)) { throw "monster-lab-windows.exe missing" }
+          if (-not (Test-Path monster-lab-windows-portable.zip)) { throw "monster-lab-windows-portable.zip missing" }
+          Write-Host "All Windows release assets conform to naming schema!"
 
-          # Expected naming schema:
-          # [app]-[os].[ext] or [app]-[os]-portable.[ext]
-          test -f release-artifacts/monster-lab-android.apk
-          test -f release-artifacts/monster-lab-android.aab
-          test -f release-artifacts/monster-lab-linux.deb
-          test -f release-artifacts/monster-lab-linux-portable.tar.gz
-          test -f release-artifacts/monster-lab-windows.exe
-          test -f release-artifacts/monster-lab-windows-portable.zip
-          test -f release-artifacts/docker-compose.yml
-          test -f release-artifacts/monster-lab-keyring.gpg
-          echo "All release artifacts conform to [app]-[os].[ext] and [app]-[os]-portable.[ext] naming schema!"
-
-      - name: Create or Update GitHub Release
+      - name: Publish Windows Release Assets to GitHub Release
         uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
         with:
           files: |
-            release-artifacts/monster-lab-android.apk
-            release-artifacts/monster-lab-android.aab
-            release-artifacts/monster-lab-linux.deb
-            release-artifacts/monster-lab-linux-portable.tar.gz
-            release-artifacts/monster-lab-keyring.gpg
-            release-artifacts/monster-lab-windows.exe
-            release-artifacts/monster-lab-windows-portable.zip
-            release-artifacts/docker-compose.yml
-          generate_release_notes: true
+            monster-lab-windows.exe
+            monster-lab-windows-portable.zip
           draft: false
           prerelease: false

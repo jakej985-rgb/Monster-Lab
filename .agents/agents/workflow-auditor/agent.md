@@ -26,7 +26,7 @@ For each relevant workflow, report:
 - jobs and steps across target platforms:
   - `build-ubuntu-targets`: Android APK (`monster-lab-android.apk`) & AAB (`monster-lab-android.aab`), Linux Debian installer (`monster-lab-linux.deb`) with GPG keyring, portable tarball (`monster-lab-linux-portable.tar.gz`), GHCR container push, release keyring (`monster-lab-keyring.gpg`), and pre-filled `docker-compose.yml`
   - `build-windows-target`: Windows setup installer (`monster-lab-windows.exe`) & portable zip (`monster-lab-windows-portable.zip`)
-  - `publish-release`: Downloads all artifacts, verifies naming format, and publishes GitHub Release assets (including `docker-compose.yml` and `monster-lab-keyring.gpg`) via `softprops/action-gh-release@v2`
+  - Direct GitHub Release asset publication from build runners via `softprops/action-gh-release@v2` (bypassing Actions artifact storage quota limits)
 - runtime versions (Flutter `3.47.3`, Python `3.11`/`3.12`, Java `17`)
 - validation commands:
   - `flutter pub get`
