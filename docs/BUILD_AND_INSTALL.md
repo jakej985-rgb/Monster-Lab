@@ -114,6 +114,26 @@ The web version is compiled to WebAssembly / CanvasKit PWA and containerized wit
 
 ### B. Android (APK & AppBundle)
 
+To allow seamless in-place updates without uninstalling (avoiding Android's `INSTALL_FAILED_UPDATE_INCOMPATIBLE` signature mismatch error), release APKs must be signed with a consistent keystore certificate.
+
+#### 1. Local Signing Setup
+A local release keystore is configured via `android/key.properties` (which is gitignored):
+```properties
+storePassword=monsterlab2026
+keyPassword=monsterlab2026
+keyAlias=monsterlab
+storeFile=monster-lab-release.jks
+```
+If `android/key.properties` or the keystore file is absent, Gradle gracefully falls back to debug keys for local development.
+
+#### 2. GitHub Actions CI/CD Signing Setup
+For automated GitHub Releases, the keystore is injected securely via GitHub Repository Secrets:
+- `ANDROID_KEYSTORE_BASE64`: Base64-encoded string of `monster-lab-release.jks`
+- `ANDROID_KEYSTORE_PASSWORD`: Keystore password (`monsterlab2026`)
+- `ANDROID_KEY_ALIAS`: Key alias (`monsterlab`)
+- `ANDROID_KEY_PASSWORD`: Key password (`monsterlab2026`)
+
+#### 3. Building Release Artifacts
 1. **Compile Standalone APK**:
    ```bash
    flutter build apk --release
@@ -126,7 +146,7 @@ The web version is compiled to WebAssembly / CanvasKit PWA and containerized wit
    cp build/app/outputs/bundle/release/app-release.aab monster-lab-android.aab
    ```
 
-3. **Install onto connected Android device**:
+3. **Install / Update onto connected Android device**:
    ```bash
    adb install -r monster-lab-android.apk
    ```

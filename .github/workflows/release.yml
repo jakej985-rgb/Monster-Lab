@@ -77,6 +77,22 @@ jobs:
       # -------------------------------------------------------------
       # Android Builds: [app]-[os].[ext]
       # -------------------------------------------------------------
+      - name: Configure Android Signing Keystore
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
+            echo "Restoring Android release keystore from secrets..."
+            echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/monster-lab-release.jks
+            printf "storePassword=%s\nkeyPassword=%s\nkeyAlias=%s\nstoreFile=monster-lab-release.jks\n" \
+              "$ANDROID_KEYSTORE_PASSWORD" "$ANDROID_KEY_PASSWORD" "$ANDROID_KEY_ALIAS" > android/key.properties
+          else
+            echo "No ANDROID_KEYSTORE_BASE64 secret found; falling back to debug signing."
+          fi
+
       - name: Build Android Release APK
         run: flutter build apk --release
 
@@ -88,6 +104,11 @@ jobs:
 
       - name: Copy Android AppBundle (monster-lab-android.aab)
         run: cp build/app/outputs/bundle/release/app-release.aab monster-lab-android.aab
+
+      - name: Clean Up Android Keystore Secrets
+        if: always()
+        run: |
+          rm -f android/app/monster-lab-release.jks android/key.properties
 
       # -------------------------------------------------------------
       # Web Builds: Docker Container Image [app]-[os]-docker.[ext] & GHCR

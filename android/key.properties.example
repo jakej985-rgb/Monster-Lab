@@ -1,0 +1,8 @@
+# Example Android signing configuration for Monster Lab
+# Copy this file to android/key.properties and configure your credentials.
+# Note: android/key.properties is gitignored to protect signing secrets.
+
+storePassword=monsterlab2026
+keyPassword=monsterlab2026
+keyAlias=monsterlab
+storeFile=monster-lab-release.jks
