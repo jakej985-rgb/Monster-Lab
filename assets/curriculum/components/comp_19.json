@@ -40,5 +40,10 @@
     "circuit": "5V -> LDR -> Pin A0 -> 10k resistor -> GND.",
     "code": "void setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int lightVal = analogRead(A0);\n  Serial.print(\"Light Level: \");\n  Serial.println(lightVal);\n  delay(100);\n}",
     "expectedOutput": "Outputs 600-900 in room light, falling below 150 when you cover the LDR with your palm."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_19.webp",
+  "imageDescription": "Hardware photo of Light Dependent Resistor (LDR)",
+  "detailImages": [
+    "assets/images/components/comp_19_detail.webp"
+  ]
 }

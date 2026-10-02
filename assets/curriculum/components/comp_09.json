@@ -51,5 +51,10 @@
     "circuit": "VCC to 5V, GND to GND, DATA to Pin 2.",
     "code": "#include <dht.h>\ndht DHT;\n#define DHT11_PIN 2\n\nvoid setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int chk = DHT.read11(DHT11_PIN);\n  Serial.print(\"Temp: \");\n  Serial.print(DHT.temperature);\n  Serial.print(\"C | Humidity: \");\n  Serial.print(DHT.humidity);\n  Serial.println(\"%\");\n  delay(2000);\n}",
     "expectedOutput": "Serial Monitor prints temperature and relative humidity every 2 seconds. Exhaling on the sensor spikes humidity to 90%+."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_09.webp",
+  "imageDescription": "Hardware photo of Temperature & Humidity Sensor",
+  "detailImages": [
+    "assets/images/components/comp_09_detail.webp"
+  ]
 }

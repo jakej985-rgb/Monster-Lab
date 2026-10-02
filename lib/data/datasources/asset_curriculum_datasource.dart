@@ -214,6 +214,9 @@ class AssetCurriculumDataSource {
           requiresParentUnlock: false,
         ),
         projectIds: ['proj_01', 'proj_11'],
+        primaryImage: 'assets/images/components/comp_01.webp',
+        detailImages: ['assets/images/components/comp_01_detail.webp'],
+        imageDescription: 'Hardware photo of Ultrasonic Sensor',
       ),
       ComponentModel(
         id: 'comp_20',
@@ -242,6 +245,9 @@ class AssetCurriculumDataSource {
           requiresParentUnlock: false,
         ),
         projectIds: ['proj_08'],
+        primaryImage: 'assets/images/components/comp_20.webp',
+        detailImages: ['assets/images/components/comp_20_detail.webp'],
+        imageDescription: 'Hardware photo of Potentiometer',
       ),
       ComponentModel(
         id: 'comp_37',
@@ -272,6 +278,9 @@ class AssetCurriculumDataSource {
           requiresParentUnlock: true,
         ),
         projectIds: ['proj_11'],
+        primaryImage: 'assets/images/components/comp_37.webp',
+        detailImages: ['assets/images/components/comp_37_detail.webp'],
+        imageDescription: 'Hardware photo of Laser Diode Module',
       ),
     ];
   }

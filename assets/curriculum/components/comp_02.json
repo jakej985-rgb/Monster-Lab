@@ -49,5 +49,10 @@
     "circuit": "VCC to 5V, GND to GND, A0 to Analog Pin A0.",
     "code": "void setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int soundLevel = analogRead(A0);\n  Serial.print(\"Sound Level: \");\n  Serial.println(soundLevel);\n  delay(50);\n}",
     "expectedOutput": "A steady stream of values around 500-600. Clapping near the mic causes sharp spikes above 750."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_02.webp",
+  "imageDescription": "Hardware photo of High-Sensitivity Sound Sensor",
+  "detailImages": [
+    "assets/images/components/comp_02_detail.webp"
+  ]
 }

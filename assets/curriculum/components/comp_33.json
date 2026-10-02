@@ -40,5 +40,10 @@
     "circuit": "Arduino Pin 9 -> 1k resistor -> Base of NPN transistor. Collector -> Motor -> 5V. Emitter -> GND. Diode across motor.",
     "code": "const int motorPin = 9;\n\nvoid setup() {\n  pinMode(motorPin, OUTPUT);\n}\n\nvoid loop() {\n  for (int speed = 0; speed <= 255; speed += 5) {\n    analogWrite(motorPin, speed);\n    delay(50);\n  }\n  delay(1000);\n  analogWrite(motorPin, 0);\n  delay(1000);\n}",
     "expectedOutput": "Motor smoothly spins up from zero to full speed, stops, and repeats."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_33.webp",
+  "imageDescription": "Hardware photo of High-Speed Toy DC Motor",
+  "detailImages": [
+    "assets/images/components/comp_33_detail.webp"
+  ]
 }

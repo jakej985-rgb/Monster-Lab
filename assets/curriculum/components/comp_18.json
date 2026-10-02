@@ -45,5 +45,10 @@
     "circuit": "VCC to 5V, GND to GND, OUT to Pin 4.",
     "code": "const int obsPin = 4;\n\nvoid setup() {\n  pinMode(obsPin, INPUT);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  if (digitalRead(obsPin) == LOW) {\n    Serial.println(\"OBSTACLE DETECTED IN FRONT!\");\n    delay(200);\n  }\n}",
     "expectedOutput": "Serial Monitor prints obstacle warnings whenever an object approaches within 2-10cm."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_18.webp",
+  "imageDescription": "Hardware photo of Infrared Obstacle Proximity Sensor",
+  "detailImages": [
+    "assets/images/components/comp_18_detail.webp"
+  ]
 }

@@ -49,5 +49,10 @@
     "circuit": "VCC to 5V, GND to GND, D0 to Pin 7.",
     "code": "const int trackerPin = 7;\n\nvoid setup() {\n  pinMode(trackerPin, INPUT);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int state = digitalRead(trackerPin);\n  if (state == HIGH) {\n    Serial.println(\"BLACK LINE DETECTED\");\n  } else {\n    Serial.println(\"White Surface\");\n  }\n  delay(100);\n}",
     "expectedOutput": "Serial Monitor prints 'BLACK LINE DETECTED' when placed over dark tape, and 'White Surface' otherwise."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_14.webp",
+  "imageDescription": "Hardware photo of Infrared Line Tracking Sensor",
+  "detailImages": [
+    "assets/images/components/comp_14_detail.webp"
+  ]
 }

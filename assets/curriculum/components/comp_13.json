@@ -44,5 +44,10 @@
     "circuit": "VCC to 5V, GND to GND, OUT to Pin 11.",
     "code": "#include <IRremote.h>\nconst int RECV_PIN = 11;\n\nvoid setup() {\n  Serial.begin(9600);\n  IrReceiver.begin(RECV_PIN, ENABLE_LED_FEEDBACK);\n}\n\nvoid loop() {\n  if (IrReceiver.decode()) {\n    Serial.print(\"Hex Code: 0x\");\n    Serial.println(IrReceiver.decodedIRData.decodedRawData, HEX);\n    IrReceiver.resume();\n  }\n}",
     "expectedOutput": "Pressing buttons on the handheld remote prints unique hexadecimal codes in Serial Monitor."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_13.webp",
+  "imageDescription": "Hardware photo of Infrared Remote & Receiver Kit",
+  "detailImages": [
+    "assets/images/components/comp_13_detail.webp"
+  ]
 }

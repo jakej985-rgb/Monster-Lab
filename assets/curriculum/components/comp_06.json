@@ -70,5 +70,10 @@
     "circuit": "Rows to pins 9-6, Cols to pins 5-2.",
     "code": "const byte ROWS = 4;\nconst byte COLS = 4;\nbyte rowPins[ROWS] = {9, 8, 7, 6};\nbyte colPins[COLS] = {5, 4, 3, 2};\n\nvoid setup() {\n  Serial.begin(9600);\n  for (int r = 0; r < ROWS; r++) pinMode(rowPins[r], OUTPUT);\n  for (int c = 0; c < COLS; c++) pinMode(colPins[c], INPUT_PULLUP);\n}\n\nvoid loop() {\n  for (int r = 0; r < ROWS; r++) {\n    digitalWrite(rowPins[r], LOW);\n    for (int c = 0; c < COLS; c++) {\n      if (digitalRead(colPins[c]) == LOW) {\n        Serial.print(\"Pressed Row: \");\n        Serial.print(r);\n        Serial.print(\" Col: \");\n        Serial.println(c);\n        delay(200);\n      }\n    }\n    digitalWrite(rowPins[r], HIGH);\n  }\n}",
     "expectedOutput": "Serial Monitor logs exact row and column numbers as you tap keys on the membrane keypad."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_06.webp",
+  "imageDescription": "Hardware photo of 16-Button Membrane Keypad",
+  "detailImages": [
+    "assets/images/components/comp_06_detail.webp"
+  ]
 }

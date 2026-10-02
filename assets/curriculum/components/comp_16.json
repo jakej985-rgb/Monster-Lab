@@ -51,5 +51,10 @@
     "circuit": "VCC to 5V, GND to GND, A0 to Analog Pin A0.",
     "code": "void setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int sensorVal = analogRead(A0);\n  Serial.print(\"Vapor Index: \");\n  Serial.println(sensorVal);\n  delay(500);\n}",
     "expectedOutput": "Outputs steady ambient readings (~50-150). Approaching with an alcohol swab causes readings to jump to 600+."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_16.webp",
+  "imageDescription": "Hardware photo of Alcohol Vapor Gas Sensor",
+  "detailImages": [
+    "assets/images/components/comp_16_detail.webp"
+  ]
 }

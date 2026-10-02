@@ -51,5 +51,10 @@
     "circuit": "VCC to 5V, GND to GND, A0 to Analog Pin A0.",
     "code": "void setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int flameVal = analogRead(A0);\n  Serial.print(\"IR Intensity: \");\n  Serial.println(flameVal);\n  delay(100);\n}",
     "expectedOutput": "Reads high numbers (~900-1023) in normal room light, and drops below 200 when exposed to an infrared source."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_11.webp",
+  "imageDescription": "Hardware photo of Infrared Flame Detector",
+  "detailImages": [
+    "assets/images/components/comp_11_detail.webp"
+  ]
 }

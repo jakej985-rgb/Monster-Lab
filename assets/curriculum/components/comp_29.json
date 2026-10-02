@@ -59,5 +59,10 @@
     "circuit": "VCC to 5V, GND to GND, TX to Pin 2, RX via divider to Pin 3.",
     "code": "#include <SoftwareSerial.h>\nSoftwareSerial btSerial(2, 3);\n\nvoid setup() {\n  Serial.begin(9600);\n  btSerial.begin(9600);\n  Serial.println(\"Bluetooth Ready\");\n}\n\nvoid loop() {\n  if (btSerial.available()) Serial.write(btSerial.read());\n  if (Serial.available()) btSerial.write(Serial.read());\n}",
     "expectedOutput": "Messages sent from a Bluetooth terminal smartphone app appear in the Serial Monitor."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_29.webp",
+  "imageDescription": "Hardware photo of UART Bluetooth Serial Module",
+  "detailImages": [
+    "assets/images/components/comp_29_detail.webp"
+  ]
 }

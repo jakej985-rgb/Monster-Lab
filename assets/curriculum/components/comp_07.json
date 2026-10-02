@@ -57,5 +57,10 @@
     "circuit": "GND to GND, VCC to 5V, SDA to A4 (Blue), SCL to A5 (Blue).",
     "code": "#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n\nLiquidCrystal_I2C lcd(0x27, 16, 2);\n\nvoid setup() {\n  lcd.init();\n  lcd.backlight();\n  lcd.setCursor(0, 0);\n  lcd.print(\"Monster Lab!\");\n  lcd.setCursor(0, 1);\n  lcd.print(\"System Online\");\n}\n\nvoid loop() {}",
     "expectedOutput": "The 16x2 LCD backlight illuminates and displays 'Monster Lab!' on line 1 and 'System Online' on line 2."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_07.webp",
+  "imageDescription": "Hardware photo of 16x2 Character LCD with I2C",
+  "detailImages": [
+    "assets/images/components/comp_07_detail.webp"
+  ]
 }

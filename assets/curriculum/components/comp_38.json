@@ -44,5 +44,10 @@
     "circuit": "VCC to 5V, GND to GND, OUT to Pin 2 with 10k pullup.",
     "code": "const int hallPin = 2;\n\nvoid setup() {\n  pinMode(hallPin, INPUT_PULLUP);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  if (digitalRead(hallPin) == LOW) {\n    Serial.println(\"MAGNET DETECTED!\");\n    delay(200);\n  }\n}",
     "expectedOutput": "Approaching the sensor with the South pole of a magnet triggers 'MAGNET DETECTED!' in Serial Monitor."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_38.webp",
+  "imageDescription": "Hardware photo of Magnetic Field Hall Effect Sensor",
+  "detailImages": [
+    "assets/images/components/comp_38_detail.webp"
+  ]
 }

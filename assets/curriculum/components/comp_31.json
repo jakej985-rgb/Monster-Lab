@@ -71,5 +71,10 @@
     "circuit": "VCC to 3.3V, GND to GND, CE to 9, CSN to 10, SCK to 13, MOSI to 11, MISO to 12.",
     "code": "#include <SPI.h>\n#include <nRF24L01.h>\n#include <RF24.h>\n\nRF24 radio(9, 10);\nconst byte address[6] = \"00001\";\n\nvoid setup() {\n  radio.begin();\n  radio.openWritingPipe(address);\n  radio.setPALevel(RF24_PA_MIN);\n  radio.stopListening();\n}\n\nvoid loop() {\n  const char text[] = \"Monster Lab Ping!\";\n  radio.write(&text, sizeof(text));\n  delay(1000);\n}",
     "expectedOutput": "Transmits 2.4GHz wireless telemetry packets once per second."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_31.webp",
+  "imageDescription": "Hardware photo of 2.4GHz Wireless Radio Transceiver",
+  "detailImages": [
+    "assets/images/components/comp_31_detail.webp"
+  ]
 }

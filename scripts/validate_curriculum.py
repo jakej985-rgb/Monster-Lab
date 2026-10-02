@@ -117,6 +117,24 @@ def validate_component(data, path):
         validate_field(exp, "code", str)
         validate_field(exp, "expectedOutput", str)
 
+    if "primaryImage" in data and data["primaryImage"] is not None:
+        validate_field(data, "primaryImage", str)
+        img_path = ROOT / data["primaryImage"]
+        if not img_path.exists():
+            raise ValidationError(f"primaryImage file not found: {data['primaryImage']}")
+
+    if "detailImages" in data and data["detailImages"] is not None:
+        validate_field(data, "detailImages", list)
+        for d_img in data["detailImages"]:
+            if not isinstance(d_img, str):
+                raise ValidationError(f"detailImages entry must be string, got {type(d_img).__name__}")
+            img_path = ROOT / d_img
+            if not img_path.exists():
+                raise ValidationError(f"detailImages file not found: {d_img}")
+
+    if "imageDescription" in data and data["imageDescription"] is not None:
+        validate_field(data, "imageDescription", str)
+
 
 
 def validate_project(data, path):

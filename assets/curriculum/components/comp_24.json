@@ -54,5 +54,10 @@
     "circuit": "GND to GND, + to 5V, CLK to Pin 2, DT to Pin 3.",
     "code": "const int pinA = 2;\nconst int pinB = 3;\nint counter = 0;\nint lastStateA;\n\nvoid setup() {\n  pinMode(pinA, INPUT);\n  pinMode(pinB, INPUT);\n  Serial.begin(9600);\n  lastStateA = digitalRead(pinA);\n}\n\nvoid loop() {\n  int stateA = digitalRead(pinA);\n  if (stateA != lastStateA && stateA == 1) {\n    if (digitalRead(pinB) != stateA) counter++;\n    else counter--;\n    Serial.print(\"Position: \");\n    Serial.println(counter);\n  }\n  lastStateA = stateA;\n}",
     "expectedOutput": "Rotating the knob clockwise increases position in Serial Monitor; counter-clockwise decreases it."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_24.webp",
+  "imageDescription": "Hardware photo of Quadrature Rotary Encoder",
+  "detailImages": [
+    "assets/images/components/comp_24_detail.webp"
+  ]
 }

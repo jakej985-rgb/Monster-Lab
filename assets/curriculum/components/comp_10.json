@@ -59,5 +59,10 @@
     "circuit": "VCC to 5V, GND to GND, SDA to A4, SCL to A5.",
     "code": "#include <Wire.h>\n#include <RTClib.h>\n\nRTC_DS3231 rtc;\n\nvoid setup() {\n  Serial.begin(9600);\n  if (!rtc.begin()) {\n    Serial.println(\"RTC not found\");\n    while (1);\n  }\n}\n\nvoid loop() {\n  DateTime now = rtc.now();\n  Serial.print(now.hour());\n  Serial.print(':');\n  Serial.print(now.minute());\n  Serial.print(':');\n  Serial.println(now.second());\n  delay(1000);\n}",
     "expectedOutput": "Serial Monitor displays live real-time hours, minutes, and seconds advancing every second."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_10.webp",
+  "imageDescription": "Hardware photo of High-Precision Real Time Clock",
+  "detailImages": [
+    "assets/images/components/comp_10_detail.webp"
+  ]
 }

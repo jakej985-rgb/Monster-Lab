@@ -51,5 +51,10 @@
     "circuit": "Brown to GND, Red to 5V, Orange to Pin 9.",
     "code": "#include <Servo.h>\nServo myServo;\n\nvoid setup() {\n  myServo.attach(9);\n}\n\nvoid loop() {\n  myServo.write(0);\n  delay(1000);\n  myServo.write(90);\n  delay(1000);\n  myServo.write(180);\n  delay(1000);\n}",
     "expectedOutput": "The servo arm smoothly steps between 0, 90, and 180 degrees every second."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_25.webp",
+  "imageDescription": "Hardware photo of 9g Micro Position Servo Motor",
+  "detailImages": [
+    "assets/images/components/comp_25_detail.webp"
+  ]
 }

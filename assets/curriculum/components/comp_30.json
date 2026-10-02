@@ -34,5 +34,10 @@
     "circuit": "Mount shield onto Arduino Uno, plug in RJ45 network cable.",
     "code": "#include <SPI.h>\n#include <Ethernet.h>\n\nbyte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };\n\nvoid setup() {\n  Serial.begin(9600);\n  if (Ethernet.begin(mac) == 0) {\n    Serial.println(\"DHCP failed\");\n  } else {\n    Serial.print(\"Assigned IP: \");\n    Serial.println(Ethernet.localIP());\n  }\n}\n\nvoid loop() {}",
     "expectedOutput": "Shield obtains an IP address from your local router and prints it in the Serial Monitor."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_30.webp",
+  "imageDescription": "Hardware photo of SPI Ethernet Controller Shield",
+  "detailImages": [
+    "assets/images/components/comp_30_detail.webp"
+  ]
 }

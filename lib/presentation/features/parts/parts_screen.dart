@@ -5,6 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../domain/models/component_model.dart';
 import '../../shared/providers.dart';
 import '../../shared/widgets/monster_card.dart';
+import '../../shared/widgets/component_image_view.dart';
 
 class PartsScreen extends ConsumerStatefulWidget {
   const PartsScreen({super.key});
@@ -38,25 +39,6 @@ class _PartsScreenState extends ConsumerState<PartsScreen> {
   void dispose() {
     _searchController.dispose();
     super.dispose();
-  }
-
-  IconData _getCategoryIcon(String category) {
-    switch (category) {
-      case 'sensor':
-        return Icons.sensors;
-      case 'actuator':
-        return Icons.precision_manufacturing;
-      case 'display':
-        return Icons.tv;
-      case 'communication':
-        return Icons.wifi;
-      case 'switch':
-        return Icons.toggle_on;
-      case 'passive':
-        return Icons.tune;
-      default:
-        return Icons.memory;
-    }
   }
 
   Color _getCategoryColor(String category) {
@@ -376,18 +358,14 @@ class _PartsScreenState extends ConsumerState<PartsScreen> {
                                     ),
                                     const Spacer(),
                                     Center(
-                                      child: Container(
-                                        width: 56,
-                                        height: 56,
-                                        decoration: BoxDecoration(
-                                          color:
-                                              catColor.withValues(alpha: 0.1),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Icon(
-                                            _getCategoryIcon(comp.category),
-                                            size: 30,
-                                            color: catColor),
+                                      child: ComponentImageView(
+                                        imagePath: comp.primaryImage,
+                                        width: 64,
+                                        height: 64,
+                                        category: comp.category,
+                                        semanticLabel: comp.imageDescription ??
+                                            '${comp.name} photo',
+                                        borderRadius: BorderRadius.circular(12),
                                       ),
                                     ),
                                     const Spacer(),

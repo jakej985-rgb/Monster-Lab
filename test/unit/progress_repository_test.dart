@@ -60,4 +60,127 @@ void main() {
       expect(progressB.totalXp, equals(300));
     });
   });
+
+  group('ProgressRepository Idempotency & XP Reliability Tests', () {
+    late ProgressRepositoryImpl progressRepo;
+
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+      final storageService = await StorageService.init();
+      final dataSource = LocalStorageDataSource(storageService);
+      progressRepo = ProgressRepositoryImpl(dataSource);
+    });
+
+    test(
+        'completeLesson awards XP and returns true on first call, returns false on replay without duplicate XP',
+        () async {
+      const learnerId = 'learner_replay';
+      const lessonId = 'lesson_01';
+
+      final firstResult =
+          await progressRepo.completeLesson(learnerId, lessonId, 50);
+      expect(firstResult, isTrue);
+
+      var progress = await progressRepo.getProgress(learnerId);
+      expect(progress.totalXp, equals(50));
+      expect(progress.completedLessonIds, contains(lessonId));
+
+      // Replaying the same lesson
+      final secondResult =
+          await progressRepo.completeLesson(learnerId, lessonId, 50);
+      expect(secondResult, isFalse);
+
+      progress = await progressRepo.getProgress(learnerId);
+      expect(progress.totalXp, equals(50),
+          reason: 'Replay must not award duplicate XP');
+      expect(progress.completedLessonIds, contains(lessonId));
+    });
+
+    test(
+        'completeProject awards XP and badge on first call, returns false on replay without duplicate XP',
+        () async {
+      const learnerId = 'learner_project';
+      const projectId = 'proj_01';
+
+      final firstResult = await progressRepo.completeProject(
+          learnerId, projectId, 100, 'badge_builder');
+      expect(firstResult, isTrue);
+
+      var progress = await progressRepo.getProgress(learnerId);
+      expect(progress.totalXp, equals(100));
+      expect(progress.completedProjectIds, contains(projectId));
+      expect(progress.earnedBadgeIds, contains('badge_builder'));
+
+      // Replay project
+      final secondResult = await progressRepo.completeProject(
+          learnerId, projectId, 100, 'badge_builder');
+      expect(secondResult, isFalse);
+
+      progress = await progressRepo.getProgress(learnerId);
+      expect(progress.totalXp, equals(100),
+          reason: 'Replay must not award duplicate XP');
+    });
+
+    test(
+        'solveChallenge awards XP on first call, returns false on replay without duplicate XP',
+        () async {
+      const learnerId = 'learner_challenge';
+      const challengeId = 'chal_01';
+
+      final firstResult =
+          await progressRepo.solveChallenge(learnerId, challengeId, 30);
+      expect(firstResult, isTrue);
+
+      var progress = await progressRepo.getProgress(learnerId);
+      expect(progress.totalXp, equals(30));
+      expect(progress.solvedChallengeIds, contains(challengeId));
+
+      // Solve again
+      final secondResult =
+          await progressRepo.solveChallenge(learnerId, challengeId, 30);
+      expect(secondResult, isFalse);
+
+      progress = await progressRepo.getProgress(learnerId);
+      expect(progress.totalXp, equals(30),
+          reason: 'Replay must not award duplicate XP');
+    });
+
+    test(
+        'concurrent completeLesson calls for same lesson are serialized and award XP only once',
+        () async {
+      const learnerId = 'learner_concurrent_1';
+      const lessonId = 'lesson_01';
+
+      final results = await Future.wait([
+        progressRepo.completeLesson(learnerId, lessonId, 50),
+        progressRepo.completeLesson(learnerId, lessonId, 50),
+      ]);
+
+      // Exactly one should be true (first completion), the other false
+      expect(results.where((r) => r == true).length, equals(1));
+      expect(results.where((r) => r == false).length, equals(1));
+
+      final progress = await progressRepo.getProgress(learnerId);
+      expect(progress.totalXp, equals(50));
+      expect(progress.completedLessonIds, contains(lessonId));
+    });
+
+    test(
+        'concurrent completeLesson calls for different lessons are serialized without clobbering',
+        () async {
+      const learnerId = 'learner_concurrent_2';
+
+      final results = await Future.wait([
+        progressRepo.completeLesson(learnerId, 'lesson_01', 50),
+        progressRepo.completeLesson(learnerId, 'lesson_02', 60),
+      ]);
+
+      expect(results, equals([true, true]));
+
+      final progress = await progressRepo.getProgress(learnerId);
+      expect(progress.totalXp, equals(110));
+      expect(
+          progress.completedLessonIds, containsAll(['lesson_01', 'lesson_02']));
+    });
+  });
 }

@@ -51,5 +51,10 @@
     "circuit": "VCC to 5V, GND to GND, A0 to Analog Pin A1.",
     "code": "void setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int gasVal = analogRead(A1);\n  Serial.print(\"Gas Reading: \");\n  Serial.println(gasVal);\n  delay(500);\n}",
     "expectedOutput": "Steady baseline readings in clean ambient air (~80-140)."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_17.webp",
+  "imageDescription": "Hardware photo of Combustible Gas & CO Sensor",
+  "detailImages": [
+    "assets/images/components/comp_17_detail.webp"
+  ]
 }

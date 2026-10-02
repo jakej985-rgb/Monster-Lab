@@ -2288,6 +2288,16 @@ for comp_tuple in COMPONENTS_RAW:
     if "miniExperiment" in enrichment:
         comp_dict["miniExperiment"] = enrichment["miniExperiment"]
 
+    primary_img_rel = f"assets/images/components/{comp_id}.webp"
+    detail_img_rel = f"assets/images/components/{comp_id}_detail.webp"
+    if (ROOT / primary_img_rel).exists():
+        comp_dict["primaryImage"] = primary_img_rel
+        comp_dict["imageDescription"] = f"Hardware photo of {title}"
+    details = []
+    if (ROOT / detail_img_rel).exists():
+        details.append(detail_img_rel)
+    if details:
+        comp_dict["detailImages"] = details
 
     fpath = COMPONENTS_DIR / f"{comp_id}.json"
     with open(fpath, "w", encoding="utf-8") as f:

@@ -86,6 +86,9 @@ class ComponentModel {
   final String? wiringGuidance;
   final List<String> commonMistakes;
   final Map<String, dynamic>? miniExperiment;
+  final String? primaryImage;
+  final List<String> detailImages;
+  final String? imageDescription;
 
   const ComponentModel({
     required this.id,
@@ -103,6 +106,9 @@ class ComponentModel {
     this.wiringGuidance,
     this.commonMistakes = const [],
     this.miniExperiment,
+    this.primaryImage,
+    this.detailImages = const [],
+    this.imageDescription,
   });
 
   factory ComponentModel.fromJson(Map<String, dynamic> json) {
@@ -125,6 +131,9 @@ class ComponentModel {
       wiringGuidance: json['wiringGuidance'] as String?,
       commonMistakes: List<String>.from(json['commonMistakes'] as List? ?? []),
       miniExperiment: json['miniExperiment'] as Map<String, dynamic>?,
+      primaryImage: json['primaryImage'] as String?,
+      detailImages: List<String>.from(json['detailImages'] as List? ?? []),
+      imageDescription: json['imageDescription'] as String?,
     );
   }
 
@@ -144,5 +153,8 @@ class ComponentModel {
         if (wiringGuidance != null) 'wiringGuidance': wiringGuidance,
         'commonMistakes': commonMistakes,
         if (miniExperiment != null) 'miniExperiment': miniExperiment,
+        if (primaryImage != null) 'primaryImage': primaryImage,
+        'detailImages': detailImages,
+        if (imageDescription != null) 'imageDescription': imageDescription,
       };
 }

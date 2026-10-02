@@ -23,8 +23,11 @@ class LessonDetailScreen extends ConsumerStatefulWidget {
 class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
   int _currentStepIndex = 0;
   final Set<String> _checkedPhysicalTasks = {};
+  final Set<String> _awardedCheckpointKeys = {};
+  bool _isCompleting = false;
 
-  void _showCompletionDialog(BuildContext context, Lesson lesson) {
+  void _showCompletionDialog(BuildContext context, Lesson lesson,
+      {required bool isFirstCompletion}) {
     showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -56,15 +59,22 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: AppColors.energyAmber.withValues(alpha: 0.15),
+                color: isFirstCompletion
+                    ? AppColors.energyAmber.withValues(alpha: 0.15)
+                    : AppColors.surfaceContainerLight,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                '+${lesson.xpReward} XP EARNED',
-                style: const TextStyle(
-                  color: Color(0xFFD48806),
+                isFirstCompletion
+                    ? '+${lesson.xpReward} XP EARNED'
+                    : 'LESSON COMPLETED (XP already earned)',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: isFirstCompletion
+                      ? const Color(0xFFD48806)
+                      : AppColors.textSecondaryLight,
                   fontWeight: FontWeight.bold,
-                  fontSize: 16,
+                  fontSize: isFirstCompletion ? 16 : 14,
                 ),
               ),
             ),
@@ -89,7 +99,7 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
   Widget build(BuildContext context) {
     final curriculumRepo = ref.watch(curriculumRepositoryProvider);
     final activeProfile = ref.watch(activeProfileProvider);
-    final progressRepo = ref.watch(progressRepositoryProvider);
+    final activeProgress = ref.watch(activeProgressProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -217,9 +227,28 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                           correctIndex: currentStep
                                   .interactiveConfig!['correctIndex'] as int? ??
                               0,
-                          onAnswerSubmitted: (isCorrect) {
-                            if (isCorrect && activeProfile != null) {
-                              progressRepo.addXp(activeProfile.id, 10);
+                          onAnswerSubmitted: (isCorrect) async {
+                            final checkpointKey =
+                                '${widget.lessonId}_step_$_currentStepIndex';
+                            final progress = activeProgress ??
+                                (activeProfile != null
+                                    ? await ref
+                                        .read(progressRepositoryProvider)
+                                        .getProgress(activeProfile.id)
+                                    : null);
+                            final isAlreadyCompleted = progress
+                                    ?.completedLessonIds
+                                    .contains(widget.lessonId) ??
+                                false;
+                            if (isCorrect &&
+                                activeProfile != null &&
+                                !isAlreadyCompleted &&
+                                !_awardedCheckpointKeys
+                                    .contains(checkpointKey)) {
+                              _awardedCheckpointKeys.add(checkpointKey);
+                              await ref
+                                  .read(activeProgressProvider.notifier)
+                                  .addXp(10);
                             }
                           },
                         ),
@@ -235,26 +264,57 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                 MonsterButton(
                   label: _currentStepIndex < steps.length - 1
                       ? 'Next Step'
-                      : 'Complete Lesson (+${lesson.xpReward} XP)',
+                      : (_isCompleting
+                          ? 'Saving Progress...'
+                          : 'Complete Lesson (+${lesson.xpReward} XP)'),
                   icon: _currentStepIndex < steps.length - 1
                       ? Icons.arrow_forward
                       : Icons.celebration,
-                  onPressed: () async {
-                    if (_currentStepIndex < steps.length - 1) {
-                      setState(() => _currentStepIndex++);
-                    } else {
-                      if (activeProfile != null) {
-                        await progressRepo.completeLesson(
-                            activeProfile.id, lesson.id, lesson.xpReward);
-                        ref
-                            .read(activeProgressProvider.notifier)
-                            .loadProgress();
-                      }
-                      if (context.mounted) {
-                        _showCompletionDialog(context, lesson);
-                      }
-                    }
-                  },
+                  onPressed: _isCompleting
+                      ? null
+                      : () async {
+                          if (_currentStepIndex < steps.length - 1) {
+                            setState(() => _currentStepIndex++);
+                          } else {
+                            if (_isCompleting) return;
+                            setState(() => _isCompleting = true);
+                            try {
+                              if (activeProfile == null) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          'Please select an active learner profile to record progress.'),
+                                      backgroundColor: AppColors.danger,
+                                    ),
+                                  );
+                                }
+                                return;
+                              }
+                              final isFirstCompletion = await ref
+                                  .read(activeProgressProvider.notifier)
+                                  .completeLesson(lesson.id, lesson.xpReward);
+                              if (context.mounted) {
+                                _showCompletionDialog(context, lesson,
+                                    isFirstCompletion: isFirstCompletion);
+                              }
+                            } catch (e) {
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        'Failed to save lesson progress: $e'),
+                                    backgroundColor: AppColors.danger,
+                                  ),
+                                );
+                              }
+                            } finally {
+                              if (mounted) {
+                                setState(() => _isCompleting = false);
+                              }
+                            }
+                          }
+                        },
                 ),
               ],
             ),

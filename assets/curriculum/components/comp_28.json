@@ -44,5 +44,10 @@
     "circuit": "VCC to 5V, GND to GND, DO to Pin 3.",
     "code": "const int vibPin = 3;\n\nvoid setup() {\n  pinMode(vibPin, INPUT);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  if (digitalRead(vibPin) == HIGH) {\n    Serial.println(\"VIBRATION DETECTED!\");\n    delay(200);\n  }\n}",
     "expectedOutput": "Tapping the desk triggers 'VIBRATION DETECTED!' instantly in the Serial Monitor."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_28.webp",
+  "imageDescription": "Hardware photo of High-Sensitivity Vibration Switch",
+  "detailImages": [
+    "assets/images/components/comp_28_detail.webp"
+  ]
 }

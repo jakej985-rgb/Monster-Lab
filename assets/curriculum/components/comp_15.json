@@ -54,5 +54,10 @@
     "circuit": "VCC to 5V, GND to GND, DIN to 11, CS to 10, CLK to 13.",
     "code": "#include <LedControl.h>\nLedControl lc = LedControl(11, 13, 10, 1);\n\nbyte smile[8] = {\n  B00111100,\n  B01000010,\n  B10100101,\n  B10000001,\n  B10100101,\n  B10011001,\n  B01000010,\n  B00111100\n};\n\nvoid setup() {\n  lc.shutdown(0, false);\n  lc.setIntensity(0, 8);\n  lc.clearDisplay(0);\n  for (int i = 0; i < 8; i++) {\n    lc.setRow(0, i, smile[i]);\n  }\n}\n\nvoid loop() {}",
     "expectedOutput": "The 8x8 LED matrix lights up displaying a bright, smiling monster face."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_15.webp",
+  "imageDescription": "Hardware photo of 8x8 Dot Matrix LED Display",
+  "detailImages": [
+    "assets/images/components/comp_15_detail.webp"
+  ]
 }

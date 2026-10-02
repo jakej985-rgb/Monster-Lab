@@ -49,5 +49,10 @@
     "circuit": "VCC to 5V, GND to GND, A0 to Analog Pin A0.",
     "code": "void setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int val = analogRead(A0);\n  Serial.print(\"Moisture Level: \");\n  Serial.println(1023 - val);\n  delay(1000);\n}",
     "expectedOutput": "Outputs 0 in air, increasing to 600-800 when inserted into damp potting soil."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_26.webp",
+  "imageDescription": "Hardware photo of Soil Moisture Dual-Probe Sensor",
+  "detailImages": [
+    "assets/images/components/comp_26_detail.webp"
+  ]
 }

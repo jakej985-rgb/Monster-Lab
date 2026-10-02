@@ -54,5 +54,10 @@
     "circuit": "GND to GND, 5V to 5V, VRx to A0, VRy to A1, SW to Pin 2.",
     "code": "void setup() {\n  Serial.begin(9600);\n  pinMode(2, INPUT_PULLUP);\n}\n\nvoid loop() {\n  int x = analogRead(A0);\n  int y = analogRead(A1);\n  int btn = digitalRead(2);\n  Serial.print(\"X: \"); Serial.print(x);\n  Serial.print(\" | Y: \"); Serial.print(y);\n  Serial.print(\" | Click: \"); Serial.println(btn == LOW ? \"YES\" : \"NO\");\n  delay(100);\n}",
     "expectedOutput": "Serial Monitor streams live 2-axis stick coordinates and button click states."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_21.webp",
+  "imageDescription": "Hardware photo of Dual-Axis Analog Joystick Module",
+  "detailImages": [
+    "assets/images/components/comp_21_detail.webp"
+  ]
 }

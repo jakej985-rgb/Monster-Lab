@@ -49,5 +49,10 @@
     "circuit": "VCC to 5V, GND to GND, A0 to Analog Pin A0.",
     "code": "void setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int rainLevel = analogRead(A0);\n  Serial.print(\"Rain Intensity: \");\n  Serial.println(1023 - rainLevel);\n  delay(200);\n}",
     "expectedOutput": "Outputs near 0 when dry; a single raindrop placed on the plate jumps the value to 700+."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_22.webp",
+  "imageDescription": "Hardware photo of Raindrop Detection Plate",
+  "detailImages": [
+    "assets/images/components/comp_22_detail.webp"
+  ]
 }

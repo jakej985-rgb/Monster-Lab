@@ -42,5 +42,10 @@
     "circuit": "Signal to Pin 8, (-) to GND.",
     "code": "const int laserPin = 8;\n\nvoid setup() {\n  pinMode(laserPin, OUTPUT);\n}\n\nvoid loop() {\n  digitalWrite(laserPin, HIGH);\n  delay(500);\n  digitalWrite(laserPin, LOW);\n  delay(500);\n}",
     "expectedOutput": "A bright red 650nm laser beam pulses on and off every half second onto a safe target sheet."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_37.webp",
+  "imageDescription": "Hardware photo of 650nm Red Laser Diode Module",
+  "detailImages": [
+    "assets/images/components/comp_37_detail.webp"
+  ]
 }

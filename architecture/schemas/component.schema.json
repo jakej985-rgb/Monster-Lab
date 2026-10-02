@@ -59,6 +59,12 @@
         "code": { "type": "string" },
         "expectedOutput": { "type": "string" }
       }
-    }
+    },
+    "primaryImage": { "type": "string" },
+    "detailImages": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "imageDescription": { "type": "string" }
   }
 }

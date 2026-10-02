@@ -47,5 +47,10 @@
     "circuit": "VCC to 5V, GND to GND, IN to Pin 7.",
     "code": "const int relayPin = 7;\n\nvoid setup() {\n  pinMode(relayPin, OUTPUT);\n}\n\nvoid loop() {\n  digitalWrite(relayPin, LOW);\n  delay(2000);\n  digitalWrite(relayPin, HIGH);\n  delay(2000);\n}",
     "expectedOutput": "The mechanical relay audibly clicks every two seconds and toggles its indicator LED."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_36.webp",
+  "imageDescription": "Hardware photo of 1-Channel Optocoupled 5V Relay",
+  "detailImages": [
+    "assets/images/components/comp_36_detail.webp"
+  ]
 }

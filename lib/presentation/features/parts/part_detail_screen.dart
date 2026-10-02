@@ -6,6 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../domain/models/component_model.dart';
 import '../../shared/providers.dart';
 import '../../shared/widgets/monster_card.dart';
+import '../../shared/widgets/component_image_view.dart';
 
 class PartDetailScreen extends ConsumerStatefulWidget {
   final String componentId;
@@ -71,25 +72,6 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
     }
   }
 
-  IconData _getCategoryIcon(String category) {
-    switch (category) {
-      case 'sensor':
-        return Icons.sensors;
-      case 'actuator':
-        return Icons.precision_manufacturing;
-      case 'display':
-        return Icons.tv;
-      case 'communication':
-        return Icons.wifi;
-      case 'switch':
-        return Icons.toggle_on;
-      case 'passive':
-        return Icons.tune;
-      default:
-        return Icons.memory;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final progress = ref.watch(activeProgressProvider);
@@ -129,16 +111,14 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
+                        ComponentImageView(
+                          imagePath: comp.primaryImage,
                           width: 64,
                           height: 64,
-                          decoration: BoxDecoration(
-                            color:
-                                AppColors.primaryViolet.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Icon(_getCategoryIcon(comp.category),
-                              size: 36, color: AppColors.primaryViolet),
+                          category: comp.category,
+                          semanticLabel:
+                              comp.imageDescription ?? '${comp.name} thumbnail',
+                          borderRadius: BorderRadius.circular(16),
                         ),
                         const SizedBox(width: 14),
                         Expanded(
@@ -288,6 +268,75 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
                           ],
                         ),
                       ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Component Visuals & Schematics Card
+              MonsterCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.photo_camera,
+                            color: AppColors.primaryViolet, size: 20),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Hardware Photo & Visuals',
+                          style:
+                              Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.primaryViolet,
+                                  ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Center(
+                      child: ComponentImageView(
+                        imagePath: comp.primaryImage,
+                        height: 200,
+                        width: double.infinity,
+                        category: comp.category,
+                        semanticLabel: comp.imageDescription ??
+                            'Hardware photo of ${comp.name}',
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    if (comp.detailImages.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          const Icon(Icons.account_tree_outlined,
+                              color: AppColors.accentCyanDark, size: 18),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Diagram & Pinout Reference',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.accentCyanDark,
+                                ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Center(
+                        child: ComponentImageView(
+                          imagePath: comp.detailImages.first,
+                          height: 160,
+                          width: double.infinity,
+                          category: comp.category,
+                          semanticLabel: 'Diagram and pinout for ${comp.name}',
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),

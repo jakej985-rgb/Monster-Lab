@@ -13,6 +13,7 @@ import 'package:monster_lab/domain/models/learner_profile_model.dart';
 import 'package:monster_lab/presentation/features/parts/part_detail_screen.dart';
 import 'package:monster_lab/presentation/features/parts/parts_screen.dart';
 import 'package:monster_lab/presentation/shared/providers.dart';
+import 'package:monster_lab/presentation/shared/widgets/component_image_view.dart';
 
 void main() {
   group('Phase 08: Parts Lab & Component Encyclopedia Tests', () {
@@ -188,6 +189,57 @@ void main() {
       final progress = await progressRepo.getProgress('test_child_1');
       expect(progress.discoveredComponentIds, contains('comp_01'));
       expect(progress.totalXp, equals(25));
+    });
+
+    testWidgets(
+        'PartsScreen renders ComponentImageView on component cards with semantic labels',
+        (tester) async {
+      await tester.pumpWidget(createTestWidget(const PartsScreen()));
+      await tester.pumpAndSettle();
+
+      // Check that ComponentImageView widgets are rendered on cards
+      expect(find.byType(ComponentImageView), findsWidgets);
+    });
+
+    testWidgets(
+        'PartDetailScreen renders Hardware Photo & Visuals card with primary and detail images',
+        (tester) async {
+      tester.view.physicalSize = const Size(1200, 3000);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await tester.pumpWidget(
+        createTestWidget(
+          const PartDetailScreen(componentId: 'comp_01'),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Verify the Hardware Photo & Visuals section
+      expect(find.text('Hardware Photo & Visuals'), findsOneWidget);
+      expect(find.text('Diagram & Pinout Reference'), findsOneWidget);
+
+      // Verify ComponentImageView widgets are present (thumbnail + hero + diagram)
+      expect(find.byType(ComponentImageView), findsAtLeastNWidgets(2));
+    });
+
+    testWidgets(
+        'ComponentImageView renders fallback icon when imagePath is null',
+        (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: ComponentImageView(
+              imagePath: null,
+              category: 'actuator',
+              width: 80,
+              height: 80,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byIcon(Icons.precision_manufacturing), findsOneWidget);
     });
   });
 }

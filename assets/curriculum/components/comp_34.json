@@ -45,5 +45,10 @@
     "circuit": "(+) to Pin 8, (-) to GND.",
     "code": "const int buzzerPin = 8;\n\nvoid setup() {}\n\nvoid loop() {\n  tone(buzzerPin, 440, 200);\n  delay(300);\n  tone(buzzerPin, 880, 200);\n  delay(700);\n}",
     "expectedOutput": "Buzzer plays two cheerful alternating tones every second."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_34.webp",
+  "imageDescription": "Hardware photo of Active & Passive Piezo Buzzer",
+  "detailImages": [
+    "assets/images/components/comp_34_detail.webp"
+  ]
 }

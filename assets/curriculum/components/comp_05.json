@@ -44,5 +44,10 @@
     "circuit": "VCC to 5V, GND to GND, OUT to Digital Pin 2.",
     "code": "const int gatePin = 2;\n\nvoid setup() {\n  pinMode(gatePin, INPUT);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  if (digitalRead(gatePin) == HIGH) {\n    Serial.println(\"Beam Interrupted!\");\n    delay(150);\n  }\n}",
     "expectedOutput": "Serial Monitor announces 'Beam Interrupted!' the instant an opaque card or toothpick enters the optical slot."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_05.webp",
+  "imageDescription": "Hardware photo of Photo Interrupter Sensor",
+  "detailImages": [
+    "assets/images/components/comp_05_detail.webp"
+  ]
 }

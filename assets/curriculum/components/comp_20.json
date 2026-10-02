@@ -45,5 +45,10 @@
     "circuit": "Pin 1 to 5V, Pin 2 to A0, Pin 3 to GND.",
     "code": "void setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int raw = analogRead(A0);\n  float volts = raw * (5.0 / 1023.0);\n  Serial.print(\"Raw: \"); Serial.print(raw);\n  Serial.print(\" | Voltage: \"); Serial.print(volts);\n  Serial.println(\" V\");\n  delay(100);\n}",
     "expectedOutput": "Rotating the knob smoothly shifts readings from 0 (0.00V) to 1023 (5.00V)."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_20.webp",
+  "imageDescription": "Hardware photo of 10k Rotary Potentiometer",
+  "detailImages": [
+    "assets/images/components/comp_20_detail.webp"
+  ]
 }

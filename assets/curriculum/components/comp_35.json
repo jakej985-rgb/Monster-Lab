@@ -44,5 +44,10 @@
     "circuit": "+ to 5V, - to GND, S to Analog Pin A0.",
     "code": "void setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int depth = analogRead(A0);\n  Serial.print(\"Water Depth: \");\n  Serial.println(depth);\n  delay(250);\n}",
     "expectedOutput": "Reads 0 when dry; dipping into water increases value proportionally up to ~650."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_35.webp",
+  "imageDescription": "Hardware photo of 10-Trace Resistive Depth Probe",
+  "detailImages": [
+    "assets/images/components/comp_35_detail.webp"
+  ]
 }

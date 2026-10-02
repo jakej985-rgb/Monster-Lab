@@ -45,5 +45,10 @@
     "circuit": "Connect Common to GND, NO to Digital Pin 3.",
     "code": "const int bumperPin = 3;\n\nvoid setup() {\n  pinMode(bumperPin, INPUT_PULLUP);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  if (digitalRead(bumperPin) == LOW) {\n    Serial.println(\"CRASH! Bumper triggered!\");\n    delay(200);\n  }\n}",
     "expectedOutput": "Serial Monitor prints 'CRASH! Bumper triggered!' whenever the microswitch lever is pressed."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_04.webp",
+  "imageDescription": "Hardware photo of Impact Collision Switch",
+  "detailImages": [
+    "assets/images/components/comp_04_detail.webp"
+  ]
 }

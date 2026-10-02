@@ -113,6 +113,15 @@ class CurriculumValidator {
         errors.add("Pin '${p.pinName}' is missing description");
       }
     }
+    if (component.primaryImage != null &&
+        component.primaryImage!.trim().isEmpty) {
+      errors.add("Component primaryImage cannot be empty string");
+    }
+    for (final detail in component.detailImages) {
+      if (detail.trim().isEmpty) {
+        errors.add("Component detailImages item cannot be empty string");
+      }
+    }
 
     if (errors.isNotEmpty) {
       throw CurriculumValidationException(

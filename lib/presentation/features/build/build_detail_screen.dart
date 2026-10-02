@@ -25,6 +25,7 @@ class _BuildDetailScreenState extends ConsumerState<BuildDetailScreen> {
   late Future<ProjectModel?> _projectFuture;
   int _currentPhaseIndex = 0;
   final Set<String> _checkedCheckpoints = <String>{};
+  bool _isCompleting = false;
 
   @override
   void initState() {
@@ -477,92 +478,128 @@ class _BuildDetailScreenState extends ConsumerState<BuildDetailScreen> {
                         icon: _currentPhaseIndex < phases.length - 1
                             ? Icons.arrow_forward_rounded
                             : Icons.celebration_rounded,
-                        onPressed: () async {
-                          if (_currentPhaseIndex < phases.length - 1) {
-                            setState(() => _currentPhaseIndex++);
-                            if (activeProfile != null) {
-                              await progressRepo.recordProjectPhase(
-                                activeProfile.id,
-                                project.id,
-                                _currentPhaseIndex + 1,
-                              );
-                            }
-                          } else {
-                            if (activeProfile != null) {
-                              await progressRepo.completeProject(
-                                activeProfile.id,
-                                project.id,
-                                project.xpReward,
-                                project.badgeRewardId,
-                              );
-                              ref
-                                  .read(activeProgressProvider.notifier)
-                                  .loadProgress();
-                            }
-                            if (context.mounted) {
-                              showDialog<void>(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (dialogContext) => AlertDialog(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16)),
-                                  title: const Row(
-                                    children: [
-                                      Icon(Icons.military_tech_rounded,
-                                          color: AppColors.energyAmber,
-                                          size: 28),
-                                      SizedBox(width: 8),
-                                      Text('Mission Complete!'),
-                                    ],
-                                  ),
-                                  content: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        'Congratulations! You successfully engineered and built ${project.title}!',
-                                        style: const TextStyle(fontSize: 15),
-                                      ),
-                                      const SizedBox(height: 16),
-                                      Container(
-                                        padding: const EdgeInsets.all(12),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.success
-                                              .withValues(alpha: 0.1),
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            const Icon(Icons.bolt_rounded,
-                                                color: AppColors.energyAmber),
-                                            const SizedBox(width: 6),
-                                            Text(
-                                              '+${project.xpReward} XP Awarded',
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16),
+                        onPressed: _isCompleting
+                            ? null
+                            : () async {
+                                if (_currentPhaseIndex < phases.length - 1) {
+                                  setState(() => _currentPhaseIndex++);
+                                  if (activeProfile != null) {
+                                    await progressRepo.recordProjectPhase(
+                                      activeProfile.id,
+                                      project.id,
+                                      _currentPhaseIndex + 1,
+                                    );
+                                  }
+                                } else {
+                                  if (_isCompleting) return;
+                                  setState(() => _isCompleting = true);
+                                  bool isFirst = false;
+                                  try {
+                                    if (activeProfile != null) {
+                                      isFirst = await ref
+                                          .read(activeProgressProvider.notifier)
+                                          .completeProject(
+                                            project.id,
+                                            project.xpReward,
+                                            project.badgeRewardId,
+                                          );
+                                    }
+                                    if (context.mounted) {
+                                      showDialog<void>(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (dialogContext) => AlertDialog(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(16)),
+                                          title: const Row(
+                                            children: [
+                                              Icon(Icons.military_tech_rounded,
+                                                  color: AppColors.energyAmber,
+                                                  size: 28),
+                                              SizedBox(width: 8),
+                                              Text('Mission Complete!'),
+                                            ],
+                                          ),
+                                          content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                'Congratulations! You successfully engineered and built ${project.title}!',
+                                                style: const TextStyle(
+                                                    fontSize: 15),
+                                              ),
+                                              const SizedBox(height: 16),
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.all(12),
+                                                decoration: BoxDecoration(
+                                                  color: isFirst
+                                                      ? AppColors.success
+                                                          .withValues(
+                                                              alpha: 0.1)
+                                                      : AppColors
+                                                          .surfaceContainerLight,
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Icon(
+                                                      isFirst
+                                                          ? Icons.bolt_rounded
+                                                          : Icons
+                                                              .check_circle_outline,
+                                                      color: isFirst
+                                                          ? AppColors
+                                                              .energyAmber
+                                                          : AppColors
+                                                              .textSecondaryLight,
+                                                    ),
+                                                    const SizedBox(width: 6),
+                                                    Text(
+                                                      isFirst
+                                                          ? '+${project.xpReward} XP Awarded'
+                                                          : 'PROJECT COMPLETED (XP already earned)',
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize:
+                                                            isFirst ? 16 : 14,
+                                                        color: isFirst
+                                                            ? null
+                                                            : AppColors
+                                                                .textSecondaryLight,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          actions: [
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.of(dialogContext)
+                                                    .pop();
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: const Text(
+                                                  'Back to Build Lab'),
                                             ),
                                           ],
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  actions: [
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.of(dialogContext).pop();
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text('Back to Build Lab'),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }
-                          }
-                        },
+                                      );
+                                    }
+                                  } finally {
+                                    if (mounted) {
+                                      setState(() => _isCompleting = false);
+                                    }
+                                  }
+                                }
+                              },
                       ),
                     ),
                   ],

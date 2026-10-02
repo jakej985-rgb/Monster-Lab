@@ -69,5 +69,10 @@
     "circuit": "VCC to 5V, GND to GND, SCL to A5, SDA to A4.",
     "code": "#include <Wire.h>\n#include <MPU6050.h>\n\nMPU6050 mpu;\n\nvoid setup() {\n  Serial.begin(9600);\n  Wire.begin();\n  mpu.initialize();\n}\n\nvoid loop() {\n  int16_t ax, ay, az;\n  mpu.getAcceleration(&ax, &ay, &az);\n  Serial.print(\"X: \"); Serial.print(ax);\n  Serial.print(\" | Y: \"); Serial.print(ay);\n  Serial.print(\" | Z: \"); Serial.println(az);\n  delay(100);\n}",
     "expectedOutput": "Serial Monitor streams raw 3-axis acceleration vectors that change as you tilt the sensor."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_12.webp",
+  "imageDescription": "Hardware photo of 6-Axis Gyroscope & Accelerometer",
+  "detailImages": [
+    "assets/images/components/comp_12_detail.webp"
+  ]
 }

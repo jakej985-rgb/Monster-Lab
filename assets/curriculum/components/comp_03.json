@@ -44,5 +44,10 @@
     "circuit": "VCC to 5V, GND to GND, OUT to Pin 2.",
     "code": "const int motionPin = 2;\nconst int ledPin = 13;\n\nvoid setup() {\n  pinMode(motionPin, INPUT);\n  pinMode(ledPin, OUTPUT);\n  Serial.begin(9600);\n  Serial.println(\"Warming up sensor for 10s...\");\n  delay(10000);\n  Serial.println(\"Sentry Armed!\");\n}\n\nvoid loop() {\n  int motion = digitalRead(motionPin);\n  if (motion == HIGH) {\n    digitalWrite(ledPin, HIGH);\n    Serial.println(\"MOTION DETECTED!\");\n  } else {\n    digitalWrite(ledPin, LOW);\n  }\n  delay(100);\n}",
     "expectedOutput": "Pin 13 LED turns ON and Serial prints 'MOTION DETECTED!' whenever a person moves in front of the Fresnel lens."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_03.webp",
+  "imageDescription": "Hardware photo of PIR Motion Sensor",
+  "detailImages": [
+    "assets/images/components/comp_03_detail.webp"
+  ]
 }

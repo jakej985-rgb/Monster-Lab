@@ -74,5 +74,10 @@
     "circuit": "COM through 220 ohm to GND, Segments A-G to Pins 2-8.",
     "code": "const int segPins[7] = {2, 3, 4, 5, 6, 7, 8};\nbyte digits[10] = {\n  B0111111, B0000110, B1011011, B1001111, B1100110,\n  B1101101, B1111101, B0000111, B1111111, B1101111\n};\n\nvoid setup() {\n  for (int i = 0; i < 7; i++) pinMode(segPins[i], OUTPUT);\n}\n\nvoid loop() {\n  for (int d = 0; d < 10; d++) {\n    for (int s = 0; s < 7; s++) {\n      digitalWrite(segPins[s], bitRead(digits[d], s));\n    }\n    delay(1000);\n  }\n}",
     "expectedOutput": "The single-digit display clearly counts from 0 through 9 once per second."
-  }
+  },
+  "primaryImage": "assets/images/components/comp_32.webp",
+  "imageDescription": "Hardware photo of Digital 7-Segment LED Display",
+  "detailImages": [
+    "assets/images/components/comp_32_detail.webp"
+  ]
 }

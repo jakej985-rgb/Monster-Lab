@@ -130,11 +130,32 @@ class ActiveProgressNotifier extends StateNotifier<LearnerProgressModel?> {
     await loadProgress();
   }
 
-  Future<void> solveChallenge(String challengeId, int xpReward) async {
+  Future<bool> completeLesson(String lessonId, int xpReward) async {
     final learnerId = _learnerId;
-    if (learnerId == null) return;
-    await _progressRepo.solveChallenge(learnerId, challengeId, xpReward);
+    if (learnerId == null) return false;
+    final isFirst =
+        await _progressRepo.completeLesson(learnerId, lessonId, xpReward);
     await loadProgress();
+    return isFirst;
+  }
+
+  Future<bool> completeProject(String projectId, int xpReward,
+      [String? badgeId]) async {
+    final learnerId = _learnerId;
+    if (learnerId == null) return false;
+    final isFirst = await _progressRepo.completeProject(
+        learnerId, projectId, xpReward, badgeId);
+    await loadProgress();
+    return isFirst;
+  }
+
+  Future<bool> solveChallenge(String challengeId, int xpReward) async {
+    final learnerId = _learnerId;
+    if (learnerId == null) return false;
+    final isFirst =
+        await _progressRepo.solveChallenge(learnerId, challengeId, xpReward);
+    await loadProgress();
+    return isFirst;
   }
 }
 
