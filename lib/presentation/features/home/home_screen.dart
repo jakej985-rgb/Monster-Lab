@@ -134,7 +134,7 @@ class HomeScreen extends ConsumerWidget {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 12),
-          _buildResumeCard(context, activeProgress),
+          _buildResumeCard(context, ref, activeProgress),
 
           const SizedBox(height: 24),
 
@@ -371,108 +371,148 @@ class HomeScreen extends ConsumerWidget {
   }
 
   Widget _buildResumeCard(
-      BuildContext context, LearnerProgressModel? progress) {
-    final lastActivity = progress?.lastActivity;
+      BuildContext context, WidgetRef ref, LearnerProgressModel? progress) {
+    final nextLessonAsync = ref.watch(nextLessonProvider);
 
-    if (lastActivity != null) {
-      final isProject = lastActivity.type == ActivityType.project;
-      final targetPath = isProject
-          ? '/build/${lastActivity.activityId}'
-          : '/learn/${lastActivity.activityId}';
-
-      return MonsterCard(
-        onTap: () => context.push(targetPath),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return nextLessonAsync.when(
+      loading: () => const MonsterCard(
+        child: SizedBox(
+          height: 100,
+          child: Center(
+            child: Text(
+              'Loading your next adventure...',
+              style: TextStyle(color: AppColors.textSecondaryLight),
+            ),
+          ),
+        ),
+      ),
+      error: (err, _) => MonsterCard(
+        child: Text('Unable to load lesson progress: $err'),
+      ),
+      data: (nextLesson) {
+        if (nextLesson == null) {
+          // All lessons completed - Celebration Card!
+          return MonsterCard(
+            key: const Key('home_curriculum_completed_card'),
+            color: AppColors.tierMaster.withValues(alpha: 0.12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryViolet.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    isProject ? 'PROJECT IN PROGRESS' : 'RECENT ACTIVITY',
-                    style: const TextStyle(
-                      color: AppColors.primaryViolet,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 11,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: AppColors.tierMaster,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Text(
+                        'CURRICULUM COMPLETE!',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11,
+                        ),
+                      ),
                     ),
+                    const Icon(Icons.emoji_events,
+                        color: AppColors.tierMaster, size: 24),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'All Lessons Completed! 🏆',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  'Outstanding work, Monster Master! You have mastered all 12 lessons in the lab curriculum.',
+                  style: TextStyle(
+                    color: AppColors.textSecondaryLight,
+                    fontSize: 13,
                   ),
                 ),
-                Text(
-                  _formatTimeAgo(lastActivity.timestamp),
-                  style: const TextStyle(
-                      color: AppColors.textSecondaryLight, fontSize: 12),
+                const SizedBox(height: 16),
+                MonsterButton(
+                  label: 'Explore Projects in Build Lab',
+                  icon: Icons.handyman,
+                  onPressed: () => context.go(RoutePaths.build),
                 ),
               ],
             ),
-            const SizedBox(height: 10),
-            Text(
-              lastActivity.title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 14),
-            MonsterButton(
-              label: 'Continue Activity',
-              icon: Icons.play_arrow,
-              onPressed: () => context.push(targetPath),
-            ),
-          ],
-        ),
-      );
-    }
+          );
+        }
 
-    // Default starter card
-    return MonsterCard(
-      onTap: () => context.push('/learn/lesson_01'),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        final hasCompletedAny =
+            progress != null && progress.completedLessonIds.isNotEmpty;
+        final lessonNumber =
+            int.tryParse(nextLesson.id.replaceAll(RegExp(r'[^0-9]'), '')) ?? 1;
+
+        return MonsterCard(
+          key: Key('home_next_lesson_card_${nextLesson.id}'),
+          onTap: () => context.push('/learn/${nextLesson.id}'),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: AppColors.tierRookie.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Text(
-                  'START HERE',
-                  style: TextStyle(
-                      color: AppColors.tierRookie,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 11),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: (hasCompletedAny
+                              ? AppColors.primaryViolet
+                              : AppColors.tierRookie)
+                          .withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      hasCompletedAny ? 'UP NEXT' : 'START HERE',
+                      style: TextStyle(
+                        color: hasCompletedAny
+                            ? AppColors.primaryViolet
+                            : AppColors.tierRookie,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '⏱ ${nextLesson.estimatedMinutes} min',
+                    style: const TextStyle(
+                      color: AppColors.textSecondaryLight,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Lesson $lessonNumber: ${nextLesson.title}',
+                style:
+                    const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                nextLesson.summary,
+                style: const TextStyle(
+                  color: AppColors.textSecondaryLight,
+                  fontSize: 13,
                 ),
               ),
-              const Text('⏱ 15 min',
-                  style: TextStyle(
-                      color: AppColors.textSecondaryLight, fontSize: 12)),
+              const SizedBox(height: 14),
+              MonsterButton(
+                label: 'Start Lesson $lessonNumber',
+                icon: Icons.rocket_launch,
+                onPressed: () => context.push('/learn/${nextLesson.id}'),
+              ),
             ],
           ),
-          const SizedBox(height: 10),
-          const Text(
-            'Lesson 1: What is Arduino & How Does It Work?',
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 6),
-          const Text(
-            'Discover the brain of your robot and explore how microcontrollers think!',
-            style: TextStyle(color: AppColors.textSecondaryLight, fontSize: 13),
-          ),
-          const SizedBox(height: 14),
-          MonsterButton(
-            label: 'Start Lesson 1',
-            icon: Icons.rocket_launch,
-            onPressed: () => context.push('/learn/lesson_01'),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -509,13 +549,5 @@ class HomeScreen extends ConsumerWidget {
         ],
       ),
     );
-  }
-
-  String _formatTimeAgo(DateTime dt) {
-    final diff = DateTime.now().difference(dt);
-    if (diff.inMinutes < 1) return 'Just now';
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
-    if (diff.inHours < 24) return '${diff.inHours}h ago';
-    return '${diff.inDays}d ago';
   }
 }

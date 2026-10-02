@@ -1,0 +1,50 @@
+{
+  "id": "comp_slider_switch",
+  "peripheralNumber": 52,
+  "name": "3-Pin Slider Switch (SPDT)",
+  "partNumber": "SS-12D00",
+  "category": "switch",
+  "description": "Single-Pole Double-Throw miniature slide switch for toggling power or selecting between two operational circuit modes.",
+  "realWorldAnalogy": "Single-Pole Double-Throw miniature slide switch for toggling power or selecting between two operational circuit modes.",
+  "voltage": "v5",
+  "pinout": [
+    {
+      "pinName": "Pin 1",
+      "type": "digitalIn",
+      "description": "Throw 1 Contact"
+    },
+    {
+      "pinName": "Pin 2",
+      "type": "power",
+      "description": "Common Center Wiper"
+    },
+    {
+      "pinName": "Pin 3",
+      "type": "digitalIn",
+      "description": "Throw 2 Contact"
+    }
+  ],
+  "safety": {
+    "level": "safe",
+    "hazards": [],
+    "childSafeAlternative": null,
+    "requiresParentUnlock": false
+  },
+  "projectIds": [
+    "proj_04",
+    "proj_08"
+  ],
+  "wiringGuidance": "Connect center pin to Arduino digital input with INPUT_PULLUP enabled. Connect outer pin 1 to GND. When slid toward pin 1, input reads LOW.",
+  "commonMistakes": [
+    "Leaving center pin floating when using external voltage instead of pull-up resistors.",
+    "Forcing the plastic slider knob with excessive force."
+  ],
+  "miniExperiment": {
+    "title": "A/B Mode Selector",
+    "circuit": "Pin 2 (Common) to Pin 7 (INPUT_PULLUP), Pin 1 to GND, Pin 3 open.",
+    "code": "const int switchPin = 7;\nvoid setup() {\n  pinMode(switchPin, INPUT_PULLUP);\n  Serial.begin(9600);\n}\nvoid loop() {\n  if (digitalRead(switchPin) == LOW) {\n    Serial.println(\"MODE: Manual Control\");\n  } else {\n    Serial.println(\"MODE: Autonomous Autopilot\");\n  }\n  delay(500);\n}",
+    "expectedOutput": "Serial Monitor updates the operational mode message whenever the slider is flipped."
+  },
+  "primaryImage": "assets/images/components/comp_slider_switch.webp",
+  "imageDescription": "Hardware photo of 3-Pin Slider Switch (SPDT)"
+}

@@ -10,7 +10,11 @@ void main() {
   group('End-to-End User Navigation & Routing Flow Tests', () {
     testWidgets('Full user navigation flow across all 5 tabs and sub-routes',
         (tester) async {
-      SharedPreferences.setMockInitialValues({});
+      SharedPreferences.setMockInitialValues({
+        'monster_lab_active_profile_id': 'prof_default',
+        'monster_lab_profiles':
+            '[{"id":"prof_default","nickname":"Tester","avatarId":"avatar_sparky","ageBracket":"ages10_12","createdAt":"2026-01-01T00:00:00.000Z","lastActiveAt":"2026-01-01T00:00:00.000Z","settings":{}}]',
+      });
       final storageService = await StorageService.init();
 
       await tester.pumpWidget(
@@ -55,7 +59,7 @@ void main() {
       // 6. Return to Home tab
       await tester.tap(find.text('Home'));
       await tester.pumpAndSettle();
-      expect(find.text('Monster Lab'), findsWidgets);
+      expect(find.textContaining('Tester'), findsWidgets);
 
       // 7. Tap avatar in AppBar to open Profile Select Screen
       final avatarFinder = find.bySemanticsLabel(RegExp(r'Switch profile'));

@@ -10,7 +10,11 @@ void main() {
   testWidgets(
       'Monster Lab application boots and renders all 5 bottom navigation tabs',
       (tester) async {
-    SharedPreferences.setMockInitialValues({});
+    SharedPreferences.setMockInitialValues({
+      'monster_lab_active_profile_id': 'prof_default',
+      'monster_lab_profiles':
+          '[{"id":"prof_default","nickname":"Tester","avatarId":"avatar_sparky","ageBracket":"ages10_12","createdAt":"2026-01-01T00:00:00.000Z","lastActiveAt":"2026-01-01T00:00:00.000Z","settings":{}}]',
+    });
     final storageService = await StorageService.init();
 
     await tester.pumpWidget(

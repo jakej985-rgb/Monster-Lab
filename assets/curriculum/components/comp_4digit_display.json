@@ -1,0 +1,55 @@
+{
+  "id": "comp_4digit_display",
+  "peripheralNumber": 47,
+  "name": "4-Digit 7-Segment LED Clock Display",
+  "partNumber": "TM1637",
+  "category": "display",
+  "description": "4-digit numeric LED display with central clock colon, controlled over a 2-wire serial protocol (CLK, DIO) using the TM1637 driver.",
+  "realWorldAnalogy": "4-digit numeric LED display with central clock colon, controlled over a 2-wire serial protocol (CLK, DIO) using the TM1637 driver.",
+  "voltage": "v5",
+  "pinout": [
+    {
+      "pinName": "GND",
+      "type": "ground",
+      "description": "Ground Reference"
+    },
+    {
+      "pinName": "VCC",
+      "type": "power",
+      "description": "5V Power Supply"
+    },
+    {
+      "pinName": "DIO",
+      "type": "digitalIn",
+      "description": "Serial Data Input/Output"
+    },
+    {
+      "pinName": "CLK",
+      "type": "digitalOut",
+      "description": "Serial Clock Input"
+    }
+  ],
+  "safety": {
+    "level": "safe",
+    "hazards": [],
+    "childSafeAlternative": null,
+    "requiresParentUnlock": false
+  },
+  "projectIds": [
+    "proj_05"
+  ],
+  "datasheetRef": "4 digit 7-segment Display .PDF",
+  "wiringGuidance": "Connect VCC to 5V, GND to GND, CLK to Pin 2, and DIO to Pin 3. Install TM1637Display library in the Arduino IDE.",
+  "commonMistakes": [
+    "Swapping CLK and DIO connections.",
+    "Omitting the TM1637 library initialization parameters."
+  ],
+  "miniExperiment": {
+    "title": "Digital Counter",
+    "circuit": "VCC to 5V, GND to GND, CLK to Pin 2, DIO to Pin 3.",
+    "code": "#include <TM1637Display.h>\n#define CLK 2\n#define DIO 3\nTM1637Display display(CLK, DIO);\nvoid setup() {\n  display.setBrightness(0x0f);\n}\nvoid loop() {\n  for (int i = 0; i <= 99; i++) {\n    display.showNumberDec(i);\n    delay(100);\n  }\n}",
+    "expectedOutput": "The display rapidly counts from 0 up to 99 in glowing red numerals."
+  },
+  "primaryImage": "assets/images/components/comp_4digit_display.webp",
+  "imageDescription": "Hardware photo of 4-Digit 7-Segment LED Clock Display"
+}

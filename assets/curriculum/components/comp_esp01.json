@@ -1,0 +1,76 @@
+{
+  "id": "comp_esp01",
+  "peripheralNumber": 48,
+  "name": "ESP8266 ESP-01 Wi-Fi Transceiver",
+  "partNumber": "ESP-01S",
+  "category": "communication",
+  "description": "Compact 8-pin Wi-Fi serial module allowing any Arduino board to connect to 2.4GHz wireless networks via AT commands.",
+  "realWorldAnalogy": "Compact 8-pin Wi-Fi serial module allowing any Arduino board to connect to 2.4GHz wireless networks via AT commands.",
+  "voltage": "v3_3",
+  "pinout": [
+    {
+      "pinName": "3V3",
+      "type": "power",
+      "description": "3.3V Power (DO NOT CONNECT 5V)"
+    },
+    {
+      "pinName": "TX",
+      "type": "uart",
+      "description": "Serial Transmit (3.3V)"
+    },
+    {
+      "pinName": "RX",
+      "type": "uart",
+      "description": "Serial Receive (3.3V)"
+    },
+    {
+      "pinName": "EN",
+      "type": "digitalIn",
+      "description": "Chip Enable (connect to 3.3V)"
+    },
+    {
+      "pinName": "IO0",
+      "type": "digitalIn",
+      "description": "Flash / Run Mode Select"
+    },
+    {
+      "pinName": "IO2",
+      "type": "digitalIn",
+      "description": "General Purpose I/O 2"
+    },
+    {
+      "pinName": "RST",
+      "type": "digitalIn",
+      "description": "Hardware Reset (active LOW)"
+    },
+    {
+      "pinName": "GND",
+      "type": "ground",
+      "description": "Ground"
+    }
+  ],
+  "safety": {
+    "level": "caution",
+    "hazards": [
+      "Module operates strictly at 3.3V. 5V on VCC or RX will damage the chip without level shifter."
+    ],
+    "childSafeAlternative": "Use ESP32 DevKit or USB cable communication for beginner wireless experiments",
+    "requiresParentUnlock": false
+  },
+  "projectIds": [
+    "proj_20"
+  ],
+  "wiringGuidance": "Must be powered by a dedicated 3.3V supply (Uno 3.3V pin cannot provide the 200mA Wi-Fi transmit current spikes). Use 1k/2k resistor divider on RX line.",
+  "commonMistakes": [
+    "Connecting ESP-01 VCC directly to Uno 5V\u2014this burns out the radio chip instantly!",
+    "Leaving the CH_PD / EN pin floating (it must be pulled HIGH to 3.3V)."
+  ],
+  "miniExperiment": {
+    "title": "AT Communication Ping",
+    "circuit": "3V3 and EN to 3.3V supply, GND to GND, TX to Pin 2 (SoftRX), RX through divider to Pin 3 (SoftTX).",
+    "code": "#include <SoftwareSerial.h>\nSoftwareSerial esp(2, 3); // RX, TX\nvoid setup() {\n  Serial.begin(9600);\n  esp.begin(115200);\n  Serial.println(\"Sending AT ping to ESP-01...\");\n  esp.println(\"AT\");\n}\nvoid loop() {\n  if (esp.available()) Serial.write(esp.read());\n}",
+    "expectedOutput": "ESP-01 responds with 'OK' in the Serial Monitor."
+  },
+  "primaryImage": "assets/images/components/comp_esp01.webp",
+  "imageDescription": "Hardware photo of ESP8266 ESP-01 Wi-Fi Transceiver"
+}

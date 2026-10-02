@@ -9,7 +9,7 @@
   ],
   "counts": {
     "lessons": 12,
-    "components": 38,
+    "components": 54,
     "projects": 20,
     "challenges": 24,
     "badges": 20
@@ -66,7 +66,23 @@
     "comp_35",
     "comp_36",
     "comp_37",
-    "comp_38"
+    "comp_38",
+    "comp_uno",
+    "comp_nano",
+    "comp_mega",
+    "comp_esp32",
+    "comp_esp8266",
+    "comp_protoshield",
+    "comp_isd1820",
+    "comp_usb_doctor",
+    "comp_4digit_display",
+    "comp_esp01",
+    "comp_l293d",
+    "comp_74hc595",
+    "comp_thermistor",
+    "comp_slider_switch",
+    "comp_breadboard",
+    "comp_power_supply"
   ],
   "projects": [
     "proj_01",

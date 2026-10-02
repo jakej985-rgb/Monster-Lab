@@ -20,6 +20,7 @@ class _PartsScreenState extends ConsumerState<PartsScreen> {
   final TextEditingController _searchController = TextEditingController();
   static const List<Map<String, String>> _categories = [
     {'id': 'all', 'label': 'All Parts'},
+    {'id': 'microcontroller', 'label': 'Main Boards'},
     {'id': 'sensor', 'label': 'Sensors'},
     {'id': 'actuator', 'label': 'Actuators'},
     {'id': 'display', 'label': 'Displays'},
@@ -43,6 +44,8 @@ class _PartsScreenState extends ConsumerState<PartsScreen> {
 
   Color _getCategoryColor(String category) {
     switch (category) {
+      case 'microcontroller':
+        return AppColors.primaryViolet;
       case 'sensor':
         return AppColors.accentCyan;
       case 'actuator':
@@ -110,7 +113,7 @@ class _PartsScreenState extends ConsumerState<PartsScreen> {
                   onChanged: (val) => setState(() => _searchQuery = val),
                   decoration: InputDecoration(
                     labelText: 'Search parts',
-                    hintText: 'Search 38 parts by name, number, or chip...',
+                    hintText: 'Search parts by name, number, or chip...',
                     prefixIcon: const Icon(Icons.search,
                         color: AppColors.primaryViolet),
                     suffixIcon: _searchQuery.isNotEmpty

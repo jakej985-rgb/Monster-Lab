@@ -19,6 +19,7 @@ class PartDetailScreen extends ConsumerStatefulWidget {
 
 class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
   late Future<ComponentModel?> _componentFuture;
+  bool _isDiscovering = false;
 
   @override
   void initState() {
@@ -26,6 +27,16 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
     _componentFuture = ref
         .read(curriculumRepositoryProvider)
         .getComponentById(widget.componentId);
+  }
+
+  @override
+  void didUpdateWidget(covariant PartDetailScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.componentId != widget.componentId) {
+      _componentFuture = ref
+          .read(curriculumRepositoryProvider)
+          .getComponentById(widget.componentId);
+    }
   }
 
   Color _getPinColor(PinType type) {
@@ -194,55 +205,8 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-
-                    // Discovery Action
-                    if (!isDiscovered)
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton.icon(
-                          key: const Key('discover_button'),
-                          onPressed: () async {
-                            await ref
-                                .read(activeProgressProvider.notifier)
-                                .discoverComponent(comp.id, 25);
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  backgroundColor: AppColors.success,
-                                  behavior: SnackBarBehavior.floating,
-                                  content: Row(
-                                    children: [
-                                      Icon(Icons.star_rounded,
-                                          color: AppColors.energyAmber),
-                                      SizedBox(width: 10),
-                                      Expanded(
-                                        child: Text(
-                                          'Component Discovered! +25 XP awarded to your profile!',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            }
-                          },
-                          icon: const Icon(Icons.star_rounded,
-                              color: AppColors.energyAmber),
-                          label: const Text('Discover Part (+25 XP)',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryViolet,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
-                          ),
-                        ),
-                      )
-                    else
+                    if (isDiscovered) ...[
+                      const SizedBox(height: 16),
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 14, vertical: 10),
@@ -268,6 +232,7 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
                           ],
                         ),
                       ),
+                    ],
                   ],
                 ),
               ),
@@ -306,7 +271,80 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    if (comp.detailImages.isNotEmpty) ...[
+
+                    // Discovery Action - directly below primary hardware photo
+                    if (!isDiscovered) ...[
+                      const SizedBox(height: 16),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          key: const Key('discover_button'),
+                          onPressed: _isDiscovering
+                              ? null
+                              : () async {
+                                  setState(() => _isDiscovering = true);
+                                  try {
+                                    await ref
+                                        .read(activeProgressProvider.notifier)
+                                        .discoverComponent(comp.id, 25);
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          backgroundColor: AppColors.success,
+                                          behavior: SnackBarBehavior.floating,
+                                          content: Row(
+                                            children: [
+                                              Icon(Icons.star_rounded,
+                                                  color: AppColors.energyAmber),
+                                              SizedBox(width: 10),
+                                              Expanded(
+                                                child: Text(
+                                                  'Component Discovered! +25 XP awarded to your profile!',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  } finally {
+                                    if (mounted) {
+                                      setState(() => _isDiscovering = false);
+                                    }
+                                  }
+                                },
+                          icon: _isDiscovering
+                              ? const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : const Icon(Icons.star_rounded,
+                                  color: AppColors.energyAmber),
+                          label: Text(
+                            _isDiscovering
+                                ? 'Discovering...'
+                                : 'Discover Part (+25 XP)',
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryViolet,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
+                          ),
+                        ),
+                      ),
+                    ],
+                    if (isDiscovered && comp.detailImages.isNotEmpty) ...[
                       const SizedBox(height: 16),
                       Row(
                         children: [
@@ -341,193 +379,46 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
                 ),
               ),
 
-              const SizedBox(height: 16),
-
-              // Safety Classification Card
-              _buildSafetyCard(comp.safety),
-
-              const SizedBox(height: 16),
-
-              // Real-World Analogy & Description
-              const Text('How it Works & Analogy',
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              MonsterCard(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(comp.description,
-                        style: const TextStyle(fontSize: 14, height: 1.5)),
-                    const SizedBox(height: 12),
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: AppColors.accentCyan.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                            color: AppColors.accentCyan.withValues(alpha: 0.2)),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Icon(Icons.lightbulb_outline,
-                              color: AppColors.accentCyanDark, size: 22),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              comp.realWorldAnalogy,
-                              style: const TextStyle(
-                                fontStyle: FontStyle.italic,
-                                fontSize: 13,
-                                height: 1.4,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Color-Coded Pinout Table
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text('Pin Connections & Wires',
-                      style:
-                          TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceContainerLight,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Text(
-                      '${comp.pinout.length} Pins',
-                      style: const TextStyle(
-                          fontSize: 12, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              MonsterCard(
-                child: Column(
-                  children: [
-                    ...comp.pinout.map((pin) {
-                      final pinColor = _getPinColor(pin.type);
-                      final wireColorName = _getWireColorName(pin.type);
-
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6.0),
-                        child: Row(
-                          children: [
-                            // Wire color indicator dot
-                            Container(
-                              width: 14,
-                              height: 14,
-                              decoration: BoxDecoration(
-                                color: pinColor,
-                                shape: BoxShape.circle,
-                                border:
-                                    Border.all(color: Colors.white, width: 1.5),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: pinColor.withValues(alpha: 0.4),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 1),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            // Pin Name pill
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: AppColors.surfaceContainerLight,
-                                borderRadius: BorderRadius.circular(6),
-                                border: Border.all(color: Colors.grey.shade300),
-                              ),
-                              child: Text(
-                                pin.pinName,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'monospace',
-                                  fontSize: 13,
-                                  color: AppColors.textPrimaryLight,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            // Description & Wire Color
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    pin.description,
-                                    style: const TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Container(
-                                        width: 10,
-                                        height: 10,
-                                        decoration: BoxDecoration(
-                                          color: pinColor,
-                                          shape: BoxShape.circle,
-                                          border:
-                                              Border.all(color: Colors.black26),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        wireColorName,
-                                        style: const TextStyle(
-                                          fontSize: 11,
-                                          color: AppColors.textSecondaryLight,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }),
-                  ],
-                ),
-              ),
-
-              // Wiring Guidance
-              if (comp.wiringGuidance != null) ...[
+              // Locked Teaser Card (When not yet discovered)
+              if (!isDiscovered) ...[
                 const SizedBox(height: 16),
-                const Text('Wiring Instructions',
-                    style:
-                        TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
                 MonsterCard(
+                  key: const Key('locked_teaser_card'),
+                  color: AppColors.surfaceContainerLight,
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.cable,
-                          color: AppColors.primaryViolet, size: 24),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          comp.wiringGuidance!,
-                          style: const TextStyle(fontSize: 14, height: 1.5),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: AppColors.energyAmber.withValues(alpha: 0.15),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.lock_outline,
+                            color: AppColors.energyAmber, size: 24),
+                      ),
+                      const SizedBox(width: 14),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Component Locked in Lab Kit',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              'Find this part in your physical kit and tap "Discover Part" above to unlock full pinout schematics, safety ratings, wiring guides, and interactive experiments!',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: AppColors.textSecondaryLight,
+                                height: 1.4,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -535,151 +426,32 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
                 ),
               ],
 
-              // Common Mistakes Card
-              if (comp.commonMistakes.isNotEmpty) ...[
+              // Full Encyclopedia Details (Unlocked upon discovery)
+              if (isDiscovered) ...[
                 const SizedBox(height: 16),
-                const Text('Common Mistakes to Avoid',
+
+                // Safety Classification Card
+                _buildSafetyCard(comp.safety),
+
+                const SizedBox(height: 16),
+
+                // Real-World Analogy & Description
+                const Text('How it Works & Analogy',
                     style:
                         TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 MonsterCard(
                   child: Column(
-                    children: comp.commonMistakes.map((mistake) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Icon(Icons.warning_amber_rounded,
-                                color: AppColors.warning, size: 20),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Text(
-                                mistake,
-                                style:
-                                    const TextStyle(fontSize: 13, height: 1.4),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ],
-
-              // Zero-Wire Mini Experiment Card
-              if (miniExp != null) ...[
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('Mini Experiment',
-                        style: TextStyle(
-                            fontSize: 17, fontWeight: FontWeight.bold)),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: AppColors.energyAmber.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: const Text(
-                        'QUICK TEST',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.energyAmber,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                MonsterCard(
-                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        miniExp['title'] as String? ?? 'Component Test',
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'Circuit: ${miniExp['circuit'] ?? ''}',
-                        style: const TextStyle(
-                            fontSize: 13, color: AppColors.textSecondaryLight),
-                      ),
+                      Text(comp.description,
+                          style: const TextStyle(fontSize: 14, height: 1.5)),
                       const SizedBox(height: 12),
-
-                      // Code Box
                       Container(
-                        width: double.infinity,
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color:
-                              const Color(0xFF1E1E2E), // Dark code background
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text(
-                                  'Arduino C++',
-                                  style: TextStyle(
-                                    color: Colors.white70,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.copy,
-                                      size: 18, color: Colors.white70),
-                                  tooltip: 'Copy Sketch',
-                                  constraints: const BoxConstraints(
-                                      minWidth: 48, minHeight: 48),
-                                  onPressed: () {
-                                    final code =
-                                        miniExp['code'] as String? ?? '';
-                                    Clipboard.setData(
-                                        ClipboardData(text: code));
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                            'Sketch code copied to clipboard!'),
-                                        duration: Duration(seconds: 2),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                            const Divider(color: Colors.white24, height: 12),
-                            Text(
-                              miniExp['code'] as String? ?? '',
-                              style: const TextStyle(
-                                color: Color(0xFF89DDFF),
-                                fontFamily: 'monospace',
-                                fontSize: 12,
-                                height: 1.4,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      // Expected Output
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
                           color: AppColors.accentCyan.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(10),
                           border: Border.all(
                               color:
                                   AppColors.accentCyan.withValues(alpha: 0.2)),
@@ -687,14 +459,17 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Icon(Icons.check_circle_outline,
-                                color: AppColors.accentCyanDark, size: 18),
-                            const SizedBox(width: 8),
+                            const Icon(Icons.lightbulb_outline,
+                                color: AppColors.accentCyanDark, size: 22),
+                            const SizedBox(width: 10),
                             Expanded(
                               child: Text(
-                                'Expected Output: ${miniExp['expectedOutput'] ?? ''}',
-                                style:
-                                    const TextStyle(fontSize: 12, height: 1.4),
+                                comp.realWorldAnalogy,
+                                style: const TextStyle(
+                                  fontStyle: FontStyle.italic,
+                                  fontSize: 13,
+                                  height: 1.4,
+                                ),
                               ),
                             ),
                           ],
@@ -703,32 +478,351 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
                     ],
                   ),
                 ),
-              ],
 
-              // Related Projects Card
-              if (comp.projectIds.isNotEmpty) ...[
                 const SizedBox(height: 16),
-                const Text('Featured Projects',
-                    style:
-                        TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: comp.projectIds.map((pId) {
-                    return ActionChip(
-                      avatar: const Icon(Icons.build_circle,
-                          size: 18, color: AppColors.primaryViolet),
-                      label: Text(
-                        'Project #${pId.replaceAll('proj_', '')}',
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 12),
+
+                // Color-Coded Pinout Table
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Pin Connections & Wires',
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.bold)),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceContainerLight,
+                        borderRadius: BorderRadius.circular(6),
                       ),
-                      backgroundColor: AppColors.surfaceContainerLight,
-                      onPressed: () => context.push('/build/$pId'),
-                    );
-                  }).toList(),
+                      child: Text(
+                        '${comp.pinout.length} Pins',
+                        style: const TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
                 ),
+                const SizedBox(height: 8),
+                MonsterCard(
+                  child: Column(
+                    children: [
+                      ...comp.pinout.map((pin) {
+                        final pinColor = _getPinColor(pin.type);
+                        final wireColorName = _getWireColorName(pin.type);
+
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 6.0),
+                          child: Row(
+                            children: [
+                              // Wire color indicator dot
+                              Container(
+                                width: 14,
+                                height: 14,
+                                decoration: BoxDecoration(
+                                  color: pinColor,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                      color: Colors.white, width: 1.5),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: pinColor.withValues(alpha: 0.4),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 1),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              // Pin Name pill
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: AppColors.surfaceContainerLight,
+                                  borderRadius: BorderRadius.circular(6),
+                                  border:
+                                      Border.all(color: Colors.grey.shade300),
+                                ),
+                                child: Text(
+                                  pin.pinName,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'monospace',
+                                    fontSize: 13,
+                                    color: AppColors.textPrimaryLight,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              // Description & Wire Color
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      pin.description,
+                                      style: const TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          width: 10,
+                                          height: 10,
+                                          decoration: BoxDecoration(
+                                            color: pinColor,
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                                color: Colors.black26),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          wireColorName,
+                                          style: const TextStyle(
+                                            fontSize: 11,
+                                            color: AppColors.textSecondaryLight,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
+                ),
+
+                // Wiring Guidance
+                if (comp.wiringGuidance != null) ...[
+                  const SizedBox(height: 16),
+                  const Text('Wiring Instructions',
+                      style:
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  MonsterCard(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.cable,
+                            color: AppColors.primaryViolet, size: 24),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            comp.wiringGuidance!,
+                            style: const TextStyle(fontSize: 14, height: 1.5),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+
+                // Common Mistakes Card
+                if (comp.commonMistakes.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  const Text('Common Mistakes to Avoid',
+                      style:
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  MonsterCard(
+                    child: Column(
+                      children: comp.commonMistakes.map((mistake) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Icon(Icons.warning_amber_rounded,
+                                  color: AppColors.warning, size: 20),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  mistake,
+                                  style: const TextStyle(
+                                      fontSize: 13, height: 1.4),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+
+                // Zero-Wire Mini Experiment Card
+                if (miniExp != null) ...[
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Mini Experiment',
+                          style: TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.bold)),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: AppColors.energyAmber.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: const Text(
+                          'QUICK TEST',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.energyAmber,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  MonsterCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          miniExp['title'] as String? ?? 'Component Test',
+                          style: const TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          'Circuit: ${miniExp['circuit'] ?? ''}',
+                          style: const TextStyle(
+                              fontSize: 13,
+                              color: AppColors.textSecondaryLight),
+                        ),
+                        const SizedBox(height: 12),
+
+                        // Code Box
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color:
+                                const Color(0xFF1E1E2E), // Dark code background
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Arduino C++',
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.copy,
+                                        size: 18, color: Colors.white70),
+                                    tooltip: 'Copy Sketch',
+                                    constraints: const BoxConstraints(
+                                        minWidth: 48, minHeight: 48),
+                                    onPressed: () {
+                                      final code =
+                                          miniExp['code'] as String? ?? '';
+                                      Clipboard.setData(
+                                          ClipboardData(text: code));
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'Sketch code copied to clipboard!'),
+                                          duration: Duration(seconds: 2),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                              const Divider(color: Colors.white24, height: 12),
+                              Text(
+                                miniExp['code'] as String? ?? '',
+                                style: const TextStyle(
+                                  color: Color(0xFF89DDFF),
+                                  fontFamily: 'monospace',
+                                  fontSize: 12,
+                                  height: 1.4,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 12),
+
+                        // Expected Output
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: AppColors.accentCyan.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                                color: AppColors.accentCyan
+                                    .withValues(alpha: 0.2)),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Icon(Icons.check_circle_outline,
+                                  color: AppColors.accentCyanDark, size: 18),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Expected Output: ${miniExp['expectedOutput'] ?? ''}',
+                                  style: const TextStyle(
+                                      fontSize: 12, height: 1.4),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+
+                // Related Projects Card
+                if (comp.projectIds.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  const Text('Featured Projects',
+                      style:
+                          TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: comp.projectIds.map((pId) {
+                      return ActionChip(
+                        avatar: const Icon(Icons.build_circle,
+                            size: 18, color: AppColors.primaryViolet),
+                        label: Text(
+                          'Project #${pId.replaceAll('proj_', '')}',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 12),
+                        ),
+                        backgroundColor: AppColors.surfaceContainerLight,
+                        onPressed: () => context.push('/build/$pId'),
+                      );
+                    }).toList(),
+                  ),
+                ],
               ],
 
               const SizedBox(height: 24),

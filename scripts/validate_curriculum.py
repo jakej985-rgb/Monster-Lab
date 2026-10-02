@@ -78,11 +78,11 @@ def validate_lesson(data, path):
 
 
 def validate_component(data, path):
-    validate_field(data, "id", str, pattern=r"^comp_[0-9]{2,3}$")
-    validate_field(data, "peripheralNumber", int, min_val=1, max_val=38)
+    validate_field(data, "id", str, pattern=r"^comp_[a-z0-9_]+$")
+    validate_field(data, "peripheralNumber", int, min_val=1, max_val=100)
     validate_field(data, "name", str, min_len=2)
     validate_field(data, "partNumber", str)
-    validate_field(data, "category", str, enum_vals=["sensor", "actuator", "display", "communication", "passive", "power", "switch"])
+    validate_field(data, "category", str, enum_vals=["sensor", "actuator", "display", "communication", "passive", "power", "switch", "microcontroller"])
     validate_field(data, "description", str)
     validate_field(data, "realWorldAnalogy", str)
     validate_field(data, "voltage", str, enum_vals=["v3_3", "v5", "dual"])

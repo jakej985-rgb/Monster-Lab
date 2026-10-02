@@ -1,0 +1,103 @@
+{
+  "id": "comp_l293d",
+  "peripheralNumber": 49,
+  "name": "L293D Dual H-Bridge Motor Driver IC",
+  "partNumber": "L293D",
+  "category": "actuator",
+  "description": "16-pin dual-channel H-bridge driver integrated circuit delivering up to 600mA per channel with internal flyback clamping diodes.",
+  "realWorldAnalogy": "16-pin dual-channel H-bridge driver integrated circuit delivering up to 600mA per channel with internal flyback clamping diodes.",
+  "voltage": "v5",
+  "pinout": [
+    {
+      "pinName": "1,2EN",
+      "type": "digitalOut",
+      "description": "Enable channel 1 and 2 (PWM speed)"
+    },
+    {
+      "pinName": "1A",
+      "type": "digitalOut",
+      "description": "Input 1 direction control"
+    },
+    {
+      "pinName": "1Y",
+      "type": "power",
+      "description": "Output 1 to Motor A"
+    },
+    {
+      "pinName": "GND",
+      "type": "ground",
+      "description": "Heatsink Ground"
+    },
+    {
+      "pinName": "2Y",
+      "type": "power",
+      "description": "Output 2 to Motor A"
+    },
+    {
+      "pinName": "2A",
+      "type": "digitalOut",
+      "description": "Input 2 direction control"
+    },
+    {
+      "pinName": "VCC2",
+      "type": "power",
+      "description": "Motor Supply Voltage (4.5V-36V)"
+    },
+    {
+      "pinName": "3,4EN",
+      "type": "digitalOut",
+      "description": "Enable channel 3 and 4"
+    },
+    {
+      "pinName": "3A",
+      "type": "digitalOut",
+      "description": "Input 3 direction"
+    },
+    {
+      "pinName": "3Y",
+      "type": "power",
+      "description": "Output 3 to Motor B"
+    },
+    {
+      "pinName": "4Y",
+      "type": "power",
+      "description": "Output 4 to Motor B"
+    },
+    {
+      "pinName": "4A",
+      "type": "digitalOut",
+      "description": "Input 4 direction"
+    },
+    {
+      "pinName": "VCC1",
+      "type": "power",
+      "description": "Logic Supply Voltage (5V)"
+    }
+  ],
+  "safety": {
+    "level": "safe",
+    "hazards": [
+      "IC can become hot when driving continuous high motor currents"
+    ],
+    "childSafeAlternative": null,
+    "requiresParentUnlock": false
+  },
+  "projectIds": [
+    "proj_08",
+    "proj_17"
+  ],
+  "datasheetRef": "L293d .pdf",
+  "wiringGuidance": "Connect pin 16 (VCC1) to Arduino 5V for logic, pin 8 (VCC2) to motor battery supply (6-9V), pins 4, 5, 12, 13 to common GND.",
+  "commonMistakes": [
+    "Forgetting to connect both battery GND and Arduino GND together.",
+    "Leaving EN1 (pin 1) low or floating, which disables the motor outputs."
+  ],
+  "miniExperiment": {
+    "title": "Forward & Reverse DC Motor Spin",
+    "circuit": "Pin 1 (EN) to 5V, Pin 2 (1A) to Pin 4, Pin 7 (2A) to Pin 5, Pin 3 & 6 to Motor terminals.",
+    "code": "const int in1 = 4, in2 = 5;\nvoid setup() {\n  pinMode(in1, OUTPUT);\n  pinMode(in2, OUTPUT);\n}\nvoid loop() {\n  digitalWrite(in1, HIGH); digitalWrite(in2, LOW); delay(2000);\n  digitalWrite(in1, LOW); digitalWrite(in2, LOW); delay(500);\n  digitalWrite(in1, LOW); digitalWrite(in2, HIGH); delay(2000);\n  digitalWrite(in1, LOW); digitalWrite(in2, LOW); delay(500);\n}",
+    "expectedOutput": "The DC motor spins forward for 2 seconds, pauses, then reverses direction for 2 seconds."
+  },
+  "primaryImage": "assets/images/components/comp_l293d.webp",
+  "imageDescription": "Hardware photo of L293D Dual H-Bridge Motor Driver IC"
+}

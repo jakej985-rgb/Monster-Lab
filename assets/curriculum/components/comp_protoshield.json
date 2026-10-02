@@ -1,0 +1,61 @@
+{
+  "id": "comp_protoshield",
+  "peripheralNumber": 44,
+  "name": "Uno Protoshield + Mini Breadboard",
+  "partNumber": "GAR-PROTO-SHIELD",
+  "category": "passive",
+  "description": "Expansion shield that plugs directly onto Arduino Uno headers with a 170-tie-point mini breadboard and custom prototyping pads.",
+  "realWorldAnalogy": "Expansion shield that plugs directly onto Arduino Uno headers with a 170-tie-point mini breadboard and custom prototyping pads.",
+  "voltage": "v5",
+  "pinout": [
+    {
+      "pinName": "Pass-Through Headers",
+      "type": "passive",
+      "description": "Full Uno pin breakout D0-D13, A0-A5, Power, GND"
+    },
+    {
+      "pinName": "Mini Breadboard",
+      "type": "passive",
+      "description": "170 tie-point solderless prototyping matrix"
+    },
+    {
+      "pinName": "5V Rail",
+      "type": "power",
+      "description": "5V Bus"
+    },
+    {
+      "pinName": "GND Rail",
+      "type": "ground",
+      "description": "Ground Bus"
+    }
+  ],
+  "safety": {
+    "level": "safe",
+    "hazards": [
+      "Ensure shield header pins are aligned before pressing into Uno"
+    ],
+    "childSafeAlternative": null,
+    "requiresParentUnlock": false
+  },
+  "projectIds": [
+    "proj_01",
+    "proj_04"
+  ],
+  "datasheetRef": "UNO Proto Shield Prototype Expansion Board.pdf",
+  "wiringGuidance": "Align all pins with Uno female headers and press down gently and evenly. Peel the backing off the mini breadboard to stick it onto the shield's solder pad area.",
+  "commonMistakes": [
+    "Bending header pins by pressing down at an uneven angle.",
+    "Shorting soldered components underneath the shield against the Uno's metal USB jack."
+  ],
+  "miniExperiment": {
+    "title": "Shield Status Test",
+    "circuit": "Plug Protoshield onto Uno. Connect jumper wire from D13 header to LED1 anode on the shield.",
+    "code": "void setup() {\n  pinMode(13, OUTPUT);\n}\nvoid loop() {\n  digitalWrite(13, HIGH);\n  delay(300);\n  digitalWrite(13, LOW);\n  delay(300);\n}",
+    "expectedOutput": "The shield LED blinks on and off rhythmically."
+  },
+  "primaryImage": "assets/images/components/comp_protoshield.webp",
+  "imageDescription": "Hardware photo of Uno Protoshield + Mini Breadboard",
+  "detailImages": [
+    "assets/images/components/comp_protoshield_detail.webp"
+  ]
+}

@@ -48,9 +48,10 @@ class ProfileRepositoryImpl implements ProfileRepository {
     await _dataSource.saveProfiles(profiles);
     await _dataSource.deleteProgress(profileId);
     if (_dataSource.getActiveProfileId() == profileId) {
-      final next = profiles.isNotEmpty ? profiles.first.id : '';
-      if (next.isNotEmpty) {
-        await _dataSource.setActiveProfileId(next);
+      if (profiles.isNotEmpty) {
+        await _dataSource.setActiveProfileId(profiles.first.id);
+      } else {
+        await _dataSource.clearActiveProfileId();
       }
     }
   }

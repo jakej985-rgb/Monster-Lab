@@ -137,7 +137,7 @@ class AboutScreen extends StatelessWidget {
                 _buildStatRow(Icons.school, '12 Step-by-Step Lessons',
                     'Digital buses, I2C, SPI, UART, & motor physics'),
                 const Divider(height: 16),
-                _buildStatRow(Icons.memory, '38 Kit Components',
+                _buildStatRow(Icons.memory, '54 Kit Components',
                     'Full pinouts, operating voltage, & sample C++ codes'),
                 const Divider(height: 16),
                 _buildStatRow(Icons.handyman, '20 Guided Projects',

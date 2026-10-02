@@ -30,7 +30,7 @@ class CurriculumValidationException implements Exception {
 
 class CurriculumValidator {
   static final RegExp _lessonIdPattern = RegExp(r'^lesson_[0-9]{2,3}$');
-  static final RegExp _componentIdPattern = RegExp(r'^comp_[0-9]{2,3}$');
+  static final RegExp _componentIdPattern = RegExp(r'^comp_[a-z0-9_]+$');
   static final RegExp _projectIdPattern = RegExp(r'^proj_[0-9]{2}$');
   static final RegExp _challengeIdPattern = RegExp(r'^chal_[a-z0-9_]+$');
 
@@ -87,11 +87,11 @@ class CurriculumValidator {
 
     if (!_componentIdPattern.hasMatch(component.id)) {
       errors.add(
-          "Component ID '${component.id}' does not match pattern '^comp_[0-9]{2,3}\$'");
+          "Component ID '${component.id}' does not match pattern '^comp_[a-z0-9_]+\$'");
     }
-    if (component.peripheralNumber < 1 || component.peripheralNumber > 38) {
+    if (component.peripheralNumber < 1 || component.peripheralNumber > 100) {
       errors.add(
-          "peripheralNumber must be between 1 and 38 (got ${component.peripheralNumber})");
+          "peripheralNumber must be between 1 and 100 (got ${component.peripheralNumber})");
     }
     if (component.name.trim().length < 2) {
       errors.add("Component name must be at least 2 characters");

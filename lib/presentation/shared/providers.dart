@@ -11,6 +11,7 @@ import '../../data/repositories/curriculum_repository_impl.dart';
 import '../../domain/models/learner_profile_model.dart';
 import '../../domain/models/learner_progress_model.dart';
 import '../../domain/models/hardware_connection_model.dart';
+import '../../domain/models/lesson_model.dart';
 import '../../domain/repositories/profile_repository.dart';
 import '../../domain/repositories/progress_repository.dart';
 import '../../domain/repositories/curriculum_repository.dart';
@@ -52,6 +53,33 @@ final curriculumRepositoryProvider = Provider<CurriculumRepository>((ref) {
   return CurriculumRepositoryImpl(engine);
 });
 
+final nextLessonProvider = FutureProvider<Lesson?>((ref) async {
+  final curriculumRepo = ref.watch(curriculumRepositoryProvider);
+  final progress = ref.watch(activeProgressProvider);
+  final lessons = await curriculumRepo.getLessons();
+
+  final sortedLessons = List<Lesson>.from(lessons)
+    ..sort((a, b) {
+      final aNum = int.tryParse(a.id.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
+      final bNum = int.tryParse(b.id.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
+      return aNum.compareTo(bNum);
+    });
+
+  for (final lesson in sortedLessons) {
+    final isCompleted =
+        progress?.completedLessonIds.contains(lesson.id) ?? false;
+    if (isCompleted) continue;
+
+    final missingPrereqs = lesson.prerequisites.where(
+      (req) => !(progress?.completedLessonIds.contains(req) ?? false),
+    );
+    if (missingPrereqs.isEmpty) {
+      return lesson;
+    }
+  }
+  return null;
+});
+
 final allProfilesProvider =
     FutureProvider<List<LearnerProfileModel>>((ref) async {
   final profileRepo = ref.watch(profileRepositoryProvider);
@@ -82,9 +110,10 @@ class ActiveProfileNotifier extends StateNotifier<LearnerProfileModel?> {
     state = active;
   }
 
-  Future<void> saveProfile(LearnerProfileModel profile) async {
+  Future<void> saveProfile(LearnerProfileModel profile,
+      {bool setActive = false}) async {
     await _profileRepo.saveProfile(profile);
-    if (state?.id == profile.id || state == null) {
+    if (setActive || state?.id == profile.id || state == null) {
       await _profileRepo.setActiveProfile(profile.id);
       state = profile;
     }

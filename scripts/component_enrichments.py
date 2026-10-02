@@ -498,5 +498,212 @@ COMPONENT_ENRICHMENTS = {
             "code": "const int hallPin = 2;\n\nvoid setup() {\n  pinMode(hallPin, INPUT_PULLUP);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  if (digitalRead(hallPin) == LOW) {\n    Serial.println(\"MAGNET DETECTED!\");\n    delay(200);\n  }\n}",
             "expectedOutput": "Approaching the sensor with the South pole of a magnet triggers 'MAGNET DETECTED!' in Serial Monitor."
         }
+    },
+    39: {
+        "wiringGuidance": "Connect to your computer using the blue USB Type-A to Type-B cable. Power is supplied directly from USB or via 7-12V DC barrel jack.",
+        "commonMistakes": [
+            "Leaving the board resting on conductive metal surfaces while powered.",
+            "Connecting sensors to 5V when they require 3.3V logic."
+        ],
+        "miniExperiment": {
+            "title": "Onboard Heartbeat Blink",
+            "circuit": "No wires needed! The Arduino Uno has an onboard LED connected to Digital Pin 13.",
+            "code": "void setup() {\n  pinMode(LED_BUILTIN, OUTPUT);\n}\n\nvoid loop() {\n  digitalWrite(LED_BUILTIN, HIGH);\n  delay(500);\n  digitalWrite(LED_BUILTIN, LOW);\n  delay(500);\n}",
+            "expectedOutput": "The tiny amber LED labeled 'L' next to pin 13 blinks steadily once per second."
+        }
+    },
+    40: {
+        "wiringGuidance": "Press firmly across the center divider of a solderless breadboard so each pin has its own separate tie-point row.",
+        "commonMistakes": [
+            "Plugging the Nano into a single column of breadboard holes, shorting opposite pins.",
+            "Selecting Uno instead of Nano in Arduino IDE board selector."
+        ],
+        "miniExperiment": {
+            "title": "Nano Serial Hello",
+            "circuit": "Connect Nano via Mini-USB to computer.",
+            "code": "void setup() {\n  Serial.begin(9600);\n  Serial.println(\"Hello from Arduino Nano!\");\n}\n\nvoid loop() {\n  Serial.println(\"Nano online.\");\n  delay(1000);\n}",
+            "expectedOutput": "Serial Monitor displays 'Hello from Arduino Nano!' followed by 'Nano online.' every second."
+        }
+    },
+    41: {
+        "wiringGuidance": "Connect via USB-B cable. Use hardware serial ports Serial1 (pins 18/19), Serial2 (16/17), or Serial3 (14/15) for multi-device communication without software emulation.",
+        "commonMistakes": [
+            "Connecting SPI peripherals to pins 10-13 instead of Mega hardware SPI pins 50 (MISO), 51 (MOSI), 52 (SCK), 53 (SS).",
+            "Exceeding power limits when running multiple motors directly."
+        ],
+        "miniExperiment": {
+            "title": "Mega Multi-Serial Echo",
+            "circuit": "Connect Mega via USB-B cable.",
+            "code": "void setup() {\n  Serial.begin(9600);\n  Serial.println(\"Arduino Mega 2560 - 54 Pins Ready!\");\n}\n\nvoid loop() {\n  Serial.println(\"Mega ready for heavy duty robotics.\");\n  delay(2000);\n}",
+            "expectedOutput": "Serial Monitor prints board specifications every 2 seconds."
+        }
+    },
+    42: {
+        "wiringGuidance": "Power via Micro-USB or 3.3V pin. When connecting 5V Arduino sensors, use a resistive voltage divider or logic level shifter on signal lines.",
+        "commonMistakes": [
+            "Applying 5V logic signals directly to ESP32 input pins.",
+            "Trying to use GPIO 34, 35, 36, or 39 as outputs—they are input-only pins!"
+        ],
+        "miniExperiment": {
+            "title": "ESP32 Wi-Fi Scanner",
+            "circuit": "Connect ESP32 via Micro-USB cable.",
+            "code": "#include <WiFi.h>\n\nvoid setup() {\n  Serial.begin(115200);\n  WiFi.mode(WIFI_STA);\n  WiFi.disconnect();\n  delay(100);\n}\n\nvoid loop() {\n  Serial.println(\"Scanning Wi-Fi networks...\");\n  int n = WiFi.scanNetworks();\n  Serial.print(n);\n  Serial.println(\" networks found.\");\n  delay(5000);\n}",
+            "expectedOutput": "Serial Monitor (at 115200 baud) lists the number of nearby 2.4GHz Wi-Fi networks detected."
+        }
+    },
+    43: {
+        "wiringGuidance": "Use Micro-USB to flash code. Remember that D-number pin labels on the PCB do not match raw GPIO numbers (e.g., D1 is GPIO5, D2 is GPIO4).",
+        "commonMistakes": [
+            "Using D3 or D4 as active low inputs during boot, preventing the ESP8266 from booting into run mode.",
+            "Setting Serial Monitor baud rate to 9600 instead of 115200."
+        ],
+        "miniExperiment": {
+            "title": "NodeMCU Blue LED Pulse",
+            "circuit": "Connect NodeMCU via Micro-USB cable.",
+            "code": "void setup() {\n  pinMode(LED_BUILTIN, OUTPUT);\n}\n\nvoid loop() {\n  digitalWrite(LED_BUILTIN, LOW); // Active LOW on NodeMCU\n  delay(200);\n  digitalWrite(LED_BUILTIN, HIGH);\n  delay(800);\n}",
+            "expectedOutput": "The blue onboard Wi-Fi module LED flashes a quick beacon flash every second."
+        }
+    },
+    44: {
+        "wiringGuidance": "Align all pins with Uno female headers and press down gently and evenly. Peel the backing off the mini breadboard to stick it onto the shield's solder pad area.",
+        "commonMistakes": [
+            "Bending header pins by pressing down at an uneven angle.",
+            "Shorting soldered components underneath the shield against the Uno's metal USB jack."
+        ],
+        "miniExperiment": {
+            "title": "Shield Status Test",
+            "circuit": "Plug Protoshield onto Uno. Connect jumper wire from D13 header to LED1 anode on the shield.",
+            "code": "void setup() {\n  pinMode(13, OUTPUT);\n}\nvoid loop() {\n  digitalWrite(13, HIGH);\n  delay(300);\n  digitalWrite(13, LOW);\n  delay(300);\n}",
+            "expectedOutput": "The shield LED blinks on and off rhythmically."
+        }
+    },
+    45: {
+        "wiringGuidance": "Connect VCC to 5V, GND to GND, and PLAYE to Arduino digital pin 8. Connect the included 2-pin mini speaker to the SP+ and SP- terminals.",
+        "commonMistakes": [
+            "Holding the REC button too far from your mouth when recording audio.",
+            "Forgetting to set REC pin to LOW during normal operation."
+        ],
+        "miniExperiment": {
+            "title": "Robot Voice Trigger",
+            "circuit": "Connect VCC to 5V, GND to GND, PLAYE to Pin 8. Connect speaker to module.",
+            "code": "const int playPin = 8;\nvoid setup() {\n  pinMode(playPin, OUTPUT);\n  digitalWrite(playPin, LOW);\n  delay(2000);\n  digitalWrite(playPin, HIGH);\n  delay(100);\n  digitalWrite(playPin, LOW);\n}\nvoid loop() {}",
+            "expectedOutput": "The speaker plays your recorded message 2 seconds after startup."
+        }
+    },
+    46: {
+        "wiringGuidance": "Plug the USB Doctor directly between your computer USB port and your Arduino board's blue cable. It requires no programming and powers on automatically.",
+        "commonMistakes": [
+            "Trying to upload code through damaged or charge-only USB cables plugged into the doctor."
+        ],
+        "miniExperiment": {
+            "title": "System Power Consumption Check",
+            "circuit": "Plug USB Doctor into laptop, then plug Arduino Uno into USB Doctor.",
+            "code": "void setup() {\n  pinMode(LED_BUILTIN, OUTPUT);\n}\nvoid loop() {\n  digitalWrite(LED_BUILTIN, HIGH);\n  delay(1000);\n  digitalWrite(LED_BUILTIN, LOW);\n  delay(1000);\n}",
+            "expectedOutput": "The display alternates between ~5.0V voltage and ~0.03A (30mA) operating current."
+        }
+    },
+    47: {
+        "wiringGuidance": "Connect VCC to 5V, GND to GND, CLK to Pin 2, and DIO to Pin 3. Install TM1637Display library in the Arduino IDE.",
+        "commonMistakes": [
+            "Swapping CLK and DIO connections.",
+            "Omitting the TM1637 library initialization parameters."
+        ],
+        "miniExperiment": {
+            "title": "Digital Counter",
+            "circuit": "VCC to 5V, GND to GND, CLK to Pin 2, DIO to Pin 3.",
+            "code": "#include <TM1637Display.h>\n#define CLK 2\n#define DIO 3\nTM1637Display display(CLK, DIO);\nvoid setup() {\n  display.setBrightness(0x0f);\n}\nvoid loop() {\n  for (int i = 0; i <= 99; i++) {\n    display.showNumberDec(i);\n    delay(100);\n  }\n}",
+            "expectedOutput": "The display rapidly counts from 0 up to 99 in glowing red numerals."
+        }
+    },
+    48: {
+        "wiringGuidance": "Must be powered by a dedicated 3.3V supply (Uno 3.3V pin cannot provide the 200mA Wi-Fi transmit current spikes). Use 1k/2k resistor divider on RX line.",
+        "commonMistakes": [
+            "Connecting ESP-01 VCC directly to Uno 5V—this burns out the radio chip instantly!",
+            "Leaving the CH_PD / EN pin floating (it must be pulled HIGH to 3.3V)."
+        ],
+        "miniExperiment": {
+            "title": "AT Communication Ping",
+            "circuit": "3V3 and EN to 3.3V supply, GND to GND, TX to Pin 2 (SoftRX), RX through divider to Pin 3 (SoftTX).",
+            "code": "#include <SoftwareSerial.h>\nSoftwareSerial esp(2, 3); // RX, TX\nvoid setup() {\n  Serial.begin(9600);\n  esp.begin(115200);\n  Serial.println(\"Sending AT ping to ESP-01...\");\n  esp.println(\"AT\");\n}\nvoid loop() {\n  if (esp.available()) Serial.write(esp.read());\n}",
+            "expectedOutput": "ESP-01 responds with 'OK' in the Serial Monitor."
+        }
+    },
+    49: {
+        "wiringGuidance": "Connect pin 16 (VCC1) to Arduino 5V for logic, pin 8 (VCC2) to motor battery supply (6-9V), pins 4, 5, 12, 13 to common GND.",
+        "commonMistakes": [
+            "Forgetting to connect both battery GND and Arduino GND together.",
+            "Leaving EN1 (pin 1) low or floating, which disables the motor outputs."
+        ],
+        "miniExperiment": {
+            "title": "Forward & Reverse DC Motor Spin",
+            "circuit": "Pin 1 (EN) to 5V, Pin 2 (1A) to Pin 4, Pin 7 (2A) to Pin 5, Pin 3 & 6 to Motor terminals.",
+            "code": "const int in1 = 4, in2 = 5;\nvoid setup() {\n  pinMode(in1, OUTPUT);\n  pinMode(in2, OUTPUT);\n}\nvoid loop() {\n  digitalWrite(in1, HIGH); digitalWrite(in2, LOW); delay(2000);\n  digitalWrite(in1, LOW); digitalWrite(in2, LOW); delay(500);\n  digitalWrite(in1, LOW); digitalWrite(in2, HIGH); delay(2000);\n  digitalWrite(in1, LOW); digitalWrite(in2, LOW); delay(500);\n}",
+            "expectedOutput": "The DC motor spins forward for 2 seconds, pauses, then reverses direction for 2 seconds."
+        }
+    },
+    50: {
+        "wiringGuidance": "Connect DS to Pin 11, ST_CP (latch) to Pin 8, SH_CP (clock) to Pin 12. Tie OE to GND and MR to 5V.",
+        "commonMistakes": [
+            "Leaving OE (Output Enable) floating high, which turns off all outputs.",
+            "Leaving MR (Master Reset) low or disconnected, which keeps the register cleared."
+        ],
+        "miniExperiment": {
+            "title": "8-LED Shift Chaser",
+            "circuit": "Connect DS to Pin 11, Latch to Pin 8, Clock to Pin 12. Connect Q0-Q7 through 220-ohm resistors to 8 LEDs.",
+            "code": "int dataPin = 11, latchPin = 8, clockPin = 12;\nvoid setup() {\n  pinMode(dataPin, OUTPUT);\n  pinMode(latchPin, OUTPUT);\n  pinMode(clockPin, OUTPUT);\n}\nvoid loop() {\n  for (int i = 0; i < 8; i++) {\n    digitalWrite(latchPin, LOW);\n    shiftOut(dataPin, clockPin, MSBFIRST, 1 << i);\n    digitalWrite(latchPin, HIGH);\n    delay(100);\n  }\n}",
+            "expectedOutput": "A single lit LED sweeps across the 8 output pins in sequence."
+        }
+    },
+    51: {
+        "wiringGuidance": "Form a voltage divider: Connect one leg of the thermistor to 5V, the other leg to Arduino A0. Connect a 10k fixed resistor between A0 and GND.",
+        "commonMistakes": [
+            "Connecting without a fixed 10k divider resistor—the analog pin will read constant 5V.",
+            "Assuming voltage changes linearly with temperature."
+        ],
+        "miniExperiment": {
+            "title": "Fingertip Heat Detector",
+            "circuit": "Thermistor between 5V and A0; 10k resistor between A0 and GND.",
+            "code": "void setup() {\n  Serial.begin(9600);\n}\nvoid loop() {\n  int raw = analogRead(A0);\n  float v = raw * (5.0 / 1023.0);\n  Serial.print(\"Raw ADC: \"); Serial.print(raw);\n  Serial.print(\" | Voltage: \"); Serial.println(v);\n  delay(250);\n}",
+            "expectedOutput": "ADC value decreases steadily as you pinch the thermistor bead with warm fingertips."
+        }
+    },
+    52: {
+        "wiringGuidance": "Connect center pin to Arduino digital input with INPUT_PULLUP enabled. Connect outer pin 1 to GND. When slid toward pin 1, input reads LOW.",
+        "commonMistakes": [
+            "Leaving center pin floating when using external voltage instead of pull-up resistors.",
+            "Forcing the plastic slider knob with excessive force."
+        ],
+        "miniExperiment": {
+            "title": "A/B Mode Selector",
+            "circuit": "Pin 2 (Common) to Pin 7 (INPUT_PULLUP), Pin 1 to GND, Pin 3 open.",
+            "code": "const int switchPin = 7;\nvoid setup() {\n  pinMode(switchPin, INPUT_PULLUP);\n  Serial.begin(9600);\n}\nvoid loop() {\n  if (digitalRead(switchPin) == LOW) {\n    Serial.println(\"MODE: Manual Control\");\n  } else {\n    Serial.println(\"MODE: Autonomous Autopilot\");\n  }\n  delay(500);\n}",
+            "expectedOutput": "Serial Monitor updates the operational mode message whenever the slider is flipped."
+        }
+    },
+    53: {
+        "wiringGuidance": "Always run Red jumper from Arduino 5V to the (+) rail, and Dark Slate or Black wire from GND to the (-) rail. Bridging components straddle the central trough.",
+        "commonMistakes": [
+            "Assuming the power rails are continuous across the entire board—some models have a split in the middle requiring a bridge wire.",
+            "Plugging both legs of an LED or resistor into the same 5-hole column, shorting the component."
+        ],
+        "miniExperiment": {
+            "title": "Breadboard Power Rail Continuity Check",
+            "circuit": "Connect 5V to (+) rail, GND to (-) rail. Place 220-ohm resistor and Red LED across the rails.",
+            "code": "void setup() {\n  pinMode(13, OUTPUT);\n  digitalWrite(13, HIGH);\n}\nvoid loop() {}",
+            "expectedOutput": "The LED illuminates bright red directly from the breadboard power rail."
+        }
+    },
+    54: {
+        "wiringGuidance": "Plug directly into the Arduino Uno or Mega circular black barrel jack. The board's onboard voltage regulator will cleanly step down 9V to 5V and 3.3V.",
+        "commonMistakes": [
+            "Plugging an AC-output adapter or reverse-polarity supply into the Arduino (GAR adapter is verified center-positive DC).",
+            "Leaving power supply plugged into wall when not in use."
+        ],
+        "miniExperiment": {
+            "title": "Untethered Robot Power Up",
+            "circuit": "Unplug USB cable. Plug 9V DC adapter barrel jack into Arduino Uno DC socket. Plug adapter into wall.",
+            "code": "void setup() {\n  pinMode(LED_BUILTIN, OUTPUT);\n}\nvoid loop() {\n  digitalWrite(LED_BUILTIN, HIGH);\n  delay(200);\n  digitalWrite(LED_BUILTIN, LOW);\n  delay(200);\n}",
+            "expectedOutput": "The Arduino boots autonomously without computer connection, and the LED blinks untethered."
+        }
     }
 }

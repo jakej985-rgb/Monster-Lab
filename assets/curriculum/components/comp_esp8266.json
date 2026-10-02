@@ -1,0 +1,104 @@
+{
+  "id": "comp_esp8266",
+  "peripheralNumber": 43,
+  "name": "ESP8266 NodeMCU V3",
+  "partNumber": "ESP-12E",
+  "category": "microcontroller",
+  "description": "Connected IoT microcontroller board running at 80/160MHz with full TCP/IP stack and onboard USB-to-Serial converter.",
+  "realWorldAnalogy": "Connected IoT microcontroller board running at 80/160MHz with full TCP/IP stack and onboard USB-to-Serial converter.",
+  "voltage": "v3_3",
+  "pinout": [
+    {
+      "pinName": "D0/GPIO16",
+      "type": "digitalIn",
+      "description": "User Wake / Digital I/O"
+    },
+    {
+      "pinName": "D1/GPIO5",
+      "type": "i2c",
+      "description": "I2C SCL / Digital I/O"
+    },
+    {
+      "pinName": "D2/GPIO4",
+      "type": "i2c",
+      "description": "I2C SDA / Digital I/O"
+    },
+    {
+      "pinName": "D3/GPIO0",
+      "type": "digitalIn",
+      "description": "Flash Boot / Pullup"
+    },
+    {
+      "pinName": "D4/GPIO2",
+      "type": "digitalOut",
+      "description": "Onboard LED / TX1"
+    },
+    {
+      "pinName": "D5/GPIO14",
+      "type": "spi",
+      "description": "SPI SCLK"
+    },
+    {
+      "pinName": "D6/GPIO12",
+      "type": "spi",
+      "description": "SPI MISO"
+    },
+    {
+      "pinName": "D7/GPIO13",
+      "type": "spi",
+      "description": "SPI MOSI"
+    },
+    {
+      "pinName": "D8/GPIO15",
+      "type": "digitalOut",
+      "description": "SPI SS / Pulldown"
+    },
+    {
+      "pinName": "A0/ADC0",
+      "type": "analogIn",
+      "description": "Analog Input (0-3.3V via onboard divider)"
+    },
+    {
+      "pinName": "3V3",
+      "type": "power",
+      "description": "3.3V Regulated Output"
+    },
+    {
+      "pinName": "GND",
+      "type": "ground",
+      "description": "Ground Reference"
+    },
+    {
+      "pinName": "VIN",
+      "type": "power",
+      "description": "5V USB / External Input"
+    }
+  ],
+  "safety": {
+    "level": "safe",
+    "hazards": [
+      "GPIO pins accept maximum 3.3V logic levels"
+    ],
+    "childSafeAlternative": null,
+    "requiresParentUnlock": false
+  },
+  "projectIds": [
+    "proj_20"
+  ],
+  "wiringGuidance": "Use Micro-USB to flash code. Remember that D-number pin labels on the PCB do not match raw GPIO numbers (e.g., D1 is GPIO5, D2 is GPIO4).",
+  "commonMistakes": [
+    "Using D3 or D4 as active low inputs during boot, preventing the ESP8266 from booting into run mode.",
+    "Setting Serial Monitor baud rate to 9600 instead of 115200."
+  ],
+  "miniExperiment": {
+    "title": "NodeMCU Blue LED Pulse",
+    "circuit": "Connect NodeMCU via Micro-USB cable.",
+    "code": "void setup() {\n  pinMode(LED_BUILTIN, OUTPUT);\n}\n\nvoid loop() {\n  digitalWrite(LED_BUILTIN, LOW); // Active LOW on NodeMCU\n  delay(200);\n  digitalWrite(LED_BUILTIN, HIGH);\n  delay(800);\n}",
+    "expectedOutput": "The blue onboard Wi-Fi module LED flashes a quick beacon flash every second."
+  },
+  "primaryImage": "assets/images/components/comp_esp8266.webp",
+  "imageDescription": "Hardware photo of ESP8266 NodeMCU V3",
+  "detailImages": [
+    "assets/images/components/comp_esp8266_detail.webp"
+  ]
+}

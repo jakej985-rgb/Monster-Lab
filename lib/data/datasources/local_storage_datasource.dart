@@ -39,6 +39,10 @@ class LocalStorageDataSource {
     await _storageService.setString(_activeProfileIdKey, profileId);
   }
 
+  Future<void> clearActiveProfileId() async {
+    await _storageService.remove(_activeProfileIdKey);
+  }
+
   LearnerProgressModel getProgress(String learnerId) {
     final raw = _storageService.getString('$_progressKeyPrefix$learnerId');
     if (raw == null || raw.isEmpty) {

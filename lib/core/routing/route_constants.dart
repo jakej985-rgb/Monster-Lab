@@ -1,6 +1,7 @@
 /// Constants defining application routes
 abstract final class RoutePaths {
   static const String splash = '/';
+  static const String onboarding = '/onboarding';
   static const String profileSelect = '/profile-select';
   static const String home = '/home';
   static const String learn = '/learn';
@@ -23,6 +24,7 @@ abstract final class RoutePaths {
 
 abstract final class RouteNames {
   static const String splash = 'splash';
+  static const String onboarding = 'onboarding';
   static const String profileSelect = 'profileSelect';
   static const String home = 'home';
   static const String learn = 'learn';

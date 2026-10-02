@@ -5,7 +5,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:monster_lab/core/services/storage_service.dart';
 import 'package:monster_lab/data/datasources/curriculum_data_engine.dart';
 import 'package:monster_lab/data/datasources/local_storage_datasource.dart';
+import 'package:monster_lab/data/repositories/profile_repository_impl.dart';
 import 'package:monster_lab/data/repositories/progress_repository_impl.dart';
+import 'package:monster_lab/domain/models/learner_profile_model.dart';
 
 class LocalDiskAssetBundle extends CachingAssetBundle {
   final String basePath;
@@ -145,7 +147,7 @@ void main() {
       final badges = await engine.getBadges();
 
       expect(lessons.length, equals(12));
-      expect(components.length, equals(38));
+      expect(components.length, equals(54));
       expect(projects.length, equals(20));
       expect(challenges.length, equals(24));
       expect(badges.length, equals(20));
@@ -159,6 +161,38 @@ void main() {
         expect(comp.id, isNotEmpty);
         expect(comp.pinout, isNotEmpty);
       }
+    });
+  });
+
+  group('Profile Deletion & Active Profile State Cleanup', () {
+    test('Deleting the sole active profile clears active profile ID in storage',
+        () async {
+      SharedPreferences.setMockInitialValues({});
+      final storage = await StorageService.init();
+      final dataSource = LocalStorageDataSource(storage);
+      final profileRepo = ProfileRepositoryImpl(dataSource);
+
+      final profile = LearnerProfileModel(
+        id: 'solo_profile',
+        nickname: 'SoloBot',
+        avatarId: 'monster_spark',
+        ageBracket: AgeBracket.ages10_12,
+        createdAt: DateTime.now(),
+        lastActiveAt: DateTime.now(),
+      );
+
+      await profileRepo.saveProfile(profile);
+      await profileRepo.setActiveProfile(profile.id);
+
+      expect(dataSource.getActiveProfileId(), equals('solo_profile'));
+      expect((await profileRepo.getAllProfiles()).length, equals(1));
+
+      // Now delete the sole profile
+      await profileRepo.deleteProfile('solo_profile');
+
+      expect((await profileRepo.getAllProfiles()), isEmpty);
+      expect(dataSource.getActiveProfileId(), isNull);
+      expect(await profileRepo.getActiveProfile(), isNull);
     });
   });
 }

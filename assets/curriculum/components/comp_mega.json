@@ -1,0 +1,74 @@
+{
+  "id": "comp_mega",
+  "peripheralNumber": 41,
+  "name": "Arduino Mega 2560",
+  "partNumber": "ATmega2560",
+  "category": "microcontroller",
+  "description": "Heavyweight powerhouse brain with 54 digital I/O pins, 16 analog inputs, 4 hardware UART serial ports, and 256KB flash memory.",
+  "realWorldAnalogy": "Heavyweight powerhouse brain with 54 digital I/O pins, 16 analog inputs, 4 hardware UART serial ports, and 256KB flash memory.",
+  "voltage": "v5",
+  "pinout": [
+    {
+      "pinName": "D0-D53",
+      "type": "digitalIn",
+      "description": "54 Digital I/O Pins (15 PWM)"
+    },
+    {
+      "pinName": "A0-A15",
+      "type": "analogIn",
+      "description": "16 Analog Input Pins"
+    },
+    {
+      "pinName": "TX1-3/RX1-3",
+      "type": "uart",
+      "description": "3 Additional Hardware Serial Ports"
+    },
+    {
+      "pinName": "SPI",
+      "type": "spi",
+      "description": "Hardware SPI (Pins 50-53)"
+    },
+    {
+      "pinName": "5V",
+      "type": "power",
+      "description": "5V Power Output"
+    },
+    {
+      "pinName": "3.3V",
+      "type": "power",
+      "description": "3.3V Power Output"
+    },
+    {
+      "pinName": "GND",
+      "type": "ground",
+      "description": "Ground Reference"
+    }
+  ],
+  "safety": {
+    "level": "safe",
+    "hazards": [
+      "Support the board firmly when plugging shields into extended headers"
+    ],
+    "childSafeAlternative": null,
+    "requiresParentUnlock": false
+  },
+  "projectIds": [
+    "proj_14"
+  ],
+  "wiringGuidance": "Connect via USB-B cable. Use hardware serial ports Serial1 (pins 18/19), Serial2 (16/17), or Serial3 (14/15) for multi-device communication without software emulation.",
+  "commonMistakes": [
+    "Connecting SPI peripherals to pins 10-13 instead of Mega hardware SPI pins 50 (MISO), 51 (MOSI), 52 (SCK), 53 (SS).",
+    "Exceeding power limits when running multiple motors directly."
+  ],
+  "miniExperiment": {
+    "title": "Mega Multi-Serial Echo",
+    "circuit": "Connect Mega via USB-B cable.",
+    "code": "void setup() {\n  Serial.begin(9600);\n  Serial.println(\"Arduino Mega 2560 - 54 Pins Ready!\");\n}\n\nvoid loop() {\n  Serial.println(\"Mega ready for heavy duty robotics.\");\n  delay(2000);\n}",
+    "expectedOutput": "Serial Monitor prints board specifications every 2 seconds."
+  },
+  "primaryImage": "assets/images/components/comp_mega.webp",
+  "imageDescription": "Hardware photo of Arduino Mega 2560",
+  "detailImages": [
+    "assets/images/components/comp_mega_detail.webp"
+  ]
+}

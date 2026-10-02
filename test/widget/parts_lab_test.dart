@@ -44,7 +44,7 @@ void main() {
     }
 
     testWidgets(
-        'PartsScreen renders 38 components and allows searching & category filtering',
+        'PartsScreen renders 54 components and allows searching & category filtering',
         (tester) async {
       await tester.pumpWidget(createTestWidget(const PartsScreen()));
       await tester.pumpAndSettle();
@@ -52,7 +52,7 @@ void main() {
       // Verify Header & Discovery Banner
       expect(find.text('Parts Lab'), findsOneWidget);
       expect(find.text('Encyclopedia Discovery'), findsOneWidget);
-      expect(find.textContaining('/ 38'), findsOneWidget);
+      expect(find.textContaining('/ 54'), findsOneWidget);
 
       // Verify Category Chips
       expect(find.text('All Parts'), findsOneWidget);
@@ -121,22 +121,42 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // 1. Verify Header info
+      // 1. Verify Header info is visible before discovery
       expect(find.text('Component Inspector'), findsOneWidget);
       expect(find.text('#01'), findsOneWidget);
       expect(find.text('HC-SR04'), findsOneWidget);
       expect(find.text('5V'), findsOneWidget);
       expect(find.text('Ultrasonic Distance Sensor'), findsOneWidget);
 
-      // 2. Verify Safety Card
-      expect(find.text('Child-Safe Component'), findsOneWidget);
+      // 2. Verify Locked Teaser is shown, and Encyclopedia details are HIDDEN
+      expect(find.byKey(const Key('locked_teaser_card')), findsOneWidget);
+      expect(find.text('Child-Safe Component'), findsNothing);
+      expect(find.text('How it Works & Analogy'), findsNothing);
+      expect(find.text('Pin Connections & Wires'), findsNothing);
+      expect(find.text('Wiring Instructions'), findsNothing);
+      expect(find.text('Common Mistakes to Avoid'), findsNothing);
+      expect(find.text('Mini Experiment'), findsNothing);
+      expect(find.text('Featured Projects'), findsNothing);
 
-      // 3. Verify Description & Real-World Analogy
+      // 3. Verify Discovery Button is present
+      final discoverBtn = find.byKey(const Key('discover_button'));
+      expect(discoverBtn, findsOneWidget);
+      expect(find.text('Discover Part (+25 XP)'), findsOneWidget);
+
+      // 4. Tap Discover Part Button
+      await tester.tap(discoverBtn);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+
+      // 5. Verify discovered state is displayed & teaser card is gone
+      expect(find.text('Discovered in your Lab Encyclopedia!'), findsOneWidget);
+      expect(find.byKey(const Key('locked_teaser_card')), findsNothing);
+
+      // 6. Verify full Encyclopedia details are now unlocked and visible
+      expect(find.text('Child-Safe Component'), findsOneWidget);
       expect(find.text('How it Works & Analogy'), findsOneWidget);
       expect(
           find.textContaining("Like a bat's echolocation ears!"), findsWidgets);
-
-      // 4. Verify Pinout Table with wire standards
       expect(find.text('Pin Connections & Wires'), findsOneWidget);
       expect(find.text('VCC'), findsOneWidget);
       expect(find.text('Red Wire'), findsOneWidget);
@@ -144,46 +164,25 @@ void main() {
       expect(find.text('ECHO'), findsOneWidget);
       expect(find.text('GND'), findsOneWidget);
       expect(find.text('Dark Slate Wire'), findsOneWidget);
-
-      // 5. Verify Wiring Instructions
       expect(find.text('Wiring Instructions'), findsOneWidget);
       expect(find.textContaining('Connect VCC (Red wire) to 5V power rail'),
           findsOneWidget);
-
-      // 6. Verify Common Mistakes
       expect(find.text('Common Mistakes to Avoid'), findsOneWidget);
       expect(
           find.textContaining(
               'Swapping TRIG and ECHO pins will result in continuous 0cm readings.'),
           findsOneWidget);
-
-      // 7. Verify Mini Experiment Card
       expect(find.text('Mini Experiment'), findsOneWidget);
       expect(find.text('Ultrasonic Ping Ruler'), findsOneWidget);
       expect(find.text('Arduino C++'), findsOneWidget);
       expect(find.textContaining('long duration = pulseIn(echoPin, HIGH);'),
           findsOneWidget);
       expect(find.textContaining('Expected Output:'), findsOneWidget);
-
-      // 8. Verify Featured Projects
       expect(find.text('Featured Projects'), findsOneWidget);
       expect(find.text('Project #01'), findsOneWidget);
       expect(find.text('Project #11'), findsOneWidget);
 
-      // 9. Verify Discovery Flow
-      final discoverBtn = find.byKey(const Key('discover_button'));
-      expect(discoverBtn, findsOneWidget);
-      expect(find.text('Discover Part (+25 XP)'), findsOneWidget);
-
-      // Tap discover button
-      await tester.tap(discoverBtn);
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
-
-      // Verify discovered state is displayed
-      expect(find.text('Discovered in your Lab Encyclopedia!'), findsOneWidget);
-
-      // Verify XP was rewarded in repository
+      // 7. Verify XP was rewarded in repository
       final progressRepo =
           ProgressRepositoryImpl(LocalStorageDataSource(storageService));
       final progress = await progressRepo.getProgress('test_child_1');
@@ -208,6 +207,24 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
 
+      // Create a test profile and mark comp_01 as discovered
+      final repo =
+          ProfileRepositoryImpl(LocalStorageDataSource(storageService));
+      final testProfile = LearnerProfileModel(
+        id: 'test_child_1',
+        nickname: 'Sparky',
+        avatarId: 'spark',
+        ageBracket: AgeBracket.ages7_9,
+        createdAt: DateTime.now(),
+        lastActiveAt: DateTime.now(),
+      );
+      await repo.saveProfile(testProfile);
+      await repo.setActiveProfile(testProfile.id);
+
+      final progressRepo =
+          ProgressRepositoryImpl(LocalStorageDataSource(storageService));
+      await progressRepo.discoverComponent('test_child_1', 'comp_01', 25);
+
       await tester.pumpWidget(
         createTestWidget(
           const PartDetailScreen(componentId: 'comp_01'),
@@ -215,7 +232,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Verify the Hardware Photo & Visuals section
+      // Verify the Hardware Photo & Visuals section shows both primary and detail diagram
       expect(find.text('Hardware Photo & Visuals'), findsOneWidget);
       expect(find.text('Diagram & Pinout Reference'), findsOneWidget);
 

@@ -54,10 +54,10 @@ void main() {
     });
 
     test(
-        'All 38 components pass CurriculumValidator schema and safety requirements',
+        'All 54 components pass CurriculumValidator schema and safety requirements',
         () async {
       final components = await engine.getComponents();
-      expect(components.length, equals(38));
+      expect(components.length, equals(54));
 
       for (final component in components) {
         expect(

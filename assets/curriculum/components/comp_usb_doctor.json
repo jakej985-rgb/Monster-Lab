@@ -1,0 +1,53 @@
+{
+  "id": "comp_usb_doctor",
+  "peripheralNumber": 46,
+  "name": "USB Charger Doctor Multimeter",
+  "partNumber": "KWS-V20",
+  "category": "sensor",
+  "description": "Inline USB diagnostics monitor measuring voltage (3-9V) and current (0-3A) in real time with dual 7-segment LED display.",
+  "realWorldAnalogy": "Inline USB diagnostics monitor measuring voltage (3-9V) and current (0-3A) in real time with dual 7-segment LED display.",
+  "voltage": "v5",
+  "pinout": [
+    {
+      "pinName": "USB-IN",
+      "type": "power",
+      "description": "Male USB Type-A 5V Input"
+    },
+    {
+      "pinName": "USB-OUT",
+      "type": "power",
+      "description": "Female USB Type-A Output to Monitored Device"
+    },
+    {
+      "pinName": "VCC",
+      "type": "power",
+      "description": "Power Rail 3V-9V"
+    },
+    {
+      "pinName": "GND",
+      "type": "ground",
+      "description": "Ground Return"
+    }
+  ],
+  "safety": {
+    "level": "safe",
+    "hazards": [
+      "Do not exceed 9V maximum operating input"
+    ],
+    "childSafeAlternative": null,
+    "requiresParentUnlock": false
+  },
+  "projectIds": [],
+  "wiringGuidance": "Plug the USB Doctor directly between your computer USB port and your Arduino board's blue cable. It requires no programming and powers on automatically.",
+  "commonMistakes": [
+    "Trying to upload code through damaged or charge-only USB cables plugged into the doctor."
+  ],
+  "miniExperiment": {
+    "title": "System Power Consumption Check",
+    "circuit": "Plug USB Doctor into laptop, then plug Arduino Uno into USB Doctor.",
+    "code": "void setup() {\n  pinMode(LED_BUILTIN, OUTPUT);\n}\nvoid loop() {\n  digitalWrite(LED_BUILTIN, HIGH);\n  delay(1000);\n  digitalWrite(LED_BUILTIN, LOW);\n  delay(1000);\n}",
+    "expectedOutput": "The display alternates between ~5.0V voltage and ~0.03A (30mA) operating current."
+  },
+  "primaryImage": "assets/images/components/comp_usb_doctor.webp",
+  "imageDescription": "Hardware photo of USB Charger Doctor Multimeter"
+}

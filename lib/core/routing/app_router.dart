@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'route_constants.dart';
@@ -15,6 +16,8 @@ import '../../presentation/features/progress/progress_screen.dart';
 import '../../presentation/features/parent/parent_gate_dialog.dart';
 import '../../presentation/features/parent/parent_screen.dart';
 import '../../presentation/features/parent/about_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../presentation/features/onboarding/onboarding_screen.dart';
 import '../../presentation/features/profile/profile_select_screen.dart';
 import '../../presentation/features/settings/settings_screen.dart';
 import '../../presentation/features/troubleshoot/troubleshooting_screen.dart';
@@ -26,6 +29,35 @@ final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: RoutePaths.home,
+  redirect: (BuildContext context, GoRouterState state) async {
+    final prefs = await SharedPreferences.getInstance();
+    final activeId = prefs.getString('monster_lab_active_profile_id');
+    final profilesRaw = prefs.getString('monster_lab_profiles');
+
+    bool hasActiveProfile = false;
+    if (activeId != null && activeId.trim().isNotEmpty) {
+      if (profilesRaw != null && profilesRaw.isNotEmpty) {
+        try {
+          final list = jsonDecode(profilesRaw) as List;
+          hasActiveProfile = list
+              .any((item) => (item as Map<String, dynamic>)['id'] == activeId);
+        } catch (_) {
+          hasActiveProfile = true;
+        }
+      } else {
+        hasActiveProfile = true;
+      }
+    }
+
+    final isOnboarding = state.matchedLocation == RoutePaths.onboarding;
+    if (!hasActiveProfile) {
+      return isOnboarding ? null : RoutePaths.onboarding;
+    }
+    if (isOnboarding) {
+      return RoutePaths.home;
+    }
+    return null;
+  },
   routes: [
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
@@ -85,6 +117,12 @@ final GoRouter appRouter = GoRouter(
       ],
     ),
     // Full screen detail & modal routes
+    GoRoute(
+      path: RoutePaths.onboarding,
+      name: RouteNames.onboarding,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const OnboardingScreen(),
+    ),
     GoRoute(
       path: RoutePaths.profileSelect,
       name: RouteNames.profileSelect,

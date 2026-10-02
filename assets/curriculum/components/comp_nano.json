@@ -1,0 +1,74 @@
+{
+  "id": "comp_nano",
+  "peripheralNumber": 40,
+  "name": "Arduino Nano V3",
+  "partNumber": "ATmega328P-AU",
+  "category": "microcontroller",
+  "description": "A compact, breadboard-friendly microcontroller with 14 digital pins, 8 analog inputs, and a Mini-B USB programming port.",
+  "realWorldAnalogy": "A compact, breadboard-friendly microcontroller with 14 digital pins, 8 analog inputs, and a Mini-B USB programming port.",
+  "voltage": "v5",
+  "pinout": [
+    {
+      "pinName": "D0-D13",
+      "type": "digitalIn",
+      "description": "14 Digital I/O Pins (6 PWM)"
+    },
+    {
+      "pinName": "A0-A7",
+      "type": "analogIn",
+      "description": "8 Analog Input Pins"
+    },
+    {
+      "pinName": "5V",
+      "type": "power",
+      "description": "Regulated 5V Power"
+    },
+    {
+      "pinName": "3V3",
+      "type": "power",
+      "description": "Regulated 3.3V Power"
+    },
+    {
+      "pinName": "GND",
+      "type": "ground",
+      "description": "Ground Reference"
+    },
+    {
+      "pinName": "VIN",
+      "type": "power",
+      "description": "Unregulated 7-12V Input"
+    },
+    {
+      "pinName": "RST",
+      "type": "digitalIn",
+      "description": "Reset Pin"
+    }
+  ],
+  "safety": {
+    "level": "safe",
+    "hazards": [
+      "Double check pin alignment before pressing into breadboard"
+    ],
+    "childSafeAlternative": null,
+    "requiresParentUnlock": false
+  },
+  "projectIds": [
+    "proj_14"
+  ],
+  "wiringGuidance": "Press firmly across the center divider of a solderless breadboard so each pin has its own separate tie-point row.",
+  "commonMistakes": [
+    "Plugging the Nano into a single column of breadboard holes, shorting opposite pins.",
+    "Selecting Uno instead of Nano in Arduino IDE board selector."
+  ],
+  "miniExperiment": {
+    "title": "Nano Serial Hello",
+    "circuit": "Connect Nano via Mini-USB to computer.",
+    "code": "void setup() {\n  Serial.begin(9600);\n  Serial.println(\"Hello from Arduino Nano!\");\n}\n\nvoid loop() {\n  Serial.println(\"Nano online.\");\n  delay(1000);\n}",
+    "expectedOutput": "Serial Monitor displays 'Hello from Arduino Nano!' followed by 'Nano online.' every second."
+  },
+  "primaryImage": "assets/images/components/comp_nano.webp",
+  "imageDescription": "Hardware photo of Arduino Nano V3",
+  "detailImages": [
+    "assets/images/components/comp_nano_detail.webp"
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "id": "comp_breadboard",
+  "peripheralNumber": 53,
+  "name": "830-Point Solderless Breadboard",
+  "partNumber": "MB-102",
+  "category": "passive",
+  "description": "Solderless prototyping board with 830 tie-points arranged in interconnected 5-hole rows and 4 full-length dual power rails.",
+  "realWorldAnalogy": "Solderless prototyping board with 830 tie-points arranged in interconnected 5-hole rows and 4 full-length dual power rails.",
+  "voltage": "dual",
+  "pinout": [
+    {
+      "pinName": "Red Rail (+)",
+      "type": "power",
+      "description": "Positive Voltage Bus"
+    },
+    {
+      "pinName": "Blue Rail (-)",
+      "type": "ground",
+      "description": "Ground Return Bus"
+    },
+    {
+      "pinName": "Row Pins (a-j)",
+      "type": "passive",
+      "description": "5-pin interconnected component sockets"
+    }
+  ],
+  "safety": {
+    "level": "safe",
+    "hazards": [
+      "Do not insert wire leads thicker than 22 AWG"
+    ],
+    "childSafeAlternative": null,
+    "requiresParentUnlock": false
+  },
+  "projectIds": [
+    "proj_01",
+    "proj_04",
+    "proj_08"
+  ],
+  "datasheetRef": "830 430 tie-points Breadboard.pdf",
+  "wiringGuidance": "Always run Red jumper from Arduino 5V to the (+) rail, and Dark Slate or Black wire from GND to the (-) rail. Bridging components straddle the central trough.",
+  "commonMistakes": [
+    "Assuming the power rails are continuous across the entire board\u2014some models have a split in the middle requiring a bridge wire.",
+    "Plugging both legs of an LED or resistor into the same 5-hole column, shorting the component."
+  ],
+  "miniExperiment": {
+    "title": "Breadboard Power Rail Continuity Check",
+    "circuit": "Connect 5V to (+) rail, GND to (-) rail. Place 220-ohm resistor and Red LED across the rails.",
+    "code": "void setup() {\n  pinMode(13, OUTPUT);\n  digitalWrite(13, HIGH);\n}\nvoid loop() {}",
+    "expectedOutput": "The LED illuminates bright red directly from the breadboard power rail."
+  },
+  "primaryImage": "assets/images/components/comp_breadboard.webp",
+  "imageDescription": "Hardware photo of 830-Point Solderless Breadboard",
+  "detailImages": [
+    "assets/images/components/comp_breadboard_detail.webp"
+  ]
+}

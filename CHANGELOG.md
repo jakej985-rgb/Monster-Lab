@@ -6,6 +6,9 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.0.4+4] - 2026-10-02
+- Automated push release build bump to v0.0.4.
+
 ## [0.0.3+3] - 2026-10-02
 - Automated push release build bump to v0.0.3.
 

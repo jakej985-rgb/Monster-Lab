@@ -208,7 +208,7 @@ void main() {
       // 4 Metric Counters
       expect(find.text('6/7'), findsOneWidget); // Lessons
       expect(find.text('2/14'), findsOneWidget); // Projects
-      expect(find.text('4/38'), findsOneWidget); // Parts
+      expect(find.text('4/54'), findsOneWidget); // Parts
       expect(find.text('3/16'), findsOneWidget); // Challenges
 
       // Quick-Take & Growth Focus

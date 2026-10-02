@@ -1,0 +1,47 @@
+{
+  "id": "comp_thermistor",
+  "peripheralNumber": 51,
+  "name": "NTC 10K Thermistor Temperature Probe",
+  "partNumber": "MF52-103",
+  "category": "sensor",
+  "description": "Negative Temperature Coefficient ceramic semiconductor resistor whose resistance decreases predictably as temperature increases.",
+  "realWorldAnalogy": "Negative Temperature Coefficient ceramic semiconductor resistor whose resistance decreases predictably as temperature increases.",
+  "voltage": "v5",
+  "pinout": [
+    {
+      "pinName": "Leg 1",
+      "type": "power",
+      "description": "Connect to 5V Power Rail"
+    },
+    {
+      "pinName": "Leg 2",
+      "type": "analogIn",
+      "description": "Connected to Analog Pin A0 and 10k resistor to GND"
+    }
+  ],
+  "safety": {
+    "level": "safe",
+    "hazards": [
+      "Avoid placing sensor against open flame or surfaces above 100\u00b0C"
+    ],
+    "childSafeAlternative": null,
+    "requiresParentUnlock": false
+  },
+  "projectIds": [
+    "proj_12"
+  ],
+  "datasheetRef": "Thermoresistor NTC MF52-103 3435 10K ohm 5%.pdf",
+  "wiringGuidance": "Form a voltage divider: Connect one leg of the thermistor to 5V, the other leg to Arduino A0. Connect a 10k fixed resistor between A0 and GND.",
+  "commonMistakes": [
+    "Connecting without a fixed 10k divider resistor\u2014the analog pin will read constant 5V.",
+    "Assuming voltage changes linearly with temperature."
+  ],
+  "miniExperiment": {
+    "title": "Fingertip Heat Detector",
+    "circuit": "Thermistor between 5V and A0; 10k resistor between A0 and GND.",
+    "code": "void setup() {\n  Serial.begin(9600);\n}\nvoid loop() {\n  int raw = analogRead(A0);\n  float v = raw * (5.0 / 1023.0);\n  Serial.print(\"Raw ADC: \"); Serial.print(raw);\n  Serial.print(\" | Voltage: \"); Serial.println(v);\n  delay(250);\n}",
+    "expectedOutput": "ADC value decreases steadily as you pinch the thermistor bead with warm fingertips."
+  },
+  "primaryImage": "assets/images/components/comp_thermistor.webp",
+  "imageDescription": "Hardware photo of NTC 10K Thermistor Temperature Probe"
+}

@@ -1,0 +1,49 @@
+{
+  "id": "comp_power_supply",
+  "peripheralNumber": 54,
+  "name": "9V 1A DC Power Supply Adapter",
+  "partNumber": "GAR-9V1A-DC",
+  "category": "power",
+  "description": "Regulated wall adapter converting 100-240V AC to 9V 1000mA DC with standard 5.5mm x 2.1mm center-positive barrel jack.",
+  "realWorldAnalogy": "Regulated wall adapter converting 100-240V AC to 9V 1000mA DC with standard 5.5mm x 2.1mm center-positive barrel jack.",
+  "voltage": "v5",
+  "pinout": [
+    {
+      "pinName": "Center Pin (+)",
+      "type": "power",
+      "description": "+9V DC Regulated Output"
+    },
+    {
+      "pinName": "Outer Ring (-)",
+      "type": "ground",
+      "description": "Ground Return Reference"
+    }
+  ],
+  "safety": {
+    "level": "caution",
+    "hazards": [
+      "Use wall outlets under adult supervision",
+      "Do not cut or short power cord wires"
+    ],
+    "childSafeAlternative": "Use USB cable power or 9V battery snap connector for portable power",
+    "requiresParentUnlock": false
+  },
+  "projectIds": [
+    "proj_08",
+    "proj_10"
+  ],
+  "datasheetRef": "9V 1A.pdf",
+  "wiringGuidance": "Plug directly into the Arduino Uno or Mega circular black barrel jack. The board's onboard voltage regulator will cleanly step down 9V to 5V and 3.3V.",
+  "commonMistakes": [
+    "Plugging an AC-output adapter or reverse-polarity supply into the Arduino (GAR adapter is verified center-positive DC).",
+    "Leaving power supply plugged into wall when not in use."
+  ],
+  "miniExperiment": {
+    "title": "Untethered Robot Power Up",
+    "circuit": "Unplug USB cable. Plug 9V DC adapter barrel jack into Arduino Uno DC socket. Plug adapter into wall.",
+    "code": "void setup() {\n  pinMode(LED_BUILTIN, OUTPUT);\n}\nvoid loop() {\n  digitalWrite(LED_BUILTIN, HIGH);\n  delay(200);\n  digitalWrite(LED_BUILTIN, LOW);\n  delay(200);\n}",
+    "expectedOutput": "The Arduino boots autonomously without computer connection, and the LED blinks untethered."
+  },
+  "primaryImage": "assets/images/components/comp_power_supply.webp",
+  "imageDescription": "Hardware photo of 9V 1A DC Power Supply Adapter"
+}

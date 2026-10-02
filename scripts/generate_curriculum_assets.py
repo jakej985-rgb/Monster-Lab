@@ -667,7 +667,120 @@ COMPONENTS_RAW = [
 
     (38, "Hall Effect Sensor", "3144", "sensor", "Magnetic Field Hall Effect Sensor", "Like a magnetic compass detector! Senses proximity of permanent magnetic fields (neodymium magnets).", "v5",
      [("VCC", "power", "Power (4.5V-24V)"), ("GND", "ground", "Ground"), ("OUT", "digitalIn", "Digital magnetic presence trigger")],
-     "Button.pdf", "safe", [], None, False, ["proj_19"])
+     "Button.pdf", "safe", [], None, False, ["proj_19"]),
+
+    (39, "Arduino Uno R3", "ATmega328P", "microcontroller", "Arduino Uno R3", "The flagship central brain of Monster Lab. Features 14 digital I/O pins, 6 analog inputs, a 16MHz clock, and a USB interface.", "v5",
+     [("D0/RX", "uart", "Serial Receive / Digital Pin 0"), ("D1/TX", "uart", "Serial Transmit / Digital Pin 1"),
+      ("D2", "digitalIn", "Digital I/O / External Interrupt 0"), ("D3", "digitalOut", "Digital I/O / PWM Output"),
+      ("D4", "digitalIn", "Digital I/O"), ("D5", "digitalOut", "Digital I/O / PWM Output"),
+      ("D6", "digitalOut", "Digital I/O / PWM Output"), ("D7", "digitalIn", "Digital I/O"),
+      ("D8", "digitalIn", "Digital I/O"), ("D9", "digitalOut", "Digital I/O / PWM Output"),
+      ("D10", "digitalOut", "Digital I/O / PWM / SPI SS"), ("D11", "digitalOut", "Digital I/O / PWM / SPI MOSI"),
+      ("D12", "digitalIn", "Digital I/O / SPI MISO"), ("D13", "digitalOut", "Digital I/O / SPI SCK / Built-in LED"),
+      ("A0", "analogIn", "Analog Input 0 (10-bit ADC)"), ("A1", "analogIn", "Analog Input 1"),
+      ("A2", "analogIn", "Analog Input 2"), ("A3", "analogIn", "Analog Input 3"),
+      ("A4/SDA", "i2c", "Analog Input 4 / I2C Serial Data"), ("A5/SCL", "i2c", "Analog Input 5 / I2C Serial Clock"),
+      ("5V", "power", "Regulated 5V Power Output"), ("3.3V", "power", "Regulated 3.3V Power Output"),
+      ("GND", "ground", "Ground Reference"), ("VIN", "power", "External DC Input 7-12V")],
+     None, "safe", ["Do not connect 5V directly to GND", "Do not draw more than 200mA total across all I/O pins"], None, False,
+     ["proj_01", "proj_02", "proj_03", "proj_04", "proj_05", "proj_06", "proj_07", "proj_08", "proj_09", "proj_10", "proj_11", "proj_12", "proj_13", "proj_14", "proj_15", "proj_16", "proj_17", "proj_18", "proj_19", "proj_20"]),
+
+    (40, "Arduino Nano V3", "ATmega328P-AU", "microcontroller", "Arduino Nano V3", "A compact, breadboard-friendly microcontroller with 14 digital pins, 8 analog inputs, and a Mini-B USB programming port.", "v5",
+     [("D0-D13", "digitalIn", "14 Digital I/O Pins (6 PWM)"), ("A0-A7", "analogIn", "8 Analog Input Pins"),
+      ("5V", "power", "Regulated 5V Power"), ("3V3", "power", "Regulated 3.3V Power"),
+      ("GND", "ground", "Ground Reference"), ("VIN", "power", "Unregulated 7-12V Input"), ("RST", "digitalIn", "Reset Pin")],
+     None, "safe", ["Double check pin alignment before pressing into breadboard"], None, False, ["proj_14"]),
+
+    (41, "Arduino Mega 2560", "ATmega2560", "microcontroller", "Arduino Mega 2560", "Heavyweight powerhouse brain with 54 digital I/O pins, 16 analog inputs, 4 hardware UART serial ports, and 256KB flash memory.", "v5",
+     [("D0-D53", "digitalIn", "54 Digital I/O Pins (15 PWM)"), ("A0-A15", "analogIn", "16 Analog Input Pins"),
+      ("TX1-3/RX1-3", "uart", "3 Additional Hardware Serial Ports"), ("SPI", "spi", "Hardware SPI (Pins 50-53)"),
+      ("5V", "power", "5V Power Output"), ("3.3V", "power", "3.3V Power Output"), ("GND", "ground", "Ground Reference")],
+     None, "safe", ["Support the board firmly when plugging shields into extended headers"], None, False, ["proj_14"]),
+
+    (42, "ESP32 DevKit V1", "ESP-WROOM-32", "microcontroller", "ESP32 DevKit V1", "High-performance 240MHz dual-core Xtensa 32-bit MCU with integrated Wi-Fi 802.11 b/g/n, Bluetooth v4.2 BR/EDR, and BLE.", "v3_3",
+     [("GPIO2", "digitalOut", "Onboard Blue LED / Boot Strapping"), ("GPIO4", "digitalIn", "Capacitive Touch / Digital I/O"),
+      ("GPIO5", "digitalOut", "VSPI CS"), ("GPIO18", "digitalOut", "VSPI SCK"), ("GPIO19", "digitalIn", "VSPI MISO"),
+      ("GPIO21", "i2c", "I2C SDA"), ("GPIO22", "i2c", "I2C SCL"), ("GPIO23", "digitalOut", "VSPI MOSI"),
+      ("3V3", "power", "3.3V Regulated Power Output"), ("GND", "ground", "Ground Reference"),
+      ("VIN", "power", "5V External / USB Power Input")],
+     None, "safe", ["All GPIO pins operate strictly at 3.3V logic - 5V inputs will damage the chip!"], None, False, ["proj_20"]),
+
+    (43, "ESP8266 NodeMCU V3", "ESP-12E", "microcontroller", "ESP8266 NodeMCU V3", "Connected IoT microcontroller board running at 80/160MHz with full TCP/IP stack and onboard USB-to-Serial converter.", "v3_3",
+     [("D0/GPIO16", "digitalIn", "User Wake / Digital I/O"), ("D1/GPIO5", "i2c", "I2C SCL / Digital I/O"),
+      ("D2/GPIO4", "i2c", "I2C SDA / Digital I/O"), ("D3/GPIO0", "digitalIn", "Flash Boot / Pullup"),
+      ("D4/GPIO2", "digitalOut", "Onboard LED / TX1"), ("D5/GPIO14", "spi", "SPI SCLK"),
+      ("D6/GPIO12", "spi", "SPI MISO"), ("D7/GPIO13", "spi", "SPI MOSI"), ("D8/GPIO15", "digitalOut", "SPI SS / Pulldown"),
+      ("A0/ADC0", "analogIn", "Analog Input (0-3.3V via onboard divider)"), ("3V3", "power", "3.3V Regulated Output"),
+      ("GND", "ground", "Ground Reference"), ("VIN", "power", "5V USB / External Input")],
+     None, "safe", ["GPIO pins accept maximum 3.3V logic levels"], None, False, ["proj_20"]),
+
+    (44, "Uno Protoshield", "GAR-PROTO-SHIELD", "passive", "Uno Protoshield + Mini Breadboard", "Expansion shield that plugs directly onto Arduino Uno headers with a 170-tie-point mini breadboard and custom prototyping pads.", "v5",
+     [("Pass-Through Headers", "passive", "Full Uno pin breakout D0-D13, A0-A5, Power, GND"),
+      ("Mini Breadboard", "passive", "170 tie-point solderless prototyping matrix"),
+      ("5V Rail", "power", "5V Bus"), ("GND Rail", "ground", "Ground Bus")],
+     "UNO Proto Shield Prototype Expansion Board.pdf", "safe", ["Ensure shield header pins are aligned before pressing into Uno"], None, False, ["proj_01", "proj_04"]),
+
+    (45, "ISD1820 Voice Module", "ISD1820", "actuator", "ISD1820 Voice Recording & Playback Module", "Single-chip voice recording and playback module with onboard microphone, 10-second non-volatile audio memory, and direct 8-ohm speaker driver.", "v5",
+     [("VCC", "power", "Power Supply (3V-5V)"), ("GND", "ground", "Ground"),
+      ("REC", "digitalIn", "Record trigger (active HIGH)"), ("PLAYE", "digitalIn", "Edge-triggered playback trigger"),
+      ("PLAYL", "digitalIn", "Level-triggered playback trigger"),
+      ("SP+", "passive", "Speaker output positive"), ("SP-", "passive", "Speaker output negative")],
+     None, "safe", ["Keep speaker away from magnetic storage devices"], None, False, ["proj_01", "proj_05"]),
+
+    (46, "USB Charger Doctor", "KWS-V20", "sensor", "USB Charger Doctor Multimeter", "Inline USB diagnostics monitor measuring voltage (3-9V) and current (0-3A) in real time with dual 7-segment LED display.", "v5",
+     [("USB-IN", "power", "Male USB Type-A 5V Input"), ("USB-OUT", "power", "Female USB Type-A Output to Monitored Device"),
+      ("VCC", "power", "Power Rail 3V-9V"), ("GND", "ground", "Ground Return")],
+     None, "safe", ["Do not exceed 9V maximum operating input"], None, False, []),
+
+    (47, "4-Digit Display", "TM1637", "display", "4-Digit 7-Segment LED Clock Display", "4-digit numeric LED display with central clock colon, controlled over a 2-wire serial protocol (CLK, DIO) using the TM1637 driver.", "v5",
+     [("GND", "ground", "Ground Reference"), ("VCC", "power", "5V Power Supply"),
+      ("DIO", "digitalIn", "Serial Data Input/Output"), ("CLK", "digitalOut", "Serial Clock Input")],
+     "4 digit 7-segment Display .PDF", "safe", [], None, False, ["proj_05"]),
+
+    (48, "ESP-01 Wi-Fi Module", "ESP-01S", "communication", "ESP8266 ESP-01 Wi-Fi Transceiver", "Compact 8-pin Wi-Fi serial module allowing any Arduino board to connect to 2.4GHz wireless networks via AT commands.", "v3_3",
+     [("3V3", "power", "3.3V Power (DO NOT CONNECT 5V)"), ("TX", "uart", "Serial Transmit (3.3V)"),
+      ("RX", "uart", "Serial Receive (3.3V)"), ("EN", "digitalIn", "Chip Enable (connect to 3.3V)"),
+      ("IO0", "digitalIn", "Flash / Run Mode Select"), ("IO2", "digitalIn", "General Purpose I/O 2"),
+      ("RST", "digitalIn", "Hardware Reset (active LOW)"), ("GND", "ground", "Ground")],
+     None, "caution", ["Module operates strictly at 3.3V. 5V on VCC or RX will damage the chip without level shifter."], "Use ESP32 DevKit or USB cable communication for beginner wireless experiments", False, ["proj_20"]),
+
+    (49, "L293D Motor Driver", "L293D", "actuator", "L293D Dual H-Bridge Motor Driver IC", "16-pin dual-channel H-bridge driver integrated circuit delivering up to 600mA per channel with internal flyback clamping diodes.", "v5",
+     [("1,2EN", "digitalOut", "Enable channel 1 and 2 (PWM speed)"), ("1A", "digitalOut", "Input 1 direction control"),
+      ("1Y", "power", "Output 1 to Motor A"), ("GND", "ground", "Heatsink Ground"),
+      ("2Y", "power", "Output 2 to Motor A"), ("2A", "digitalOut", "Input 2 direction control"),
+      ("VCC2", "power", "Motor Supply Voltage (4.5V-36V)"), ("3,4EN", "digitalOut", "Enable channel 3 and 4"),
+      ("3A", "digitalOut", "Input 3 direction"), ("3Y", "power", "Output 3 to Motor B"),
+      ("4Y", "power", "Output 4 to Motor B"), ("4A", "digitalOut", "Input 4 direction"),
+      ("VCC1", "power", "Logic Supply Voltage (5V)")],
+     "L293d .pdf", "safe", ["IC can become hot when driving continuous high motor currents"], None, False, ["proj_08", "proj_17"]),
+
+    (50, "74HC595 Shift Register", "74HC595N", "actuator", "74HC595 8-Bit Shift Register IC", "Serial-in, parallel-out 8-stage shift register with storage latch that expands 3 microcontroller pins into 8 independent digital outputs.", "v5",
+     [("Q0-Q7", "digitalOut", "8 Parallel Digital Outputs"), ("GND", "ground", "Ground"),
+      ("Q7S", "digitalOut", "Serial Output for Cascading"), ("MR", "digitalIn", "Master Reset (active LOW - tie to 5V)"),
+      ("SH_CP", "digitalOut", "Shift Clock Input"), ("ST_CP", "digitalOut", "Storage Latch Clock Input"),
+      ("OE", "digitalIn", "Output Enable (active LOW - tie to GND)"), ("DS", "digitalIn", "Serial Data Input"),
+      ("VCC", "power", "5V Power Supply")],
+     "74HC595.PDF", "safe", [], None, False, ["proj_07", "proj_19"]),
+
+    (51, "10K Thermistor", "MF52-103", "sensor", "NTC 10K Thermistor Temperature Probe", "Negative Temperature Coefficient ceramic semiconductor resistor whose resistance decreases predictably as temperature increases.", "v5",
+     [("Leg 1", "power", "Connect to 5V Power Rail"),
+      ("Leg 2", "analogIn", "Connected to Analog Pin A0 and 10k resistor to GND")],
+     "Thermoresistor NTC MF52-103 3435 10K ohm 5%.pdf", "safe", ["Avoid placing sensor against open flame or surfaces above 100°C"], None, False, ["proj_12"]),
+
+    (52, "Slider Switch", "SS-12D00", "switch", "3-Pin Slider Switch (SPDT)", "Single-Pole Double-Throw miniature slide switch for toggling power or selecting between two operational circuit modes.", "v5",
+     [("Pin 1", "digitalIn", "Throw 1 Contact"), ("Pin 2", "power", "Common Center Wiper"),
+      ("Pin 3", "digitalIn", "Throw 2 Contact")],
+     None, "safe", [], None, False, ["proj_04", "proj_08"]),
+
+    (53, "Solderless Breadboard", "MB-102", "passive", "830-Point Solderless Breadboard", "Solderless prototyping board with 830 tie-points arranged in interconnected 5-hole rows and 4 full-length dual power rails.", "dual",
+     [("Red Rail (+)", "power", "Positive Voltage Bus"), ("Blue Rail (-)", "ground", "Ground Return Bus"),
+      ("Row Pins (a-j)", "passive", "5-pin interconnected component sockets")],
+     "830 430 tie-points Breadboard.pdf", "safe", ["Do not insert wire leads thicker than 22 AWG"], None, False, ["proj_01", "proj_04", "proj_08"]),
+
+    (54, "9V 1A DC Power Supply", "GAR-9V1A-DC", "power", "9V 1A DC Power Supply Adapter", "Regulated wall adapter converting 100-240V AC to 9V 1000mA DC with standard 5.5mm x 2.1mm center-positive barrel jack.", "v5",
+     [("Center Pin (+)", "power", "+9V DC Regulated Output"),
+      ("Outer Ring (-)", "ground", "Ground Return Reference")],
+     "9V 1A.pdf", "caution", ["Use wall outlets under adult supervision", "Do not cut or short power cord wires"], "Use USB cable power or 9V battery snap connector for portable power", False, ["proj_08", "proj_10"])
 ]
 
 # -------------------------------------------------------------
@@ -2251,11 +2364,30 @@ for les in LESSONS:
         json.dump(les, f, indent=2)
     lesson_manifest.append(les["id"])
 
+ID_MAP = {
+    39: "comp_uno",
+    40: "comp_nano",
+    41: "comp_mega",
+    42: "comp_esp32",
+    43: "comp_esp8266",
+    44: "comp_protoshield",
+    45: "comp_isd1820",
+    46: "comp_usb_doctor",
+    47: "comp_4digit_display",
+    48: "comp_esp01",
+    49: "comp_l293d",
+    50: "comp_74hc595",
+    51: "comp_thermistor",
+    52: "comp_slider_switch",
+    53: "comp_breadboard",
+    54: "comp_power_supply",
+}
+
 print("Writing Component JSONs...")
 comp_manifest = []
 for comp_tuple in COMPONENTS_RAW:
     num, name, part, cat, title, desc, volt, pinout_raw, ds, safety_lvl, hazards, alt, parent_req, projs = comp_tuple
-    comp_id = f"comp_{num:02d}"
+    comp_id = ID_MAP.get(num, f"comp_{num:02d}")
 
     pinout_list = [{"pinName": p[0], "type": p[1], "description": p[2]} for p in pinout_raw]
 

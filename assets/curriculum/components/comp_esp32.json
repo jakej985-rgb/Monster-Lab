@@ -1,0 +1,94 @@
+{
+  "id": "comp_esp32",
+  "peripheralNumber": 42,
+  "name": "ESP32 DevKit V1",
+  "partNumber": "ESP-WROOM-32",
+  "category": "microcontroller",
+  "description": "High-performance 240MHz dual-core Xtensa 32-bit MCU with integrated Wi-Fi 802.11 b/g/n, Bluetooth v4.2 BR/EDR, and BLE.",
+  "realWorldAnalogy": "High-performance 240MHz dual-core Xtensa 32-bit MCU with integrated Wi-Fi 802.11 b/g/n, Bluetooth v4.2 BR/EDR, and BLE.",
+  "voltage": "v3_3",
+  "pinout": [
+    {
+      "pinName": "GPIO2",
+      "type": "digitalOut",
+      "description": "Onboard Blue LED / Boot Strapping"
+    },
+    {
+      "pinName": "GPIO4",
+      "type": "digitalIn",
+      "description": "Capacitive Touch / Digital I/O"
+    },
+    {
+      "pinName": "GPIO5",
+      "type": "digitalOut",
+      "description": "VSPI CS"
+    },
+    {
+      "pinName": "GPIO18",
+      "type": "digitalOut",
+      "description": "VSPI SCK"
+    },
+    {
+      "pinName": "GPIO19",
+      "type": "digitalIn",
+      "description": "VSPI MISO"
+    },
+    {
+      "pinName": "GPIO21",
+      "type": "i2c",
+      "description": "I2C SDA"
+    },
+    {
+      "pinName": "GPIO22",
+      "type": "i2c",
+      "description": "I2C SCL"
+    },
+    {
+      "pinName": "GPIO23",
+      "type": "digitalOut",
+      "description": "VSPI MOSI"
+    },
+    {
+      "pinName": "3V3",
+      "type": "power",
+      "description": "3.3V Regulated Power Output"
+    },
+    {
+      "pinName": "GND",
+      "type": "ground",
+      "description": "Ground Reference"
+    },
+    {
+      "pinName": "VIN",
+      "type": "power",
+      "description": "5V External / USB Power Input"
+    }
+  ],
+  "safety": {
+    "level": "safe",
+    "hazards": [
+      "All GPIO pins operate strictly at 3.3V logic - 5V inputs will damage the chip!"
+    ],
+    "childSafeAlternative": null,
+    "requiresParentUnlock": false
+  },
+  "projectIds": [
+    "proj_20"
+  ],
+  "wiringGuidance": "Power via Micro-USB or 3.3V pin. When connecting 5V Arduino sensors, use a resistive voltage divider or logic level shifter on signal lines.",
+  "commonMistakes": [
+    "Applying 5V logic signals directly to ESP32 input pins.",
+    "Trying to use GPIO 34, 35, 36, or 39 as outputs\u2014they are input-only pins!"
+  ],
+  "miniExperiment": {
+    "title": "ESP32 Wi-Fi Scanner",
+    "circuit": "Connect ESP32 via Micro-USB cable.",
+    "code": "#include <WiFi.h>\n\nvoid setup() {\n  Serial.begin(115200);\n  WiFi.mode(WIFI_STA);\n  WiFi.disconnect();\n  delay(100);\n}\n\nvoid loop() {\n  Serial.println(\"Scanning Wi-Fi networks...\");\n  int n = WiFi.scanNetworks();\n  Serial.print(n);\n  Serial.println(\" networks found.\");\n  delay(5000);\n}",
+    "expectedOutput": "Serial Monitor (at 115200 baud) lists the number of nearby 2.4GHz Wi-Fi networks detected."
+  },
+  "primaryImage": "assets/images/components/comp_esp32.webp",
+  "imageDescription": "Hardware photo of ESP32 DevKit V1",
+  "detailImages": [
+    "assets/images/components/comp_esp32_detail.webp"
+  ]
+}

@@ -13,6 +13,7 @@ class CurriculumDataEngine {
   final AssetCurriculumDataSource _fallbackDataSource;
 
   bool _isInitialized = false;
+  Future<void>? _initFuture;
   final Map<String, Lesson> _lessons = {};
   final Map<String, ComponentModel> _components = {};
   final Map<String, ProjectModel> _projects = {};
@@ -28,9 +29,12 @@ class CurriculumDataEngine {
   bool get isInitialized => _isInitialized;
 
   /// Loads and validates all curriculum JSON files from assets
-  Future<void> initialize() async {
-    if (_isInitialized) return;
+  Future<void> initialize() {
+    if (_isInitialized) return Future.value();
+    return _initFuture ??= _performInitialize();
+  }
 
+  Future<void> _performInitialize() async {
     try {
       final manifestJson =
           await _assetBundle.loadString('assets/curriculum/manifest.json');
@@ -51,9 +55,11 @@ class CurriculumDataEngine {
 
       // 2. Load Components
       final compIds = List<String>.from(manifest['components'] as List);
-      for (final cid in compIds) {
-        final cJson = await _assetBundle
-            .loadString('assets/curriculum/components/$cid.json');
+      final compJsons = await Future.wait(
+        compIds.map((cid) =>
+            _assetBundle.loadString('assets/curriculum/components/$cid.json')),
+      );
+      for (final cJson in compJsons) {
         final comp =
             ComponentModel.fromJson(jsonDecode(cJson) as Map<String, dynamic>);
         _components[comp.id] = comp;
@@ -61,9 +67,11 @@ class CurriculumDataEngine {
 
       // 3. Load Lessons
       final lessonIds = List<String>.from(manifest['lessons'] as List);
-      for (final lid in lessonIds) {
-        final lJson = await _assetBundle
-            .loadString('assets/curriculum/lessons/$lid.json');
+      final lessonJsons = await Future.wait(
+        lessonIds.map((lid) =>
+            _assetBundle.loadString('assets/curriculum/lessons/$lid.json')),
+      );
+      for (final lJson in lessonJsons) {
         final lesson =
             Lesson.fromJson(jsonDecode(lJson) as Map<String, dynamic>);
         _lessons[lesson.id] = lesson;
@@ -71,9 +79,11 @@ class CurriculumDataEngine {
 
       // 4. Load Projects
       final projectIds = List<String>.from(manifest['projects'] as List);
-      for (final pid in projectIds) {
-        final pJson = await _assetBundle
-            .loadString('assets/curriculum/projects/$pid.json');
+      final projectJsons = await Future.wait(
+        projectIds.map((pid) =>
+            _assetBundle.loadString('assets/curriculum/projects/$pid.json')),
+      );
+      for (final pJson in projectJsons) {
         final project =
             ProjectModel.fromJson(jsonDecode(pJson) as Map<String, dynamic>);
         _projects[project.id] = project;
@@ -81,9 +91,11 @@ class CurriculumDataEngine {
 
       // 5. Load Challenges
       final challengeIds = List<String>.from(manifest['challenges'] as List);
-      for (final chid in challengeIds) {
-        final chJson = await _assetBundle
-            .loadString('assets/curriculum/challenges/$chid.json');
+      final challengeJsons = await Future.wait(
+        challengeIds.map((chid) =>
+            _assetBundle.loadString('assets/curriculum/challenges/$chid.json')),
+      );
+      for (final chJson in challengeJsons) {
         final challenge =
             ChallengeModel.fromJson(jsonDecode(chJson) as Map<String, dynamic>);
         _challenges[challenge.id] = challenge;

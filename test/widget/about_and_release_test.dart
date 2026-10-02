@@ -25,7 +25,7 @@ void main() {
 
       // Curriculum statistics
       expect(find.text('12 Step-by-Step Lessons'), findsOneWidget);
-      expect(find.text('38 Kit Components'), findsOneWidget);
+      expect(find.text('54 Kit Components'), findsOneWidget);
       expect(find.text('20 Guided Projects'), findsOneWidget);
       expect(find.text('24 Circuit Challenges'), findsOneWidget);
       expect(find.text('20 Mastery Badges'), findsOneWidget);

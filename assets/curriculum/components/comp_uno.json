@@ -1,0 +1,179 @@
+{
+  "id": "comp_uno",
+  "peripheralNumber": 39,
+  "name": "Arduino Uno R3",
+  "partNumber": "ATmega328P",
+  "category": "microcontroller",
+  "description": "The flagship central brain of Monster Lab. Features 14 digital I/O pins, 6 analog inputs, a 16MHz clock, and a USB interface.",
+  "realWorldAnalogy": "The flagship central brain of Monster Lab. Features 14 digital I/O pins, 6 analog inputs, a 16MHz clock, and a USB interface.",
+  "voltage": "v5",
+  "pinout": [
+    {
+      "pinName": "D0/RX",
+      "type": "uart",
+      "description": "Serial Receive / Digital Pin 0"
+    },
+    {
+      "pinName": "D1/TX",
+      "type": "uart",
+      "description": "Serial Transmit / Digital Pin 1"
+    },
+    {
+      "pinName": "D2",
+      "type": "digitalIn",
+      "description": "Digital I/O / External Interrupt 0"
+    },
+    {
+      "pinName": "D3",
+      "type": "digitalOut",
+      "description": "Digital I/O / PWM Output"
+    },
+    {
+      "pinName": "D4",
+      "type": "digitalIn",
+      "description": "Digital I/O"
+    },
+    {
+      "pinName": "D5",
+      "type": "digitalOut",
+      "description": "Digital I/O / PWM Output"
+    },
+    {
+      "pinName": "D6",
+      "type": "digitalOut",
+      "description": "Digital I/O / PWM Output"
+    },
+    {
+      "pinName": "D7",
+      "type": "digitalIn",
+      "description": "Digital I/O"
+    },
+    {
+      "pinName": "D8",
+      "type": "digitalIn",
+      "description": "Digital I/O"
+    },
+    {
+      "pinName": "D9",
+      "type": "digitalOut",
+      "description": "Digital I/O / PWM Output"
+    },
+    {
+      "pinName": "D10",
+      "type": "digitalOut",
+      "description": "Digital I/O / PWM / SPI SS"
+    },
+    {
+      "pinName": "D11",
+      "type": "digitalOut",
+      "description": "Digital I/O / PWM / SPI MOSI"
+    },
+    {
+      "pinName": "D12",
+      "type": "digitalIn",
+      "description": "Digital I/O / SPI MISO"
+    },
+    {
+      "pinName": "D13",
+      "type": "digitalOut",
+      "description": "Digital I/O / SPI SCK / Built-in LED"
+    },
+    {
+      "pinName": "A0",
+      "type": "analogIn",
+      "description": "Analog Input 0 (10-bit ADC)"
+    },
+    {
+      "pinName": "A1",
+      "type": "analogIn",
+      "description": "Analog Input 1"
+    },
+    {
+      "pinName": "A2",
+      "type": "analogIn",
+      "description": "Analog Input 2"
+    },
+    {
+      "pinName": "A3",
+      "type": "analogIn",
+      "description": "Analog Input 3"
+    },
+    {
+      "pinName": "A4/SDA",
+      "type": "i2c",
+      "description": "Analog Input 4 / I2C Serial Data"
+    },
+    {
+      "pinName": "A5/SCL",
+      "type": "i2c",
+      "description": "Analog Input 5 / I2C Serial Clock"
+    },
+    {
+      "pinName": "5V",
+      "type": "power",
+      "description": "Regulated 5V Power Output"
+    },
+    {
+      "pinName": "3.3V",
+      "type": "power",
+      "description": "Regulated 3.3V Power Output"
+    },
+    {
+      "pinName": "GND",
+      "type": "ground",
+      "description": "Ground Reference"
+    },
+    {
+      "pinName": "VIN",
+      "type": "power",
+      "description": "External DC Input 7-12V"
+    }
+  ],
+  "safety": {
+    "level": "safe",
+    "hazards": [
+      "Do not connect 5V directly to GND",
+      "Do not draw more than 200mA total across all I/O pins"
+    ],
+    "childSafeAlternative": null,
+    "requiresParentUnlock": false
+  },
+  "projectIds": [
+    "proj_01",
+    "proj_02",
+    "proj_03",
+    "proj_04",
+    "proj_05",
+    "proj_06",
+    "proj_07",
+    "proj_08",
+    "proj_09",
+    "proj_10",
+    "proj_11",
+    "proj_12",
+    "proj_13",
+    "proj_14",
+    "proj_15",
+    "proj_16",
+    "proj_17",
+    "proj_18",
+    "proj_19",
+    "proj_20"
+  ],
+  "wiringGuidance": "Connect to your computer using the blue USB Type-A to Type-B cable. Power is supplied directly from USB or via 7-12V DC barrel jack.",
+  "commonMistakes": [
+    "Leaving the board resting on conductive metal surfaces while powered.",
+    "Connecting sensors to 5V when they require 3.3V logic."
+  ],
+  "miniExperiment": {
+    "title": "Onboard Heartbeat Blink",
+    "circuit": "No wires needed! The Arduino Uno has an onboard LED connected to Digital Pin 13.",
+    "code": "void setup() {\n  pinMode(LED_BUILTIN, OUTPUT);\n}\n\nvoid loop() {\n  digitalWrite(LED_BUILTIN, HIGH);\n  delay(500);\n  digitalWrite(LED_BUILTIN, LOW);\n  delay(500);\n}",
+    "expectedOutput": "The tiny amber LED labeled 'L' next to pin 13 blinks steadily once per second."
+  },
+  "primaryImage": "assets/images/components/comp_uno.webp",
+  "imageDescription": "Hardware photo of Arduino Uno R3",
+  "detailImages": [
+    "assets/images/components/comp_uno_detail.webp"
+  ]
+}

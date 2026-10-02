@@ -209,7 +209,7 @@ void main() {
       expect(lessons.first.title, contains('Arduino'));
 
       final components = await engine.getComponents();
-      expect(components.length, equals(38));
+      expect(components.length, equals(54));
       expect(components.first.id, equals('comp_01'));
 
       final projects = await engine.getProjects();

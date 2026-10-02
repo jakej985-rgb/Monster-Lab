@@ -229,7 +229,7 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
               _buildMetricTile('Projects',
                   '${progress.completedProjectIds.length}/14', Icons.handyman),
               _buildMetricTile('Parts Found',
-                  '${progress.discoveredComponentIds.length}/38', Icons.memory),
+                  '${progress.discoveredComponentIds.length}/54', Icons.memory),
               _buildMetricTile(
                   'Challenges',
                   '${progress.solvedChallengeIds.length}/16',

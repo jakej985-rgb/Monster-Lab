@@ -25,6 +25,8 @@ class ComponentImageView extends StatelessWidget {
 
   static IconData getCategoryIcon(String category) {
     switch (category) {
+      case 'microcontroller':
+        return Icons.developer_board;
       case 'sensor':
         return Icons.sensors;
       case 'actuator':
@@ -44,6 +46,8 @@ class ComponentImageView extends StatelessWidget {
 
   static Color getCategoryColor(String category) {
     switch (category) {
+      case 'microcontroller':
+        return AppColors.primaryViolet;
       case 'sensor':
         return AppColors.accentCyan;
       case 'actuator':

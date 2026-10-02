@@ -119,7 +119,9 @@ class LearnerProgressModel {
           ? LastActivityInfo.fromJson(
               json['lastActivity'] as Map<String, dynamic>)
           : null,
-      lastSessionDate: DateTime.parse(json['lastSessionDate'] as String),
+      lastSessionDate: json['lastSessionDate'] != null
+          ? DateTime.parse(json['lastSessionDate'] as String)
+          : DateTime.now(),
     );
   }
 

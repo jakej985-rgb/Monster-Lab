@@ -1,0 +1,81 @@
+{
+  "id": "comp_74hc595",
+  "peripheralNumber": 50,
+  "name": "74HC595 8-Bit Shift Register IC",
+  "partNumber": "74HC595N",
+  "category": "actuator",
+  "description": "Serial-in, parallel-out 8-stage shift register with storage latch that expands 3 microcontroller pins into 8 independent digital outputs.",
+  "realWorldAnalogy": "Serial-in, parallel-out 8-stage shift register with storage latch that expands 3 microcontroller pins into 8 independent digital outputs.",
+  "voltage": "v5",
+  "pinout": [
+    {
+      "pinName": "Q0-Q7",
+      "type": "digitalOut",
+      "description": "8 Parallel Digital Outputs"
+    },
+    {
+      "pinName": "GND",
+      "type": "ground",
+      "description": "Ground"
+    },
+    {
+      "pinName": "Q7S",
+      "type": "digitalOut",
+      "description": "Serial Output for Cascading"
+    },
+    {
+      "pinName": "MR",
+      "type": "digitalIn",
+      "description": "Master Reset (active LOW - tie to 5V)"
+    },
+    {
+      "pinName": "SH_CP",
+      "type": "digitalOut",
+      "description": "Shift Clock Input"
+    },
+    {
+      "pinName": "ST_CP",
+      "type": "digitalOut",
+      "description": "Storage Latch Clock Input"
+    },
+    {
+      "pinName": "OE",
+      "type": "digitalIn",
+      "description": "Output Enable (active LOW - tie to GND)"
+    },
+    {
+      "pinName": "DS",
+      "type": "digitalIn",
+      "description": "Serial Data Input"
+    },
+    {
+      "pinName": "VCC",
+      "type": "power",
+      "description": "5V Power Supply"
+    }
+  ],
+  "safety": {
+    "level": "safe",
+    "hazards": [],
+    "childSafeAlternative": null,
+    "requiresParentUnlock": false
+  },
+  "projectIds": [
+    "proj_07",
+    "proj_19"
+  ],
+  "datasheetRef": "74HC595.PDF",
+  "wiringGuidance": "Connect DS to Pin 11, ST_CP (latch) to Pin 8, SH_CP (clock) to Pin 12. Tie OE to GND and MR to 5V.",
+  "commonMistakes": [
+    "Leaving OE (Output Enable) floating high, which turns off all outputs.",
+    "Leaving MR (Master Reset) low or disconnected, which keeps the register cleared."
+  ],
+  "miniExperiment": {
+    "title": "8-LED Shift Chaser",
+    "circuit": "Connect DS to Pin 11, Latch to Pin 8, Clock to Pin 12. Connect Q0-Q7 through 220-ohm resistors to 8 LEDs.",
+    "code": "int dataPin = 11, latchPin = 8, clockPin = 12;\nvoid setup() {\n  pinMode(dataPin, OUTPUT);\n  pinMode(latchPin, OUTPUT);\n  pinMode(clockPin, OUTPUT);\n}\nvoid loop() {\n  for (int i = 0; i < 8; i++) {\n    digitalWrite(latchPin, LOW);\n    shiftOut(dataPin, clockPin, MSBFIRST, 1 << i);\n    digitalWrite(latchPin, HIGH);\n    delay(100);\n  }\n}",
+    "expectedOutput": "A single lit LED sweeps across the 8 output pins in sequence."
+  },
+  "primaryImage": "assets/images/components/comp_74hc595.webp",
+  "imageDescription": "Hardware photo of 74HC595 8-Bit Shift Register IC"
+}

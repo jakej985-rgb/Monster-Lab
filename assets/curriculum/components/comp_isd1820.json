@@ -1,0 +1,72 @@
+{
+  "id": "comp_isd1820",
+  "peripheralNumber": 45,
+  "name": "ISD1820 Voice Recording & Playback Module",
+  "partNumber": "ISD1820",
+  "category": "actuator",
+  "description": "Single-chip voice recording and playback module with onboard microphone, 10-second non-volatile audio memory, and direct 8-ohm speaker driver.",
+  "realWorldAnalogy": "Single-chip voice recording and playback module with onboard microphone, 10-second non-volatile audio memory, and direct 8-ohm speaker driver.",
+  "voltage": "v5",
+  "pinout": [
+    {
+      "pinName": "VCC",
+      "type": "power",
+      "description": "Power Supply (3V-5V)"
+    },
+    {
+      "pinName": "GND",
+      "type": "ground",
+      "description": "Ground"
+    },
+    {
+      "pinName": "REC",
+      "type": "digitalIn",
+      "description": "Record trigger (active HIGH)"
+    },
+    {
+      "pinName": "PLAYE",
+      "type": "digitalIn",
+      "description": "Edge-triggered playback trigger"
+    },
+    {
+      "pinName": "PLAYL",
+      "type": "digitalIn",
+      "description": "Level-triggered playback trigger"
+    },
+    {
+      "pinName": "SP+",
+      "type": "passive",
+      "description": "Speaker output positive"
+    },
+    {
+      "pinName": "SP-",
+      "type": "passive",
+      "description": "Speaker output negative"
+    }
+  ],
+  "safety": {
+    "level": "safe",
+    "hazards": [
+      "Keep speaker away from magnetic storage devices"
+    ],
+    "childSafeAlternative": null,
+    "requiresParentUnlock": false
+  },
+  "projectIds": [
+    "proj_01",
+    "proj_05"
+  ],
+  "wiringGuidance": "Connect VCC to 5V, GND to GND, and PLAYE to Arduino digital pin 8. Connect the included 2-pin mini speaker to the SP+ and SP- terminals.",
+  "commonMistakes": [
+    "Holding the REC button too far from your mouth when recording audio.",
+    "Forgetting to set REC pin to LOW during normal operation."
+  ],
+  "miniExperiment": {
+    "title": "Robot Voice Trigger",
+    "circuit": "Connect VCC to 5V, GND to GND, PLAYE to Pin 8. Connect speaker to module.",
+    "code": "const int playPin = 8;\nvoid setup() {\n  pinMode(playPin, OUTPUT);\n  digitalWrite(playPin, LOW);\n  delay(2000);\n  digitalWrite(playPin, HIGH);\n  delay(100);\n  digitalWrite(playPin, LOW);\n}\nvoid loop() {}",
+    "expectedOutput": "The speaker plays your recorded message 2 seconds after startup."
+  },
+  "primaryImage": "assets/images/components/comp_isd1820.webp",
+  "imageDescription": "Hardware photo of ISD1820 Voice Recording & Playback Module"
+}
