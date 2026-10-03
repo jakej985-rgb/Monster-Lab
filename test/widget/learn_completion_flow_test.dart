@@ -218,17 +218,15 @@ void main() {
       // Quiz step: select correct answer (Option A) and submit
       final optionFinder = find.text(
           'They speed up code by writing complex hardware protocols for you');
-      if (optionFinder.evaluate().isNotEmpty) {
-        await tester.ensureVisible(optionFinder);
-        await tester.tap(optionFinder);
-        await tester.pumpAndSettle();
+      expect(optionFinder, findsOneWidget);
+      await tester.ensureVisible(optionFinder);
+      await tester.tap(optionFinder);
+      await tester.pumpAndSettle();
 
-        final submitBtn = find.text('Submit Answer');
-        if (submitBtn.evaluate().isNotEmpty) {
-          await tester.tap(submitBtn);
-          await tester.pumpAndSettle();
-        }
-      }
+      final submitBtn = find.text('Submit Answer');
+      expect(submitBtn, findsOneWidget);
+      await tester.tap(submitBtn);
+      await tester.pumpAndSettle();
 
       // Verify progress XP did not increase on replay
       final currentProgress =

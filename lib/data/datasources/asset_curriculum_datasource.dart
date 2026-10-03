@@ -21,7 +21,7 @@ class AssetCurriculumDataSource {
     }
   }
 
-  /// Initial curriculum foundation lessons (audit Lessons 1 through 7)
+  /// Initial curriculum foundation lessons (Lessons 1 through 12)
   List<Lesson> getBaselineLessons() {
     return const [
       Lesson(
@@ -30,152 +30,552 @@ class AssetCurriculumDataSource {
         summary:
             'Meet the brain of your robot! Discover microcontrollers, inputs, and outputs.',
         tier: DifficultyTier.rookie,
-        estimatedMinutes: 10,
+        estimatedMinutes: 18,
         prerequisites: [],
         componentIds: [],
         steps: [
           LessonStep(
-            stepId: 'step_1',
-            title: 'Welcome to the Lab',
+            stepId: 'l01_s01',
+            title: 'Meet the Monster Brain',
             type: StepType.story,
             markdownContent:
-                'An Arduino is a tiny computer that can listen to sensors and control motors or lights!',
+                'Welcome to Monster Lab! The Arduino Uno is a microcontroller board—a tiny, rugged computer designed to interact directly with hardware in the physical world.',
           ),
           LessonStep(
-            stepId: 'step_2',
-            title: 'Board Anatomy',
+            stepId: 'l01_s02',
+            title: 'Inputs vs Outputs & The Decision Engine',
             type: StepType.visualExplanation,
+            interactiveWidgetType: 'boardInspector',
             markdownContent:
-                'Notice the USB port, power barrel, reset button, and numbered pin sockets.',
+                'A microcontroller reads Inputs (sensors and buttons) and commands Outputs (LEDs, buzzers, and motors).',
           ),
           LessonStep(
-            stepId: 'step_3',
+            stepId: 'l01_s03',
+            title: 'Pin Tour: Power and Ground',
+            type: StepType.physicalTask,
+            markdownContent:
+                'Locate 5V and GND. Electricity flows from 5V through your circuit and returns to GND!',
+          ),
+          LessonStep(
+            stepId: 'l01_s04',
             title: 'Board Identification Checkpoint',
             type: StepType.quizCheckpoint,
-            markdownContent: 'Can you spot the USB connector?',
+            markdownContent:
+                'What role does Ground (GND) play in an electrical circuit?',
+            interactiveConfig: {
+              'question': 'What is Ground (GND)?',
+              'options': [
+                'A battery that provides unlimited power',
+                'The return path for electric current to complete the circuit',
+                'A sensor that measures dirt depth',
+              ],
+              'correctIndex': 1,
+            },
           ),
         ],
         xpReward: 50,
       ),
       Lesson(
         id: 'lesson_02',
-        title: 'Installing the Arduino IDE',
+        title: 'Setting Up Your Monster Lab Station',
         summary:
-            'Set up your software laboratory and connect your computer to the board.',
+            'Install the Arduino IDE, connect your board via USB, and verify serial communication link.',
         tier: DifficultyTier.rookie,
-        estimatedMinutes: 15,
+        estimatedMinutes: 18,
         prerequisites: ['lesson_01'],
-        componentIds: [],
+        componentIds: ['comp_uno'],
         steps: [
           LessonStep(
-            stepId: 'step_1',
-            title: 'Download and Drivers',
+            stepId: 'l02_s01',
+            title: 'The Arduino IDE Workbench',
             type: StepType.story,
             markdownContent:
-                'Install the Arduino IDE and verify the CH340G USB communication driver.',
+                'To give commands to your Monster, write code in the Arduino IDE on your computer.',
+          ),
+          LessonStep(
+            stepId: 'l02_s02',
+            title: 'USB Cable Connection',
+            type: StepType.physicalTask,
+            markdownContent:
+                'Plug the blue USB cable into your Arduino and your computer. Watch for the green ON LED.',
+          ),
+          LessonStep(
+            stepId: 'l02_s03',
+            title: 'Configuration Checkpoint',
+            type: StepType.quizCheckpoint,
+            markdownContent: 'How does your computer talk to the Arduino Uno?',
+            interactiveConfig: {
+              'question': 'How does your computer communicate with the board?',
+              'options': [
+                'Through the USB cable using a virtual COM port',
+                'Using an infrared remote',
+                'By sound waves from the computer speakers',
+              ],
+              'correctIndex': 0,
+            },
           ),
         ],
         xpReward: 50,
       ),
       Lesson(
         id: 'lesson_03',
-        title: 'Installing Libraries',
+        title: 'Installing Libraries: Supercharging Code',
         summary:
-            'Learn how open-source libraries give your robot superpowers in seconds.',
-        tier: DifficultyTier.rookie,
-        estimatedMinutes: 10,
+            'Understand open-source modular libraries and how to install them with the Library Manager.',
+        tier: DifficultyTier.builder,
+        estimatedMinutes: 18,
         prerequisites: ['lesson_02'],
-        componentIds: [],
+        componentIds: ['comp_uno', 'comp_07'],
         steps: [
           LessonStep(
-            stepId: 'step_1',
-            title: 'Extending Arduino',
+            stepId: 'l03_s01',
+            title: 'What is a Library?',
             type: StepType.story,
             markdownContent:
-                'Libraries add pre-written functions so you can use LCDs and Servos easily.',
+                'Libraries add pre-written functions so you can use LCDs and sensors easily.',
+          ),
+          LessonStep(
+            stepId: 'l03_s02',
+            title: 'Using the Library Manager',
+            type: StepType.visualExplanation,
+            markdownContent:
+                'The Arduino IDE includes a built-in package repository under Tools > Manage Libraries.',
+          ),
+          LessonStep(
+            stepId: 'l03_s03',
+            title: 'Inspecting the I2C LCD Backpack',
+            type: StepType.physicalTask,
+            markdownContent:
+                'Examine the 4 interface pins on your 16x2 LCD backpack: GND, VCC, SDA, and SCL.',
+          ),
+          LessonStep(
+            stepId: 'l03_s04',
+            title: 'Annotated Walkthrough: LiquidCrystal_I2C',
+            type: StepType.codeExperiment,
+            markdownContent:
+                'LiquidCrystal_I2C lcd(0x27, 16, 2); creates the display object instance.',
+          ),
+          LessonStep(
+            stepId: 'l03_s05',
+            title: 'Library Quiz',
+            type: StepType.quizCheckpoint,
+            markdownContent: 'Why do roboticists use libraries?',
+            interactiveConfig: {
+              'question': 'What is the primary benefit of libraries?',
+              'options': [
+                'They speed up code by writing complex hardware protocols for you',
+                'They replace the need for physical wires',
+                'They make the Arduino heavier',
+              ],
+              'correctIndex': 0,
+            },
           ),
         ],
-        xpReward: 50,
+        xpReward: 60,
       ),
       Lesson(
         id: 'lesson_04',
-        title: 'Basics of the Arduino IDE',
+        title: 'Basics of the Arduino IDE: Setup and Loop',
         summary:
-            'Explore setup(), loop(), verify, upload, and the Serial Monitor window.',
+            'Explore sketch anatomy: the one-time setup() routine and the infinite loop(). Learn Verify and Upload.',
         tier: DifficultyTier.rookie,
-        estimatedMinutes: 15,
+        estimatedMinutes: 18,
         prerequisites: ['lesson_02'],
-        componentIds: [],
+        componentIds: ['comp_uno'],
         steps: [
           LessonStep(
-            stepId: 'step_1',
-            title: 'Code Anatomy',
+            stepId: 'l04_s01',
+            title: 'The Two Heartbeats: setup() and loop()',
             type: StepType.story,
             markdownContent:
                 'Every sketch has two main parts: setup() runs once, loop() repeats forever!',
+          ),
+          LessonStep(
+            stepId: 'l04_s02',
+            title: 'Serial Monitor Diagnostics',
+            type: StepType.codeExperiment,
+            markdownContent:
+                'Serial.begin(9600); opens the hardware UART link to print debug logs.',
+          ),
+          LessonStep(
+            stepId: 'l04_s03',
+            title: 'Execution Cycle Checkpoint',
+            type: StepType.quizCheckpoint,
+            markdownContent: 'How many times does setup() execute?',
+            interactiveConfig: {
+              'question': 'How many times does setup() execute?',
+              'options': [
+                'Exactly once when the board powers on or resets',
+                'Continuously in an infinite loop',
+                'Only when a button is pressed',
+              ],
+              'correctIndex': 0,
+            },
+          ),
+        ],
+        xpReward: 60,
+      ),
+      Lesson(
+        id: 'lesson_05',
+        title: 'Blink: Your First Physical Circuit',
+        summary:
+            'Take control of physical photons! Toggle digital outputs with digitalWrite() and master delay() timing.',
+        tier: DifficultyTier.rookie,
+        estimatedMinutes: 20,
+        prerequisites: ['lesson_04'],
+        componentIds: ['comp_uno'],
+        steps: [
+          LessonStep(
+            stepId: 'l05_s01',
+            title: 'Digital HIGH vs LOW & Push-Pull Drivers',
+            type: StepType.story,
+            markdownContent:
+                'HIGH sends 5 Volts (LED on). LOW sends 0 Volts (LED off).',
+          ),
+          LessonStep(
+            stepId: 'l05_s02',
+            title: 'The Built-In LED (Pin 13 L)',
+            type: StepType.physicalTask,
+            markdownContent:
+                'Inspect the tiny amber LED labeled L next to digital pin 13.',
+          ),
+          LessonStep(
+            stepId: 'l05_s03',
+            title: 'The Blink Code',
+            type: StepType.codeExperiment,
+            interactiveWidgetType: 'blinkSimulator',
+            markdownContent:
+                'Control Pin 13 LED with pinMode(13, OUTPUT) and digitalWrite(13, HIGH).',
+          ),
+          LessonStep(
+            stepId: 'l05_s04',
+            title: 'Timing Challenge',
+            type: StepType.quizCheckpoint,
+            markdownContent: 'What does delay(500) do?',
+            interactiveConfig: {
+              'question': 'What is delay(500)?',
+              'options': [
+                'Waits for half a second (500 milliseconds)',
+                'Waits for 500 seconds',
+                'Increases voltage by 500 millivolts',
+              ],
+              'correctIndex': 0,
+            },
           ),
         ],
         xpReward: 75,
       ),
       Lesson(
-        id: 'lesson_05',
-        title: 'Blink: Your First Project',
-        summary:
-            'Send electricity through pin 13 to flash your first light on and off!',
-        tier: DifficultyTier.rookie,
-        estimatedMinutes: 15,
-        prerequisites: ['lesson_04'],
-        componentIds: [],
-        steps: [
-          LessonStep(
-            stepId: 'step_1',
-            title: 'Digital High and Low',
-            type: StepType.codeExperiment,
-            markdownContent:
-                'HIGH sends 5 Volts (LED on). LOW sends 0 Volts (LED off).',
-          ),
-        ],
-        xpReward: 100,
-      ),
-      Lesson(
         id: 'lesson_06',
-        title: 'Potentiometer Readings',
+        title: 'Potentiometer: Reading Analog Signals',
         summary:
-            'Turn a physical knob to send smooth analog numbers from 0 to 1023.',
-        tier: DifficultyTier.rookie,
-        estimatedMinutes: 15,
-        prerequisites: ['lesson_05'],
-        componentIds: ['comp_20'],
-        steps: [
-          LessonStep(
-            stepId: 'step_1',
-            title: 'Analog Voltage Divider',
-            type: StepType.interactiveWiring,
-            markdownContent:
-                'Connect 5V, GND, and the center wiper pin to analog input A0.',
-          ),
-        ],
-        xpReward: 100,
-      ),
-      Lesson(
-        id: 'lesson_07',
-        title: 'Simple RGB LEDs',
-        summary:
-            'Mix Red, Green, and Blue light using Pulse Width Modulation (PWM).',
+            'Convert physical rotation into digital numbers! Discover the 10-bit Analog to Digital Converter (ADC).',
         tier: DifficultyTier.rookie,
         estimatedMinutes: 20,
         prerequisites: ['lesson_05'],
-        componentIds: [],
+        componentIds: ['comp_uno', 'comp_breadboard', 'comp_20'],
         steps: [
           LessonStep(
-            stepId: 'step_1',
-            title: 'Color Synthesis',
-            type: StepType.codeExperiment,
+            stepId: 'l06_s01',
+            title: 'Analog vs Digital Signals',
+            type: StepType.story,
             markdownContent:
-                'Use analogWrite(pin, 0..255) to mix custom rainbow colors!',
+                'Turn a physical knob to send smooth analog numbers from 0 to 1023.',
+          ),
+          LessonStep(
+            stepId: 'l06_s02',
+            title: 'The Voltage Divider Knob',
+            type: StepType.visualExplanation,
+            markdownContent:
+                'A potentiometer outputs a continuous voltage fraction between 0V and 5V.',
+          ),
+          LessonStep(
+            stepId: 'l06_s03',
+            title: 'ADC Math (0 to 1023)',
+            type: StepType.codeExperiment,
+            interactiveWidgetType: 'potentiometerSimulator',
+            markdownContent:
+                'int rawValue = analogRead(A0); converts voltage into a 10-bit count.',
+          ),
+          LessonStep(
+            stepId: 'l06_s04',
+            title: 'Analog Perception Checkpoint',
+            type: StepType.quizCheckpoint,
+            markdownContent: 'What is the range of analogRead()?',
+            interactiveConfig: {
+              'question': 'What is the range of analogRead()?',
+              'options': [
+                '0 to 1023',
+                '0 to 255',
+                '-512 to +512',
+              ],
+              'correctIndex': 0,
+            },
           ),
         ],
-        xpReward: 120,
+        xpReward: 80,
+      ),
+      Lesson(
+        id: 'lesson_07',
+        title: 'RGB LED: Mixing Colors with PWM',
+        summary:
+            'Harness Pulse Width Modulation (PWM) and additive color physics to generate millions of custom hues.',
+        tier: DifficultyTier.rookie,
+        estimatedMinutes: 20,
+        prerequisites: ['lesson_05'],
+        componentIds: ['comp_uno', 'comp_breadboard'],
+        steps: [
+          LessonStep(
+            stepId: 'l07_s01',
+            title: 'Additive Optics & PWM',
+            type: StepType.story,
+            markdownContent:
+                'Mix Red, Green, and Blue light using Pulse Width Modulation (PWM).',
+          ),
+          LessonStep(
+            stepId: 'l07_s02',
+            title: 'analogWrite() Color Studio',
+            type: StepType.codeExperiment,
+            interactiveWidgetType: 'rgbMixer',
+            markdownContent:
+                'analogWrite(pin, value); switches the digital pin hundreds of times per second.',
+          ),
+          LessonStep(
+            stepId: 'l07_s03',
+            title: 'Color Mixing Quiz',
+            type: StepType.quizCheckpoint,
+            markdownContent: 'What color is produced by Red + Green light?',
+            interactiveConfig: {
+              'question': 'Red + Green light makes what color?',
+              'options': [
+                'Yellow',
+                'Cyan',
+                'Magenta',
+              ],
+              'correctIndex': 0,
+            },
+          ),
+        ],
+        xpReward: 90,
+      ),
+      Lesson(
+        id: 'lesson_08',
+        title: 'Digital Inputs: Pushbuttons & Internal Pullups',
+        summary:
+            'Detect physical button presses and master the internal pullup resistor to prevent floating pins.',
+        tier: DifficultyTier.rookie,
+        estimatedMinutes: 18,
+        prerequisites: ['lesson_05'],
+        componentIds: ['comp_uno', 'comp_breadboard'],
+        steps: [
+          LessonStep(
+            stepId: 'l08_s01',
+            title: 'Floating Inputs and Electromagnetic Interference',
+            type: StepType.story,
+            markdownContent:
+                'Unconnected CMOS input pins act like antennas, picking up stray electromagnetic noise.',
+          ),
+          LessonStep(
+            stepId: 'l08_s02',
+            title: 'INPUT_PULLUP and Inverted Logic',
+            type: StepType.codeExperiment,
+            markdownContent:
+                'pinMode(buttonPin, INPUT_PULLUP); enables the internal 20k-50k ohm pullup resistor.',
+          ),
+          LessonStep(
+            stepId: 'l08_s03',
+            title: 'Digital Input Checkpoint',
+            type: StepType.quizCheckpoint,
+            markdownContent:
+                'What state is read when a pullup button is pressed to GND?',
+            interactiveConfig: {
+              'question':
+                  'What state does digitalRead() return when an INPUT_PULLUP button is pressed?',
+              'options': [
+                'LOW (0V)',
+                'HIGH (5V)',
+                'Floating',
+              ],
+              'correctIndex': 0,
+            },
+          ),
+        ],
+        xpReward: 70,
+      ),
+      Lesson(
+        id: 'lesson_09',
+        title: 'The I2C Communication Bus',
+        summary:
+            'Network multiple sensors and displays over two shared wires using the Inter-Integrated Circuit protocol.',
+        tier: DifficultyTier.builder,
+        estimatedMinutes: 20,
+        prerequisites: ['lesson_03', 'lesson_04'],
+        componentIds: ['comp_uno', 'comp_07', 'comp_10'],
+        steps: [
+          LessonStep(
+            stepId: 'l09_s01',
+            title: 'The Shared 2-Wire Highway: SDA and SCL',
+            type: StepType.story,
+            markdownContent:
+                'I2C networks up to 127 devices using just two wires: SDA (data) and SCL (clock).',
+          ),
+          LessonStep(
+            stepId: 'l09_s02',
+            title: 'Addressing and Bus Collisions',
+            type: StepType.visualExplanation,
+            markdownContent:
+                'Every I2C peripheral has a unique 7-bit hexadecimal address like 0x27 or 0x68.',
+          ),
+          LessonStep(
+            stepId: 'l09_s03',
+            title: 'I2C Bus Protocol Checkpoint',
+            type: StepType.quizCheckpoint,
+            markdownContent:
+                'How many signal wires does I2C use for communication?',
+            interactiveConfig: {
+              'question':
+                  'How many signal wires does I2C require (excluding power and ground)?',
+              'options': [
+                '2 wires (SDA and SCL)',
+                '4 wires (MOSI, MISO, SCK, SS)',
+                '8 parallel wires',
+              ],
+              'correctIndex': 0,
+            },
+          ),
+        ],
+        xpReward: 80,
+      ),
+      Lesson(
+        id: 'lesson_10',
+        title: 'The High-Speed SPI Protocol',
+        summary:
+            'Stream data at megahertz clock speeds using 4-wire Serial Peripheral Interface.',
+        tier: DifficultyTier.engineer,
+        estimatedMinutes: 20,
+        prerequisites: ['lesson_09'],
+        componentIds: ['comp_uno', 'comp_15', 'comp_23'],
+        steps: [
+          LessonStep(
+            stepId: 'l10_s01',
+            title: 'Synchronous Full-Duplex Speed',
+            type: StepType.story,
+            markdownContent:
+                'SPI uses 4 dedicated lines (MOSI, MISO, SCK, SS) to achieve clock speeds up to 10+ MHz.',
+          ),
+          LessonStep(
+            stepId: 'l10_s02',
+            title: 'Chip Select (SS) Bus Arbitration',
+            type: StepType.visualExplanation,
+            markdownContent:
+                'The Master controller pulls a specific peripheral Slave Select (SS) LOW to talk to it.',
+          ),
+          LessonStep(
+            stepId: 'l10_s03',
+            title: 'SPI Protocol Checkpoint',
+            type: StepType.quizCheckpoint,
+            markdownContent: 'What line selects which SPI device is active?',
+            interactiveConfig: {
+              'question':
+                  'Which SPI line activates a specific peripheral device?',
+              'options': [
+                'SS / CS (Slave Select / Chip Select pulled LOW)',
+                'MOSI',
+                'MISO',
+              ],
+              'correctIndex': 0,
+            },
+          ),
+        ],
+        xpReward: 90,
+      ),
+      Lesson(
+        id: 'lesson_11',
+        title: 'Serial UART & Wireless Communication',
+        summary:
+            'Master universal asynchronous reception and transmission to control robots wirelessly.',
+        tier: DifficultyTier.engineer,
+        estimatedMinutes: 20,
+        prerequisites: ['lesson_04'],
+        componentIds: ['comp_uno', 'comp_29'],
+        steps: [
+          LessonStep(
+            stepId: 'l11_s01',
+            title: 'Asynchronous Point-to-Point Links',
+            type: StepType.story,
+            markdownContent:
+                'UART communicates without a clock wire by agreeing on a shared Baud Rate.',
+          ),
+          LessonStep(
+            stepId: 'l11_s02',
+            title: 'The Crossover Rule: TX to RX',
+            type: StepType.visualExplanation,
+            markdownContent:
+                'Always cross lines: the transmitter TX connects to the receiver RX of the other device.',
+          ),
+          LessonStep(
+            stepId: 'l11_s03',
+            title: 'UART Protocol Checkpoint',
+            type: StepType.quizCheckpoint,
+            markdownContent:
+                'How should TX and RX be connected between two devices?',
+            interactiveConfig: {
+              'question':
+                  'How must UART transmit and receive pins be connected?',
+              'options': [
+                'TX connects to RX and RX connects to TX (crossover)',
+                'TX to TX and RX to RX',
+                'Both to Ground',
+              ],
+              'correctIndex': 0,
+            },
+          ),
+        ],
+        xpReward: 90,
+      ),
+      Lesson(
+        id: 'lesson_12',
+        title: 'PWM & Motor Physics',
+        summary:
+            'Tame electromagnetic inductance! Drive DC motors and servos with PWM and H-bridge drivers.',
+        tier: DifficultyTier.engineer,
+        estimatedMinutes: 22,
+        prerequisites: ['lesson_06', 'lesson_07'],
+        componentIds: ['comp_uno', 'comp_33', 'comp_36', 'comp_l293d'],
+        steps: [
+          LessonStep(
+            stepId: 'l12_s01',
+            title: 'Inductive Kickback and Flyback Protection',
+            type: StepType.story,
+            markdownContent:
+                'Motor coils collapse their magnetic fields when switched off, creating destructive back-EMF voltage spikes.',
+          ),
+          LessonStep(
+            stepId: 'l12_s02',
+            title: 'H-Bridge Direction Control and Shoot-Through',
+            type: StepType.codeExperiment,
+            markdownContent:
+                'An H-bridge motor driver (like L293D) routes current in either direction without short circuits.',
+          ),
+          LessonStep(
+            stepId: 'l12_s03',
+            title: 'Motor Physics Checkpoint',
+            type: StepType.quizCheckpoint,
+            markdownContent:
+                'Why must you use a flyback diode with an inductive motor?',
+            interactiveConfig: {
+              'question':
+                  'Why is a flyback diode required across DC motor terminals?',
+              'options': [
+                'To safely clamp high-voltage inductive kickback spikes',
+                'To make the motor run in reverse',
+                'To amplify the motor speed',
+              ],
+              'correctIndex': 0,
+            },
+          ),
+        ],
+        xpReward: 100,
       ),
     ];
   }
@@ -281,6 +681,77 @@ class AssetCurriculumDataSource {
         primaryImage: 'assets/images/components/comp_37.webp',
         detailImages: ['assets/images/components/comp_37_detail.webp'],
         imageDescription: 'Hardware photo of Laser Diode Module',
+      ),
+      ComponentModel(
+        id: 'comp_uno',
+        peripheralNumber: 39,
+        name: 'Arduino Uno R3',
+        partNumber: 'ATmega328P',
+        category: 'microcontroller',
+        description:
+            'The flagship central brain of Monster Lab. Features 14 digital I/O pins, 6 analog inputs, a 16MHz clock, and a USB interface.',
+        realWorldAnalogy: 'The central brain of a robot or smart device.',
+        voltage: OperatingVoltage.v5,
+        pinout: [
+          PinDefinition(
+              pinName: 'D0/RX',
+              type: PinType.uart,
+              description: 'Serial Receive'),
+          PinDefinition(
+              pinName: 'D1/TX',
+              type: PinType.uart,
+              description: 'Serial Transmit'),
+          PinDefinition(
+              pinName: 'D13',
+              type: PinType.digitalOut,
+              description: 'Built-in LED'),
+          PinDefinition(
+              pinName: '5V', type: PinType.power, description: '5V Power'),
+          PinDefinition(
+              pinName: 'GND', type: PinType.ground, description: 'Ground'),
+        ],
+        datasheetRef: 'ATmega328P.pdf',
+        safety: SafetyClassification(
+          level: SafetyLevel.safe,
+          hazards: [],
+          requiresParentUnlock: false,
+        ),
+        projectIds: ['proj_01'],
+        primaryImage: 'assets/images/components/comp_uno.webp',
+        detailImages: ['assets/images/components/comp_uno_detail.webp'],
+        imageDescription: 'Hardware photo of Arduino Uno R3',
+      ),
+      ComponentModel(
+        id: 'comp_breadboard',
+        peripheralNumber: 42,
+        name: '830-Point Solderless Breadboard',
+        partNumber: 'MB-102',
+        category: 'prototyping',
+        description:
+            'A solderless prototyping board featuring twin power distribution rails and 630 tie-point component grid.',
+        realWorldAnalogy:
+            'A reusable circuit highway for connecting components without soldering.',
+        voltage: OperatingVoltage.v5,
+        pinout: [
+          PinDefinition(
+              pinName: 'Power (+)',
+              type: PinType.power,
+              description: 'Power Rail'),
+          PinDefinition(
+              pinName: 'Ground (-)',
+              type: PinType.ground,
+              description: 'Ground Rail'),
+        ],
+        datasheetRef: 'Breadboard.pdf',
+        safety: SafetyClassification(
+          level: SafetyLevel.safe,
+          hazards: [],
+          requiresParentUnlock: false,
+        ),
+        projectIds: ['proj_01'],
+        primaryImage: 'assets/images/components/comp_breadboard.webp',
+        detailImages: ['assets/images/components/comp_breadboard_detail.webp'],
+        imageDescription: 'Hardware photo of Solderless Breadboard',
       ),
     ];
   }

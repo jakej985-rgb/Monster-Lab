@@ -3,7 +3,7 @@
   "title": "Basics of the Arduino IDE: Setup and Loop",
   "summary": "Explore sketch anatomy: the one-time setup() routine and the infinite loop(). Learn Verify and Upload.",
   "tier": "rookie",
-  "estimatedMinutes": 20,
+  "estimatedMinutes": 18,
   "prerequisites": [
     "lesson_02"
   ],
@@ -13,22 +13,28 @@
       "stepId": "l04_s01",
       "title": "The Two Heartbeats: setup() and loop()",
       "type": "story",
-      "markdownContent": "Every Arduino sketch has two main functions:\n- `setup()` runs once when the board turns on.\n- `loop()` runs continuously over and over forever!"
+      "markdownContent": "Unlike computer apps that terminate, a robot's brain must never quit. An Arduino sketch has two mandatory architectural functions:\n\n- `void setup()`: Executes **exactly once** when power is applied or the reset button is pressed. Used for configuring pin modes, establishing serial baud rates, and initializing sensors.\n- `void loop()`: Executes **continuously and repeatedly forever**. Houses sensing, decision logic, and actuator commands."
     },
     {
       "stepId": "l04_s02",
-      "title": "The Verify and Upload Buttons",
+      "title": "Syntax Anatomy: Blocks and Semicolons",
       "type": "visualExplanation",
-      "markdownContent": "- **Verify (Checkmark)**: Checks your code for typos and syntax errors.\n- **Upload (Arrow)**: Compiles and flashes the program onto the board's flash memory."
+      "markdownContent": "Arduino C++ programs follow strict punctuation grammar:\n\n- **Statements**: Every executable command must end with a semicolon `;`.\n- **Functions**: Group reusable blocks of code inside curly braces `{}`.\n- **Comments**: Notes ignored by the compiler. Single-line comments start with `//`, and block comments span `/* ... */`."
     },
     {
       "stepId": "l04_s03",
-      "title": "Serial Monitor",
-      "type": "codeExperiment",
-      "markdownContent": "`Serial.begin(9600);` starts a telephone line between Arduino and your computer. `Serial.println(\"Hello Monster!\");` sends messages to the screen!"
+      "title": "Board Tour: TX/RX LEDs and Reset Switch",
+      "type": "physicalTask",
+      "markdownContent": "Locate hardware feedback indicators on your Uno:\n1. Find the small red or yellow **Reset** momentary switch in the corner.\n2. Locate the surface-mount LEDs labeled `TX` (Transmit) and `RX` (Receive) near digital pins 0 and 1.\n3. Connect USB and press Reset\u2014notice how the board restarts and TX/RX flash as the bootloader handshakes with the computer."
     },
     {
       "stepId": "l04_s04",
+      "title": "Serial Monitor at 9600 Baud",
+      "type": "codeExperiment",
+      "markdownContent": "```cpp\nvoid setup() {\n  Serial.begin(9600); // Initialize UART communication at 9600 baud\n  Serial.println(\"--- Monster Lab Station Online ---\");\n}\n\nvoid loop() {\n  Serial.print(\"Heartbeat timestamp: \");\n  Serial.println(millis()); // Print milliseconds since boot\n  delay(1000);              // Wait 1 second before repeating\n}\n```\n\nOpen **Tools > Serial Monitor** and set the bottom-right dropdown to **9600 baud** to view real-time diagnostics."
+    },
+    {
+      "stepId": "l04_s05",
       "title": "Sketch Anatomy Checkpoint",
       "type": "quizCheckpoint",
       "markdownContent": "How many times does code inside void setup() run?",
@@ -39,7 +45,81 @@
           "Every millisecond",
           "Only when you press a button"
         ],
-        "correctIndex": 0
+        "correctIndex": 0,
+        "questions": [
+          {
+            "question": "How many times does code inside void setup() execute after startup?",
+            "options": [
+              "Exactly once",
+              "Exactly ten times",
+              "Continuously in an infinite loop"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What is the primary role of void loop() in an Arduino robot?",
+            "options": [
+              "To repeatedly execute sensing, decision-making, and actuator control forever",
+              "To shut down the Arduino when code finishes",
+              "To format the flash memory"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What character must terminate every standard C++ statement in Arduino?",
+            "options": [
+              "Semicolon (;)",
+              "Colon (:)",
+              "Period (.)"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What does the Verify (checkmark) button in the IDE do?",
+            "options": [
+              "Compiles the sketch to check for syntax and type errors without uploading",
+              "Physically tests the Arduino hardware circuits",
+              "Deletes existing code from the board"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "If your code specifies Serial.begin(9600), what baud rate must the Serial Monitor be set to?",
+            "options": [
+              "9600 baud",
+              "115200 baud",
+              "Any baud rate works automatically"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What is the purpose of curly braces { } in code?",
+            "options": [
+              "They group multiple statements together into a single function or block",
+              "They represent mathematical multiplication",
+              "They indicate comments ignored by the compiler"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What function is used to send text to the Serial Monitor followed by a new line?",
+            "options": [
+              "Serial.println()",
+              "Serial.write()",
+              "Serial.input()"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What happens if delay(1000) is omitted from a loop() that prints text?",
+            "options": [
+              "The loop runs at maximum CPU speed, flooding the serial buffer and monitor",
+              "The Arduino overheats and shuts off",
+              "The compiler refuses to upload the code"
+            ],
+            "correctIndex": 0
+          }
+        ]
       }
     }
   ],

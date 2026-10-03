@@ -3,7 +3,7 @@
   "title": "RGB LED: Mixing Colors with PWM",
   "summary": "Harness Pulse Width Modulation (PWM) and additive color physics to generate millions of custom hues.",
   "tier": "rookie",
-  "estimatedMinutes": 30,
+  "estimatedMinutes": 20,
   "prerequisites": [
     "lesson_05"
   ],
@@ -11,24 +11,31 @@
   "steps": [
     {
       "stepId": "l07_s01",
-      "title": "Light Physics: Red, Green, Blue",
+      "title": "Additive Optics: Red, Green, Blue",
       "type": "story",
-      "markdownContent": "An RGB LED combines three tiny LED dies inside a single lens. By mixing different amounts of Red, Green, and Blue light, you can make any color in the rainbow!"
+      "markdownContent": "An RGB LED packages three independent semiconductor dies (Red, Green, Blue) into a single 5mm lens. By combining these three primary wavelengths of light at varying intensities, additive optics stimulates human retina cone cells to synthesize over 16 million colors:\n\n- Red + Green = **Yellow**\n- Green + Blue = **Cyan**\n- Red + Blue = **Magenta / Purple**\n- Red + Green + Blue = **White**"
     },
     {
       "stepId": "l07_s02",
-      "title": "What is Pulse Width Modulation (PWM)?",
+      "title": "Pulse Width Modulation (PWM) & Duty Cycle",
       "type": "visualExplanation",
-      "markdownContent": "Digital pins can only output 5V or 0V. To dim an LED, the Arduino turns the pin ON and OFF hundreds of times per second. Look for the tilde `~` symbol next to pins 3, 5, 6, 9, 10, 11!"
+      "markdownContent": "Because digital pins can only output 5V or 0V, the Uno simulates intermediate voltages using **Pulse Width Modulation (PWM)**\u2014pulsing the output hundreds of times per second (~490 Hz).\n\n- **Duty Cycle**: The percentage of time the square wave stays HIGH in one period.\n- Look for the tilde `~` symbol next to PWM pins: `3`, `5`, `6`, `9`, `10`, `11`!"
     },
     {
       "stepId": "l07_s03",
-      "title": "analogWrite() Duty Cycle",
-      "type": "codeExperiment",
-      "markdownContent": "`analogWrite(pin, value)` accepts 0 (always OFF) to 255 (always ON). To make Purple, send Red=255, Green=0, Blue=255!"
+      "title": "Common Cathode Lead Identification",
+      "type": "physicalTask",
+      "markdownContent": "Inspect a 4-pin Common Cathode RGB LED:\n1. Find the longest lead\u2014this is the **Common Cathode (GND)**.\n2. The isolated pin on one side of the cathode is **Red**.\n3. The two pins on the other side are **Green** and **Blue**.\n4. Insert into breadboard. Connect Cathode to `GND`, and place a 220\u03a9 resistor on Red, Green, and Blue leading to PWM pins `9`, `10`, and `11`."
     },
     {
       "stepId": "l07_s04",
+      "title": "analogWrite() Color Studio",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "rgbMixer",
+      "markdownContent": "```cpp\nconst int redPin = 9;\nconst int greenPin = 10;\nconst int bluePin = 11;\n\nvoid setColor(int r, int g, int b) {\n  analogWrite(redPin, constrain(r, 0, 255));\n  analogWrite(greenPin, constrain(g, 0, 255));\n  analogWrite(bluePin, constrain(b, 0, 255));\n}\n\nvoid setup() {\n  pinMode(redPin, OUTPUT);\n  pinMode(greenPin, OUTPUT);\n  pinMode(bluePin, OUTPUT);\n}\n\nvoid loop() {\n  setColor(255, 0, 255); // Purple (Red + Blue)\n  delay(1000);\n  setColor(255, 120, 0); // Monster Amber\n  delay(1000);\n  setColor(0, 255, 255); // Cyan (Green + Blue)\n  delay(1000);\n}\n```"
+    },
+    {
+      "stepId": "l07_s05",
       "title": "Color Mixing Quiz",
       "type": "quizCheckpoint",
       "markdownContent": "What color do you get if you mix Red at 255 and Green at 255 (with Blue at 0)?",
@@ -39,7 +46,81 @@
           "Cyan",
           "Magenta"
         ],
-        "correctIndex": 0
+        "correctIndex": 0,
+        "questions": [
+          {
+            "question": "What does PWM stand for?",
+            "options": [
+              "Pulse Width Modulation",
+              "Power Wave Measurement",
+              "Phase Wire Multiplication"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What is the valid argument range for analogWrite() on an Arduino Uno?",
+            "options": [
+              "0 to 255 (8-bit)",
+              "0 to 1023 (10-bit)",
+              "0 to 100 (%)"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "Which digital pins on the Arduino Uno support hardware PWM?",
+            "options": [
+              "Pins marked with a tilde (~): 3, 5, 6, 9, 10, 11",
+              "All digital pins 0 through 13",
+              "Only analog pins A0 through A5"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What primary colors of light combine to produce Yellow?",
+            "options": [
+              "Red and Green",
+              "Blue and Yellow",
+              "Red and Blue"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What duty cycle percentage does an analogWrite() value of 127 produce?",
+            "options": [
+              "Approximately 50%",
+              "10%",
+              "100%"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "On a 4-pin common cathode RGB LED, what does the longest lead connect to?",
+            "options": [
+              "Ground (GND)",
+              "5V Power",
+              "Digital Pin 13"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "Why does an LED appear dimmer when fed a 25% duty cycle PWM signal?",
+            "options": [
+              "The LED is off for 75% of the time, and the human eye averages the photon emission",
+              "The voltage is reduced from 5V to 1.25V DC",
+              "The resistor value increases dynamically"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What primary colors combine to produce Cyan?",
+            "options": [
+              "Green and Blue",
+              "Red and Blue",
+              "Red and Green"
+            ],
+            "correctIndex": 0
+          }
+        ]
       }
     }
   ],

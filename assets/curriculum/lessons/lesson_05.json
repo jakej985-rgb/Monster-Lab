@@ -3,34 +3,41 @@
   "title": "Blink: Your First Physical Circuit",
   "summary": "Take control of physical photons! Toggle digital outputs with digitalWrite() and master delay() timing.",
   "tier": "rookie",
-  "estimatedMinutes": 25,
+  "estimatedMinutes": 20,
   "prerequisites": [
     "lesson_04"
   ],
   "componentIds": [
-    "comp_34"
+    "comp_uno"
   ],
   "steps": [
     {
       "stepId": "l05_s01",
-      "title": "Digital HIGH vs LOW",
+      "title": "Digital HIGH vs LOW & Push-Pull Drivers",
       "type": "story",
-      "markdownContent": "A digital pin has two states:\n- `HIGH` = 5 Volts (ON)\n- `LOW` = 0 Volts (OFF)\nThis is binary 1 and 0 in the physical world!"
+      "markdownContent": "Software commands physical electrons through digital output pins:\n\n- `HIGH` = **5.0 Volts** (internal P-FET connects pin to 5V rail; sources current).\n- `LOW` = **0.0 Volts** (internal N-FET connects pin to Ground; sinks current).\n\nBefore an output pin can drive current, you must configure its silicon driver into low-impedance mode by calling `pinMode(pin, OUTPUT);` inside `setup()`."
     },
     {
       "stepId": "l05_s02",
-      "title": "The Built-In LED (Pin 13)",
+      "title": "The Built-In LED (Pin 13 'L')",
       "type": "physicalTask",
-      "markdownContent": "Look closely at your Arduino board. Near pin 13 is a tiny amber LED marked with the letter `L`. We can control it without any external wires!"
+      "markdownContent": "Inspect your Arduino Uno hardware:\n1. Look between Digital Pin 13 and the ATmega328P microcontroller chip.\n2. Find the tiny rectangular surface-mount amber LED labeled with silkscreen `L`.\n3. Trace the fine copper trace on the PCB leading from Pin 13 through an onboard 1k\u03a9 SMD resistor to the LED.\n4. You can control this light without plugging in a single external jumper wire!"
     },
     {
       "stepId": "l05_s03",
       "title": "The Blink Code",
       "type": "codeExperiment",
-      "markdownContent": "```cpp\nvoid setup() {\n  pinMode(13, OUTPUT);\n}\nvoid loop() {\n  digitalWrite(13, HIGH);\n  delay(1000);\n  digitalWrite(13, LOW);\n  delay(1000);\n}\n```\nUpload this code and watch the light blink every second!"
+      "interactiveWidgetType": "blinkSimulator",
+      "markdownContent": "```cpp\nconst int ledPin = 13;\n\nvoid setup() {\n  pinMode(ledPin, OUTPUT); // Configure Pin 13 as a low-impedance output\n}\n\nvoid loop() {\n  digitalWrite(ledPin, HIGH); // Turn LED ON (5V)\n  delay(1000);                // Wait 1000 ms (1 second)\n  digitalWrite(ledPin, LOW);  // Turn LED OFF (0V)\n  delay(1000);                // Wait 1000 ms (1 second)\n}\n```"
     },
     {
       "stepId": "l05_s04",
+      "title": "Persistence of Vision & Current Limits",
+      "type": "story",
+      "markdownContent": "Two critical physical principles govern microcontroller LEDs:\n\n- **Persistence of Vision**: If an LED is toggled faster than 50 times per second (`delay(10)`), human retina cone cells cannot detect the dark interval\u2014the LED appears steadily illuminated at reduced brightness.\n- **Current Limits**: An ATmega328P output pin can supply a maximum of **20 mA** continuous current. Never wire an external LED directly to a pin without a 220\u03a9\u20131k\u03a9 current-limiting resistor!"
+    },
+    {
+      "stepId": "l05_s05",
       "title": "Timing Challenge",
       "type": "quizCheckpoint",
       "markdownContent": "What does delay(500) do?",
@@ -41,7 +48,81 @@
           "Waits for 500 seconds",
           "Increases voltage by 500 millivolts"
         ],
-        "correctIndex": 0
+        "correctIndex": 0,
+        "questions": [
+          {
+            "question": "What voltage level does digitalWrite(pin, HIGH) produce on an Arduino Uno?",
+            "options": [
+              "5.0 Volts",
+              "0.0 Volts",
+              "12.0 Volts"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "How many milliseconds are in 1.5 seconds?",
+            "options": [
+              "1500 ms",
+              "150 ms",
+              "15 ms"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "Why must you call pinMode(pin, OUTPUT) before writing to a pin?",
+            "options": [
+              "To switch internal pin transistors from high-impedance listening to active voltage driving",
+              "To supply 12V to the USB port",
+              "To download the sketch to EEPROM"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "Which digital pin on the Arduino Uno is wired directly to the on-board amber 'L' LED?",
+            "options": [
+              "Pin 13",
+              "Pin 0",
+              "Pin A0"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What visual phenomenon causes an LED flashing at 100 Hz to appear continuously solid?",
+            "options": [
+              "Persistence of vision",
+              "Capacitive filtering",
+              "Inductive kickback"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What happens if you omit the delay() between turning the LED OFF and turning it back ON in loop()?",
+            "options": [
+              "The LED turns back on so quickly the off-state is imperceptible",
+              "The microcontroller halts",
+              "The LED burns out"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What is the maximum safe continuous current that should be drawn from an Uno I/O pin?",
+            "options": [
+              "Approximately 20 mA",
+              "5 Amps",
+              "500 mA"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What does digitalWrite(pin, LOW) connect the output pin to internally?",
+            "options": [
+              "Ground (0V reference)",
+              "5V power supply",
+              "Analog-to-digital converter"
+            ],
+            "correctIndex": 0
+          }
+        ]
       }
     }
   ],

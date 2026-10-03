@@ -3,7 +3,7 @@
   "title": "Setting Up Your Monster Lab Station",
   "summary": "Install the Arduino IDE, connect your board via USB, and verify serial communication link.",
   "tier": "rookie",
-  "estimatedMinutes": 20,
+  "estimatedMinutes": 18,
   "prerequisites": [
     "lesson_01"
   ],
@@ -13,22 +13,34 @@
       "stepId": "l02_s01",
       "title": "The Arduino IDE Workbench",
       "type": "story",
-      "markdownContent": "To give commands to your Monster, you write code in the **Arduino IDE** (Integrated Development Environment) on your computer."
+      "markdownContent": "To give life to your monster, you write programs in the **Arduino IDE** (Integrated Development Environment). The IDE brings together a code editor, a C++ compiler (AVR-GCC), and an automated flash loader (avrdude) into a single workbench."
     },
     {
       "stepId": "l02_s02",
       "title": "USB Cable Connection",
       "type": "physicalTask",
-      "markdownContent": "Plug the blue USB cable into your Arduino and your computer. Watch for the green `ON` LED illuminating on the board."
+      "markdownContent": "Connect your physical hardware station:\n1. Plug the square USB Type-B cable into your Arduino Uno.\n2. Plug the USB Type-A connector into your computer.\n3. Look for the green `ON` LED illuminating solidly on the board.\n4. Observe the yellow `TX` and `RX` LEDs flash briefly as the computer enumerates the serial link."
     },
     {
       "stepId": "l02_s03",
       "title": "Select Board and Port",
       "type": "visualExplanation",
-      "markdownContent": "Go to **Tools > Board > Arduino Uno**, then select the active COM / Serial port for your device."
+      "markdownContent": "Before code can be compiled and transferred, tell the IDE what hardware is attached:\n\n- **Select Board**: Open **Tools > Board > Arduino AVR Boards > Arduino Uno**.\n- **Select Port**: Open **Tools > Port** and pick the communication channel (e.g., `COM3` on Windows, or `/dev/cu.usbmodem...` on macOS/Linux).\n- The COM port represents the virtual serial stream connecting your computer's OS to the Uno's USB communication chip."
     },
     {
       "stepId": "l02_s04",
+      "title": "Source Code vs Machine Language",
+      "type": "story",
+      "markdownContent": "Microcontrollers cannot read English or C++ directly. When you click **Verify**, the IDE compiler transforms your human-readable instructions into a stream of binary machine instructions (hexadecimal opcode bytes). When you click **Upload**, this binary program is flashed into the ATmega328P's 32 KB flash memory!"
+    },
+    {
+      "stepId": "l02_s05",
+      "title": "Verify and Upload Lifecycle",
+      "type": "codeExperiment",
+      "markdownContent": "The programming lifecycle follows five disciplined engineering steps:\n\n1. **Write**: Compose code in the editor.\n2. **Verify (Checkmark)**: Compile code to check for typos and syntax errors without touching hardware.\n3. **Upload (Right Arrow)**: Flash the compiled machine binary onto the board.\n4. **Observe**: Watch how the physical circuit and LEDs react.\n5. **Iterate**: Adjust timing, change pin behaviors, and re-test!"
+    },
+    {
+      "stepId": "l02_s06",
       "title": "Connection Checkpoint",
       "type": "quizCheckpoint",
       "markdownContent": "Which menu in the IDE lets you choose your Arduino board model?",
@@ -39,7 +51,81 @@
           "Tools > Board",
           "Help > About"
         ],
-        "correctIndex": 1
+        "correctIndex": 1,
+        "questions": [
+          {
+            "question": "What does IDE stand for?",
+            "options": [
+              "Integrated Development Environment",
+              "Internal Digital Engine",
+              "Internet Device Emulator"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "Which menu in the IDE lets you choose your Arduino board model?",
+            "options": [
+              "Tools > Board",
+              "File > Save",
+              "Help > About"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What is the primary function of the Verify (checkmark) button?",
+            "options": [
+              "Checks for syntax and type errors by compiling without uploading",
+              "Physically uploads code to the Arduino",
+              "Formats flash memory"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What does the Upload (arrow) button do?",
+            "options": [
+              "Compiles and flashes the program onto the board",
+              "Deletes existing files",
+              "Opens the serial monitor"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What does a COM or serial port represent?",
+            "options": [
+              "The virtual communication channel between computer and board",
+              "An AC wall power socket",
+              "A graphics rendering pipeline"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What LED indicates the Arduino is receiving electrical power?",
+            "options": [
+              "The green ON LED",
+              "The amber L LED",
+              "The TX LED"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What software translates human-readable C++ into binary machine code?",
+            "options": [
+              "The compiler",
+              "The text editor",
+              "The web browser"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What happens to the program stored in flash memory when USB power is disconnected?",
+            "options": [
+              "It is safely preserved in non-volatile flash memory",
+              "It is permanently erased",
+              "It resets back to factory defaults"
+            ],
+            "correctIndex": 0
+          }
+        ]
       }
     }
   ],

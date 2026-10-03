@@ -3,7 +3,7 @@
   "title": "Potentiometer: Reading Analog Signals",
   "summary": "Convert physical rotation into digital numbers! Discover the 10-bit Analog to Digital Converter (ADC).",
   "tier": "rookie",
-  "estimatedMinutes": 30,
+  "estimatedMinutes": 20,
   "prerequisites": [
     "lesson_05"
   ],
@@ -13,27 +13,117 @@
   "steps": [
     {
       "stepId": "l06_s01",
-      "title": "Analog vs Digital",
+      "title": "Analog vs Digital Signals",
       "type": "story",
-      "markdownContent": "While digital is just ON or OFF, the physical world has smooth gradients\u2014like volume, temperature, and speed. Analog pins measure these shades!"
+      "markdownContent": "The physical world is not binary. Temperature rises smoothly, sound levels swell, and robotic arms rotate through infinite angles. To perceive these gradients, microcontrollers use **Analog Inputs** (`A0`\u2013`A5`) to measure continuous voltages between 0.0V and 5.0V."
     },
     {
       "stepId": "l06_s02",
       "title": "The Voltage Divider Knob",
       "type": "visualExplanation",
-      "markdownContent": "A potentiometer has 3 pins: 5V, Ground, and a middle wiper pin. Turning the knob slides the wiper along a resistive track, outputting 0V to 5V."
+      "markdownContent": "A potentiometer (`comp_20`) is a variable resistor with 3 pins:\n\n- **Outer Pin 1**: Connected to `5V`.\n- **Outer Pin 3**: Connected to `GND`.\n- **Center Wiper Pin 2**: Slides across a resistive carbon track as you turn the knob, outputting a proportional voltage fraction according to the voltage divider formula: $V_{out} = 5.0\\text{V} \\times \\frac{R_2}{R_1 + R_2}$."
     },
     {
       "stepId": "l06_s03",
       "title": "Breadboard Wiring",
       "type": "interactiveWiring",
-      "markdownContent": "Connect the outer pins of the potentiometer to 5V and GND, and connect the center wiper pin to Arduino analog pin `A0`."
+      "markdownContent": "Construct your circuit on the breadboard:\n1. Insert the potentiometer across 3 separate terminal rows (e.g. Rows 10, 11, 12).\n2. Connect outer pin 1 to Uno `5V`.\n3. Connect outer pin 3 to Uno `GND`.\n4. Connect center wiper pin 2 to Uno Analog Pin `A0`."
     },
     {
       "stepId": "l06_s04",
       "title": "ADC Math (0 to 1023)",
       "type": "codeExperiment",
-      "markdownContent": "The Arduino converts 0V-5V into a number from 0 to 1023 (10 bits = 2^10 = 1024 steps). `int val = analogRead(A0);` captures the knob position!"
+      "interactiveWidgetType": "potentiometerSimulator",
+      "markdownContent": "```cpp\nconst int potPin = A0;\n\nvoid setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int rawValue = analogRead(potPin);         // 10-bit ADC conversion (0 to 1023)\n  float voltage = rawValue * (5.0 / 1023.0); // Convert count to true voltage\n\n  Serial.print(\"ADC: \");\n  Serial.print(rawValue);\n  Serial.print(\" | Voltage: \");\n  Serial.print(voltage, 2);\n  Serial.println(\" V\");\n  delay(200);\n}\n```\n\nThe Uno's 10-bit Successive Approximation ADC provides $2^{10} = 1024$ measurement steps (~4.88 mV per step)!"
+    },
+    {
+      "stepId": "l06_s05",
+      "title": "Analog Perception Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "What range of integer values is returned by analogRead() on an Arduino Uno?",
+      "interactiveConfig": {
+        "question": "What is the range of analogRead()?",
+        "options": [
+          "0 to 1023",
+          "0 to 255",
+          "-512 to +512"
+        ],
+        "correctIndex": 0,
+        "questions": [
+          {
+            "question": "What range of integer values is returned by analogRead() on an Arduino Uno?",
+            "options": [
+              "0 to 1023",
+              "0 to 255",
+              "-512 to +512"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What is the resolution of the built-in ADC on an Arduino Uno?",
+            "options": [
+              "10-bit (1024 discrete levels)",
+              "8-bit (256 discrete levels)",
+              "16-bit (65536 discrete levels)"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "If analogRead(A0) returns 1023, what voltage is present on pin A0?",
+            "options": [
+              "5.0 Volts",
+              "2.5 Volts",
+              "10.23 Volts"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "Which terminal of a standard 3-pin potentiometer connects to the variable wiper?",
+            "options": [
+              "The middle terminal",
+              "The leftmost terminal",
+              "The mounting metal tab"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What electrical circuit principle does a potentiometer utilize to produce variable voltage?",
+            "options": [
+              "Voltage divider",
+              "Inductive coupling",
+              "Rectification"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "Approximately how many millivolts does each single ADC step represent on a 5V Uno?",
+            "options": [
+              "~4.88 mV (5.0V / 1024)",
+              "~100 mV",
+              "~0.01 mV"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "Why is pinMode(A0, INPUT) not strictly mandatory before calling analogRead(A0)?",
+            "options": [
+              "analogRead() automatically switches the pin multiplexer to ADC input mode",
+              "Analog pins cannot be configured as digital pins",
+              "The Arduino detects hardware connections automatically"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What causes an analog input reading to jump erratically when nothing is touched?",
+            "options": [
+              "A floating input wire acting as an antenna picking up electromagnetic interference",
+              "A dead microcontroller battery",
+              "Excessively high baud rate"
+            ],
+            "correctIndex": 0
+          }
+        ]
+      }
     }
   ],
   "xpReward": 80

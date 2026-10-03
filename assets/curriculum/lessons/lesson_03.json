@@ -3,7 +3,7 @@
   "title": "Installing Libraries: Supercharging Code",
   "summary": "Understand open-source modular libraries and how to install them with the Library Manager.",
   "tier": "builder",
-  "estimatedMinutes": 15,
+  "estimatedMinutes": 18,
   "prerequisites": [
     "lesson_02"
   ],
@@ -13,16 +13,28 @@
       "stepId": "l03_s01",
       "title": "What is a Library?",
       "type": "story",
-      "markdownContent": "A library is a pre-written bundle of code created by engineers so you don't have to reinvent the wheel. Just `#include <LibraryName.h>`!"
+      "markdownContent": "A library is a pre-written, reusable collection of C++ code created by experienced engineers. Instead of writing hundreds of lines of complex microsecond timing and register manipulation to talk to an LCD screen, a library lets you control it with simple commands like `lcd.print(\"Monster Lab!\");`."
     },
     {
       "stepId": "l03_s02",
       "title": "Using the Library Manager",
       "type": "visualExplanation",
-      "markdownContent": "Open **Tools > Manage Libraries...** in the Arduino IDE. Search for libraries like `LiquidCrystal_I2C` and click Install."
+      "markdownContent": "The Arduino IDE includes a built-in package repository:\n\n1. Open **Tools > Manage Libraries...** (or click the Library icon on the left tab bar).\n2. Search for the library name (e.g., `LiquidCrystal_I2C`).\n3. Click **Install**. The IDE downloads the header files (`.h`), source code (`.cpp`), and usage examples directly into your local library folder!"
     },
     {
       "stepId": "l03_s03",
+      "title": "Inspecting the I2C LCD Backpack",
+      "type": "physicalTask",
+      "markdownContent": "Examine your 16x2 Character LCD (`comp_07`):\n1. Flip the display over and look at the black daughterboard soldered to its pins\u2014this is the **I2C Backpack**.\n2. Notice how it reduces 16 individual parallel LCD pins down to just 4 wires: `GND`, `VCC`, `SDA`, and `SCL`.\n3. Find the blue square potentiometer on the backpack\u2014this is the contrast trimmer that adjusts text readability!"
+    },
+    {
+      "stepId": "l03_s04",
+      "title": "Annotated Walkthrough: LiquidCrystal_I2C",
+      "type": "codeExperiment",
+      "markdownContent": "```cpp\n#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n\n// Create LCD object at 7-bit hex address 0x27 (16 columns, 2 rows)\nLiquidCrystal_I2C lcd(0x27, 16, 2);\n\nvoid setup() {\n  lcd.init();          // Initialize LCD hardware and I2C bus\n  lcd.backlight();     // Turn on backlight LED\n  lcd.setCursor(0, 0); // Column 0, Row 0\n  lcd.print(\"Monster Online!\");\n}\n\nvoid loop() {\n  // Static display\n}\n```"
+    },
+    {
+      "stepId": "l03_s05",
       "title": "Library Quiz",
       "type": "quizCheckpoint",
       "markdownContent": "Why do roboticists use libraries?",
@@ -33,7 +45,81 @@
           "They replace the need for physical wires",
           "They make the Arduino heavier"
         ],
-        "correctIndex": 0
+        "correctIndex": 0,
+        "questions": [
+          {
+            "question": "What is the primary purpose of an Arduino library?",
+            "options": [
+              "They speed up code by writing complex hardware protocols for you",
+              "They double the CPU clock speed of the Arduino",
+              "They convert AC electricity into DC electricity"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "Which preprocessor directive imports a library header into a sketch?",
+            "options": [
+              "#include <LibraryName.h>",
+              "import LibraryName;",
+              "using namespace LibraryName;"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "In LiquidCrystal_I2C lcd(0x27, 16, 2);, what does 0x27 represent?",
+            "options": [
+              "The 7-bit hexadecimal I2C device address",
+              "The digital pin connected to the screen",
+              "The operating temperature in Celsius"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "Where in the IDE can you search for and install community libraries?",
+            "options": [
+              "Tools > Manage Libraries",
+              "File > Preferences > Upload",
+              "Help > Drivers"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What do the numbers (16, 2) specify in the LCD constructor?",
+            "options": [
+              "16 columns and 2 rows of text",
+              "16 volts and 2 amps",
+              "16 MHz clock and 2 KB RAM"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "If your code compiles cleanly but the LCD shows solid white boxes, what should you adjust?",
+            "options": [
+              "The blue contrast potentiometer on the backpack",
+              "Reinstall the Arduino IDE",
+              "Replace the Uno microcontroller"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "Why does an I2C backpack save wiring compared to standard parallel LCDs?",
+            "options": [
+              "It reduces required data pins from 10+ down to 2 shared bus lines",
+              "It eliminates the need for power and ground",
+              "It transmits over Wi-Fi"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What file extension designates C++ header files in libraries?",
+            "options": [
+              ".h",
+              ".ino",
+              ".hex"
+            ],
+            "correctIndex": 0
+          }
+        ]
       }
     }
   ],

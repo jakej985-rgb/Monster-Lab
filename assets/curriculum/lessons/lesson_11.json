@@ -3,7 +3,7 @@
   "title": "Serial UART & Wireless Communication",
   "summary": "Connect Arduinos to computers, Bluetooth modules, and GPS with asynchronous TX/RX serial streams.",
   "tier": "engineer",
-  "estimatedMinutes": 30,
+  "estimatedMinutes": 20,
   "prerequisites": [
     "lesson_04"
   ],
@@ -13,24 +13,30 @@
   "steps": [
     {
       "stepId": "l11_s01",
-      "title": "Asynchronous Streams",
+      "title": "Asynchronous Streams & Baud Framing",
       "type": "story",
-      "markdownContent": "UART serial needs no shared clock line! Both devices simply agree on a common speed (the **Baud Rate**, such as 9600 or 115200 bits per second)."
+      "markdownContent": "To roam untethered across terrain, robots transmit commands wirelessly using **UART** (Universal Asynchronous Receiver-Transmitter). Unlike I2C or SPI, UART is **asynchronous**\u2014there is no shared clock line! Both devices agree on a precise bit frequency (the **Baud Rate**, such as 9600 bits per second) and synchronize on the falling edge of a Start Bit."
     },
     {
       "stepId": "l11_s02",
       "title": "Crossed Wires: TX to RX",
       "type": "visualExplanation",
-      "markdownContent": "Always cross serial wires: Arduino's `TX` (Transmit) connects to the peripheral's `RX` (Receive), and peripheral `TX` connects to Arduino `RX`!"
+      "markdownContent": "The golden wiring rule of UART serial is to **cross the lines**:\n\n- Arduino `TX` (Transmit) connects to Module `RX` (Receive).\n- Module `TX` connects to Arduino `RX`.\n- Pins `0` and `1` are hardwired to the onboard USB chip. To avoid USB upload collisions, we use the `<SoftwareSerial.h>` library to create virtual serial ports on pins `10` and `11`!"
     },
     {
       "stepId": "l11_s03",
-      "title": "SoftwareSerial for Modules",
-      "type": "codeExperiment",
-      "markdownContent": "Pins 0 and 1 are used by the USB cable for programming. To talk to Bluetooth (HC-05), we use the `<SoftwareSerial.h>` library on pins 10 and 11!"
+      "title": "Voltage Divider Protection for 3.3V RX",
+      "type": "physicalTask",
+      "markdownContent": "Examine the HC-05 Bluetooth Module (`comp_29`):\n1. Module `TXD` outputs safe 3.3V logic\u2014connect directly to Uno Pin `10` (`SoftwareSerial RX`).\n2. Module `RXD` cannot tolerate 5.0V! Build a resistor divider on breadboard:\n   - Connect Uno Pin `11` (`TX`) to a 1k\u03a9 resistor.\n   - Connect the resistor to a node wired to Module `RXD`.\n   - Connect a 2k\u03a9 resistor from the node to `GND`.\n   - Voltage drops safely: $5\\text{V} \\times \\frac{2\\text{k}\\Omega}{1\\text{k}\\Omega + 2\\text{k}\\Omega} = 3.33\\text{V}$!"
     },
     {
       "stepId": "l11_s04",
+      "title": "SoftwareSerial Bidirectional Bridge",
+      "type": "codeExperiment",
+      "markdownContent": "```cpp\n#include <SoftwareSerial.h>\n\nSoftwareSerial bluetooth(10, 11); // RX, TX\n\nvoid setup() {\n  Serial.begin(9600);    // USB Serial to computer\n  bluetooth.begin(9600); // Wireless UART to Bluetooth\n  Serial.println(\"--- Telemetry Bridge Active ---\");\n}\n\nvoid loop() {\n  if (bluetooth.available()) {\n    Serial.write(bluetooth.read()); // Phone -> Computer\n  }\n  if (Serial.available()) {\n    bluetooth.write(Serial.read()); // Computer -> Phone\n  }\n}\n```"
+    },
+    {
+      "stepId": "l11_s05",
       "title": "UART Checkpoint",
       "type": "quizCheckpoint",
       "markdownContent": "What happens if two devices attempt to communicate with mismatched baud rates (e.g. 9600 vs 115200)?",
@@ -41,7 +47,81 @@
           "The board gets too hot",
           "The code fails to compile"
         ],
-        "correctIndex": 0
+        "correctIndex": 0,
+        "questions": [
+          {
+            "question": "What does UART stand for?",
+            "options": [
+              "Universal Asynchronous Receiver-Transmitter",
+              "Ultra Analog Radio Transceiver",
+              "Unified Automated Robotic Telemetry"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What is the golden wiring rule for connecting two UART serial devices?",
+            "options": [
+              "Cross the data lines: TX connects to RX, and RX connects to TX",
+              "Connect TX to TX, and RX to RX",
+              "Connect both lines to Ground"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "Why is UART called 'asynchronous'?",
+            "options": [
+              "There is no shared clock line; timing is governed entirely by agreed baud rates",
+              "It only works when the microcontroller is asleep",
+              "Signals are sent in reverse order"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "Why should you avoid connecting external hardware to Digital Pins 0 and 1 on an Uno?",
+            "options": [
+              "Pins 0 and 1 are shared with the onboard USB-to-serial chip used for flashing code",
+              "They have no power supply",
+              "They only support 1.8V"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What is the purpose of the SoftwareSerial library?",
+            "options": [
+              "It allows ordinary digital pins to emulate hardware UART serial ports",
+              "It compresses sketches to save flash memory",
+              "It encrypts wireless data"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "Why is a voltage divider needed between an Uno TX pin and a 3.3V Bluetooth module RX pin?",
+            "options": [
+              "To step down the 5V Arduino signal to prevent overvoltage damage to the 3.3V module",
+              "To speed up data transmission",
+              "To filter out radio interference"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What method checks how many bytes are waiting in the serial receive buffer?",
+            "options": [
+              "available()",
+              "read()",
+              "length()"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What happens if the transmitter and receiver are configured with mismatched baud rates?",
+            "options": [
+              "Bits are sampled at incorrect intervals, resulting in corrupt or unreadable data",
+              "The microcontroller shuts off",
+              "The hardware catches fire"
+            ],
+            "correctIndex": 0
+          }
+        ]
       }
     }
   ],

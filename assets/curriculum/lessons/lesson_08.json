@@ -3,7 +3,7 @@
   "title": "Digital Inputs: Pushbuttons & Internal Pullups",
   "summary": "Sense physical button presses without phantom triggers! Learn the secret of INPUT_PULLUP and debouncing.",
   "tier": "rookie",
-  "estimatedMinutes": 20,
+  "estimatedMinutes": 18,
   "prerequisites": [
     "lesson_05"
   ],
@@ -13,22 +13,28 @@
       "stepId": "l08_s01",
       "title": "Buttons and Open Circuits",
       "type": "story",
-      "markdownContent": "A tactile pushbutton is an electrical drawbridge. When pressed, it connects two contacts and lets current cross!"
+      "markdownContent": "Robots need bump switches and limit sensors to detect physical collisions. A momentary tactile pushbutton is a mechanical bridge: when pressed, two internal metal contacts connect, completing a circuit path."
     },
     {
       "stepId": "l08_s02",
       "title": "The Floating Pin Trap",
       "type": "visualExplanation",
-      "markdownContent": "If an input pin isn't connected to either 5V or GND, it **floats** like an antenna, picking up radio waves and triggering randomly! We must tether it with a resistor."
+      "markdownContent": "Microcontroller input pins have enormous internal resistance (>100 M\u03a9). If an input is not firmly connected to either 5V or GND, it **floats** like an open antenna, picking up 60Hz wall hum and electrostatic fields, causing random false triggers!\n\nTo prevent this, every digital input must be tied to a stable reference voltage using a pull-up or pull-down resistor."
     },
     {
       "stepId": "l08_s03",
-      "title": "INPUT_PULLUP to the Rescue",
-      "type": "codeExperiment",
-      "markdownContent": "Arduino has built-in 20k\u03a9 pullup resistors! When you configure `pinMode(2, INPUT_PULLUP);`, the pin defaults to `HIGH`. When you press the button to GND, it reads `LOW`!"
+      "title": "Pushbutton Breadboard Placement",
+      "type": "physicalTask",
+      "markdownContent": "Wire a tactile pushbutton using active-low logic:\n1. Place the 4-pin button so it straddles the center divider trench of your breadboard.\n2. Connect one terminal to Uno Digital Pin `2`.\n3. Connect the opposite terminal to Uno `GND`.\n4. *Notice: No 5V wire or external resistor is needed on the breadboard!*"
     },
     {
       "stepId": "l08_s04",
+      "title": "INPUT_PULLUP to the Rescue",
+      "type": "codeExperiment",
+      "markdownContent": "```cpp\nconst int buttonPin = 2;\nconst int ledPin = 13;\n\nvoid setup() {\n  pinMode(buttonPin, INPUT_PULLUP); // Enable ATmega328P built-in 30k pullup\n  pinMode(ledPin, OUTPUT);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int state = digitalRead(buttonPin);\n  if (state == LOW) { // Active-Low: Pressed shorts pin to GND\n    digitalWrite(ledPin, HIGH);\n    Serial.println(\"BUMP DETECTED!\");\n  } else {\n    digitalWrite(ledPin, LOW);\n  }\n}\n```"
+    },
+    {
+      "stepId": "l08_s05",
       "title": "Pullup Logic Checkpoint",
       "type": "quizCheckpoint",
       "markdownContent": "When using INPUT_PULLUP, what value does digitalRead() return when the button is NOT pressed?",
@@ -39,7 +45,81 @@
           "LOW (0V)",
           "Random values"
         ],
-        "correctIndex": 0
+        "correctIndex": 0,
+        "questions": [
+          {
+            "question": "What state does a pin configured with INPUT_PULLUP read when the button is open (unpressed)?",
+            "options": [
+              "HIGH",
+              "LOW",
+              "Floating"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What is a 'floating' digital pin?",
+            "options": [
+              "An unconnected high-impedance input that fluctuates randomly from electromagnetic noise",
+              "A pin submerged in water",
+              "A pin configured as both input and output simultaneously"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "Why is INPUT_PULLUP preferred for simple pushbutton circuits?",
+            "options": [
+              "It eliminates the need for an external physical resistor on the breadboard",
+              "It makes buttons click louder",
+              "It allows buttons to operate over Wi-Fi"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "When using active-low logic with a pull-up, what value indicates the button is pressed?",
+            "options": [
+              "LOW (0)",
+              "HIGH (1)",
+              "1023"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What physical phenomenon causes a single mechanical button press to register multiple times?",
+            "options": [
+              "Switch bounce (contact chatter)",
+              "Inductive kickback",
+              "Serial overflow"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "Approximately what resistance value does the ATmega328P internal pull-up provide?",
+            "options": [
+              "20k\u03a9 to 50k\u03a9",
+              "1\u03a9",
+              "10M\u03a9"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "How should a momentary button be wired when using INPUT_PULLUP?",
+            "options": [
+              "One terminal to the digital pin, the other terminal to GND",
+              "One terminal to 5V, the other to 12V",
+              "One terminal to A0, the other to 3.3V"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "In robotics, why are emergency limit switches typically wired active-low?",
+            "options": [
+              "Fail-safe protection: if a wire breaks, the system detects it immediately as triggered",
+              "To save battery power",
+              "It reduces code size"
+            ],
+            "correctIndex": 0
+          }
+        ]
       }
     }
   ],

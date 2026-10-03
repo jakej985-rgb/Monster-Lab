@@ -1,178 +1,229 @@
 # 21d Lesson 04 Reworked Example
 
 ## Purpose
-Expand the IDE lesson into a 15–20 minute programming fundamentals module centered on setup(), loop(), verification, uploading, and Serial Monitor.
+Expand Lesson 04 into a comprehensive 16–20 minute learning module that establishes the core microcontroller execution lifecycle: reset vectors, `setup()`, infinite `loop()`, syntax structures, and UART Serial Monitor telemetry at 9600 baud.
 
-## Lesson Standard
+## Lesson
+**Title:** Basics of the Arduino IDE: Setup and Loop
 **Tier:** Rookie
+**Target Time:** 16–20 minutes
+**Prerequisites:** Lesson 02
+**XP:** 60
+**Components:** `comp_uno` (Arduino Uno R3)
 
-**Target Time:** 15–20 minutes
-
-**Prerequisite:** Previous lessons required by the curriculum
+---
 
 ## Learning Goals
-- Understand the real-world purpose of the lesson topic.
-- Learn the important vocabulary.
-- Understand the hardware before wiring it.
-- Understand the programming concepts before using the code.
-- Read and explain the important lines of code.
-- Predict what the hardware or code should do.
-- Perform a guided hands-on activity.
-- Troubleshoot a realistic failure.
-- Demonstrate understanding through a multi-question assessment.
+- Understand the microcontroller lifecycle: hardware reset, bootloader, `setup()`, and infinite `loop()`.
+- Differentiate between statements, functions, syntax blocks (`{}`), and line terminators (`;`).
+- Differentiate between the *Verify* (compile) and *Upload* (flash) processes.
+- Initialize and use the hardware UART Serial Monitor for debugging at 9600 baud.
+- Predict print frequencies and timing in infinite loops.
+- Troubleshoot common syntax errors (missing semicolons, mismatched braces, baud rate mismatch).
+- Demonstrate mastery through a comprehensive 8-question assessment.
+
+---
 
 ## 1. Mission Introduction
-Start with a real robotics problem that makes the topic useful.
+### The Never-Sleeping Monster Brain
+Unlike desktop programs that launch, calculate a spreadsheet, and quit, a robot's brain must never terminate. It must continuously sense obstacles, calculate trajectory updates, and control motors thousands of times per second until power is switched off.
 
-Explain what the learner is going to accomplish and why the skill matters in a real robot.
+In this lesson, you will master the two fundamental functions of embedded systems: `setup()`—the one-time initialization routine—and `loop()`—the perpetual heartbeat of your monster robot.
+
+---
 
 ## 2. Prior Knowledge Check
-Ask 2–4 quick questions about the previous lesson and the learner's existing knowledge.
+1. **What happens when an Arduino Uno is plugged into USB?** The bootloader initializes the chip and executes the program stored in flash memory.
+2. **What does the COM port represent?** The virtual serial communications link between computer and Arduino.
 
-Do not block beginners. If the learner already understands the concept, allow them to move through the explanation quickly.
+---
 
-## 3. Core Concept
-Explain the main concept in age-appropriate language.
+## 3. Core Concept & Vocabulary
+- **`setup()`:** A function executed exactly once upon board power-up or hardware reset button press. Used for configuring pins and starting communication.
+- **`loop()`:** A function executed repeatedly and continuously forever. Houses sensing, decision logic, and actuator commands.
+- **Statement:** A single executable instruction that must end with a semicolon `;`.
+- **Baud Rate:** Communication speed in symbols/bits per second (e.g., 9600 baud = 960 characters/sec with 10-bit framing).
+- **Serial Monitor:** An interactive terminal console embedded in the IDE for bidirectional text communication with the board.
 
-Define important technical vocabulary before using it repeatedly.
+---
 
 ## 4. How It Works
-Explain what is physically happening.
+The microcontroller execution lifecycle proceeds through distinct phases:
 
-Connect:
-**Hardware → Electrical Signal → Arduino → Program → Result**
+```
+Power On / Reset
+       ↓
+Clock Oscillator Stabilizes (16 MHz)
+       ↓
+Optiboot Bootloader Runs (Checks for USB Upload)
+       ↓ (If no upload)
+main() Jump
+       ↓
+Executes setup() Once
+       ↓
+while(1) { loop(); } (Runs Forever)
+```
 
-Use diagrams or component images where appropriate.
+---
 
 ## 5. Hardware Mission
-Have the learner physically identify the relevant components, pins, connectors, and power connections before wiring.
+Examine your Arduino Uno R3 (`comp_uno`):
+1. **Reset Switch:** Locate the red or yellow pushbutton in the upper-left corner near the USB connector. Pressing this pulls the ATmega328P `RESET` pin to GND, restarting the program at `setup()`.
+2. **TX and RX LEDs:** Locate the two tiny surface-mount LEDs labeled `TX` (Transmit) and `RX` (Receive) near Digital Pins 0 and 1.
+3. **Observation Task:** Connect the board to USB. Notice how TX and RX flash rapidly when sketches are uploaded or serial text transmits.
 
-Require the learner to predict what each connection is supposed to accomplish.
+---
 
 ## 6. Coding Basics
-Introduce the programming concepts needed for this lesson.
+- **Function Syntax:** `void setup() { ... }`. `void` means the function returns no value.
+- **Curly Braces `{}`:** Group multiple instructions into an executable code block. Every `{` must have a matching `}`.
+- **Semicolons `;`:** Mark the conclusion of an instruction statement. Omitting a semicolon causes a compiler syntax error.
 
-Explain commands, functions, variables, values, operators, and control flow when they appear.
+---
 
 ## 7. Code Walkthrough
-Use a small code example.
+```cpp
+void setup() {
+  Serial.begin(9600); // Initialize hardware UART at 9600 baud
+  Serial.println("--- Monster Lab Online ---");
+  Serial.println("System Initialized Successfully.");
+}
 
-For every important line:
-- Explain what it does.
-- Explain important numbers or names.
-- Explain what hardware it affects.
-- Explain what can safely be changed.
+void loop() {
+  Serial.print("Heartbeat ping at timestamp: ");
+  Serial.println(millis());
+  delay(1000); // Pause for 1000 milliseconds (1 second) before repeating
+}
+```
 
-Do not present unexplained code as a recipe.
+### Breakdown:
+- `Serial.begin(9600)`: Powers on the ATmega328P USART hardware and sets baud generator registers.
+- `Serial.println(...)`: Sends ASCII characters followed by carriage return `\r` and line feed `\n`.
+- `millis()`: Returns the number of milliseconds since the Arduino began running the current sketch.
+- `delay(1000)`: Halts execution for 1000 ms, regulating loop cadence.
+
+---
 
 ## 8. Code Prediction
-Before running the code, ask the learner to predict:
-- What will happen?
-- Which component will respond?
-- Which value controls the behavior?
-- What happens if one value changes?
+- **Prediction 1:** What happens if `Serial.println("Booting...");` is placed inside `loop()` instead of `setup()`?
+  *Answer:* It prints continuously every loop cycle rather than once at startup.
+- **Prediction 2:** What happens if `Serial.begin(9600)` is omitted from `setup()`?
+  *Answer:* The hardware UART baud rate generator is not configured; no text will transmit over USB, and the Serial Monitor will stay completely blank.
 
-Then run the experiment and compare the result.
+---
 
 ## 9. Guided Experiment
-Have the learner make one controlled change.
+1. Change `delay(1000);` to `delay(250);`.
+2. Predict the new transmission frequency: 4 pings per second instead of 1.
+3. Upload sketch, open Serial Monitor, and observe the accelerated telemetry cadence.
 
-**Change → Predict → Run → Observe → Explain**
+---
 
-This teaches experimentation instead of blind copying.
+## 10. Real-World Robot Example
+Automotive electronic control units (ECUs), NASA planetary rovers, and medical infusion pumps execute identical state loops:
+- `setup()`: Perform sensor self-test, verify battery voltage, zero actuators.
+- `loop()`: Read obstacle sensors, update kinematics math, drive steering servos within rigid cycle deadlines.
 
-## 10. Real-World Example
-Connect the lesson to real robots, machines, vehicles, appliances, sensors, industrial equipment, or other relevant technology.
-
-Explain why engineers actually use this concept.
+---
 
 ## 11. Troubleshooting Challenge
-Give the learner a realistic failure.
+### Symptom 1: Garbled Characters in Serial Monitor
+- **Symptom:** Serial Monitor prints `⸮⸮x⸮f⸮` or strange inverted symbols.
+- **Diagnosis:** Baud rate mismatch! The sketch specified `9600`, but the Serial Monitor dropdown in the lower right is set to 115200 or 57600.
+- **Remedy:** Click the baud rate dropdown and select `9600 baud`.
 
-Have them:
-1. Observe the symptom.
-2. List likely causes.
-3. Choose a test.
-4. Make one change.
-5. Test again.
-6. Explain what they learned.
+### Symptom 2: Compiler Error on Braces / Semicolons
+- **Symptom:** `error: expected ';' before '}' token`.
+- **Diagnosis:** The statement directly preceding line X is missing its terminating `;`.
+- **Remedy:** Locate the unclosed statement and add `;`.
 
-Do not encourage random changes.
+---
 
-## 12. Safety
-Include topic-specific safety guidance.
+## 12. Workshop Safety & Hardware Care
+- Never plug or unplug shield headers or jumper wires into the 5V and GND rail while the USB cable is supplying power, as accidental shorts can trigger computer USB port overcurrent shutdown.
+- Place the Arduino on a non-conductive surface (wood, plastic, or antistatic mat)—never on metal workbench surfaces or foil wrappers.
 
-Especially cover:
-- Power and ground.
-- Current limits.
-- Component polarity.
-- Motor power.
-- Short circuits.
-- USB connections.
-- Heat or moving hardware where applicable.
+---
 
-## 13. Knowledge Check
-Use approximately 8 questions.
+## 13. Knowledge Check (8 Questions)
+1. **How many times does code inside `void setup()` execute after startup?**
+   - [x] Exactly once
+   - [ ] Exactly ten times
+   - [ ] Continuously in an infinite loop
 
-Include a mixture of:
-- Concept recall.
-- Vocabulary.
-- Hardware identification.
-- Code reading.
-- Prediction.
-- Application.
-- Troubleshooting.
-- Safety.
+2. **What is the primary role of `void loop()` in an Arduino robot?**
+   - [x] To repeatedly execute sensing, decision-making, and actuator control forever
+   - [ ] To shut down the Arduino when code finishes
+   - [ ] To format the flash memory
 
-Avoid asking the same fact repeatedly.
+3. **What character must terminate every standard C++ statement in Arduino?**
+   - [x] Semicolon (`;`)
+   - [ ] Colon (`:`)
+   - [ ] Period (`.`)
+
+4. **What does the Verify (checkmark) button in the IDE do?**
+   - [x] Compiles the sketch to check for syntax and type errors without uploading
+   - [ ] Physically tests the Arduino hardware circuits
+   - [ ] Deletes existing code from the board
+
+5. **If your code specifies `Serial.begin(9600)`, what baud rate must the Serial Monitor be set to?**
+   - [x] 9600 baud
+   - [ ] 115200 baud
+   - [ ] Any baud rate works automatically
+
+6. **What is the purpose of curly braces `{ }` in code?**
+   - [x] They group multiple statements together into a single function or block
+   - [ ] They represent mathematical multiplication
+   - [ ] They indicate comments ignored by the compiler
+
+7. **What function is used to send text to the Serial Monitor followed by a new line?**
+   - [x] `Serial.println()`
+   - [ ] `Serial.write()`
+   - [ ] `Serial.input()`
+
+8. **What happens if `delay(1000)` is omitted from a `loop()` that prints text?**
+   - [x] The loop runs at maximum CPU speed, flooding the serial buffer and monitor
+   - [ ] The Arduino overheats and shuts off
+   - [ ] The compiler refuses to upload the code
+
+---
 
 ## 14. Final Review
-End with:
-- What the learner learned.
-- Important vocabulary.
-- The most important engineering idea.
-- What the learner should remember.
-- How this lesson connects to the next lesson.
+- The microcontroller execution model relies on `setup()` for configuration and `loop()` for ongoing autonomy.
+- Semicolons, braces, and matching baud rates are non-negotiable fundamentals of embedded software.
+- The Serial Monitor provides an essential telemetry window into your robot's thoughts.
+- Up next in Lesson 05: Moving from digital text to physical photons with the Blink circuit.
 
-## Expanded Content Requirements
-- Review functions, statements, braces, and semicolons.
-- Explain why setup() runs once and loop() repeats.
-- Walk through pinMode() and Serial.begin().
-- Explain Verify versus Upload.
-- Introduce Serial Monitor as a debugging tool.
-- Have the learner predict Serial output.
-- Change one line and observe the result.
-- Troubleshoot a missing semicolon, wrong baud rate, and code placed in the wrong function.
-- Knowledge check with 8 questions.
+---
 
 ## Estimated Time Breakdown
-| Activity | Target |
+| Activity | Target Time |
 |---|---:|
-| Mission and prior knowledge | 2–3 min |
-| Core explanation | 3–4 min |
-| Hardware/visual exploration | 2–3 min |
-| Code walkthrough | 2–3 min |
-| Prediction/experiment | 2–3 min |
-| Troubleshooting | 2 min |
-| Knowledge check | 2–3 min |
-| Review | 1 min |
-| **Total** | **16–21 min** |
+| 1. Mission Introduction | 1–2 min |
+| 2. Prior Knowledge Check | 1 min |
+| 3. Core Concept & Vocabulary | 2 min |
+| 4. How It Works (Microcontroller Lifecycle) | 2 min |
+| 5. Hardware Mission (Reset Button & TX/RX LEDs) | 2 min |
+| 6. Coding Basics (Functions, Braces, Semicolons) | 2 min |
+| 7. Code Walkthrough | 2 min |
+| 8. Code Prediction | 1 min |
+| 9. Guided Experiment (Timing Modulation) | 2 min |
+| 10. Real-World Robot Example | 1 min |
+| 11. Troubleshooting & Safety | 2 min |
+| 12. Knowledge Check (8 Questions) | 2–3 min |
+| 13. Final Review | 1 min |
+| **Total** | **18–20 min** |
+
+---
 
 ## Implementation Notes
-- Convert this plan into structured lesson step objects.
-- Preserve offline-first curriculum data.
-- Support reading, vocabulary, code explanation, prediction, physical tasks, experiments, troubleshooting, and multiple quiz questions.
-- Use component images where appropriate.
-- Keep the learner's existing progress and completion behavior intact.
-- Recalculate the final estimatedMinutes value after implementation.
+- Container mapping: sections 1–3 use `story`, section 4 uses `visualExplanation`, section 5 uses `physicalTask`, sections 6–9 use `codeExperiment`, sections 11–12 use `story`, section 13 uses `quizCheckpoint`.
+- Checkpoint awards 10 milestone XP. Total lesson XP: 60.
+
+---
 
 ## Done When
-- The lesson contains meaningful instruction rather than filler.
-- A beginner can follow it.
-- An experienced learner can move quickly through familiar concepts.
-- The learner understands the code before running it.
-- The learner performs a hands-on or interactive activity.
-- The learner predicts and verifies behavior.
-- The learner completes a troubleshooting challenge.
-- The assessment checks multiple skills.
-- The lesson provides approximately 15–20 minutes of meaningful learning.
+- Paced for 16–20 minutes of active learning.
+- Learner understands `setup()`, `loop()`, semicolon rules, and serial baud rates.
+- Learner inspects TX/RX LEDs and verifies output in Serial Monitor.
+- All 8 assessment questions pass cleanly.

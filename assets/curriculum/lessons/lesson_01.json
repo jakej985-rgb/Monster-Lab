@@ -3,7 +3,7 @@
   "title": "What is Arduino & How Does It Work?",
   "summary": "Discover the brain of your robot! Learn what microcontrollers do, explore the pins, and understand how power flows.",
   "tier": "rookie",
-  "estimatedMinutes": 15,
+  "estimatedMinutes": 18,
   "prerequisites": [],
   "componentIds": [],
   "steps": [
@@ -11,22 +11,35 @@
       "stepId": "l01_s01",
       "title": "Meet the Monster Brain",
       "type": "story",
-      "markdownContent": "Welcome to Monster Lab! Inside your kit is an **Arduino Uno**\u2014a tiny computer designed to control sensors, lights, and motors in the real world."
+      "markdownContent": "Welcome to Monster Lab! The **Arduino Uno** is a microcontroller board\u2014a tiny, rugged computer designed to interact directly with hardware in the physical world. Unlike desktop computers, it runs a dedicated program that loops continuously to sense inputs and command outputs."
     },
     {
       "stepId": "l01_s02",
-      "title": "Inputs vs Outputs",
+      "title": "Inputs vs Outputs & The Decision Engine",
       "type": "visualExplanation",
-      "markdownContent": "A microcontroller reads **Inputs** (eyes and ears like distance and sound sensors) and commands **Outputs** (hands and voice like motors and buzzers)."
+      "interactiveWidgetType": "boardInspector",
+      "markdownContent": "Robots follow a continuous loop: **Sensor \u2192 Arduino \u2192 Decision \u2192 Output**.\n\n- **Inputs (Senses)**: Pushbuttons, ultrasonic distance sensors, sound detectors, and potentiometers.\n- **Outputs (Actions)**: LEDs, buzzers, LCD screens, and motor drivers.\n- **The Program**: You write the code that decides how inputs turn into actions!"
     },
     {
       "stepId": "l01_s03",
-      "title": "Pin Tour: Power and Ground",
-      "type": "physicalTask",
-      "markdownContent": "Locate the `5V` (Power) and `GND` (Ground) pins on your board. Electricity flows from 5V through your circuit and returns to GND!"
+      "title": "Digital vs Analog Signals",
+      "type": "story",
+      "markdownContent": "Microcontrollers understand two kinds of electrical information:\n\n- **Digital Signals**: Have distinct binary states\u2014either `HIGH` (5.0V / ON) or `LOW` (0.0V / OFF).\n- **Analog Signals**: Vary smoothly across a continuous spectrum (like temperature, sound volume, or knob angle from 0V to 5V)."
     },
     {
       "stepId": "l01_s04",
+      "title": "Pin Tour: Power and Ground Paths",
+      "type": "physicalTask",
+      "markdownContent": "Electricity must flow in a complete loop: **Power (5V) \u2192 Component \u2192 Ground (GND)**.\n\nInspect your physical Arduino Uno board:\n1. Locate the `5V` and `3.3V` power output pins.\n2. Locate the multiple `GND` (Ground) reference return sockets.\n3. Find Digital Pins `0` through `13` on the upper header.\n4. Find Analog In Pins `A0` through `A5` on the lower header.\n5. Spot the tiny amber `L` LED next to pin 13."
+    },
+    {
+      "stepId": "l01_s05",
+      "title": "Your First Instruction: Reading Code",
+      "type": "codeExperiment",
+      "markdownContent": "Before uploading sketches, engineers read and predict code line by line:\n\n```cpp\ndigitalWrite(13, HIGH);\n```\n\n- `digitalWrite`: The built-in command that controls a digital output pin.\n- `13`: The target pin connected to the built-in amber LED.\n- `HIGH`: Sets the pin to 5.0 Volts (turn on).\n- `;`: The semicolon terminates every C++ statement!"
+    },
+    {
+      "stepId": "l01_s06",
       "title": "Knowledge Check",
       "type": "quizCheckpoint",
       "markdownContent": "What role does Ground (GND) play in an electrical circuit?",
@@ -37,7 +50,81 @@
           "The return path for electric current to complete the circuit",
           "A sensor that measures dirt depth"
         ],
-        "correctIndex": 1
+        "correctIndex": 1,
+        "questions": [
+          {
+            "question": "What is a microcontroller?",
+            "options": [
+              "A small computer designed to control electronics",
+              "A chemical battery",
+              "A mechanical switch"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "A distance sensor sends distance readings to Arduino. Is it an input or output?",
+            "options": [
+              "Input",
+              "Output",
+              "Power supply"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "An LED controlled by Arduino is an example of what?",
+            "options": [
+              "Input",
+              "Output",
+              "Ground"
+            ],
+            "correctIndex": 1
+          },
+          {
+            "question": "What is GND used for in a typical circuit?",
+            "options": [
+              "A common reference and return path",
+              "Unlimited power",
+              "Storing program code"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What does HIGH represent in a simple digital output?",
+            "options": [
+              "The output's high/on state (5V)",
+              "A program error",
+              "A sensor disconnect"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What does 13 mean in digitalWrite(13, HIGH);?",
+            "options": [
+              "The digital pin number being controlled",
+              "The microcontroller clock speed",
+              "Flash memory bytes"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "A potentiometer produces a smoothly changing voltage as it turns. Is this digital or analog?",
+            "options": [
+              "Analog",
+              "Digital only",
+              "Neither"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "Why should you read and understand code before uploading it?",
+            "options": [
+              "So you can predict behavior and troubleshoot problems",
+              "Arduino deletes unverified sketches",
+              "Every program must be memorized"
+            ],
+            "correctIndex": 0
+          }
+        ]
       }
     }
   ],

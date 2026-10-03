@@ -183,27 +183,50 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Interactive Simulators Embedded Contextually
-                      if (lesson.id == 'lesson_01' &&
-                          currentStep.type == StepType.visualExplanation) ...[
+                      // Optional Illustration Asset
+                      if (currentStep.illustrationAsset != null &&
+                          currentStep.illustrationAsset!.isNotEmpty) ...[
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.asset(
+                            currentStep.illustrationAsset!,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const SizedBox.shrink(),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+
+                      // Interactive Simulators (routed via interactiveWidgetType with legacy fallback)
+                      if (currentStep.interactiveWidgetType ==
+                              'boardInspector' ||
+                          (lesson.id == 'lesson_01' &&
+                              currentStep.type ==
+                                  StepType.visualExplanation)) ...[
                         const BoardInspectorWidget(),
                         const SizedBox(height: 16),
                       ],
 
-                      if (lesson.id == 'lesson_05' &&
-                          currentStep.type == StepType.codeExperiment) ...[
+                      if (currentStep.interactiveWidgetType ==
+                              'blinkSimulator' ||
+                          (lesson.id == 'lesson_05' &&
+                              currentStep.type == StepType.codeExperiment)) ...[
                         const BlinkSimulatorWidget(),
                         const SizedBox(height: 16),
                       ],
 
-                      if (lesson.id == 'lesson_06' &&
-                          currentStep.type == StepType.codeExperiment) ...[
+                      if (currentStep.interactiveWidgetType ==
+                              'potentiometerSimulator' ||
+                          (lesson.id == 'lesson_06' &&
+                              currentStep.type == StepType.codeExperiment)) ...[
                         const PotentiometerSimulatorWidget(),
                         const SizedBox(height: 16),
                       ],
 
-                      if (lesson.id == 'lesson_07' &&
-                          currentStep.type == StepType.codeExperiment) ...[
+                      if (currentStep.interactiveWidgetType == 'rgbMixer' ||
+                          (lesson.id == 'lesson_07' &&
+                              currentStep.type == StepType.codeExperiment)) ...[
                         const RgbMixerWidget(),
                         const SizedBox(height: 16),
                       ],

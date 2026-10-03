@@ -3,7 +3,7 @@
   "title": "PWM & Motor Physics",
   "summary": "Harness high-power inductors! Control motor speed with pulse width modulation and protect pins with flyback diodes.",
   "tier": "engineer",
-  "estimatedMinutes": 35,
+  "estimatedMinutes": 22,
   "prerequisites": [
     "lesson_06",
     "lesson_07"
@@ -17,22 +17,28 @@
       "stepId": "l12_s01",
       "title": "Inductive Coils & Magnetic Fields",
       "type": "story",
-      "markdownContent": "Motors and relays contain coils of wire that build magnetic fields. When power is suddenly cut, the collapsing field generates a high-voltage spike called **inductive kickback**!"
+      "markdownContent": "Motors and relays contain coils of copper wire that generate magnetic fields to produce mechanical torque. But motors are inductive loads: an ATmega328P output pin can only supply 20mA, while a stalled DC motor draws **500mA to 2000mA**! Attempting to power a motor directly from an Arduino pin will destroy its internal driver transistors."
     },
     {
       "stepId": "l12_s02",
       "title": "The Flyback Diode Protector",
       "type": "visualExplanation",
-      "markdownContent": "A 1N4007 diode wired across the motor in reverse safely absorbs these 50V+ voltage spikes, protecting your Arduino's sensitive transistors from destruction."
+      "markdownContent": "According to Lenz's Law ($V = -L \\frac{di}{dt}$), when current flowing through a motor coil is abruptly cut, the collapsing magnetic field generates a massive reverse voltage spike called **inductive kickback** (>60 Volts!).\n\nA reverse-biased **Flyback Diode** placed across the coil safely recirculates this spike, dissipating the inductive energy harmlessly as heat instead of frying your microcontroller."
     },
     {
       "stepId": "l12_s03",
-      "title": "H-Bridge Drivers (L293D)",
-      "type": "codeExperiment",
-      "markdownContent": "Microcontroller pins can only supply 20mA. To spin high-current 500mA motors forward and backward, we command an **H-Bridge** driver chip like the L293D!"
+      "title": "H-Bridge IC Pinout & Common Ground",
+      "type": "physicalTask",
+      "markdownContent": "Inspect the L293D Dual H-Bridge IC (`comp_l293d`):\n1. Locate the semi-circular notch on top of the DIP-16 chip. Pin 1 is to the left of the notch.\n2. **Pin 16 ($V_{CC1}$)**: Logic 5V (from Arduino 5V).\n3. **Pin 8 ($V_{CC2}$)**: Motor Power (connect to separate external 6V\u20139V battery pack).\n4. **Pins 4, 5, 12, 13**: Connect to common Ground.\n5. **CRITICAL**: Always connect the external motor battery Ground to the Arduino Ground to establish a shared 0V reference!"
     },
     {
       "stepId": "l12_s04",
+      "title": "L293D Bidirectional Motor Control",
+      "type": "codeExperiment",
+      "markdownContent": "```cpp\nconst int enablePin = 9; // PWM Speed Control\nconst int in1Pin = 8;    // Direction Leg A\nconst int in2Pin = 7;    // Direction Leg B\n\nvoid driveMotor(int speed, bool forward) {\n  digitalWrite(in1Pin, forward ? HIGH : LOW);\n  digitalWrite(in2Pin, forward ? LOW : HIGH);\n  analogWrite(enablePin, constrain(speed, 0, 255));\n}\n\nvoid stopMotor() {\n  digitalWrite(in1Pin, LOW);\n  digitalWrite(in2Pin, LOW);\n  analogWrite(enablePin, 0);\n}\n\nvoid setup() {\n  pinMode(enablePin, OUTPUT);\n  pinMode(in1Pin, OUTPUT);\n  pinMode(in2Pin, OUTPUT);\n}\n\nvoid loop() {\n  driveMotor(200, true);  // Forward ~78% speed\n  delay(2000);\n  stopMotor();\n  delay(1000);\n  driveMotor(200, false); // Reverse\n  delay(2000);\n  stopMotor();\n  delay(1000);\n}\n```"
+    },
+    {
+      "stepId": "l12_s05",
       "title": "Flyback Checkpoint",
       "type": "quizCheckpoint",
       "markdownContent": "Why do engineers install a flyback diode across DC motor and relay coils?",
@@ -43,7 +49,81 @@
           "To make the motor spin backwards",
           "To turn battery power into AC wall electricity"
         ],
-        "correctIndex": 0
+        "correctIndex": 0,
+        "questions": [
+          {
+            "question": "What causes inductive kickback spikes when a motor is suddenly turned off?",
+            "options": [
+              "The collapsing magnetic field in the motor's copper coils induces a high reverse voltage",
+              "The battery releases excess chemical energy",
+              "Static electricity on the motor casing"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What is the primary function of a flyback diode connected across an inductive load?",
+            "options": [
+              "To safely clamp and dissipate high-voltage inductive kickback spikes",
+              "To make the motor spin twice as fast",
+              "To convert AC voltage to DC voltage"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "Why can you NOT power a standard DC hobby motor directly from an Arduino digital pin?",
+            "options": [
+              "Arduino pins provide only ~20mA, while motors require 300mA\u20131000mA+ and can destroy pin transistors",
+              "Arduino digital pins output AC voltage",
+              "The code would be too complex"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What circuit architecture allows a microcontroller to reverse a motor's rotation direction?",
+            "options": [
+              "An H-Bridge circuit",
+              "A voltage divider",
+              "A low-pass filter"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "What electrical problem occurs if you fail to connect the motor battery ground to Arduino ground?",
+            "options": [
+              "No shared reference voltage: control signals float and the motor driver cannot interpret logic states",
+              "The battery explodes",
+              "The Arduino executes code at half speed"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "Why does an Arduino often crash or reset if a motor is wired directly to its 5V pin?",
+            "options": [
+              "Brownout reset: the sudden motor inrush current pulls the 5V rail voltage below the microcontroller operating limit",
+              "Software stack overflow",
+              "Flash memory corruption"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "In an H-bridge driver, what happens if both high-side and low-side switches on the same leg turn on simultaneously?",
+            "options": [
+              "Shoot-through short circuit that burns out the transistors",
+              "The motor doubles its torque",
+              "The motor switches to generator mode"
+            ],
+            "correctIndex": 0
+          },
+          {
+            "question": "Why does a DC motor hum but refuse to turn at very low PWM values (e.g. 15 out of 255)?",
+            "options": [
+              "Static mechanical friction (stiction) requires a minimum threshold torque to overcome",
+              "The PWM frequency is too high for electricity to flow",
+              "The Arduino compiler ignores values below 20"
+            ],
+            "correctIndex": 0
+          }
+        ]
       }
     }
   ],
