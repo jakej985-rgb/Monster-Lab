@@ -24,6 +24,38 @@ Check understanding
     ↓
 Review
 
+## Lesson Rework Files
+
+The lesson rework specifications are maintained as separate Markdown files using the 21-series letter format.
+
+- **21a** — Lesson 01: Arduino Fundamentals
+- **21b** — Lesson 02: Arduino IDE and Board Setup
+- **21c** — Lesson 03: Libraries
+- **21d** — Lesson 04: setup() and loop()
+- **21e** — Lesson 05: Blink
+- **21f** — Lesson 06: Potentiometer
+- **21g** — Lesson 07: RGB LED and PWM
+- **21h** — Lesson 08: Digital Inputs and Pushbuttons
+- **21i** — Lesson 09: I2C
+- **21j** — Lesson 10: SPI
+- **21k** — Lesson 11: UART and Wireless Communication
+- **21l** — Lesson 12: PWM and Motor Physics
+
+### 21x Specification Standard
+Each 21x Markdown file is the working content specification for its corresponding lesson.
+
+When implementing a lesson:
+1. Read the matching 21x Markdown.
+2. Research and verify the technical information.
+3. Treat the 21x content as the starting blueprint, not throwaway example text.
+4. Correct or expand content when research or hardware requirements require it.
+5. Convert the specification into curriculum data.
+6. Implement the required lesson step types.
+7. Add required images, diagrams, code examples, and interactive activities.
+8. Add the assessment.
+9. Recalculate the actual estimated duration.
+10. Test the completed lesson in the app.
+
 ## Lesson Time Target
 Each lesson should reasonably provide approximately 15–20 minutes of meaningful activity.
 
@@ -88,20 +120,18 @@ Connect programming concepts directly to Arduino:
 
 ## Code Understanding Standard
 
-Before a learner uses a significant code example, explain:
-- What the code is trying to accomplish.
-- What each important line does.
-- What the important numbers mean.
-- What can safely be changed.
-- What happens when a value changes.
-- Which parts are required.
-- Which parts are optional.
-- What hardware the code is controlling.
+Before a learner uses significant code:
+- Explain what the code is trying to accomplish.
+- Explain each important line.
+- Explain important numbers and values.
+- Explain what can safely be changed.
+- Explain what happens when a value changes.
+- Explain required versus optional parts.
+- Explain what hardware the code controls.
 
 ### Code Walkthrough
 Use small annotated examples instead of unexplained large blocks.
 
-Example:
 - Show the complete sketch.
 - Break it into sections.
 - Explain each section.
@@ -112,14 +142,12 @@ Example:
 - Explain why the result changed.
 
 ### Trust but Verify
-Learners should understand that copied code is not magic.
-
-Teach them to:
+Teach learners to:
 - Read code before uploading it.
 - Identify the pins being used.
 - Identify timing values.
 - Identify input and output operations.
-- Predict the expected behavior.
+- Predict expected behavior.
 - Compare actual behavior with expected behavior.
 - Find simple mistakes.
 - Make a controlled change and test again.
@@ -153,18 +181,18 @@ Teach them to:
 - Explain how the concept is used in an actual robot, machine, device, or engineering system.
 
 ### 7. Guided Practice
-- Give the learner a small prediction, matching task, troubleshooting problem, calculation, or identification task.
+- Give the learner a prediction, matching task, troubleshooting problem, calculation, or identification task.
 
 ### 8. Coding Basics
 When code is part of the lesson:
 - Introduce the programming concept.
-- Explain the Arduino-specific commands.
+- Explain Arduino-specific commands.
 - Walk through the code.
 - Explain important values and pins.
 - Ask the learner to predict the result.
 
 ### 9. Hands-On Mission
-- Have the learner work with the physical kit whenever appropriate.
+- Work with the physical kit whenever appropriate.
 - Identify components.
 - Wire circuits.
 - Upload code.
@@ -172,7 +200,9 @@ When code is part of the lesson:
 - Make a controlled modification.
 
 ### 10. Troubleshooting Challenge
-Give the learner a realistic failure:
+Give the learner a realistic failure and have them reason through the likely cause before revealing the answer.
+
+Examples:
 - LED does not blink.
 - Sensor returns unexpected values.
 - Button behaves backwards.
@@ -180,12 +210,10 @@ Give the learner a realistic failure:
 - Serial output is unreadable.
 - Wrong pin is used.
 
-Have the learner reason through the likely cause before revealing the answer.
-
 ### 11. Knowledge Check
 Target 5–8 questions for normal lessons.
 
-Questions should test different skills:
+Questions should test:
 - Recall.
 - Understanding.
 - Application.
@@ -244,17 +272,43 @@ Research should include, when relevant:
 Do not measure lesson quality by question count alone.
 
 Questions should:
-- Cover the lesson objectives.
+- Cover lesson objectives.
 - Include more than simple memorization.
-- Require reading code when code is taught.
+- Require code reading when code is taught.
 - Include prediction questions.
 - Include troubleshooting questions.
 - Reinforce safety.
 - Verify prerequisite knowledge when needed.
 
+## Implementation Workflow
+
+### Phase A — Read the 21x Specification
+Use the corresponding 21x Markdown file as the lesson's starting blueprint.
+
+### Phase B — Research
+Research the technical subject and verify the information in the 21x file.
+
+### Phase C — Content Build
+Turn the blueprint into complete learner-facing curriculum content.
+
+### Phase D — Interactive Build
+Implement reading, vocabulary, visuals, code walkthroughs, predictions, physical tasks, experiments, troubleshooting, and assessments.
+
+### Phase E — Hardware and Visual Support
+Add component pictures, diagrams, pin maps, and other visuals required to understand the lesson.
+
+### Phase F — Assessment
+Build a meaningful multi-question assessment covering different skills.
+
+### Phase G — Duration Validation
+Walk through the complete lesson and verify that the advertised time is realistic.
+
+### Phase H — App Validation
+Verify progress, completion, prerequisites, navigation, offline behavior, and rendering.
+
 ## Existing Lesson Expansion
 
-Review all current lessons.
+Review all current lessons using their matching 21x Markdown specifications.
 
 For each lesson:
 - Verify the advertised duration.
@@ -268,15 +322,6 @@ For each lesson:
 - Expand assessment.
 - Add a meaningful recap.
 - Recalculate the estimated duration.
-
-Initial lessons requiring particular attention:
-- Lesson 01: Arduino fundamentals.
-- Lesson 02: IDE and board setup.
-- Lesson 03: Libraries.
-- Lesson 04: setup() and loop().
-- Lesson 05: Blink.
-- Lesson 08: Digital inputs.
-- Lessons 09–11: communication protocols.
 
 ## Data Model Requirements
 Support additional lesson content types as needed:
@@ -295,10 +340,12 @@ Support additional lesson content types as needed:
 - QuizCheckpoint.
 - Review.
 
-Keep the curriculum data offline-first and compatible with existing lessons.
+Keep curriculum data offline-first and compatible with existing lessons.
 
 ## Tests
 - Every lesson has enough content for its estimated duration.
+- Every lesson has a corresponding 21x Markdown specification.
+- The implementation follows its corresponding 21x specification.
 - Coding lessons explain code before execution.
 - Beginner learners can access coding fundamentals.
 - Existing learners are not blocked by the baseline assessment.
@@ -318,6 +365,8 @@ Manual lesson walkthrough on Android.
 
 ## Done When
 - Lessons genuinely provide approximately 15–20 minutes of meaningful learning.
+- Every lesson has a corresponding 21x Markdown specification.
+- The 21x files are used as the starting blueprint for implementation.
 - Learners understand the concepts behind the code they use.
 - Learners are taught enough programming basics to read simple Arduino code.
 - Learners are encouraged to predict and verify behavior instead of blindly copying code.
