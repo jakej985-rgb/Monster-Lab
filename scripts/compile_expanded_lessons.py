@@ -93,90 +93,296 @@ def parse_questions_21c_l(text):
         })
     return out
 
-def build_lesson_01(plan_text):
-    raw_sec = re.findall(r'## ([0-9]+)\. (.*?)\n(.*?)(?=\n## [0-9]+|\n## Estimated|\Z)', plan_text, re.DOTALL)
-    sections = {num: body for num, title, body in raw_sec}
-    qs = parse_questions_21a(plan_text)
-    
+def build_lesson_01(plan_text=None):
+    qs = [
+        {
+            "question": "What is a microcontroller?",
+            "options": [
+                "A small computer designed to control electronics",
+                "A battery",
+                "A mechanical switch"
+            ],
+            "correctIndex": 0,
+            "explanation": "A microcontroller is a specialized chip combining CPU, memory, and IO peripherals to control hardware."
+        },
+        {
+            "question": "A distance sensor sends information to Arduino. Is it an input or output?",
+            "options": [
+                "Input",
+                "Output",
+                "Power supply"
+            ],
+            "correctIndex": 0,
+            "explanation": "Distance sensors gather environmental telemetry and feed data into the Arduino, making them inputs."
+        },
+        {
+            "question": "An LED controlled by Arduino is an example of what?",
+            "options": [
+                "Input",
+                "Output",
+                "Ground"
+            ],
+            "correctIndex": 1,
+            "explanation": "LEDs produce visual illumination based on controller pin voltages, making them outputs."
+        },
+        {
+            "question": "What is GND used for in a typical circuit?",
+            "options": [
+                "Unlimited power",
+                "A common reference and return path",
+                "Storing the program"
+            ],
+            "correctIndex": 1,
+            "explanation": "Ground (GND) is the 0V reference potential and essential return path for electric current."
+        },
+        {
+            "question": "What does HIGH represent in a simple digital output?",
+            "options": [
+                "The output's high/on state (+5V)",
+                "A program error",
+                "A sensor failure"
+            ],
+            "correctIndex": 0,
+            "explanation": "In 5V digital logic, HIGH commands the output transistor to connect to the positive 5V supply rail."
+        },
+        {
+            "question": "What does \"13\" mean in \"digitalWrite(13, HIGH);\"?",
+            "options": [
+                "The pin being controlled",
+                "The amount of memory",
+                "The Arduino speed"
+            ],
+            "correctIndex": 0,
+            "explanation": "The first parameter of digitalWrite specifies the target hardware pin on the ATmega328P header."
+        },
+        {
+            "question": "A potentiometer produces a changing voltage as it turns. Is this digital or analog information?",
+            "options": [
+                "Analog",
+                "Digital only",
+                "Neither"
+            ],
+            "correctIndex": 0,
+            "explanation": "Potentiometers output a continuously variable voltage division ratio between 0V and 5V."
+        },
+        {
+            "question": "Why should you understand code before uploading it?",
+            "options": [
+                "So you can predict behavior and troubleshoot problems",
+                "Arduino refuses copied code",
+                "Every program must be memorized"
+            ],
+            "correctIndex": 0,
+            "explanation": "Systematic programmers analyze pin assignments and logic to predict behavior before applying electrical power."
+        }
+    ]
+
     steps = [
         {
             "stepId": "l01_s01",
             "title": "Meet the Monster Brain",
             "type": "story",
-            "markdownContent": clean_markdown(sections['1'])
+            "interactiveWidgetType": "visualFlowDiagram",
+            "markdownContent": (
+                "A robot needs a brain! The **Arduino Uno** is a small microcontroller development board that reads information from the physical world and commands electronic mechanisms.\n\n"
+                "It can read a pushbutton, measure distance with an ultrasonic sensor, turn an LED on or off, control a motor through a driver chip, and talk to other smart devices.\n\n"
+                "The Arduino does not magically know what to do. A **program** tells it what to look for and what decisions to make.\n\n"
+                "```\nSensor (Input) ➔ Arduino Uno ➔ Program Decision ➔ Actuator (Output)\n```\n\n"
+                "Test the interactive signal flow below to watch how information moves through the brain!"
+            )
         },
         {
             "stepId": "l01_s02",
             "title": "What Is a Microcontroller? Architecture & Vocabulary",
             "type": "story",
-            "markdownContent": clean_markdown(sections['2'])
+            "interactiveWidgetType": "visualFlowDiagram",
+            "markdownContent": (
+                "A **microcontroller** is a self-contained computer on a single chip, built specifically to interact with electrical hardware. Unlike a desktop computer with a monitor and keyboard, a microcontroller lives inside devices.\n\n"
+                "It contains:\n"
+                "- **CPU (Processor)**: Executes your code instructions up to 16 million times per second (16 MHz).\n"
+                "- **Flash Memory**: Stores your compiled sketch even when power is turned off.\n"
+                "- **RAM**: Holds temporary variables and sensor readings while running.\n"
+                "- **GPIO Pins**: General Purpose Input/Output connections that wire into circuits.\n\n"
+                "### Core Vocabulary\n"
+                "- **Microcontroller**: A compact computer engineered to control physical electronics.\n"
+                "- **Program (Sketch)**: Step-by-step instructions that tell the controller what logic to execute.\n"
+                "- **Input**: Sensory data flowing **into** the controller from the world.\n"
+                "- **Output**: A physical voltage or command sent **out** to control hardware."
+            )
         },
         {
             "stepId": "l01_s03",
             "title": "Inputs vs Outputs: Think Like a Robot",
             "type": "story",
-            "markdownContent": clean_markdown(sections['3'])
+            "interactiveWidgetType": "inputOutputClassification",
+            "markdownContent": (
+                "Robots interact with reality through two fundamental types of hardware:\n\n"
+                "### 1. Inputs (The Senses)\n"
+                "Sensors collect data from the environment and send electrical signals into the Arduino:\n"
+                "- **Pushbutton**: Senses physical finger touch\n"
+                "- **Ultrasonic Sensor**: Measures distance by bouncing sound waves\n"
+                "- **Potentiometer**: Reads the angle of a rotating knob\n"
+                "- **Light Sensor (LDR)**: Measures environmental room brightness\n\n"
+                "### 2. Outputs (The Muscles & Voices)\n"
+                "Actuators receive voltage commands from the Arduino to change the physical world:\n"
+                "- **LED**: Shines colored light\n"
+                "- **Piezo Buzzer**: Vibrates to create beeps and musical tones\n"
+                "- **4-Digit Display**: Shows numbers and scores\n"
+                "- **Servo Motor**: Moves arms and steers robot wheels\n\n"
+                "### Classification Mission\n"
+                "Classify each hardware component in the mission below as an **Input** or **Output**!"
+            )
         },
         {
             "stepId": "l01_s04",
             "title": "Digital vs Analog Signals & Prediction",
             "type": "visualExplanation",
-            "interactiveWidgetType": "boardInspector",
-            "markdownContent": clean_markdown(sections['4'])
+            "interactiveWidgetType": "arduinoBoardInspector",
+            "markdownContent": (
+                "Electronics communicate using two distinct types of electrical signals:\n\n"
+                "### 1. Digital Signals (Binary)\n"
+                "Digital signals have only **two discrete states**:\n"
+                "- **HIGH**: +5.0 Volts (ON / TRUE / Binary 1)\n"
+                "- **LOW**: 0.0 Volts (OFF / FALSE / Binary 0)\n"
+                "Like a simple light switch, a digital pin is either fully powered or off.\n\n"
+                "### 2. Analog Signals (Continuous)\n"
+                "Analog signals can represent **any smooth value** across a continuous range between 0.0V and 5.0V.\n"
+                "The Arduino uses an internal **Analog-to-Digital Converter (ADC)** on pins A0–A5 to convert voltage into an integer from **0 to 1023**.\n\n"
+                "Explore both signal modes below and test your prediction on potentiometer behavior!"
+            )
         },
         {
             "stepId": "l01_s05",
             "title": "Meet the Arduino Uno: Physical Hardware Mission",
             "type": "physicalTask",
-            "markdownContent": clean_markdown(sections['5'])
+            "interactiveWidgetType": "boardLabelDragDrop",
+            "markdownContent": (
+                "Take your Arduino Uno development board in your hands. Look closely at the surface-mount components, pin headers, and silk-screen labels.\n\n"
+                "### Key Board Landmarks to Identify:\n"
+                "1. **USB Type-B Port**: Connects to your PC for code uploading and delivers 5V DC power.\n"
+                "2. **DC Barrel Jack**: External power input (accepts 7V–12V from battery pack or wall adapter).\n"
+                "3. **Digital Pins 0–13**: Top header pins for binary inputs and outputs (pins with `~` support PWM).\n"
+                "4. **Analog Pins A0–A5**: Bottom right header reading continuous sensory voltages.\n"
+                "5. **Power Rails (5V & 3.3V)**: Regulated power sources for sensors and breadboard circuits.\n"
+                "6. **GND (Ground)**: The 0V reference potential and return path for all electricity.\n"
+                "7. **Reset Button**: Restarts your program from the very beginning of `setup()`.\n"
+                "8. **Built-in LED**: Amber test LED connected internally to Digital Pin 13.\n\n"
+                "Drag and match each label badge to its corresponding landmark below!"
+            )
         },
         {
             "stepId": "l01_s06",
             "title": "Why Power and Ground Matter: Complete Circuits",
             "type": "story",
-            "markdownContent": clean_markdown(sections['6'])
+            "interactiveWidgetType": "groundTroubleshooting",
+            "markdownContent": (
+                "Electricity can only do work when it flows in an **unbroken, closed loop**.\n\n"
+                "In every electronic circuit:\n"
+                "1. Energy leaves the positive power supply (+5V).\n"
+                "2. It travels through wires and components (resistors, LEDs, sensors).\n"
+                "3. It returns safely to **Ground (GND)**.\n\n"
+                "```\n+5V Power Rail ➔ Current-Limiting Resistor ➔ LED Anode ➔ GND Return Rail\n```\n\n"
+                "> **The Ground Invariant**: GND is not a trash bin where electricity disappears! It is the zero-volt reference and the return highway for electron current. If the GND wire is loose or disconnected, the circuit opens, current drops to 0 mA, and nothing works.\n\n"
+                "Test the 4 circuit conditions below to observe normal, open, loose, and shorted ground connections."
+            )
         },
         {
             "stepId": "l01_s07",
             "title": "How the Robot Brain Makes Decisions",
             "type": "story",
-            "markdownContent": clean_markdown(sections['7'])
+            "interactiveWidgetType": "decisionSimulator",
+            "markdownContent": (
+                "The microcontroller brain doesn't guess what to do—it processes a clear logic sequence:\n\n"
+                "```\nCondition (Input) ➔ Decision (Code Logic) ➔ Action (Output)\n```\n\n"
+                "### The 3-Step Decision Pipeline:\n"
+                "1. **Input**: A finger pushes the button, closing the contacts and delivering 5V to Pin 2.\n"
+                "2. **Decision**: The microcontroller runs code: `if (digitalRead(2) == HIGH)`. The condition evaluates to **TRUE**.\n"
+                "3. **Action**: The program commands the output: `digitalWrite(13, HIGH);`, powering on the Pin 13 LED!\n\n"
+                "Press and hold the virtual tactile button below to watch the decision pipeline evaluate live."
+            )
         },
         {
             "stepId": "l01_s08",
             "title": "Your First Instruction: Deconstructing digitalWrite",
             "type": "codeExperiment",
-            "markdownContent": clean_markdown(sections['8'])
+            "interactiveWidgetType": "codeDeconstruction",
+            "markdownContent": (
+                "Before writing whole sketches, let's deconstruct the most famous instruction in robotics:\n\n"
+                "```cpp\ndigitalWrite(13, HIGH);\n```\n\n"
+                "### What Each Token Means:\n"
+                "- `digitalWrite`: The function name. Commands a digital pin to output voltage.\n"
+                "- `(` and `)`: Parentheses containing the arguments.\n"
+                "- `13`: The pin number. Digital Pin 13 is connected to the onboard amber LED.\n"
+                "- `,`: Comma separating the target pin from the state.\n"
+                "- `HIGH`: The output state. Connects Pin 13 to +5 Volts.\n"
+                "- `;`: The semicolon. Every instruction in C++ terminates with a semicolon, like a period.\n\n"
+                "Tap each code token below to inspect its job, then predict and simulate its hardware execution!"
+            )
         },
         {
             "stepId": "l01_s09",
             "title": "Trust but Verify: Scientific Engineering Method",
             "type": "story",
-            "markdownContent": clean_markdown(sections['9'])
+            "interactiveWidgetType": "engineeringPrediction",
+            "markdownContent": (
+                "Great robotics engineers never blindly upload code from the internet. They use the **Scientific Engineering Method**:\n\n"
+                "```\nRead Code ➔ Predict Outcome ➔ Upload ➔ Observe ➔ Verify ➔ Change & Test\n```\n\n"
+                "Before uploading any sketch to an Arduino board, always ask:\n"
+                "1. Which pin number does this code command?\n"
+                "2. Is my physical jumper wire plugged into that exact pin?\n"
+                "3. What do the constants and delays mean?\n"
+                "4. What physical motion or light do I predict will happen?\n\n"
+                "Practice this habit below: Predict what happens when `HIGH` is replaced with `LOW`!"
+            )
         },
         {
             "stepId": "l01_s10",
             "title": "Real-World Systems: Obstacle Avoidance & Robot Vacuums",
             "type": "visualExplanation",
-            "markdownContent": clean_markdown(sections['10'])
+            "interactiveWidgetType": "realWorldSystemDiagram",
+            "markdownContent": (
+                "The simple **Input ➔ Decision ➔ Output** pattern you just learned is the foundation of modern automation:\n\n"
+                "- **Robot Vacuums**: Ultrasonic sensor measures distance to wall ➔ if distance < 20cm ➔ reverse right wheel to steer away.\n"
+                "- **Automatic Supermarket Doors**: Motion sensor detects approaching customer ➔ if motion detected ➔ slide glass doors open for 5 seconds.\n"
+                "- **Security Intruder Alarms**: Laser tripwire monitors doorway ➔ if beam broken ➔ blast siren and flash strobe lights.\n\n"
+                "Select each automated system below and simulate how it reacts to environmental triggers!"
+            )
         },
         {
             "stepId": "l01_s11",
             "title": "Troubleshooting Challenge: The Silent LED",
             "type": "story",
-            "markdownContent": clean_markdown(sections['11'])
+            "interactiveWidgetType": "interactiveTroubleshooting",
+            "markdownContent": (
+                "A fellow robotics student calls you over in frustration: *\"I uploaded my sketch, but my LED refuses to light up!\"*\n\n"
+                "Instead of randomly moving wires or rewriting code, follow the **4-Step Diagnostic Triage**:\n"
+                "1. **Check Power**: Is the green ON LED lit on the Arduino?\n"
+                "2. **Check Code**: What pin number is commanded `HIGH` in `digitalWrite`?\n"
+                "3. **Check Physical Wiring**: Which header pin is the physical jumper wire actually plugged into?\n"
+                "4. **Identify Mismatch**: Compare code pin vs physical pin!\n\n"
+                "Inspect the test bench below, find the pin mismatch bug, and fix the circuit!"
+            )
         },
         {
             "stepId": "l01_s12",
             "title": "Final Review & Self-Reflection",
             "type": "story",
-            "markdownContent": clean_markdown(sections['13'])
+            "interactiveWidgetType": "miniQuiz",
+            "markdownContent": (
+                "Congratulations on completing your first robotics investigation! Let's review the fundamental principles:\n\n"
+                "- The **Arduino Uno** is a microcontroller development board powered by the **ATmega328P chip**.\n"
+                "- **Inputs** collect sensory data; **Outputs** perform physical work in the world.\n"
+                "- **Digital signals** are strictly binary (0V or 5V); **Analog signals** represent smooth continuous ranges (0–1023 ADC).\n"
+                "- Circuits require an unbroken loop: current flows from **+5V**, through components, and returns safely through **GND**.\n"
+                "- Code instructions like `digitalWrite(pin, state);` command specific pins, so physical wiring must match code exactly.\n\n"
+                "Complete the 4-question self-reflection check below before tackling the final Knowledge Check!"
+            )
         },
         {
             "stepId": "l01_s13",
             "title": "Comprehensive Knowledge Check",
             "type": "quizCheckpoint",
-            "markdownContent": "Test your mastery of microcontrollers, signal types, power paths, and code prediction.",
+            "markdownContent": "Test your mastery of microcontrollers, signal types, power paths, and code prediction with this 8-question knowledge check.",
             "interactiveConfig": {
                 "question": qs[3]["question"],
                 "options": qs[3]["options"],

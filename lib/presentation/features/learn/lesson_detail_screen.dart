@@ -5,6 +5,8 @@ import '../../../domain/models/lesson_model.dart';
 import '../../shared/providers.dart';
 import '../../shared/widgets/monster_button.dart';
 import '../../shared/widgets/monster_card.dart';
+import '../../shared/widgets/monster_markdown.dart';
+import 'activities/activity_registry.dart';
 import 'widgets/blink_simulator_widget.dart';
 import 'widgets/potentiometer_simulator_widget.dart';
 import 'widgets/rgb_mixer_widget.dart';
@@ -171,14 +173,8 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                     children: [
                       // Story / Explanation Markdown Card
                       MonsterCard(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              currentStep.markdownContent,
-                              style: const TextStyle(fontSize: 15, height: 1.5),
-                            ),
-                          ],
+                        child: MonsterMarkdown(
+                          data: currentStep.markdownContent,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -198,48 +194,50 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                         const SizedBox(height: 16),
                       ],
 
-                      // Interactive Simulators (routed via interactiveWidgetType with legacy fallback)
-                      if (currentStep.interactiveWidgetType ==
-                              'boardInspector' ||
-                          (currentStep.interactiveWidgetType == null &&
-                              lesson.id == 'lesson_01' &&
-                              currentStep.type == StepType.visualExplanation &&
-                              steps.length <= 6)) ...[
-                        const BoardInspectorWidget(),
+                      // Interactive Activities & Simulators (routed via ActivityRegistry with legacy fallback)
+                      if (ActivityRegistry.hasActivity(
+                          currentStep.interactiveWidgetType)) ...[
+                        ActivityRegistry.buildActivity(
+                          context: context,
+                          activityType: currentStep.interactiveWidgetType,
+                          config: currentStep.interactiveConfig,
+                        )!,
                         const SizedBox(height: 16),
+                      ] else ...[
+                        // Legacy fallback when interactiveWidgetType is not set
+                        if (currentStep.interactiveWidgetType == null &&
+                            lesson.id == 'lesson_01' &&
+                            currentStep.type == StepType.visualExplanation &&
+                            steps.length <= 6) ...[
+                          const BoardInspectorWidget(),
+                          const SizedBox(height: 16),
+                        ],
+                        if (currentStep.interactiveWidgetType == null &&
+                            lesson.id == 'lesson_05' &&
+                            currentStep.type == StepType.codeExperiment &&
+                            steps.length <= 6) ...[
+                          const BlinkSimulatorWidget(),
+                          const SizedBox(height: 16),
+                        ],
+                        if (currentStep.interactiveWidgetType == null &&
+                            lesson.id == 'lesson_06' &&
+                            currentStep.type == StepType.codeExperiment &&
+                            steps.length <= 6) ...[
+                          const PotentiometerSimulatorWidget(),
+                          const SizedBox(height: 16),
+                        ],
+                        if (currentStep.interactiveWidgetType == null &&
+                            lesson.id == 'lesson_07' &&
+                            currentStep.type == StepType.codeExperiment &&
+                            steps.length <= 6) ...[
+                          const RgbMixerWidget(),
+                          const SizedBox(height: 16),
+                        ],
                       ],
 
-                      if (currentStep.interactiveWidgetType ==
-                              'blinkSimulator' ||
-                          (currentStep.interactiveWidgetType == null &&
-                              lesson.id == 'lesson_05' &&
-                              currentStep.type == StepType.codeExperiment &&
-                              steps.length <= 6)) ...[
-                        const BlinkSimulatorWidget(),
-                        const SizedBox(height: 16),
-                      ],
-
-                      if (currentStep.interactiveWidgetType ==
-                              'potentiometerSimulator' ||
-                          (currentStep.interactiveWidgetType == null &&
-                              lesson.id == 'lesson_06' &&
-                              currentStep.type == StepType.codeExperiment &&
-                              steps.length <= 6)) ...[
-                        const PotentiometerSimulatorWidget(),
-                        const SizedBox(height: 16),
-                      ],
-
-                      if (currentStep.interactiveWidgetType == 'rgbMixer' ||
-                          (currentStep.interactiveWidgetType == null &&
-                              lesson.id == 'lesson_07' &&
-                              currentStep.type == StepType.codeExperiment &&
-                              steps.length <= 6)) ...[
-                        const RgbMixerWidget(),
-                        const SizedBox(height: 16),
-                      ],
-
-                      // Physical Task Checklist
-                      if (currentStep.type == StepType.physicalTask) ...[
+                      // Physical Task Checklist (only when no interactive widget handles this step)
+                      if (currentStep.type == StepType.physicalTask &&
+                          currentStep.interactiveWidgetType == null) ...[
                         _buildPhysicalTaskChecklist(currentStep),
                         const SizedBox(height: 16),
                       ],

@@ -41,3 +41,5 @@ coverage/
 *.aab
 *.deb
 *.exe
+# Widget Preview related
+.widget_preview/
