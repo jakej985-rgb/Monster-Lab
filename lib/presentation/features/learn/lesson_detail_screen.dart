@@ -201,32 +201,39 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                       // Interactive Simulators (routed via interactiveWidgetType with legacy fallback)
                       if (currentStep.interactiveWidgetType ==
                               'boardInspector' ||
-                          (lesson.id == 'lesson_01' &&
-                              currentStep.type ==
-                                  StepType.visualExplanation)) ...[
+                          (currentStep.interactiveWidgetType == null &&
+                              lesson.id == 'lesson_01' &&
+                              currentStep.type == StepType.visualExplanation &&
+                              steps.length <= 6)) ...[
                         const BoardInspectorWidget(),
                         const SizedBox(height: 16),
                       ],
 
                       if (currentStep.interactiveWidgetType ==
                               'blinkSimulator' ||
-                          (lesson.id == 'lesson_05' &&
-                              currentStep.type == StepType.codeExperiment)) ...[
+                          (currentStep.interactiveWidgetType == null &&
+                              lesson.id == 'lesson_05' &&
+                              currentStep.type == StepType.codeExperiment &&
+                              steps.length <= 6)) ...[
                         const BlinkSimulatorWidget(),
                         const SizedBox(height: 16),
                       ],
 
                       if (currentStep.interactiveWidgetType ==
                               'potentiometerSimulator' ||
-                          (lesson.id == 'lesson_06' &&
-                              currentStep.type == StepType.codeExperiment)) ...[
+                          (currentStep.interactiveWidgetType == null &&
+                              lesson.id == 'lesson_06' &&
+                              currentStep.type == StepType.codeExperiment &&
+                              steps.length <= 6)) ...[
                         const PotentiometerSimulatorWidget(),
                         const SizedBox(height: 16),
                       ],
 
                       if (currentStep.interactiveWidgetType == 'rgbMixer' ||
-                          (lesson.id == 'lesson_07' &&
-                              currentStep.type == StepType.codeExperiment)) ...[
+                          (currentStep.interactiveWidgetType == null &&
+                              lesson.id == 'lesson_07' &&
+                              currentStep.type == StepType.codeExperiment &&
+                              steps.length <= 6)) ...[
                         const RgbMixerWidget(),
                         const SizedBox(height: 16),
                       ],
@@ -241,6 +248,8 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                       if (currentStep.type == StepType.quizCheckpoint &&
                           currentStep.interactiveConfig != null) ...[
                         QuizCheckpointWidget(
+                          key: ValueKey(
+                              '${widget.lessonId}_quiz_${currentStep.stepId}'),
                           question: currentStep.interactiveConfig!['question']
                                   as String? ??
                               'Checkpoint Question',
@@ -250,6 +259,12 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                           correctIndex: currentStep
                                   .interactiveConfig!['correctIndex'] as int? ??
                               0,
+                          questions: (currentStep
+                                  .interactiveConfig!['questions'] as List?)
+                              ?.map((q) => Map<String, dynamic>.from(q as Map))
+                              .toList(),
+                          explanation: currentStep
+                              .interactiveConfig!['explanation'] as String?,
                           onAnswerSubmitted: (isCorrect) async {
                             final checkpointKey =
                                 '${widget.lessonId}_step_$_currentStepIndex';

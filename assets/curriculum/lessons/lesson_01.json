@@ -5,124 +5,177 @@
   "tier": "rookie",
   "estimatedMinutes": 18,
   "prerequisites": [],
-  "componentIds": [],
+  "componentIds": [
+    "comp_uno"
+  ],
   "steps": [
     {
       "stepId": "l01_s01",
       "title": "Meet the Monster Brain",
       "type": "story",
-      "markdownContent": "Welcome to Monster Lab! The **Arduino Uno** is a microcontroller board\u2014a tiny, rugged computer designed to interact directly with hardware in the physical world. Unlike desktop computers, it runs a dedicated program that loops continuously to sense inputs and command outputs."
+      "markdownContent": "### Meet the Monster Brain\nA robot needs a brain. The Arduino Uno is a small microcontroller development board that can read information from the world and control electronic devices.\n\nIt can read a button, measure a sensor, turn an LED on or off, control a motor through a driver, and communicate with other electronics.\n\nThe Arduino does not magically know what to do. A program tells it what to look for and what actions to take.\n\n**Sensor \u2192 Arduino \u2192 Decision \u2192 Output**"
     },
     {
       "stepId": "l01_s02",
-      "title": "Inputs vs Outputs & The Decision Engine",
-      "type": "visualExplanation",
-      "interactiveWidgetType": "boardInspector",
-      "markdownContent": "Robots follow a continuous loop: **Sensor \u2192 Arduino \u2192 Decision \u2192 Output**.\n\n- **Inputs (Senses)**: Pushbuttons, ultrasonic distance sensors, sound detectors, and potentiometers.\n- **Outputs (Actions)**: LEDs, buzzers, LCD screens, and motor drivers.\n- **The Program**: You write the code that decides how inputs turn into actions!"
+      "title": "What Is a Microcontroller? Architecture & Vocabulary",
+      "type": "story",
+      "markdownContent": "A microcontroller is a small computer designed to control electronics. Unlike a desktop computer, it is designed to interact directly with hardware.\n\nIt contains a processor that runs instructions, memory for programs and data, input/output connections, timers, and other hardware used by programs.\n\n### Vocabulary\n- **Microcontroller:** A small computer designed to control electronic hardware.\n- **Program:** Instructions that tell a computer what to do.\n- **Input:** Information entering the controller.\n- **Output:** An action or signal produced by the controller."
     },
     {
       "stepId": "l01_s03",
-      "title": "Digital vs Analog Signals",
+      "title": "Inputs vs Outputs: Think Like a Robot",
       "type": "story",
-      "markdownContent": "Microcontrollers understand two kinds of electrical information:\n\n- **Digital Signals**: Have distinct binary states\u2014either `HIGH` (5.0V / ON) or `LOW` (0.0V / OFF).\n- **Analog Signals**: Vary smoothly across a continuous spectrum (like temperature, sound volume, or knob angle from 0V to 5V)."
+      "markdownContent": "Robots need ways to sense and act.\n\n### Inputs\n- Pushbutton\n- Distance sensor\n- Sound sensor\n- Potentiometer\n- Light sensor\n\n### Outputs\n- LED\n- Buzzer\n- Display\n- Motor driver\n- Servo\n\n### Think Like a Robot\nAsk the learner to classify an ultrasonic sensor, LED, pushbutton, and motor driver as input or output.\n\nExample: If a robot needs to know whether someone pressed a button, is the button an input or an output?\n\n**Answer:** Input."
     },
     {
       "stepId": "l01_s04",
-      "title": "Pin Tour: Power and Ground Paths",
-      "type": "physicalTask",
-      "markdownContent": "Electricity must flow in a complete loop: **Power (5V) \u2192 Component \u2192 Ground (GND)**.\n\nInspect your physical Arduino Uno board:\n1. Locate the `5V` and `3.3V` power output pins.\n2. Locate the multiple `GND` (Ground) reference return sockets.\n3. Find Digital Pins `0` through `13` on the upper header.\n4. Find Analog In Pins `A0` through `A5` on the lower header.\n5. Spot the tiny amber `L` LED next to pin 13."
+      "title": "Digital vs Analog Signals & Prediction",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "boardInspector",
+      "markdownContent": "Digital information can represent distinct states. For a simple Arduino input this is often HIGH or LOW, similar to ON or OFF.\n\nAnalog information can represent changing values such as temperature, light level, knob position, or sound level.\n\n### Quick Prediction\nA potentiometer is turned slowly from one end to the other. Would its reading stay the same, change gradually, or only have two possible values?\n\n**Answer:** Change gradually."
     },
     {
       "stepId": "l01_s05",
-      "title": "Your First Instruction: Reading Code",
-      "type": "codeExperiment",
-      "markdownContent": "Before uploading sketches, engineers read and predict code line by line:\n\n```cpp\ndigitalWrite(13, HIGH);\n```\n\n- `digitalWrite`: The built-in command that controls a digital output pin.\n- `13`: The target pin connected to the built-in amber LED.\n- `HIGH`: Sets the pin to 5.0 Volts (turn on).\n- `;`: The semicolon terminates every C++ statement!"
+      "title": "Meet the Arduino Uno: Physical Hardware Mission",
+      "type": "physicalTask",
+      "markdownContent": "Have the learner physically locate:\n- USB connection\n- Power connection\n- Digital pins\n- Analog pins\n- 5V\n- 3.3V\n- GND\n- Reset button\n- Built-in LED\n\n### Physical Mission\n1. Find 5V.\n2. Find GND.\n3. Find one digital pin.\n4. Find one analog pin.\n5. Find the built-in LED.\n6. Identify the USB connection.\n\nDo not connect anything yet. The goal is identification."
     },
     {
       "stepId": "l01_s06",
-      "title": "Knowledge Check",
+      "title": "Why Power and Ground Matter: Complete Circuits",
+      "type": "story",
+      "markdownContent": "Electronic circuits need a complete electrical path.\n\nFor a simple circuit, electrical energy travels from the power source through the components and returns through the circuit's ground/reference path.\n\nA common pattern is:\n\n**Power \u2192 Component \u2192 GND**\n\nImportant: GND does not mean the electricity simply disappears. It is the circuit's reference and return path."
+    },
+    {
+      "stepId": "l01_s07",
+      "title": "How the Robot Brain Makes Decisions",
+      "type": "story",
+      "markdownContent": "Suppose we want a robot to turn on an LED when a button is pressed:\n\n1. Button provides an input.\n2. Arduino reads the input.\n3. Program checks the value.\n4. Program decides what to do.\n5. Arduino controls the LED.\n\nThis introduces an important programming idea:\n\n**condition \u2192 decision \u2192 action**"
+    },
+    {
+      "stepId": "l01_s08",
+      "title": "Your First Instruction: Deconstructing digitalWrite",
+      "type": "codeExperiment",
+      "markdownContent": "Before giving the learner a complete sketch, introduce one instruction:\n\n    digitalWrite(13, HIGH);\n\n### Break It Apart\n- **digitalWrite:** A function that sets a digital output.\n- **13:** The digital pin being controlled.\n- **HIGH:** The requested high/on state.\n- **;:** Marks the end of the statement.\n\n### Code Prediction\nIf pin 13 controls the built-in LED, what do you predict this instruction will do?\n\n**Expected answer:** Command the LED on.\n\nThe goal is learning to read code, not simply copy it."
+    },
+    {
+      "stepId": "l01_s09",
+      "title": "Trust but Verify: Scientific Engineering Method",
+      "type": "story",
+      "markdownContent": "A programmer should not blindly trust code copied from the internet.\n\nBefore uploading code, ask:\n- What pin does it use?\n- Is that pin connected to the component?\n- What do the important numbers mean?\n- What should happen?\n- What could go wrong?\n\nTeach the habit: **Read \u2192 Predict \u2192 Upload \u2192 Observe \u2192 Verify \u2192 Change \u2192 Test.**"
+    },
+    {
+      "stepId": "l01_s10",
+      "title": "Real-World Systems: Obstacle Avoidance & Robot Vacuums",
+      "type": "visualExplanation",
+      "markdownContent": "Imagine a robot that needs to avoid walls.\n\n**Ultrasonic sensor \u2192 measures distance**\n\n**Arduino \u2192 reads the measurement**\n\n**Program \u2192 decides whether the robot is too close**\n\n**Motor driver \u2192 controls the motors**\n\nThis same input/decision/output pattern appears in robot vacuums, automatic doors, factory robots, alarm systems, and smart devices."
+    },
+    {
+      "stepId": "l01_s11",
+      "title": "Troubleshooting Challenge: The Silent LED",
+      "type": "story",
+      "markdownContent": "### Scenario\nA learner says: My LED code does not work.\n\nHave the learner investigate:\n1. Is the Arduino powered?\n2. Is the correct board selected?\n3. Is the correct pin being used?\n4. Is the LED connected to that pin?\n5. Is the code using HIGH or LOW?\n6. Was the program successfully uploaded?\n\n### Engineering Habit\n**Observe \u2192 Form a theory \u2192 Test \u2192 Learn**\n\nDo not randomly change everything."
+    },
+    {
+      "stepId": "l01_s12",
+      "title": "Final Review & Self-Reflection",
+      "type": "story",
+      "markdownContent": "### You Learned\n- Arduino is a development board built around a microcontroller.\n- A microcontroller runs programs that control electronics.\n- Inputs provide information.\n- Outputs perform actions.\n- Digital signals can represent distinct states.\n- Analog signals can represent changing values.\n- Power and GND are fundamental to circuits.\n- Code contains instructions that control hardware.\n- Pin numbers matter.\n- Good engineers predict, test, and troubleshoot.\n\n### Before You Continue\nAsk the learner:\n- What is the input?\n- What is the output?\n- What pin is being used?\n- What is the code telling the hardware to do?"
+    },
+    {
+      "stepId": "l01_s13",
+      "title": "Comprehensive Knowledge Check",
       "type": "quizCheckpoint",
-      "markdownContent": "What role does Ground (GND) play in an electrical circuit?",
+      "markdownContent": "Test your mastery of microcontrollers, signal types, power paths, and code prediction.",
       "interactiveConfig": {
-        "question": "What is Ground (GND)?",
+        "question": "What is GND used for in a typical circuit?",
         "options": [
-          "A battery that provides unlimited power",
-          "The return path for electric current to complete the circuit",
-          "A sensor that measures dirt depth"
+          "Unlimited power.",
+          "A common reference and return path.",
+          "Storing the program."
         ],
         "correctIndex": 1,
+        "explanation": "Ground (GND) is the 0V reference potential and essential return path for electric current.",
         "questions": [
           {
             "question": "What is a microcontroller?",
             "options": [
-              "A small computer designed to control electronics",
-              "A chemical battery",
-              "A mechanical switch"
+              "A small computer designed to control electronics.",
+              "A battery.",
+              "A mechanical switch."
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "A microcontroller is a specialized chip combining CPU, memory, and IO peripherals to control hardware."
           },
           {
-            "question": "A distance sensor sends distance readings to Arduino. Is it an input or output?",
+            "question": "A distance sensor sends information to Arduino. Is it an input or output?",
             "options": [
-              "Input",
-              "Output",
-              "Power supply"
+              "Input.",
+              "Output.",
+              "Power supply."
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Distance sensors gather environmental telemetry and feed data into the Arduino, making them inputs."
           },
           {
             "question": "An LED controlled by Arduino is an example of what?",
             "options": [
-              "Input",
-              "Output",
-              "Ground"
+              "Input.",
+              "Output.",
+              "Ground."
             ],
-            "correctIndex": 1
+            "correctIndex": 1,
+            "explanation": "LEDs produce visual illumination based on controller pin voltages, making them outputs."
           },
           {
             "question": "What is GND used for in a typical circuit?",
             "options": [
-              "A common reference and return path",
-              "Unlimited power",
-              "Storing program code"
+              "Unlimited power.",
+              "A common reference and return path.",
+              "Storing the program."
             ],
-            "correctIndex": 0
+            "correctIndex": 1,
+            "explanation": "Ground (GND) is the 0V reference potential and essential return path for electric current."
           },
           {
             "question": "What does HIGH represent in a simple digital output?",
             "options": [
-              "The output's high/on state (5V)",
-              "A program error",
-              "A sensor disconnect"
+              "The output's high/on state.",
+              "A program error.",
+              "A sensor failure."
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "In 5V digital logic, HIGH commands the output transistor to connect to the positive 5V supply rail."
           },
           {
             "question": "What does 13 mean in digitalWrite(13, HIGH);?",
             "options": [
-              "The digital pin number being controlled",
-              "The microcontroller clock speed",
-              "Flash memory bytes"
+              "The pin being controlled.",
+              "The amount of memory.",
+              "The Arduino speed."
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "The first parameter of digitalWrite specifies the target hardware pin on the ATmega328P header."
           },
           {
-            "question": "A potentiometer produces a smoothly changing voltage as it turns. Is this digital or analog?",
+            "question": "A potentiometer produces a changing voltage as it turns. Is this digital or analog information?",
             "options": [
-              "Analog",
-              "Digital only",
-              "Neither"
+              "Analog.",
+              "Digital only.",
+              "Neither."
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Potentiometers output a continuously variable voltage division ratio between 0V and 5V."
           },
           {
-            "question": "Why should you read and understand code before uploading it?",
+            "question": "Why should you understand code before uploading it?",
             "options": [
-              "So you can predict behavior and troubleshoot problems",
-              "Arduino deletes unverified sketches",
-              "Every program must be memorized"
+              "So you can predict behavior and troubleshoot problems.",
+              "Arduino refuses copied code.",
+              "Every program must be memorized."
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Systematic programmers analyze pin assignments and logic to predict behavior before applying electrical power."
           }
         ]
       }

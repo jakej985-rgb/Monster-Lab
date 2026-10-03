@@ -1,53 +1,109 @@
 {
   "id": "lesson_11",
   "title": "Serial UART & Wireless Communication",
-  "summary": "Connect Arduinos to computers, Bluetooth modules, and GPS with asynchronous TX/RX serial streams.",
+  "summary": "Establish bidirectional serial telemetry and communicate wirelessly with Bluetooth modules.",
   "tier": "engineer",
   "estimatedMinutes": 20,
   "prerequisites": [
     "lesson_04"
   ],
   "componentIds": [
+    "comp_uno",
     "comp_29"
   ],
   "steps": [
     {
       "stepId": "l11_s01",
-      "title": "Asynchronous Streams & Baud Framing",
+      "title": "Mission Introduction",
       "type": "story",
-      "markdownContent": "To roam untethered across terrain, robots transmit commands wirelessly using **UART** (Universal Asynchronous Receiver-Transmitter). Unlike I2C or SPI, UART is **asynchronous**\u2014there is no shared clock line! Both devices agree on a precise bit frequency (the **Baud Rate**, such as 9600 bits per second) and synchronize on the falling edge of a Start Bit."
+      "markdownContent": "### Cut the Tether: Untethered Wireless Telemetry\nA robot tethered to a workbench by a USB cable cannot explore the world. To roam autonomously across terrain, monster robots must transmit telemetry data, video diagnostics, and receive directional steering commands wirelessly through the air.\n\nUART (Universal Asynchronous Receiver-Transmitter) is the universal language of microcontrollers, GPS receivers, radio transceivers, and cellular modems. In this lesson, you will build an asynchronous wireless bridge between your monster robot and your smartphone!\n\n```\nArduino Uno (5V) \u2500\u2500\u2500 Pin 11 (TX) \u2500\u2500\u2500[ 1k\u03a9 ]\u2500\u2500\u2500\u252c\u2500\u2500\u2500 RXD (3.3V) \u2500\u2500\u2500 Bluetooth Module\n                                             \u2502\n                                           [ 2k\u03a9 ]\n                                             \u2502\nArduino Uno (GND) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500 GND \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Bluetooth Module\nArduino Uno (5V) \u2500\u2500\u2500 Pin 10 (RX) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 TXD \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Bluetooth Module\n```"
     },
     {
       "stepId": "l11_s02",
-      "title": "Crossed Wires: TX to RX",
-      "type": "visualExplanation",
-      "markdownContent": "The golden wiring rule of UART serial is to **cross the lines**:\n\n- Arduino `TX` (Transmit) connects to Module `RX` (Receive).\n- Module `TX` connects to Arduino `RX`.\n- Pins `0` and `1` are hardwired to the onboard USB chip. To avoid USB upload collisions, we use the `<SoftwareSerial.h>` library to create virtual serial ports on pins `10` and `11`!"
+      "title": "Prior Knowledge Check",
+      "type": "story",
+      "markdownContent": "1. **What baud rate does `Serial.begin(9600)` configure?** 9600 symbols/bits per second.\n2. **What do the `TX` and `RX` labels represent on microcontrollers?** Transmit (`TX`) and Receive (`RX`)."
     },
     {
       "stepId": "l11_s03",
-      "title": "Voltage Divider Protection for 3.3V RX",
-      "type": "physicalTask",
-      "markdownContent": "Examine the HC-05 Bluetooth Module (`comp_29`):\n1. Module `TXD` outputs safe 3.3V logic\u2014connect directly to Uno Pin `10` (`SoftwareSerial RX`).\n2. Module `RXD` cannot tolerate 5.0V! Build a resistor divider on breadboard:\n   - Connect Uno Pin `11` (`TX`) to a 1k\u03a9 resistor.\n   - Connect the resistor to a node wired to Module `RXD`.\n   - Connect a 2k\u03a9 resistor from the node to `GND`.\n   - Voltage drops safely: $5\\text{V} \\times \\frac{2\\text{k}\\Omega}{1\\text{k}\\Omega + 2\\text{k}\\Omega} = 3.33\\text{V}$!"
+      "title": "Core Concept & Vocabulary",
+      "type": "story",
+      "markdownContent": "- **UART:** A dedicated hardware peripheral that translates parallel CPU data bytes into serial bitstreams and vice versa.\n- **Asynchronous:** Communication without a shared clock wire; transmitter and receiver agree on precise timing (baud rate) in advance.\n- **Data Framing (8-N-1):** Standard serial protocol consisting of 1 Start bit (falling edge), 8 Data bits, No Parity bit, and 1 Stop bit (high idle).\n- **Crossed Lines:** Fundamental serial rule: Transmitter (`TX`) connects to Receiver (`RX`) on the partner device.\n- **`SoftwareSerial`:** Library that emulates UART timing on general-purpose digital pins, freeing hardware Pins 0 and 1 for USB programming.\n- **Logic Level Shifting:** Stepping down 5.0V output signals to 3.3V to prevent destruction of sensitive radio receiver ICs."
     },
     {
       "stepId": "l11_s04",
-      "title": "SoftwareSerial Bidirectional Bridge",
-      "type": "codeExperiment",
-      "markdownContent": "```cpp\n#include <SoftwareSerial.h>\n\nSoftwareSerial bluetooth(10, 11); // RX, TX\n\nvoid setup() {\n  Serial.begin(9600);    // USB Serial to computer\n  bluetooth.begin(9600); // Wireless UART to Bluetooth\n  Serial.println(\"--- Telemetry Bridge Active ---\");\n}\n\nvoid loop() {\n  if (bluetooth.available()) {\n    Serial.write(bluetooth.read()); // Phone -> Computer\n  }\n  if (Serial.available()) {\n    bluetooth.write(Serial.read()); // Computer -> Phone\n  }\n}\n```"
+      "title": "How It Works: Signal Flow & Hardware Registers",
+      "type": "visualExplanation",
+      "markdownContent": "UART serial framing operates without a clock line:\n1. **Idle State:** The serial line sits at continuous HIGH (5V or 3.3V).\n2. **Start Bit:** The transmitter pulls the line LOW for exactly 1 bit duration ($\\frac{1}{9600\\text{ baud}} \\approx 104.16\\ \\mu\\text{s}$). This falling edge triggers the receiver's internal clock timer.\n3. **Data Sampling:** The receiver counts clock ticks and samples the line state in the exact middle of each of the subsequent 8 bit windows.\n4. **Stop Bit:** The transmitter pulls the line HIGH for at least 1 bit duration to conclude the frame and re-establish the idle level."
     },
     {
       "stepId": "l11_s05",
-      "title": "UART Checkpoint",
+      "title": "Hardware Mission: Component & Pin Inspection",
+      "type": "physicalTask",
+      "markdownContent": "Examine `comp_29` (HC-05 Bluetooth Module):\n1. **Pin Inspection:** Locate the header pins: `VCC`, `GND`, `TXD`, `RXD`, `STATE`, `EN`.\n2. **Power Wiring:** Connect Module `VCC` to Uno `5V`, and Module `GND` to Uno `GND`.\n3. **Receive Line (Direct):** Connect Module `TXD` (which outputs safe 3.3V logic) directly to Uno Digital Pin 10 (`SoftwareSerial RX`).\n4. **Transmit Line (Voltage Divider):** Uno Pin 11 outputs 5.0V, but the HC-05 RXD pin accepts only 3.3V maximum!\n   - Connect Uno Pin 11 to one leg of a 1k\u03a9 resistor.\n   - Connect the other leg of the 1k\u03a9 resistor to a breadboard node.\n   - Connect the breadboard node to HC-05 `RXD`.\n   - Connect a 2k\u03a9 resistor from the breadboard node to `GND`.\n   - *Result: $V_{\\text{out}} = 5\\text{V} \\times \\frac{2\\text{k}\\Omega}{1\\text{k}\\Omega + 2\\text{k}\\Omega} = 3.33\\text{V}$ (perfect protection!).*"
+    },
+    {
+      "stepId": "l11_s06",
+      "title": "Coding Basics: Syntax & Control Structures",
+      "type": "story",
+      "markdownContent": "- Instantiate the software serial port: `SoftwareSerial bluetooth(10, 11);` (Pin 10 = RX, Pin 11 = TX).\n- Always verify incoming characters using `bluetooth.available()` before invoking `bluetooth.read()`."
+    },
+    {
+      "stepId": "l11_s07",
+      "title": "Code Walkthrough: Annotated Sketch",
+      "type": "codeExperiment",
+      "markdownContent": "```cpp\n#include <SoftwareSerial.h>\n\n// Pin 10 = Arduino RX (connects to Module TXD)\n// Pin 11 = Arduino TX (connects via voltage divider to Module RXD)\nSoftwareSerial bluetooth(10, 11);\n\nvoid setup() {\n  Serial.begin(9600);       // USB Hardware Serial to Computer\n  bluetooth.begin(9600);    // Wireless UART to Bluetooth Module\n  Serial.println(\"--- Bluetooth Telemetry Bridge Active ---\");\n}\n\nvoid loop() {\n  // Forward wireless commands from phone/tablet to computer monitor\n  if (bluetooth.available()) {\n    char incomingByte = bluetooth.read();\n    Serial.write(incomingByte);\n  }\n\n  // Forward keyboard commands from computer monitor to wireless robot\n  if (Serial.available()) {\n    char outboundByte = Serial.read();\n    bluetooth.write(outboundByte);\n  }\n}\n```\n\n### Breakdown:\n- Bi-directional bridge forwards packets between USB hardware serial and wireless software serial.\n- Zero delay blocks: execution loops continuously at maximum speed."
+    },
+    {
+      "stepId": "l11_s08",
+      "title": "Code Prediction: Hypothesis & Deductions",
+      "type": "codeExperiment",
+      "markdownContent": "- **Prediction 1:** What happens if the Bluetooth module transmits at 38400 baud while `bluetooth.begin()` is set to 9600?\n  *Answer:* Severe bit sampling timing errors: incoming characters will appear as corrupted gibberish symbols.\n- **Prediction 2:** What happens if you plug Bluetooth TX directly into Arduino Hardware Pin 0 (RX) while trying to upload code via USB?\n  *Answer:* USB code upload fails with an `avrdude` sync error because the ATmega16U2 USB chip and the Bluetooth module fight to drive Pin 0 simultaneously."
+    },
+    {
+      "stepId": "l11_s09",
+      "title": "Guided Experiment: Parameter Modulation",
+      "type": "codeExperiment",
+      "markdownContent": "1. Pair a smartphone or laptop to the HC-05 module using a Bluetooth terminal application (e.g. Serial Bluetooth Terminal).\n2. Type command `'1'` on the phone.\n3. Expand the Arduino code to toggle the Pin 13 LED on when `'1'` is received, and off when `'0'` is received.\n4. Test wireless control from across the room!"
+    },
+    {
+      "stepId": "l11_s10",
+      "title": "Real-World Robotics: Industrial & Aerospace Systems",
+      "type": "visualExplanation",
+      "markdownContent": "GPS navigation satellites, drone telemetry radios (MavLink), industrial cellular telemetry modems, and barcode scanners communicate with flight computers using UART serial data streams."
+    },
+    {
+      "stepId": "l11_s11",
+      "title": "Troubleshooting Challenge: Diagnostic Scenarios",
+      "type": "story",
+      "markdownContent": "### Symptom 1: Arduino IDE Reports `avrdude: programmer is not responding`\n- **Diagnosis:** Hardware Pin Conflict! External modules are wired to Hardware Pins 0 and 1 during upload.\n- **Remedy:** Unplug wires on Pins 0 and 1 while flashing, or migrate the module connections to `SoftwareSerial` on Pins 10 and 11.\n\n### Symptom 2: Module Pairs, but No Text Received\n- **Diagnosis:** Straight connection error! TX was wired to TX, and RX was wired to RX.\n- **Remedy:** Swap data lines: Arduino TX must connect to Module RX, and Arduino RX must connect to Module TX."
+    },
+    {
+      "stepId": "l11_s12",
+      "title": "Workshop Safety & Hardware Care",
+      "type": "story",
+      "markdownContent": "- **3.3V Logic Protection:** The RX pin on many Bluetooth (HC-05/ESP8266) modules is strictly 3.3V. Feeding raw 5V from an Arduino Uno output pin directly into the module RX pin will overheat and permanently destroy the wireless radio chip. Always use a resistor voltage divider.\n- Disconnect power before adjusting voltage divider resistors on the breadboard."
+    },
+    {
+      "stepId": "l11_s13",
+      "title": "Final Review & Competencies",
+      "type": "story",
+      "markdownContent": "- UART achieves point-to-point serial communication using start/stop framing without a shared clock wire.\n- TX and RX lines must always cross between partner devices.\n- `SoftwareSerial` frees hardware pins 0 and 1 to prevent USB upload lockouts.\n- Resistor dividers safely step down 5V Uno signals to protect 3.3V wireless silicon.\n- Up next in Lesson 12: High power motor driving, flyback diodes, and H-Bridge physics!"
+    },
+    {
+      "stepId": "l11_s14",
+      "title": "Comprehensive Knowledge Check",
       "type": "quizCheckpoint",
-      "markdownContent": "What happens if two devices attempt to communicate with mismatched baud rates (e.g. 9600 vs 115200)?",
+      "markdownContent": "Test your mastery of the electrical, programming, and hardware concepts in this module.",
       "interactiveConfig": {
-        "question": "What happens when baud rates do not match?",
+        "question": "What does UART stand for?",
         "options": [
-          "Garbled characters or complete silence",
-          "The board gets too hot",
-          "The code fails to compile"
+          "Universal Asynchronous Receiver-Transmitter",
+          "Ultra Analog Radio Transceiver",
+          "Unified Automated Robotic Telemetry"
         ],
         "correctIndex": 0,
+        "explanation": "Correct: Universal Asynchronous Receiver-Transmitter. Understanding this principle ensures proper circuit function and reliability.",
         "questions": [
           {
             "question": "What does UART stand for?",
@@ -56,7 +112,8 @@
               "Ultra Analog Radio Transceiver",
               "Unified Automated Robotic Telemetry"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: Universal Asynchronous Receiver-Transmitter. Understanding this principle ensures proper circuit function and reliability."
           },
           {
             "question": "What is the golden wiring rule for connecting two UART serial devices?",
@@ -65,16 +122,18 @@
               "Connect TX to TX, and RX to RX",
               "Connect both lines to Ground"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: Cross the data lines: TX connects to RX, and RX connects to TX. Understanding this principle ensures proper circuit function and reliability."
           },
           {
-            "question": "Why is UART called 'asynchronous'?",
+            "question": "Why is UART called \"asynchronous\"?",
             "options": [
               "There is no shared clock line; timing is governed entirely by agreed baud rates",
               "It only works when the microcontroller is asleep",
               "Signals are sent in reverse order"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: There is no shared clock line; timing is governed entirely by agreed baud rates. Understanding this principle ensures proper circuit function and reliability."
           },
           {
             "question": "Why should you avoid connecting external hardware to Digital Pins 0 and 1 on an Uno?",
@@ -83,16 +142,18 @@
               "They have no power supply",
               "They only support 1.8V"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: Pins 0 and 1 are shared with the onboard USB-to-serial chip used for flashing code. Understanding this principle ensures proper circuit function and reliability."
           },
           {
-            "question": "What is the purpose of the SoftwareSerial library?",
+            "question": "What is the purpose of the `SoftwareSerial` library?",
             "options": [
               "It allows ordinary digital pins to emulate hardware UART serial ports",
               "It compresses sketches to save flash memory",
               "It encrypts wireless data"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: It allows ordinary digital pins to emulate hardware UART serial ports. Understanding this principle ensures proper circuit function and reliability."
           },
           {
             "question": "Why is a voltage divider needed between an Uno TX pin and a 3.3V Bluetooth module RX pin?",
@@ -101,16 +162,18 @@
               "To speed up data transmission",
               "To filter out radio interference"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: To step down the 5V Arduino signal to prevent overvoltage damage to the 3.3V module. Understanding this principle ensures proper circuit function and reliability."
           },
           {
             "question": "What method checks how many bytes are waiting in the serial receive buffer?",
             "options": [
-              "available()",
-              "read()",
-              "length()"
+              "`available()`",
+              "`read()`",
+              "`length()`"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: `available()`. Understanding this principle ensures proper circuit function and reliability."
           },
           {
             "question": "What happens if the transmitter and receiver are configured with mismatched baud rates?",
@@ -119,7 +182,8 @@
               "The microcontroller shuts off",
               "The hardware catches fire"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: Bits are sampled at incorrect intervals, resulting in corrupt or unreadable data. Understanding this principle ensures proper circuit function and reliability."
           }
         ]
       }

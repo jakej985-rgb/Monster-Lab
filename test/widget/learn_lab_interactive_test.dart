@@ -133,5 +133,142 @@ void main() {
       expect(result, isTrue);
       expect(find.text('Spot on! You nailed this concept.'), findsOneWidget);
     });
+
+    testWidgets(
+        'QuizCheckpointWidget handles multi-question carousel and deck completion',
+        (tester) async {
+      final results = <bool>[];
+
+      final questionsList = [
+        {
+          'question': 'What is a microcontroller?',
+          'options': ['A small computer', 'A battery'],
+          'correctIndex': 0,
+          'explanation': 'Microcontrollers run embedded code.',
+        },
+        {
+          'question': 'Is an LED an input or output?',
+          'options': ['Input', 'Output'],
+          'correctIndex': 1,
+          'explanation': 'LEDs produce light so they are outputs.',
+        },
+      ];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: QuizCheckpointWidget(
+              question: 'Fallback Q',
+              options: const ['A', 'B'],
+              correctIndex: 0,
+              questions: questionsList,
+              onAnswerSubmitted: (val) => results.add(val),
+            ),
+          ),
+        ),
+      );
+
+      // Verify Question 1 of 2
+      expect(find.text('Question 1 of 2'), findsOneWidget);
+      expect(find.text('What is a microcontroller?'), findsOneWidget);
+
+      // Answer Question 1 correctly
+      await tester.tap(find.text('A small computer'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Submit Answer'));
+      await tester.pumpAndSettle();
+
+      expect(results.last, isTrue);
+      expect(find.text('Spot on! Microcontrollers run embedded code.'),
+          findsOneWidget);
+      expect(find.text('Next Question'), findsOneWidget);
+
+      // Advance to Question 2
+      await tester.tap(find.text('Next Question'));
+      await tester.pumpAndSettle();
+
+      // Verify Question 2 of 2
+      expect(find.text('Question 2 of 2'), findsOneWidget);
+      expect(find.text('Is an LED an input or output?'), findsOneWidget);
+
+      // Answer Question 2 correctly
+      await tester.tap(find.text('Output'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Submit Answer'));
+      await tester.pumpAndSettle();
+
+      expect(results.last, isTrue);
+      expect(find.text('Finish Assessment'), findsOneWidget);
+
+      // Finish assessment
+      await tester.tap(find.text('Finish Assessment'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Assessment Complete! All 2 Questions Answered.'),
+          findsOneWidget);
+      expect(results.last, isTrue);
+    });
+
+    testWidgets(
+        'QuizCheckpointWidget resets state cleanly when questions change via didUpdateWidget',
+        (tester) async {
+      final questionsDeck1 = [
+        {
+          'question': 'Deck 1 Q1',
+          'options': ['Opt A', 'Opt B'],
+          'correctIndex': 0,
+        },
+      ];
+
+      final questionsDeck2 = [
+        {
+          'question': 'Deck 2 Q1',
+          'options': ['New A', 'New B'],
+          'correctIndex': 1,
+        },
+      ];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: QuizCheckpointWidget(
+              question: 'Deck 1 Q1',
+              options: const ['Opt A', 'Opt B'],
+              correctIndex: 0,
+              questions: questionsDeck1,
+              onAnswerSubmitted: (_) {},
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Deck 1 Q1'), findsOneWidget);
+
+      // Submit Deck 1 Q1
+      await tester.tap(find.text('Opt A'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Submit Answer'));
+      await tester.pumpAndSettle();
+      expect(find.text('Finish Assessment'), findsOneWidget);
+
+      // Re-pump with questionsDeck2
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: QuizCheckpointWidget(
+              question: 'Deck 2 Q1',
+              options: const ['New A', 'New B'],
+              correctIndex: 1,
+              questions: questionsDeck2,
+              onAnswerSubmitted: (_) {},
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Deck 2 Q1'), findsOneWidget);
+      expect(find.text('Submit Answer'), findsOneWidget);
+    });
   });
 }

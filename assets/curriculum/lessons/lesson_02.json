@@ -7,123 +7,176 @@
   "prerequisites": [
     "lesson_01"
   ],
-  "componentIds": [],
+  "componentIds": [
+    "comp_uno"
+  ],
   "steps": [
     {
       "stepId": "l02_s01",
-      "title": "The Arduino IDE Workbench",
+      "title": "Give the Monster Its Voice",
       "type": "story",
-      "markdownContent": "To give life to your monster, you write programs in the **Arduino IDE** (Integrated Development Environment). The IDE brings together a code editor, a C++ compiler (AVR-GCC), and an automated flash loader (avrdude) into a single workbench."
+      "markdownContent": "### Give the Monster Its Voice\nThe Arduino is the robot's brain, but the brain needs instructions.\n\nYour computer is where you write those instructions.\n\nThe Arduino IDE is the workbench that lets you write Arduino programs, check code, compile programs, upload them to the board, and communicate with the board.\n\nThink of the process as:\n**Write \u2192 Check \u2192 Compile \u2192 Upload \u2192 Run**"
     },
     {
       "stepId": "l02_s02",
-      "title": "USB Cable Connection",
-      "type": "physicalTask",
-      "markdownContent": "Connect your physical hardware station:\n1. Plug the square USB Type-B cable into your Arduino Uno.\n2. Plug the USB Type-A connector into your computer.\n3. Look for the green `ON` LED illuminating solidly on the board.\n4. Observe the yellow `TX` and `RX` LEDs flash briefly as the computer enumerates the serial link."
+      "title": "Prior Knowledge Check: Computer Programs & USB",
+      "type": "story",
+      "markdownContent": "Ask the learner:\n\n### Question 1\nHave you ever written a computer program before?\n- Yes.\n- A little.\n- No.\n\n### Question 2\nWhat do you think a program is?\n- Instructions for a computer.\n- A battery.\n- A USB cable.\n\n### Question 3\nWhat do you think USB is used for in this project?\n- Connecting the computer and Arduino.\n- Supplying unlimited power to every component.\n- Making the Arduino wireless.\n\nDo not block beginners based on their answers. If they already know these concepts, allow them to move quickly through the explanation."
     },
     {
       "stepId": "l02_s03",
-      "title": "Select Board and Port",
-      "type": "visualExplanation",
-      "markdownContent": "Before code can be compiled and transferred, tell the IDE what hardware is attached:\n\n- **Select Board**: Open **Tools > Board > Arduino AVR Boards > Arduino Uno**.\n- **Select Port**: Open **Tools > Port** and pick the communication channel (e.g., `COM3` on Windows, or `/dev/cu.usbmodem...` on macOS/Linux).\n- The COM port represents the virtual serial stream connecting your computer's OS to the Uno's USB communication chip."
+      "title": "What Is an IDE? The Programmer's Workbench",
+      "type": "story",
+      "markdownContent": "IDE stands for Integrated Development Environment.\n\nThink of it as a programming workbench. Instead of using one program to write code, another to compile it, and another to send it to the board, the Arduino IDE puts the important tools together.\n\n### Vocabulary\n- **IDE:** Software used to write and work with programs.\n- **Sketch:** Arduino's name for a program/project.\n- **Compile:** Convert source code into a form the Arduino can use.\n- **Upload:** Send the compiled program from the computer to the Arduino.\n- **Port:** A communication connection the computer uses to communicate with a device."
     },
     {
       "stepId": "l02_s04",
-      "title": "Source Code vs Machine Language",
-      "type": "story",
-      "markdownContent": "Microcontrollers cannot read English or C++ directly. When you click **Verify**, the IDE compiler transforms your human-readable instructions into a stream of binary machine instructions (hexadecimal opcode bytes). When you click **Upload**, this binary program is flashed into the ATmega328P's 32 KB flash memory!"
+      "title": "Compilation & Flashing: What Happens When You Upload?",
+      "type": "visualExplanation",
+      "markdownContent": "When you press Upload, several things happen.\n\n### Step 1 \u2014 Write code\nYou create a sketch.\n\n### Step 2 \u2014 Check the code\nThe IDE looks for problems that prevent the program from being compiled.\n\n### Step 3 \u2014 Compile\nThe computer translates the source code into machine instructions appropriate for the board.\n\n### Step 4 \u2014 Communicate\nThe computer sends the program through the USB connection.\n\n### Step 5 \u2014 Run\nThe Arduino stores and executes the program.\n\n### Think About It\nDoes pressing Upload magically create the program?\n\n**No.** The computer has already converted the source code and then sends the resulting program to the board."
     },
     {
       "stepId": "l02_s05",
-      "title": "Verify and Upload Lifecycle",
-      "type": "codeExperiment",
-      "markdownContent": "The programming lifecycle follows five disciplined engineering steps:\n\n1. **Write**: Compose code in the editor.\n2. **Verify (Checkmark)**: Compile code to check for typos and syntax errors without touching hardware.\n3. **Upload (Right Arrow)**: Flash the compiled machine binary onto the board.\n4. **Observe**: Watch how the physical circuit and LEDs react.\n5. **Iterate**: Adjust timing, change pin behaviors, and re-test!"
+      "title": "Connecting the USB Cable Safely",
+      "type": "physicalTask",
+      "markdownContent": "The USB cable provides an important connection between the computer and Arduino.\n\nDepending on the board and setup, USB can provide power, data communication, program uploads, and serial communication.\n\n### Physical Mission\n1. Find the USB connector on the Arduino.\n2. Find the USB connector on the computer.\n3. Inspect the cable for damage.\n4. Connect the cable.\n5. Look for the Arduino power indicator.\n6. Confirm the board is receiving power.\n\n### Safety\n- Do not force the connector.\n- Do not connect damaged cables.\n- Do not intentionally short power and ground."
     },
     {
       "stepId": "l02_s06",
-      "title": "Connection Checkpoint",
+      "title": "What Is a Port? Serial COM Ports & Device Drivers",
+      "type": "story",
+      "markdownContent": "Your computer may have many devices connected to it. The operating system needs a way to identify which communication connection belongs to the Arduino.\n\nThat connection appears as a serial or COM port. The exact name depends on the computer and operating system.\n\nThink:\n**Computer \u2192 Port \u2192 USB \u2192 Arduino**\n\n### Prediction\nIf the Arduino is unplugged, should the Arduino's port normally remain available as the same active device?\n\n**Usually no.** The available port list can change when devices are connected or disconnected.\n\n\nThe IDE needs to know which Arduino board you are programming.\n\nFor this project, select:\n**Arduino Uno**\n\nDifferent boards can have different processors, pin layouts, memory, communication hardware, and programming requirements.\n\nChoosing the wrong board can cause uploads to fail or produce unexpected behavior.\n\n### Guided Task\nHave the learner open:\n**Tools \u2192 Board \u2192 Arduino Uno**\n\nThen verify the selected board.\n\n\nNow select the communication port belonging to the Arduino.\n\nHave the learner:\n1. Open the port selection.\n2. Note which ports are currently visible.\n3. Disconnect the Arduino.\n4. Check the list again.\n5. Reconnect the Arduino.\n6. Identify the port that appears or returns.\n7. Select it.\n\nThis turns port selection into something the learner can understand instead of simply being told which item to click."
+    },
+    {
+      "stepId": "l02_s07",
+      "title": "First Look at Arduino Code: setup() and loop() Structure",
+      "type": "codeExperiment",
+      "markdownContent": "Before uploading a full project, look at this tiny sketch:\n\n    void setup() {\n      Serial.begin(9600);\n    }\n\n    void loop() {\n    }\n\n### What Does This Mean?\n- **void setup():** A function that runs when the Arduino starts or resets.\n- **Serial.begin(9600):** Starts serial communication at a speed called the baud rate.\n- **void loop():** The function Arduino repeatedly runs.\n- The empty loop means this example does not currently have anything repeating.\n\n### Coding Basics\nThis introduces functions, parentheses, braces, statements, numbers, and semicolons.\n\nThe learner does not need to memorize these yet. The goal is recognizing that code has structure."
+    },
+    {
+      "stepId": "l02_s08",
+      "title": "Code Prediction Challenge: Empty Setup vs Unbounded Loops",
+      "type": "codeExperiment",
+      "markdownContent": "### Prediction 1\nIf setup() runs when the Arduino starts, will this happen repeatedly every second?\n\n**No.**\n\n### Prediction 2\nWhat does 9600 represent?\n- The serial communication speed.\n- The Arduino pin number.\n- The amount of memory.\n\n**Answer:** Serial communication speed/baud rate.\n\n### Prediction 3\nWhat happens inside the empty loop?\nNothing from this example is being repeatedly executed."
+    },
+    {
+      "stepId": "l02_s09",
+      "title": "Real-World Systems: NASA Mars Rovers & Embedded Firmware",
+      "type": "visualExplanation",
+      "markdownContent": "Professional developers use similar workflows. They write software, build or compile it, send it to a target system, test it, observe the result, and fix problems.\n\nEmbedded engineers do this with robots, drones, industrial controllers, sensors, automotive electronics, and smart appliances.\n\nMonster Lab is introducing the same basic engineering workflow."
+    },
+    {
+      "stepId": "l02_s10",
+      "title": "Troubleshooting Lab Station: Port Not Found & Driver Issues",
+      "type": "story",
+      "markdownContent": "Walk through the basic workflow:\n1. Connect Arduino.\n2. Open Arduino IDE.\n3. Select Arduino Uno.\n4. Select the correct port.\n5. Open or enter a simple sketch.\n6. Verify the code.\n7. Upload the sketch.\n8. Watch the IDE for the upload result.\n\nExplain the difference:\n**Verify \u2192 checks/compiles the sketch.**\n**Upload \u2192 sends the program to the Arduino.**\n\nThe learner should understand that these are not the same button.\n\n\n### Scenario A \u2014 No Port\nThe Arduino is plugged in, but no new port appears.\n\nAsk the learner to check:\n- Is the USB cable connected?\n- Is the cable capable of data communication?\n- Is the board powered?\n- Is the cable damaged?\n- Is the correct USB port being used?\n- Does the operating system recognize the device?\n\n### Scenario B \u2014 Upload Fails\nAsk:\n- Is the correct board selected?\n- Is the correct port selected?\n- Is another program using the serial port?\n- Is the USB connection stable?\n- Did the code compile successfully?\n\n### Scenario C \u2014 Wrong Board\nThe learner selected a different board model.\n\nAsk why this might cause problems.\n\nExpected reasoning: The IDE needs to know what hardware it is programming so it can compile and upload the program correctly."
+    },
+    {
+      "stepId": "l02_s11",
+      "title": "Workshop Safety: Electrostatic Discharge (ESD) & Surge Prevention",
+      "type": "story",
+      "markdownContent": "### Workshop Safety: Electrostatic Discharge (ESD) & Surge Prevention\n\nMicrocontrollers are sensitive CMOS semiconductor devices. A spark of static electricity that you can barely feel (under 3,000 volts) can permanently puncture internal silicon MOSFET gate oxide layers!\n\n**Best Safety Practices:**\n- Touch a grounded metal object before picking up your Arduino board.\n- Hold boards by the edges\u2014never press fingers directly across exposed IC pins or header solder pads.\n- Keep conductive liquids, soda cans, and metal rulers away from your active wiring workspace.\n- Always disconnect USB power before moving wires or inserting IC components."
+    },
+    {
+      "stepId": "l02_s12",
+      "title": "Station Setup Review & Competencies",
+      "type": "story",
+      "markdownContent": "### You Learned\n- The Arduino IDE is the programming workbench.\n- Arduino sketches are programs.\n- Verify/compile and Upload are different operations.\n- USB can provide power and data communication.\n- A port identifies a computer communication connection.\n- The IDE must know which board you are programming.\n- setup() runs during startup or reset.\n- loop() repeats.\n- Uploading code is part of an engineering test cycle.\n\n### Monster Lab Workflow\n**Connect \u2192 Select Board \u2192 Select Port \u2192 Write \u2192 Verify \u2192 Upload \u2192 Test \u2192 Troubleshoot**"
+    },
+    {
+      "stepId": "l02_s13",
+      "title": "Comprehensive Knowledge Check",
       "type": "quizCheckpoint",
-      "markdownContent": "Which menu in the IDE lets you choose your Arduino board model?",
+      "markdownContent": "Verify your understanding of IDE compilation, USB device drivers, COM ports, and firmware lifecycles.",
       "interactiveConfig": {
-        "question": "Where do you select your board?",
+        "question": "What does IDE stand for?",
         "options": [
-          "Edit > Cut",
-          "Tools > Board",
-          "Help > About"
+          "Integrated Development Environment.",
+          "Internal Digital Engine.",
+          "Input Device Electronics."
         ],
-        "correctIndex": 1,
+        "correctIndex": 0,
+        "explanation": "IDE stands for Integrated Development Environment\u2014the unified coding and flashing workbench.",
         "questions": [
           {
             "question": "What does IDE stand for?",
             "options": [
-              "Integrated Development Environment",
-              "Internal Digital Engine",
-              "Internet Device Emulator"
+              "Integrated Development Environment.",
+              "Internal Digital Engine.",
+              "Input Device Electronics."
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "IDE stands for Integrated Development Environment\u2014the unified coding and flashing workbench."
           },
           {
-            "question": "Which menu in the IDE lets you choose your Arduino board model?",
+            "question": "What is an Arduino sketch?",
             "options": [
-              "Tools > Board",
-              "File > Save",
-              "Help > About"
+              "An Arduino program/project.",
+              "A battery.",
+              "A USB port."
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "An Arduino sketch is the C++ program file containing setup() and loop() routines."
           },
           {
-            "question": "What is the primary function of the Verify (checkmark) button?",
+            "question": "What does compiling do?",
             "options": [
-              "Checks for syntax and type errors by compiling without uploading",
-              "Physically uploads code to the Arduino",
-              "Formats flash memory"
+              "Converts source code into a form suitable for the target system.",
+              "Supplies electricity to the Arduino.",
+              "Connects the USB cable."
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "The compiler translates human-readable C++ source text into hexadecimal machine opcodes."
           },
           {
-            "question": "What does the Upload (arrow) button do?",
+            "question": "What does Upload do?",
             "options": [
-              "Compiles and flashes the program onto the board",
-              "Deletes existing files",
-              "Opens the serial monitor"
+              "Sends the program to the Arduino.",
+              "Deletes the Arduino.",
+              "Changes the USB cable."
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Upload uses the avrdude utility to transfer compiled hex binary through USB into microcontroller flash memory."
           },
           {
-            "question": "What does a COM or serial port represent?",
+            "question": "Why must you select the correct board?",
             "options": [
-              "The virtual communication channel between computer and board",
-              "An AC wall power socket",
-              "A graphics rendering pipeline"
+              "Different boards can use different hardware and programming requirements.",
+              "The board name changes the USB cable.",
+              "The Arduino cannot store programs."
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Different microcontroller boards use distinct pin layouts, register maps, and flash sizes."
           },
           {
-            "question": "What LED indicates the Arduino is receiving electrical power?",
+            "question": "What does the port identify?",
             "options": [
-              "The green ON LED",
-              "The amber L LED",
-              "The TX LED"
+              "The computer's communication connection to the Arduino.",
+              "The Arduino's battery level.",
+              "The program's XP reward."
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "The serial COM port provides the virtual UART communication link between host OS and the Uno board."
           },
           {
-            "question": "What software translates human-readable C++ into binary machine code?",
+            "question": "What does setup() do?",
             "options": [
-              "The compiler",
-              "The text editor",
-              "The web browser"
+              "Runs once when the Arduino starts or resets.",
+              "Runs continuously forever.",
+              "Deletes the sketch."
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "void setup() executes once upon microcontroller boot or hardware reset to initialize peripherals."
           },
           {
-            "question": "What happens to the program stored in flash memory when USB power is disconnected?",
+            "question": "What does loop() normally do?",
             "options": [
-              "It is safely preserved in non-volatile flash memory",
-              "It is permanently erased",
-              "It resets back to factory defaults"
+              "Repeatedly runs the code placed inside it.",
+              "Selects the USB port.",
+              "Compiles the computer's operating system."
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "void loop() is called repeatedly in a perpetual cycle to process real-time events."
           }
         ]
       }

@@ -1,63 +1,121 @@
 {
   "id": "lesson_06",
   "title": "Potentiometer: Reading Analog Signals",
-  "summary": "Convert physical rotation into digital numbers! Discover the 10-bit Analog to Digital Converter (ADC).",
+  "summary": "Measure continuous rotary voltages with 10-bit analogRead() and map sensor readings.",
   "tier": "rookie",
   "estimatedMinutes": 20,
   "prerequisites": [
     "lesson_05"
   ],
   "componentIds": [
+    "comp_uno",
+    "comp_breadboard",
     "comp_20"
   ],
   "steps": [
     {
       "stepId": "l06_s01",
-      "title": "Analog vs Digital Signals",
+      "title": "Mission Introduction",
       "type": "story",
-      "markdownContent": "The physical world is not binary. Temperature rises smoothly, sound levels swell, and robotic arms rotate through infinite angles. To perceive these gradients, microcontrollers use **Analog Inputs** (`A0`\u2013`A5`) to measure continuous voltages between 0.0V and 5.0V."
+      "markdownContent": "### Sense the Spectrum: Analog Perception\nThe physical world is not simply ON or OFF. Temperatures rise and fall smoothly, battery voltages drain gradually, and robot steering angles vary continuously. A potentiometer gives your monster robot continuous analog perception, allowing it to sense fine gradients like steering angles, robotic arm joint positions, and motor throttle.\n\n```\n5V Power \u2192 Carbon Track \u2192 Wiper Picks Off Voltage \u2192 ATmega328P 10-bit ADC \u2192 Integer (0 to 1023)\n```"
     },
     {
       "stepId": "l06_s02",
-      "title": "The Voltage Divider Knob",
-      "type": "visualExplanation",
-      "markdownContent": "A potentiometer (`comp_20`) is a variable resistor with 3 pins:\n\n- **Outer Pin 1**: Connected to `5V`.\n- **Outer Pin 3**: Connected to `GND`.\n- **Center Wiper Pin 2**: Slides across a resistive carbon track as you turn the knob, outputting a proportional voltage fraction according to the voltage divider formula: $V_{out} = 5.0\\text{V} \\times \\frac{R_2}{R_1 + R_2}$."
+      "title": "Prior Knowledge Check",
+      "type": "story",
+      "markdownContent": "1. **What does `digitalRead()` return?** Only binary `HIGH` (1) or `LOW` (0).\n2. **What voltage does the Arduino Uno provide on its 5V rail?** Regulated 5.0 Volts DC."
     },
     {
       "stepId": "l06_s03",
-      "title": "Breadboard Wiring",
-      "type": "interactiveWiring",
-      "markdownContent": "Construct your circuit on the breadboard:\n1. Insert the potentiometer across 3 separate terminal rows (e.g. Rows 10, 11, 12).\n2. Connect outer pin 1 to Uno `5V`.\n3. Connect outer pin 3 to Uno `GND`.\n4. Connect center wiper pin 2 to Uno Analog Pin `A0`."
+      "title": "Core Concept & Vocabulary",
+      "type": "story",
+      "markdownContent": "- **Potentiometer:** A three-terminal variable resistor with a rotating shaft connected to an internal wiper contact.\n- **Voltage Divider:** A circuit of two resistances in series that divides an input voltage into a proportional output fraction.\n- **ADC (Analog-to-Digital Converter):** An on-chip silicon peripheral that translates continuous analog voltage into a binary integer.\n- **10-Bit Resolution:** $2^{10} = 1024$ discrete measurement steps (~4.88 mV per step on a 5.0V reference).\n- **`analogRead()`:** Built-in function that samples an analog pin (`A0`\u2013`A5`) and returns an integer from 0 to 1023."
     },
     {
       "stepId": "l06_s04",
-      "title": "ADC Math (0 to 1023)",
-      "type": "codeExperiment",
-      "interactiveWidgetType": "potentiometerSimulator",
-      "markdownContent": "```cpp\nconst int potPin = A0;\n\nvoid setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int rawValue = analogRead(potPin);         // 10-bit ADC conversion (0 to 1023)\n  float voltage = rawValue * (5.0 / 1023.0); // Convert count to true voltage\n\n  Serial.print(\"ADC: \");\n  Serial.print(rawValue);\n  Serial.print(\" | Voltage: \");\n  Serial.print(voltage, 2);\n  Serial.println(\" V\");\n  delay(200);\n}\n```\n\nThe Uno's 10-bit Successive Approximation ADC provides $2^{10} = 1024$ measurement steps (~4.88 mV per step)!"
+      "title": "How It Works: Signal Flow & Hardware Registers",
+      "type": "visualExplanation",
+      "markdownContent": "Inside `comp_20`:\n1. A horseshoe-shaped resistive carbon track connects Outer Terminal 1 and Outer Terminal 3 (total resistance $\\approx 10\\text{k}\\Omega$).\n2. Outer Pin 1 connects to `5V`, and Outer Pin 3 connects to `GND`.\n3. Turning the knob sweeps Center Wiper Pin 2 across the track, splitting it into two resistances ($R_1$ and $R_2$):\n   $$V_{\\text{out}} = 5.0\\text{V} \\times \\frac{R_2}{R_1 + R_2}$$\n4. The output voltage connects to Uno Pin `A0`.\n5. The ATmega328P's successive-approximation 10-bit ADC quantizes the voltage into an integer:\n   $$\\text{ADC Count} = \\text{round}\\left(V_{\\text{in}} \\times \\frac{1023}{5.0\\text{V}}\\right)$$"
     },
     {
       "stepId": "l06_s05",
-      "title": "Analog Perception Checkpoint",
+      "title": "Hardware Mission: Component & Pin Inspection",
+      "type": "physicalTask",
+      "markdownContent": "Examine `comp_20` (10k\u03a9 Potentiometer) and `comp_breadboard`:\n1. **Pin Identification:** Notice the 3 pins protruding from the bottom:\n   - Pin 1 (Outer Leg): Connect to Uno `5V`.\n   - Pin 2 (Center Wiper): Connect to Uno `A0`.\n   - Pin 3 (Outer Leg): Connect to Uno `GND`.\n2. **Breadboard Placement:** Insert the potentiometer into the breadboard across three separate terminal tie-point rows (e.g., Rows 10, 11, 12). Never place all three pins in the same row!\n3. **Connect Jumpers:** Run a red jumper from Uno `5V` to breadboard Row 10, a yellow jumper from Uno `A0` to Row 11, and a black jumper from Uno `GND` to Row 12."
+    },
+    {
+      "stepId": "l06_s06",
+      "title": "Coding Basics: Syntax & Control Structures",
+      "type": "story",
+      "markdownContent": "- Unlike digital pins, Uno analog input pins (`A0`\u2013`A5`) do not require `pinMode()` prior to calling `analogRead()`. The ADC multiplexer hardware automatically configures the pin during conversion.\n- `float` data types store decimal numbers for true voltage calculations."
+    },
+    {
+      "stepId": "l06_s07",
+      "title": "Code Walkthrough: Annotated Sketch",
+      "type": "codeExperiment",
+      "markdownContent": "```cpp\nconst int potPin = A0;\n\nvoid setup() {\n  Serial.begin(9600); // Initialize telemetry link\n}\n\nvoid loop() {\n  int rawValue = analogRead(potPin);          // Read ADC count (0 to 1023)\n  float voltage = rawValue * (5.0 / 1023.0);  // Convert count to true voltage\n\n  Serial.print(\"ADC Count: \");\n  Serial.print(rawValue);\n  Serial.print(\" | Voltage: \");\n  Serial.print(voltage, 2);\n  Serial.println(\" V\");\n\n  delay(200); // 5 Hz update rate for readable telemetry\n}\n```\n\n### Breakdown:\n- `analogRead(potPin)`: Takes approximately 100 microseconds to sample and hold the analog voltage and execute the 10-bit conversion.\n- `voltage = rawValue * (5.0 / 1023.0)`: Scales the integer count to physical volts.\n- `Serial.print(voltage, 2)`: Prints the float formatted to 2 decimal places."
+    },
+    {
+      "stepId": "l06_s08",
+      "title": "Code Prediction: Hypothesis & Deductions",
+      "type": "codeExperiment",
+      "markdownContent": "- **Prediction 1:** What will `analogRead(A0)` return if the knob is rotated exactly midway?\n  *Answer:* Approximately 511 to 512 counts (~2.50 Volts).\n- **Prediction 2:** What happens if you swap the wires connected to Outer Pin 1 and Outer Pin 3?\n  *Answer:* The rotation polarity reverses (turning clockwise decreases rather than increases the count)."
+    },
+    {
+      "stepId": "l06_s09",
+      "title": "Guided Experiment: Parameter Modulation",
+      "type": "codeExperiment",
+      "markdownContent": "1. Combine Lesson 05 and 06: use `rawValue` directly as the delay period for the Pin 13 LED:\n   ```cpp\n   digitalWrite(13, HIGH);\n   delay(rawValue);\n   digitalWrite(13, LOW);\n   delay(rawValue);\n   ```\n2. Turn the knob and observe how physical rotation directly modulates the LED's blinking speed.",
+      "interactiveWidgetType": "potentiometerSimulator"
+    },
+    {
+      "stepId": "l06_s10",
+      "title": "Real-World Robotics: Industrial & Aerospace Systems",
+      "type": "visualExplanation",
+      "markdownContent": "Radio transmitter control sticks, aircraft throttle quadrants, electric vehicle accelerator pedals, and industrial robotic arm joint potentiometers all use rotary voltage division for position telemetry."
+    },
+    {
+      "stepId": "l06_s11",
+      "title": "Troubleshooting Challenge: Diagnostic Scenarios",
+      "type": "story",
+      "markdownContent": "### Symptom 1: Potentiometer Gets Burning Hot!\n- **Diagnosis:** Dead short! 5V and GND were connected across an outer pin and the center wiper, creating an unrestricted short when turned to the stop.\n- **Remedy:** Unplug USB immediately! Verify that 5V and GND connect to the two *outer* legs, and A0 connects to the *center* wiper.\n\n### Symptom 2: Serial Readings Jump Erratically (e.g., 100, 950, 40)\n- **Diagnosis:** Floating input! The center wiper wire is loose or plugged into the wrong breadboard row, acting as an antenna picking up ambient 60Hz electromagnetic noise.\n- **Remedy:** Firmly seat the wiper wire into the center pin's terminal row."
+    },
+    {
+      "stepId": "l06_s12",
+      "title": "Workshop Safety & Hardware Care",
+      "type": "story",
+      "markdownContent": "- Never apply more than 5.0V to an analog pin on an Uno R3. Exceeding 5.5V will forward-bias the internal silicon clamping diodes and destroy the ADC multiplexer.\n- Avoid applying mechanical torque beyond the physical rotation stops of the potentiometer."
+    },
+    {
+      "stepId": "l06_s13",
+      "title": "Final Review & Competencies",
+      "type": "story",
+      "markdownContent": "- Potentiometers act as variable voltage dividers producing 0.0V to 5.0V.\n- The 10-bit ADC quantizes analog voltages into integers from 0 to 1023 (~4.88 mV per count).\n- Solderless breadboards connect rows horizontally\u2014keep pins in separate rows.\n- Up next in Lesson 07: Modulating digital duty cycles with PWM to mix colors on an RGB LED."
+    },
+    {
+      "stepId": "l06_s14",
+      "title": "Comprehensive Knowledge Check",
       "type": "quizCheckpoint",
-      "markdownContent": "What range of integer values is returned by analogRead() on an Arduino Uno?",
+      "markdownContent": "Test your mastery of the electrical, programming, and hardware concepts in this module.",
       "interactiveConfig": {
-        "question": "What is the range of analogRead()?",
+        "question": "What range of integer values is returned by `analogRead()` on an Arduino Uno?",
         "options": [
           "0 to 1023",
           "0 to 255",
           "-512 to +512"
         ],
         "correctIndex": 0,
+        "explanation": "Correct: 0 to 1023. Understanding this principle ensures proper circuit function and reliability.",
         "questions": [
           {
-            "question": "What range of integer values is returned by analogRead() on an Arduino Uno?",
+            "question": "What range of integer values is returned by `analogRead()` on an Arduino Uno?",
             "options": [
               "0 to 1023",
               "0 to 255",
               "-512 to +512"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: 0 to 1023. Understanding this principle ensures proper circuit function and reliability."
           },
           {
             "question": "What is the resolution of the built-in ADC on an Arduino Uno?",
@@ -66,16 +124,18 @@
               "8-bit (256 discrete levels)",
               "16-bit (65536 discrete levels)"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: 10-bit (1024 discrete levels). Understanding this principle ensures proper circuit function and reliability."
           },
           {
-            "question": "If analogRead(A0) returns 1023, what voltage is present on pin A0?",
+            "question": "If `analogRead(A0)` returns 1023, what voltage is present on pin A0?",
             "options": [
               "5.0 Volts",
               "2.5 Volts",
               "10.23 Volts"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: 5.0 Volts. Understanding this principle ensures proper circuit function and reliability."
           },
           {
             "question": "Which terminal of a standard 3-pin potentiometer connects to the variable wiper?",
@@ -84,7 +144,8 @@
               "The leftmost terminal",
               "The mounting metal tab"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: The middle terminal. Understanding this principle ensures proper circuit function and reliability."
           },
           {
             "question": "What electrical circuit principle does a potentiometer utilize to produce variable voltage?",
@@ -93,7 +154,8 @@
               "Inductive coupling",
               "Rectification"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: Voltage divider. Understanding this principle ensures proper circuit function and reliability."
           },
           {
             "question": "Approximately how many millivolts does each single ADC step represent on a 5V Uno?",
@@ -102,16 +164,18 @@
               "~100 mV",
               "~0.01 mV"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: ~4.88 mV (5.0V / 1024). Understanding this principle ensures proper circuit function and reliability."
           },
           {
-            "question": "Why is pinMode(A0, INPUT) not strictly mandatory before calling analogRead(A0)?",
+            "question": "Why is `pinMode(A0, INPUT)` not strictly mandatory before calling `analogRead(A0)`?",
             "options": [
-              "analogRead() automatically switches the pin multiplexer to ADC input mode",
+              "`analogRead()` automatically switches the pin multiplexer to ADC input mode",
               "Analog pins cannot be configured as digital pins",
               "The Arduino detects hardware connections automatically"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: `analogRead()` automatically switches the pin multiplexer to ADC input mode. Understanding this principle ensures proper circuit function and reliability."
           },
           {
             "question": "What causes an analog input reading to jump erratically when nothing is touched?",
@@ -120,7 +184,8 @@
               "A dead microcontroller battery",
               "Excessively high baud rate"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: A floating input wire acting as an antenna picking up electromagnetic interference. Understanding this principle ensures proper circuit function and reliability."
           }
         ]
       }

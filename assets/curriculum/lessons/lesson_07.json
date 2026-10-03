@@ -1,52 +1,110 @@
 {
   "id": "lesson_07",
   "title": "RGB LED: Mixing Colors with PWM",
-  "summary": "Harness Pulse Width Modulation (PWM) and additive color physics to generate millions of custom hues.",
+  "summary": "Synthesize millions of colors using Pulse Width Modulation and additive optical color physics.",
   "tier": "rookie",
   "estimatedMinutes": 20,
   "prerequisites": [
     "lesson_05"
   ],
-  "componentIds": [],
+  "componentIds": [
+    "comp_uno",
+    "comp_breadboard"
+  ],
   "steps": [
     {
       "stepId": "l07_s01",
-      "title": "Additive Optics: Red, Green, Blue",
+      "title": "Mission Introduction",
       "type": "story",
-      "markdownContent": "An RGB LED packages three independent semiconductor dies (Red, Green, Blue) into a single 5mm lens. By combining these three primary wavelengths of light at varying intensities, additive optics stimulates human retina cone cells to synthesize over 16 million colors:\n\n- Red + Green = **Yellow**\n- Green + Blue = **Cyan**\n- Red + Blue = **Magenta / Purple**\n- Red + Green + Blue = **White**"
+      "markdownContent": "### Expressive Monsters: Crafting Living Light\nMonsters need emotion and visual expression! By combining three primary wavelengths of light\u2014Red, Green, and Blue\u2014at varying intensities, we can create any color in the visible rainbow, from energetic yellow to menacing purple or calm cyan.\n\nBecause the Arduino Uno does not have true analog output voltage DACs on its digital pins, we use high-speed silicon pulsing\u2014Pulse Width Modulation\u2014to fool the human eye into perceiving smooth brightness levels!\n\n```\nTimer Register OCR1A \u2192 High-Speed 490Hz Pulse Train \u2192 Duty Cycle Average \u2192 Eye Cone Cells \u2192 Perceived Color\n```"
     },
     {
       "stepId": "l07_s02",
-      "title": "Pulse Width Modulation (PWM) & Duty Cycle",
-      "type": "visualExplanation",
-      "markdownContent": "Because digital pins can only output 5V or 0V, the Uno simulates intermediate voltages using **Pulse Width Modulation (PWM)**\u2014pulsing the output hundreds of times per second (~490 Hz).\n\n- **Duty Cycle**: The percentage of time the square wave stays HIGH in one period.\n- Look for the tilde `~` symbol next to PWM pins: `3`, `5`, `6`, `9`, `10`, `11`!"
+      "title": "Prior Knowledge Check",
+      "type": "story",
+      "markdownContent": "1. **How does an LED emit light?** Electric current passes forward through a semiconductor diode junction, releasing photons.\n2. **Why does an LED need a series resistor?** To limit forward current and prevent the semiconductor die from thermal runaway."
     },
     {
       "stepId": "l07_s03",
-      "title": "Common Cathode Lead Identification",
-      "type": "physicalTask",
-      "markdownContent": "Inspect a 4-pin Common Cathode RGB LED:\n1. Find the longest lead\u2014this is the **Common Cathode (GND)**.\n2. The isolated pin on one side of the cathode is **Red**.\n3. The two pins on the other side are **Green** and **Blue**.\n4. Insert into breadboard. Connect Cathode to `GND`, and place a 220\u03a9 resistor on Red, Green, and Blue leading to PWM pins `9`, `10`, and `11`."
+      "title": "Core Concept & Vocabulary",
+      "type": "story",
+      "markdownContent": "- **RGB LED:** A single component packaging three independent semiconductor dies (Red, Green, Blue) sharing common electrical pins.\n- **Common Cathode:** Configuration where all three LEDs share a single negative Ground (`-`) lead.\n- **Pulse Width Modulation (PWM):** Digital technique of switching an output between 5V and 0V hundreds of times per second to simulate intermediate voltages.\n- **Duty Cycle:** The ratio or percentage of time a square wave pulse remains in the `HIGH` state during one full period.\n- **`analogWrite()`:** Built-in function generating 8-bit PWM (0 = 0% duty cycle / 0V average; 255 = 100% duty cycle / 5V continuous)."
     },
     {
       "stepId": "l07_s04",
-      "title": "analogWrite() Color Studio",
-      "type": "codeExperiment",
-      "interactiveWidgetType": "rgbMixer",
-      "markdownContent": "```cpp\nconst int redPin = 9;\nconst int greenPin = 10;\nconst int bluePin = 11;\n\nvoid setColor(int r, int g, int b) {\n  analogWrite(redPin, constrain(r, 0, 255));\n  analogWrite(greenPin, constrain(g, 0, 255));\n  analogWrite(bluePin, constrain(b, 0, 255));\n}\n\nvoid setup() {\n  pinMode(redPin, OUTPUT);\n  pinMode(greenPin, OUTPUT);\n  pinMode(bluePin, OUTPUT);\n}\n\nvoid loop() {\n  setColor(255, 0, 255); // Purple (Red + Blue)\n  delay(1000);\n  setColor(255, 120, 0); // Monster Amber\n  delay(1000);\n  setColor(0, 255, 255); // Cyan (Green + Blue)\n  delay(1000);\n}\n```"
+      "title": "How It Works: Signal Flow & Hardware Registers",
+      "type": "visualExplanation",
+      "markdownContent": "Human photoreceptor cone cells cannot resolve light pulses cycling faster than approximately 60 Hz (persistence of vision).\n1. The ATmega328P hardware timers oscillate at ~490 Hz (Pins 9, 10, 11, 3) or ~980 Hz (Pins 5, 6).\n2. Setting `analogWrite(pin, 127)` configures the timer to drive the pin to 5V for 50% of the period, and 0V for the remaining 50%.\n3. The human eye integrates this photon flux, perceiving exactly 50% brightness.\n4. By mixing different duty cycles across Red, Green, and Blue channels, the three primary wavelengths stimulate retina cone cells in varying proportions to synthesize over 16 million colors!"
     },
     {
       "stepId": "l07_s05",
-      "title": "Color Mixing Quiz",
+      "title": "Hardware Mission: Component & Pin Inspection",
+      "type": "physicalTask",
+      "markdownContent": "Examine a 4-pin 5mm Common Cathode RGB LED:\n1. **Lead Identification:** Hold the LED with the flat edge on the plastic rim facing right:\n   - Lead 1 (Outer Leg): Red Anode\n   - Lead 2 (Longest Leg): Common Cathode (GND)\n   - Lead 3: Green Anode\n   - Lead 4 (Outer Leg): Blue Anode\n2. **Breadboard Insertion:** Insert the 4 leads into 4 adjacent breadboard rows.\n3. **Current Limiting Resistors:** Connect a 220\u03a9 or 330\u03a9 resistor to Lead 1 (Red), Lead 3 (Green), and Lead 4 (Blue). Connect Lead 2 directly to Uno `GND`.\n4. **PWM Pin Wiring:** Connect Red resistor to Pin 9, Green resistor to Pin 10, and Blue resistor to Pin 11."
+    },
+    {
+      "stepId": "l07_s06",
+      "title": "Coding Basics: Syntax & Control Structures",
+      "type": "story",
+      "markdownContent": "- `analogWrite(pin, value)` does NOT generate true analog DC voltage; it modulates hardware timer compare registers.\n- Valid values are integers from `0` to `255` (8-bit quantization)."
+    },
+    {
+      "stepId": "l07_s07",
+      "title": "Code Walkthrough: Annotated Sketch",
+      "type": "codeExperiment",
+      "markdownContent": "```cpp\nconst int redPin = 9;\nconst int greenPin = 10;\nconst int bluePin = 11;\n\nvoid setup() {\n  pinMode(redPin, OUTPUT);\n  pinMode(greenPin, OUTPUT);\n  pinMode(bluePin, OUTPUT);\n}\n\nvoid setColor(int r, int g, int b) {\n  analogWrite(redPin, constrain(r, 0, 255));\n  analogWrite(greenPin, constrain(g, 0, 255));\n  analogWrite(bluePin, constrain(b, 0, 255));\n}\n\nvoid loop() {\n  setColor(255, 0, 255);   // Purple (Red + Blue)\n  delay(1000);\n  setColor(255, 120, 0);   // Monster Amber/Orange\n  delay(1000);\n  setColor(0, 255, 255);   // Cyan (Green + Blue)\n  delay(1000);\n}\n```\n\n### Breakdown:\n- `setColor(...)`: Modular helper function encapsulating multi-channel mixing.\n- `constrain(val, 0, 255)`: Defensive programming ensuring PWM values stay within the valid 8-bit window.\n- In `loop()`, high-level colors transition every second."
+    },
+    {
+      "stepId": "l07_s08",
+      "title": "Code Prediction: Hypothesis & Deductions",
+      "type": "codeExperiment",
+      "markdownContent": "- **Prediction 1:** What color appears when `setColor(255, 255, 0)` executes?\n  *Answer:* Bright Yellow (equal parts full-intensity Red and Green light).\n- **Prediction 2:** What happens if you plug the Blue LED jumper into Digital Pin 8 instead of Pin 11?\n  *Answer:* Digital Pin 8 does NOT support hardware PWM on the Uno; `analogWrite(8, 128)` will not produce variable dimming\u2014it will jump abruptly between fully on and fully off."
+    },
+    {
+      "stepId": "l07_s09",
+      "title": "Guided Experiment: Parameter Modulation",
+      "type": "codeExperiment",
+      "markdownContent": "1. Wire the Potentiometer from Lesson 06 into Analog Pin `A0`.\n2. Map its reading to the Blue channel while keeping Red fixed at 128:\n   ```cpp\n   int knob = analogRead(A0);\n   int blueVal = map(knob, 0, 1023, 0, 255);\n   setColor(128, 0, blueVal);\n   ```\n3. Rotate the knob to dial smoothly between deep red, magenta, and bright violet!",
+      "interactiveWidgetType": "rgbMixer"
+    },
+    {
+      "stepId": "l07_s10",
+      "title": "Real-World Robotics: Industrial & Aerospace Systems",
+      "type": "visualExplanation",
+      "markdownContent": "Full-color gaming PC illumination, automotive dynamic ambient lighting, smart home lightbulbs (Philips Hue), and multi-colored warning beacons on autonomous warehouse rovers rely on multi-channel PWM color synthesis."
+    },
+    {
+      "stepId": "l07_s11",
+      "title": "Troubleshooting Challenge: Diagnostic Scenarios",
+      "type": "story",
+      "markdownContent": "### Symptom 1: Inverted Brightness\n- **Symptom:** Passing `255` turns the LED off, and passing `0` turns it fully on.\n- **Diagnosis:** Common Anode LED! You have a common anode component whose shared lead is connected to 5V instead of GND.\n- **Remedy:** Connect common lead to 5V and invert code logic: `analogWrite(pin, 255 - value)`.\n\n### Symptom 2: Red Is Blindingly Bright, Blue Is Very Dim\n- **Diagnosis:** Forward voltage disparity: Red diodes have a lower forward drop ($V_f \\approx 1.8\\text{V}$), while Blue diodes require $V_f \\approx 3.2\\text{V}$.\n- **Remedy:** Use a higher value resistor (330\u03a9 or 470\u03a9) on the Red anode line to balance luminous intensity."
+    },
+    {
+      "stepId": "l07_s12",
+      "title": "Workshop Safety & Hardware Care",
+      "type": "story",
+      "markdownContent": "- Never connect all three color leads directly to 5V or output pins without current-limiting resistors. Three concurrent short circuits can draw >120mA, tripping thermal protection.\n- Ensure the longest pin (cathode) connects to GND, not 5V, to prevent reverse voltage breakdown."
+    },
+    {
+      "stepId": "l07_s13",
+      "title": "Final Review & Competencies",
+      "type": "story",
+      "markdownContent": "- Additive optics combines Red, Green, and Blue light to create full-spectrum color.\n- PWM modulates duty cycles at hundreds of hertz to simulate variable voltage without true DACs.\n- Always use series resistors on each color channel to balance currents and prevent burnouts.\n- Up next in Lesson 08: Reading mechanical pushbuttons, debouncing, and internal pull-up resistors."
+    },
+    {
+      "stepId": "l07_s14",
+      "title": "Comprehensive Knowledge Check",
       "type": "quizCheckpoint",
-      "markdownContent": "What color do you get if you mix Red at 255 and Green at 255 (with Blue at 0)?",
+      "markdownContent": "Test your mastery of the electrical, programming, and hardware concepts in this module.",
       "interactiveConfig": {
-        "question": "Red + Green light makes what color?",
+        "question": "What does PWM stand for?",
         "options": [
-          "Yellow",
-          "Cyan",
-          "Magenta"
+          "Pulse Width Modulation",
+          "Power Wave Measurement",
+          "Phase Wire Multiplication"
         ],
         "correctIndex": 0,
+        "explanation": "Correct: Pulse Width Modulation. Understanding this principle ensures proper circuit function and reliability.",
         "questions": [
           {
             "question": "What does PWM stand for?",
@@ -55,16 +113,18 @@
               "Power Wave Measurement",
               "Phase Wire Multiplication"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: Pulse Width Modulation. Understanding this principle ensures proper circuit function and reliability."
           },
           {
-            "question": "What is the valid argument range for analogWrite() on an Arduino Uno?",
+            "question": "What is the valid argument range for `analogWrite()` on an Arduino Uno?",
             "options": [
               "0 to 255 (8-bit)",
               "0 to 1023 (10-bit)",
               "0 to 100 (%)"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: 0 to 255 (8-bit). Understanding this principle ensures proper circuit function and reliability."
           },
           {
             "question": "Which digital pins on the Arduino Uno support hardware PWM?",
@@ -73,7 +133,8 @@
               "All digital pins 0 through 13",
               "Only analog pins A0 through A5"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: Pins marked with a tilde (~): 3, 5, 6, 9, 10, 11. Understanding this principle ensures proper circuit function and reliability."
           },
           {
             "question": "What primary colors of light combine to produce Yellow?",
@@ -82,16 +143,18 @@
               "Blue and Yellow",
               "Red and Blue"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: Red and Green. Understanding this principle ensures proper circuit function and reliability."
           },
           {
-            "question": "What duty cycle percentage does an analogWrite() value of 127 produce?",
+            "question": "What duty cycle percentage does an `analogWrite()` value of 127 produce?",
             "options": [
               "Approximately 50%",
               "10%",
               "100%"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: Approximately 50%. Understanding this principle ensures proper circuit function and reliability."
           },
           {
             "question": "On a 4-pin common cathode RGB LED, what does the longest lead connect to?",
@@ -100,7 +163,8 @@
               "5V Power",
               "Digital Pin 13"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: Ground (GND). Understanding this principle ensures proper circuit function and reliability."
           },
           {
             "question": "Why does an LED appear dimmer when fed a 25% duty cycle PWM signal?",
@@ -109,7 +173,8 @@
               "The voltage is reduced from 5V to 1.25V DC",
               "The resistor value increases dynamically"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: The LED is off for 75% of the time, and the human eye averages the photon emission. Understanding this principle ensures proper circuit function and reliability."
           },
           {
             "question": "What primary colors combine to produce Cyan?",
@@ -118,7 +183,8 @@
               "Red and Blue",
               "Red and Green"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: Green and Blue. Understanding this principle ensures proper circuit function and reliability."
           }
         ]
       }

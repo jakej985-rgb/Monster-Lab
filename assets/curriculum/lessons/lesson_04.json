@@ -1,78 +1,138 @@
 {
   "id": "lesson_04",
   "title": "Basics of the Arduino IDE: Setup and Loop",
-  "summary": "Explore sketch anatomy: the one-time setup() routine and the infinite loop(). Learn Verify and Upload.",
+  "summary": "Master the core microcontroller lifecycle: setup() once, loop() forever, and serial monitoring.",
   "tier": "rookie",
   "estimatedMinutes": 18,
   "prerequisites": [
     "lesson_02"
   ],
-  "componentIds": [],
+  "componentIds": [
+    "comp_uno"
+  ],
   "steps": [
     {
       "stepId": "l04_s01",
-      "title": "The Two Heartbeats: setup() and loop()",
+      "title": "Mission Introduction",
       "type": "story",
-      "markdownContent": "Unlike computer apps that terminate, a robot's brain must never quit. An Arduino sketch has two mandatory architectural functions:\n\n- `void setup()`: Executes **exactly once** when power is applied or the reset button is pressed. Used for configuring pin modes, establishing serial baud rates, and initializing sensors.\n- `void loop()`: Executes **continuously and repeatedly forever**. Houses sensing, decision logic, and actuator commands."
+      "markdownContent": "### The Never-Sleeping Monster Brain\nUnlike desktop programs that launch, calculate a spreadsheet, and quit, a robot's brain must never terminate. It must continuously sense obstacles, calculate trajectory updates, and control motors thousands of times per second until power is switched off.\n\nIn this lesson, you will master the two fundamental functions of embedded systems: `setup()`\u2014the one-time initialization routine\u2014and `loop()`\u2014the perpetual heartbeat of your monster robot."
     },
     {
       "stepId": "l04_s02",
-      "title": "Syntax Anatomy: Blocks and Semicolons",
-      "type": "visualExplanation",
-      "markdownContent": "Arduino C++ programs follow strict punctuation grammar:\n\n- **Statements**: Every executable command must end with a semicolon `;`.\n- **Functions**: Group reusable blocks of code inside curly braces `{}`.\n- **Comments**: Notes ignored by the compiler. Single-line comments start with `//`, and block comments span `/* ... */`."
+      "title": "Prior Knowledge Check",
+      "type": "story",
+      "markdownContent": "1. **What happens when an Arduino Uno is plugged into USB?** The bootloader initializes the chip and executes the program stored in flash memory.\n2. **What does the COM port represent?** The virtual serial communications link between computer and Arduino."
     },
     {
       "stepId": "l04_s03",
-      "title": "Board Tour: TX/RX LEDs and Reset Switch",
-      "type": "physicalTask",
-      "markdownContent": "Locate hardware feedback indicators on your Uno:\n1. Find the small red or yellow **Reset** momentary switch in the corner.\n2. Locate the surface-mount LEDs labeled `TX` (Transmit) and `RX` (Receive) near digital pins 0 and 1.\n3. Connect USB and press Reset\u2014notice how the board restarts and TX/RX flash as the bootloader handshakes with the computer."
+      "title": "Core Concept & Vocabulary",
+      "type": "story",
+      "markdownContent": "- **`setup()`:** A function executed exactly once upon board power-up or hardware reset button press. Used for configuring pins and starting communication.\n- **`loop()`:** A function executed repeatedly and continuously forever. Houses sensing, decision logic, and actuator commands.\n- **Statement:** A single executable instruction that must end with a semicolon `;`.\n- **Baud Rate:** Communication speed in symbols/bits per second (e.g., 9600 baud = 960 characters/sec with 10-bit framing).\n- **Serial Monitor:** An interactive terminal console embedded in the IDE for bidirectional text communication with the board."
     },
     {
       "stepId": "l04_s04",
-      "title": "Serial Monitor at 9600 Baud",
-      "type": "codeExperiment",
-      "markdownContent": "```cpp\nvoid setup() {\n  Serial.begin(9600); // Initialize UART communication at 9600 baud\n  Serial.println(\"--- Monster Lab Station Online ---\");\n}\n\nvoid loop() {\n  Serial.print(\"Heartbeat timestamp: \");\n  Serial.println(millis()); // Print milliseconds since boot\n  delay(1000);              // Wait 1 second before repeating\n}\n```\n\nOpen **Tools > Serial Monitor** and set the bottom-right dropdown to **9600 baud** to view real-time diagnostics."
+      "title": "How It Works: Signal Flow & Hardware Registers",
+      "type": "visualExplanation",
+      "markdownContent": "The microcontroller execution lifecycle proceeds through distinct phases:\n\n```\nPower On / Reset\n       \u2193\nClock Oscillator Stabilizes (16 MHz)\n       \u2193\nOptiboot Bootloader Runs (Checks for USB Upload)\n       \u2193 (If no upload)\nmain() Jump\n       \u2193\nExecutes setup() Once\n       \u2193\nwhile(1) { loop(); } (Runs Forever)\n```"
     },
     {
       "stepId": "l04_s05",
-      "title": "Sketch Anatomy Checkpoint",
+      "title": "Hardware Mission: Component & Pin Inspection",
+      "type": "physicalTask",
+      "markdownContent": "Examine your Arduino Uno R3 (`comp_uno`):\n1. **Reset Switch:** Locate the red or yellow pushbutton in the upper-left corner near the USB connector. Pressing this pulls the ATmega328P `RESET` pin to GND, restarting the program at `setup()`.\n2. **TX and RX LEDs:** Locate the two tiny surface-mount LEDs labeled `TX` (Transmit) and `RX` (Receive) near Digital Pins 0 and 1.\n3. **Observation Task:** Connect the board to USB. Notice how TX and RX flash rapidly when sketches are uploaded or serial text transmits."
+    },
+    {
+      "stepId": "l04_s06",
+      "title": "Coding Basics: Syntax & Control Structures",
+      "type": "story",
+      "markdownContent": "- **Function Syntax:** `void setup() { ... }`. `void` means the function returns no value.\n- **Curly Braces `{}`:** Group multiple instructions into an executable code block. Every `{` must have a matching `}`.\n- **Semicolons `;`:** Mark the conclusion of an instruction statement. Omitting a semicolon causes a compiler syntax error."
+    },
+    {
+      "stepId": "l04_s07",
+      "title": "Code Walkthrough: Annotated Sketch",
+      "type": "codeExperiment",
+      "markdownContent": "```cpp\nvoid setup() {\n  Serial.begin(9600); // Initialize hardware UART at 9600 baud\n  Serial.println(\"--- Monster Lab Online ---\");\n  Serial.println(\"System Initialized Successfully.\");\n}\n\nvoid loop() {\n  Serial.print(\"Heartbeat ping at timestamp: \");\n  Serial.println(millis());\n  delay(1000); // Pause for 1000 milliseconds (1 second) before repeating\n}\n```\n\n### Breakdown:\n- `Serial.begin(9600)`: Powers on the ATmega328P USART hardware and sets baud generator registers.\n- `Serial.println(...)`: Sends ASCII characters followed by carriage return `\\r` and line feed `\\n`.\n- `millis()`: Returns the number of milliseconds since the Arduino began running the current sketch.\n- `delay(1000)`: Halts execution for 1000 ms, regulating loop cadence."
+    },
+    {
+      "stepId": "l04_s08",
+      "title": "Code Prediction: Hypothesis & Deductions",
+      "type": "codeExperiment",
+      "markdownContent": "- **Prediction 1:** What happens if `Serial.println(\"Booting...\");` is placed inside `loop()` instead of `setup()`?\n  *Answer:* It prints continuously every loop cycle rather than once at startup.\n- **Prediction 2:** What happens if `Serial.begin(9600)` is omitted from `setup()`?\n  *Answer:* The hardware UART baud rate generator is not configured; no text will transmit over USB, and the Serial Monitor will stay completely blank."
+    },
+    {
+      "stepId": "l04_s09",
+      "title": "Guided Experiment: Parameter Modulation",
+      "type": "codeExperiment",
+      "markdownContent": "1. Change `delay(1000);` to `delay(250);`.\n2. Predict the new transmission frequency: 4 pings per second instead of 1.\n3. Upload sketch, open Serial Monitor, and observe the accelerated telemetry cadence."
+    },
+    {
+      "stepId": "l04_s10",
+      "title": "Real-World Robotics: Industrial & Aerospace Systems",
+      "type": "visualExplanation",
+      "markdownContent": "Automotive electronic control units (ECUs), NASA planetary rovers, and medical infusion pumps execute identical state loops:\n- `setup()`: Perform sensor self-test, verify battery voltage, zero actuators.\n- `loop()`: Read obstacle sensors, update kinematics math, drive steering servos within rigid cycle deadlines."
+    },
+    {
+      "stepId": "l04_s11",
+      "title": "Troubleshooting Challenge: Diagnostic Scenarios",
+      "type": "story",
+      "markdownContent": "### Symptom 1: Garbled Characters in Serial Monitor\n- **Symptom:** Serial Monitor prints `\u2e2e\u2e2ex\u2e2ef\u2e2e` or strange inverted symbols.\n- **Diagnosis:** Baud rate mismatch! The sketch specified `9600`, but the Serial Monitor dropdown in the lower right is set to 115200 or 57600.\n- **Remedy:** Click the baud rate dropdown and select `9600 baud`.\n\n### Symptom 2: Compiler Error on Braces / Semicolons\n- **Symptom:** `error: expected ';' before '}' token`.\n- **Diagnosis:** The statement directly preceding line X is missing its terminating `;`.\n- **Remedy:** Locate the unclosed statement and add `;`."
+    },
+    {
+      "stepId": "l04_s12",
+      "title": "Workshop Safety & Hardware Care",
+      "type": "story",
+      "markdownContent": "- Never plug or unplug shield headers or jumper wires into the 5V and GND rail while the USB cable is supplying power, as accidental shorts can trigger computer USB port overcurrent shutdown.\n- Place the Arduino on a non-conductive surface (wood, plastic, or antistatic mat)\u2014never on metal workbench surfaces or foil wrappers."
+    },
+    {
+      "stepId": "l04_s13",
+      "title": "Final Review & Competencies",
+      "type": "story",
+      "markdownContent": "- The microcontroller execution model relies on `setup()` for configuration and `loop()` for ongoing autonomy.\n- Semicolons, braces, and matching baud rates are non-negotiable fundamentals of embedded software.\n- The Serial Monitor provides an essential telemetry window into your robot's thoughts.\n- Up next in Lesson 05: Moving from digital text to physical photons with the Blink circuit."
+    },
+    {
+      "stepId": "l04_s14",
+      "title": "Comprehensive Knowledge Check",
       "type": "quizCheckpoint",
-      "markdownContent": "How many times does code inside void setup() run?",
+      "markdownContent": "Test your mastery of the electrical, programming, and hardware concepts in this module.",
       "interactiveConfig": {
-        "question": "How often does setup() execute?",
+        "question": "How many times does code inside `void setup()` execute after startup?",
         "options": [
-          "Exactly once on startup or reset",
-          "Every millisecond",
-          "Only when you press a button"
+          "Exactly once",
+          "Exactly ten times",
+          "Continuously in an infinite loop"
         ],
         "correctIndex": 0,
+        "explanation": "Correct: Exactly once. Understanding this principle ensures proper circuit function and reliability.",
         "questions": [
           {
-            "question": "How many times does code inside void setup() execute after startup?",
+            "question": "How many times does code inside `void setup()` execute after startup?",
             "options": [
               "Exactly once",
               "Exactly ten times",
               "Continuously in an infinite loop"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: Exactly once. Understanding this principle ensures proper circuit function and reliability."
           },
           {
-            "question": "What is the primary role of void loop() in an Arduino robot?",
+            "question": "What is the primary role of `void loop()` in an Arduino robot?",
             "options": [
               "To repeatedly execute sensing, decision-making, and actuator control forever",
               "To shut down the Arduino when code finishes",
               "To format the flash memory"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: To repeatedly execute sensing, decision-making, and actuator control forever. Understanding this principle ensures proper circuit function and reliability."
           },
           {
             "question": "What character must terminate every standard C++ statement in Arduino?",
             "options": [
-              "Semicolon (;)",
-              "Colon (:)",
-              "Period (.)"
+              "Semicolon (`;`)",
+              "Colon (`:`)",
+              "Period (`.`)"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: Semicolon (`;`). Understanding this principle ensures proper circuit function and reliability."
           },
           {
             "question": "What does the Verify (checkmark) button in the IDE do?",
@@ -81,43 +141,48 @@
               "Physically tests the Arduino hardware circuits",
               "Deletes existing code from the board"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: Compiles the sketch to check for syntax and type errors without uploading. Understanding this principle ensures proper circuit function and reliability."
           },
           {
-            "question": "If your code specifies Serial.begin(9600), what baud rate must the Serial Monitor be set to?",
+            "question": "If your code specifies `Serial.begin(9600)`, what baud rate must the Serial Monitor be set to?",
             "options": [
               "9600 baud",
               "115200 baud",
               "Any baud rate works automatically"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: 9600 baud. Understanding this principle ensures proper circuit function and reliability."
           },
           {
-            "question": "What is the purpose of curly braces { } in code?",
+            "question": "What is the purpose of curly braces `{ }` in code?",
             "options": [
               "They group multiple statements together into a single function or block",
               "They represent mathematical multiplication",
               "They indicate comments ignored by the compiler"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: They group multiple statements together into a single function or block. Understanding this principle ensures proper circuit function and reliability."
           },
           {
             "question": "What function is used to send text to the Serial Monitor followed by a new line?",
             "options": [
-              "Serial.println()",
-              "Serial.write()",
-              "Serial.input()"
+              "`Serial.println()`",
+              "`Serial.write()`",
+              "`Serial.input()`"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: `Serial.println()`. Understanding this principle ensures proper circuit function and reliability."
           },
           {
-            "question": "What happens if delay(1000) is omitted from a loop() that prints text?",
+            "question": "What happens if `delay(1000)` is omitted from a `loop()` that prints text?",
             "options": [
               "The loop runs at maximum CPU speed, flooding the serial buffer and monitor",
               "The Arduino overheats and shuts off",
               "The compiler refuses to upload the code"
             ],
-            "correctIndex": 0
+            "correctIndex": 0,
+            "explanation": "Correct: The loop runs at maximum CPU speed, flooding the serial buffer and monitor. Understanding this principle ensures proper circuit function and reliability."
           }
         ]
       }
