@@ -1,6 +1,6 @@
-Lesson 1 — What is Arduino & How Does It Work?
+#Lesson 1 — What is Arduino & How Does It Work?
 
-Lesson Metadata
+##Lesson Metadata
 
 - ID: "lesson_01"
 - Title: What is Arduino & How Does It Work?
@@ -16,7 +16,7 @@ Discover the brain of your robot! Learn what microcontrollers do, explore the pi
 
 ---
 
-Step 1 — Meet the Monster Brain
+##Step 1 — Meet the Monster Brain
 
 - Step ID: "l01_s01"
 - Type: "story"
@@ -24,7 +24,7 @@ Step 1 — Meet the Monster Brain
 
 Content
 
-Meet the Monster Brain
+Meet the Monster Brain "<- this line need removed it the title" 
 
 A robot needs a brain. The Arduino Uno is a small microcontroller development board that can read information from the world and control electronic devices.
 
@@ -37,8 +37,8 @@ Sensor → Arduino → Decision → Output
 Changes I Want
 
 <!-- Edit this section if anything needs changed. -->---
-
-Step 2 — What Is a Microcontroller? Architecture & Vocabulary
+ - some things are using md format into message box
+##Step 2 — What Is a Microcontroller? Architecture & Vocabulary
 
 - Step ID: "l01_s02"
 - Type: "story"
@@ -60,8 +60,10 @@ Vocabulary
 Changes I Want
 
 <!-- Edit this section if anything needs changed. -->---
+ - Think we should add some pics of diagrams of how he flow of input, output, program, and mircocontroller
+ - some things are using md format into message box
 
-Step 3 — Inputs vs Outputs: Think Like a Robot
+## Step 3 — Inputs vs Outputs: Think Like a Robot
 
 - Step ID: "l01_s03"
 - Type: "story"
@@ -100,8 +102,9 @@ Answer: Input.
 Changes I Want
 
 <!-- Edit this section if anything needs changed. -->---
-
-Step 4 — Digital vs Analog Signals & Prediction
+ - some things are using md format into message box
+ - more graphic with pitures this is for kids
+##Step 4 — Digital vs Analog Signals & Prediction
 
 - Step ID: "l01_s04"
 - Type: "visualExplanation"
@@ -129,8 +132,10 @@ Answer: Change gradually.
 Changes I Want
 
 <!-- Edit this section if anything needs changed. -->---
+ - some things are using md format into message box
+ - more graphic with pitures this is for kids interactive board inpestor should show board we are taking about and pic of like usb port analog pins 5v 3.3v and gnd
 
-Step 5 — Meet the Arduino Uno: Physical Hardware Mission
+##Step 5 — Meet the Arduino Uno: Physical Hardware Mission
 
 - Step ID: "l01_s05"
 - Type: "physicalTask"
@@ -164,8 +169,9 @@ Do not connect anything yet. The goal is identification.
 Changes I Want
 
 <!-- Edit this section if anything needs changed. -->---
+ - feel like it should have pic of board with line pointing to the items on board and give them a group of name in bottom for them to drag and drop to the component
 
-Step 6 — Why Power and Ground Matter: Complete Circuits
+##Step 6 — Why Power and Ground Matter: Complete Circuits
 
 - Step ID: "l01_s06"
 - Type: "story"
@@ -186,8 +192,9 @@ Important: GND does not mean the electricity simply disappears. It is the circui
 Changes I Want
 
 <!-- Edit this section if anything needs changed. -->---
+ - more detail on effect of bad grond and how to ensure proper ground
 
-Step 7 — How the Robot Brain Makes Decisions
+##Step 7 — How the Robot Brain Makes Decisions
 
 - Step ID: "l01_s07"
 - Type: "story"
@@ -210,8 +217,9 @@ condition → decision → action
 Changes I Want
 
 <!-- Edit this section if anything needs changed. -->---
+ - some md format in message box and add some diaphams 
 
-Step 8 — Your First Instruction: Deconstructing digitalWrite
+##Step 8 — Your First Instruction: Deconstructing digitalWrite
 
 - Step ID: "l01_s08"
 - Type: "codeExperiment"
@@ -241,8 +249,9 @@ The goal is learning to read code, not simply copy it.
 Changes I Want
 
 <!-- Edit this section if anything needs changed. -->---
+ - some md format in lesson box 
 
-Step 9 — Trust but Verify: Scientific Engineering Method
+##Step 9 — Trust but Verify: Scientific Engineering Method
 
 - Step ID: "l01_s09"
 - Type: "story"
@@ -267,8 +276,9 @@ Read → Predict → Upload → Observe → Verify → Change → Test.
 Changes I Want
 
 <!-- Edit this section if anything needs changed. -->---
+ - more md in message
 
-Step 10 — Real-World Systems: Obstacle Avoidance & Robot Vacuums
+##Step 10 — Real-World Systems: Obstacle Avoidance & Robot Vacuums
 
 - Step ID: "l01_s10"
 - Type: "visualExplanation"
@@ -291,8 +301,9 @@ This same input/decision/output pattern appears in robot vacuums, automatic door
 Changes I Want
 
 <!-- Edit this section if anything needs changed. -->---
+ - more md and add pics and diagrams
 
-Step 11 — Troubleshooting Challenge: The Silent LED
+##Step 11 — Troubleshooting Challenge: The Silent LED
 
 - Step ID: "l01_s11"
 - Type: "story"
@@ -324,8 +335,8 @@ Do not randomly change everything.
 Changes I Want
 
 <!-- Edit this section if anything needs changed. -->---
-
-Step 12 — Final Review & Self-Reflection
+ - should inculde a pic of the users board we are trying to fix that show pins use and code so user can tell us if it a wiring problem or a hardware problem and teach them to use steps above to fix the board want a inteactive leasson to go with it
+##Step 12 — Final Review & Self-Reflection
 
 - Step ID: "l01_s12"
 - Type: "story"
@@ -356,8 +367,9 @@ Ask the learner:
 Changes I Want
 
 <!-- Edit this section if anything needs changed. -->---
+ - md again and things like ask the learner should not be there you are the teacher and those question should be a mini quiz/pretest 
 
-Step 13 — Comprehensive Knowledge Check
+##Step 13 — Comprehensive Knowledge Check
 
 - Step ID: "l01_s13"
 - Type: "quizCheckpoint"
@@ -610,8 +622,8 @@ Examples:
 - Needs vocabulary
 - Needs a challenge
 - Needs better progression
--->1. 
-2. 
+-->1. more graphical with images and interactive leasons
+2. monster lab is the teach so stop telling teacher to ask questions
 3. 
 4. 
 5. 
@@ -623,7 +635,7 @@ Desired Lesson Outcome
 <!--
 Describe what the learner should genuinely understand or be able to do
 after completing Lesson 1.
--->---
+-->---should understand how the microcontroller reads input output and program to create actions 
 
 Notes for JSON Conversion
 
