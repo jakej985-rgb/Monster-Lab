@@ -28,13 +28,15 @@
       "stepId": "l08_s03",
       "title": "Core Concept & Vocabulary",
       "type": "story",
-      "markdownContent": "- **`digitalRead()`:** Function that measures an input pin, returning `HIGH` (if voltage $\\ge 3.0\\text{V}$) or `LOW` (if voltage $\\le 1.5\\text{V}$).\n- **Floating Pin:** An unconnected high-impedance input pin that acts as an antenna, picking up stray electromagnetic fields and oscillating erratically.\n- **Pull-Up Resistor:** A resistor connecting an input pin to 5V, guaranteeing a stable, deterministic `HIGH` state when a switch is open.\n- **`INPUT_PULLUP`:** Built-in mode configuring the ATmega328P's internal 20k\u03a9\u201350k\u03a9 pull-up resistor, eliminating the need for an external breadboard resistor.\n- **Active-Low Logic:** Circuit architecture where 0V (`LOW`) signals the active/pressed state, and 5V (`HIGH`) signals idle.\n- **Switch Bounce:** Microsecond mechanical vibrations when switch metal contacts collide, creating multiple rapid false triggers."
+      "interactiveWidgetType": "floatingPinSimulator",
+      "markdownContent": "- **`digitalRead()`:** Function that measures an input pin, returning `HIGH` (if voltage $\\ge 3.0\\text{V}$) or `LOW` (if voltage $\\le 1.5\\text{V}$).\n- **Floating Pin:** An unconnected high-impedance input pin that acts as an antenna, picking up stray electromagnetic fields and oscillating erratically.\n- **Pull-Up Resistor:** A resistor connecting an input pin to 5V, guaranteeing a stable, deterministic `HIGH` state when a switch is open.\n- **`INPUT_PULLUP`:** Built-in mode configuring the ATmega328P's internal 20k\u03a9\u201350k\u03a9 pull-up resistor, eliminating the need for an external breadboard resistor.\n- **Active-Low Logic:** Circuit architecture where 0V (`LOW`) signals the active/pressed state, and 5V (`HIGH`) signals idle.\n- **Switch Bounce:** Microsecond mechanical vibrations when switch metal contacts collide, creating multiple rapid false triggers.\n\n### Interactive Mission: Test High-Impedance Floating Pins\nExplore the interactive simulator below to observe how an unconnected input pin oscillates erratically from environmental electromagnetic noise. Switch between Floating, Pull-Up, and Pull-Down to observe how pull resistors stabilize logic levels!"
     },
     {
       "stepId": "l08_s04",
       "title": "How It Works: Signal Flow & Hardware Registers",
       "type": "visualExplanation",
-      "markdownContent": "Inside the ATmega328P input buffer:\n1. When configured with `INPUT_PULLUP`, an internal P-FET engages a ~30k\u03a9 resistor tied to 5V.\n2. When the external button is open (unpressed), tiny leakage currents flow through the pull-up, holding the pin securely at 5.0V (`HIGH`).\n3. When the button is pressed, it shorts the pin directly to Ground (0V). Because the internal pull-up has a high 30k\u03a9 resistance, only $\\frac{5\\text{V}}{30\\text{k}\\Omega} \\approx 0.16\\text{ mA}$ flows harmlessly to ground.\n4. The input Schmitt trigger detects 0V and reports `LOW`."
+      "interactiveWidgetType": "internalPullupCircuitDiagram",
+      "markdownContent": "Inside the ATmega328P input buffer:\n1. When configured with `INPUT_PULLUP`, an internal P-FET engages a ~30k\u03a9 resistor tied to 5V.\n2. When the external button is open (unpressed), tiny leakage currents flow through the pull-up, holding the pin securely at 5.0V (`HIGH`).\n3. When the button is pressed, it shorts the pin directly to Ground (0V). Because the internal pull-up has a high 30k\u03a9 resistance, only $\\frac{5\\text{V}}{30\\text{k}\\Omega} \\approx 0.16\\text{ mA}$ flows harmlessly to ground.\n4. The input Schmitt trigger detects 0V and reports `LOW`.\n\n### Interactive Schematic: ATmega328P Internal Pull-Up Resistor\nExamine the interactive schematic below. Toggle `pinMode(pin, INPUT_PULLUP)` and press the button to observe the harmless 0.25mA drain to GND and verify active-low logic (unpressed = HIGH, pressed = LOW)!"
     },
     {
       "stepId": "l08_s05",
@@ -46,7 +48,8 @@
       "stepId": "l08_s06",
       "title": "Coding Basics: Syntax & Control Structures",
       "type": "story",
-      "markdownContent": "Because of active-low logic:\n```cpp\nif (digitalRead(buttonPin) == LOW) {\n  // ACTION: Button IS physically pressed!\n} else {\n  // IDLE: Button is released!\n}\n```"
+      "interactiveWidgetType": "activeLowLogicChecker",
+      "markdownContent": "Because of active-low logic:\n```cpp\nif (digitalRead(buttonPin) == LOW) {\n  // ACTION: Button IS physically pressed!\n} else {\n  // IDLE: Button is released!\n}\n```\n\n### Interactive Bench: Test Active-Low Inverted Logic\nTest the logic checker below. Press the virtual button to evaluate `if (digitalRead(buttonPin) == LOW)` and verify that physical button presses illuminate the built-in Pin 13 LED!"
     },
     {
       "stepId": "l08_s07",
@@ -64,7 +67,8 @@
       "stepId": "l08_s09",
       "title": "Guided Experiment: Parameter Modulation",
       "type": "codeExperiment",
-      "markdownContent": "1. Create a push-to-toggle counter:\n   ```cpp\n   int count = 0;\n   void loop() {\n     if (digitalRead(buttonPin) == LOW) {\n       count++;\n       Serial.print(\"Press Count: \");\n       Serial.println(count);\n       delay(200); // Simple software debounce delay\n     }\n   }\n   ```\n2. Press the button quickly and observe how a 200ms delay prevents mechanical switch bounce from registering 5 presses for 1 physical click."
+      "interactiveWidgetType": "switchBounceVisualizer",
+      "markdownContent": "1. Create a push-to-toggle counter:\n   ```cpp\n   int count = 0;\n   void loop() {\n     if (digitalRead(buttonPin) == LOW) {\n       count++;\n       Serial.print(\"Press Count: \");\n       Serial.println(count);\n       delay(200); // Simple software debounce delay\n     }\n   }\n   ```\n2. Press the button quickly and observe how a 200ms delay prevents mechanical switch bounce from registering 5 presses for 1 physical click.\n\n### Interactive Oscilloscope: Microsecond Switch Bounce\nPress the button on the oscilloscope below to observe microsecond contact chatter. Toggle debounce mode and adjust the software delay window to eliminate false clicks!"
     },
     {
       "stepId": "l08_s10",
@@ -94,7 +98,7 @@
       "stepId": "l08_s14",
       "title": "Comprehensive Knowledge Check",
       "type": "quizCheckpoint",
-      "markdownContent": "Test your mastery of the electrical, programming, and hardware concepts in this module.",
+      "markdownContent": "Test your mastery of digital inputs, floating pins, active-low logic, and debouncing.",
       "interactiveConfig": {
         "question": "What state does a pin configured with `INPUT_PULLUP` read when the button is open (unpressed)?",
         "options": [

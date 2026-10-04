@@ -34,13 +34,15 @@
       "stepId": "l11_s04",
       "title": "How It Works: Signal Flow & Hardware Registers",
       "type": "visualExplanation",
-      "markdownContent": "UART serial framing operates without a clock line:\n1. **Idle State:** The serial line sits at continuous HIGH (5V or 3.3V).\n2. **Start Bit:** The transmitter pulls the line LOW for exactly 1 bit duration ($\\frac{1}{9600\\text{ baud}} \\approx 104.16\\ \\mu\\text{s}$). This falling edge triggers the receiver's internal clock timer.\n3. **Data Sampling:** The receiver counts clock ticks and samples the line state in the exact middle of each of the subsequent 8 bit windows.\n4. **Stop Bit:** The transmitter pulls the line HIGH for at least 1 bit duration to conclude the frame and re-establish the idle level."
+      "interactiveWidgetType": "uartFrameVisualizer",
+      "markdownContent": "UART serial framing operates without a clock line:\n1. **Idle State:** The serial line sits at continuous HIGH (5V or 3.3V).\n2. **Start Bit:** The transmitter pulls the line LOW for exactly 1 bit duration ($\\frac{1}{9600\\text{ baud}} \\approx 104.16\\ \\mu\\text{s}$). This falling edge triggers the receiver's internal clock timer.\n3. **Data Sampling:** The receiver counts clock ticks and samples the line state in the exact middle of each of the subsequent 8 bit windows.\n4. **Stop Bit:** The transmitter pulls the line HIGH for at least 1 bit duration to conclude the frame and re-establish the idle level.\n\n### Interactive Waveform Visualizer: UART Packet Anatomy\nExplore asynchronous UART packet framing below. Observe how the line idles HIGH (+5V), pulls LOW for the Start Bit, sends 8 data bits LSB-first, and returns HIGH for the Stop Bit!"
     },
     {
       "stepId": "l11_s05",
       "title": "Hardware Mission: Component & Pin Inspection",
       "type": "physicalTask",
-      "markdownContent": "Examine `comp_29` (HC-05 Bluetooth Module):\n1. **Pin Inspection:** Locate the header pins: `VCC`, `GND`, `TXD`, `RXD`, `STATE`, `EN`.\n2. **Power Wiring:** Connect Module `VCC` to Uno `5V`, and Module `GND` to Uno `GND`.\n3. **Receive Line (Direct):** Connect Module `TXD` (which outputs safe 3.3V logic) directly to Uno Digital Pin 10 (`SoftwareSerial RX`).\n4. **Transmit Line (Voltage Divider):** Uno Pin 11 outputs 5.0V, but the HC-05 RXD pin accepts only 3.3V maximum!\n   - Connect Uno Pin 11 to one leg of a 1k\u03a9 resistor.\n   - Connect the other leg of the 1k\u03a9 resistor to a breadboard node.\n   - Connect the breadboard node to HC-05 `RXD`.\n   - Connect a 2k\u03a9 resistor from the breadboard node to `GND`.\n   - *Result: $V_{\\text{out}} = 5\\text{V} \\times \\frac{2\\text{k}\\Omega}{1\\text{k}\\Omega + 2\\text{k}\\Omega} = 3.33\\text{V}$ (perfect protection!).*"
+      "interactiveWidgetType": "txRxCrossWireChecker",
+      "markdownContent": "Examine `comp_29` (HC-05 Bluetooth Module):\n1. **Pin Inspection:** Locate the header pins: `VCC`, `GND`, `TXD`, `RXD`, `STATE`, `EN`.\n2. **Power Wiring:** Connect Module `VCC` to Uno `5V`, and Module `GND` to Uno `GND`.\n3. **Receive Line (Direct):** Connect Module `TXD` (which outputs safe 3.3V logic) directly to Uno Digital Pin 10 (`SoftwareSerial RX`).\n4. **Transmit Line (Voltage Divider):** Uno Pin 11 outputs 5.0V, but the HC-05 RXD pin accepts only 3.3V maximum!\n   - Connect Uno Pin 11 to one leg of a 1k\u03a9 resistor.\n   - Connect the other leg of the 1k\u03a9 resistor to a breadboard node.\n   - Connect the breadboard node to HC-05 `RXD`.\n   - Connect a 2k\u03a9 resistor from the breadboard node to `GND`.\n   - *Result: $V_{\\text{out}} = 5\\text{V} \\times \\frac{2\\text{k}\\Omega}{1\\text{k}\\Omega + 2\\text{k}\\Omega} = 3.33\\text{V}$ (perfect protection!).*\n\n### Interactive Breadboard Checker: TX/RX Cross-Wiring & Voltage Divider\nTest your serial wiring below to avoid the classic TX-to-TX beginner trap and verify that the 1k\u03a9 / 2k\u03a9 voltage divider protects delicate 3.3V wireless RX pins!"
     },
     {
       "stepId": "l11_s06",
@@ -58,13 +60,15 @@
       "stepId": "l11_s08",
       "title": "Code Prediction: Hypothesis & Deductions",
       "type": "codeExperiment",
-      "markdownContent": "- **Prediction 1:** What happens if the Bluetooth module transmits at 38400 baud while `bluetooth.begin()` is set to 9600?\n  *Answer:* Severe bit sampling timing errors: incoming characters will appear as corrupted gibberish symbols.\n- **Prediction 2:** What happens if you plug Bluetooth TX directly into Arduino Hardware Pin 0 (RX) while trying to upload code via USB?\n  *Answer:* USB code upload fails with an `avrdude` sync error because the ATmega16U2 USB chip and the Bluetooth module fight to drive Pin 0 simultaneously."
+      "interactiveWidgetType": "baudRateMismatchDemo",
+      "markdownContent": "- **Prediction 1:** What happens if the Bluetooth module transmits at 38400 baud while `bluetooth.begin()` is set to 9600?\n  *Answer:* Severe bit sampling timing errors: incoming characters will appear as corrupted gibberish symbols.\n- **Prediction 2:** What happens if you plug Bluetooth TX directly into Arduino Hardware Pin 0 (RX) while trying to upload code via USB?\n  *Answer:* USB code upload fails with an `avrdude` sync error because the ATmega16U2 USB chip and the Bluetooth module fight to drive Pin 0 simultaneously.\n\n### Interactive Timing Lab: Baud Rate Clock Mismatch & Framing Errors\nExperiment with mismatched baud rates below. Observe how clock drift produces framing errors and corrupted gibberish when sender and receiver clocks disagree!"
     },
     {
       "stepId": "l11_s09",
       "title": "Guided Experiment: Parameter Modulation",
       "type": "codeExperiment",
-      "markdownContent": "1. Pair a smartphone or laptop to the HC-05 module using a Bluetooth terminal application (e.g. Serial Bluetooth Terminal).\n2. Type command `'1'` on the phone.\n3. Expand the Arduino code to toggle the Pin 13 LED on when `'1'` is received, and off when `'0'` is received.\n4. Test wireless control from across the room!"
+      "interactiveWidgetType": "bluetoothAtCommandTerminal",
+      "markdownContent": "1. Pair a smartphone or laptop to the HC-05 module using a Bluetooth terminal application (e.g. Serial Bluetooth Terminal).\n2. Type command `'1'` on the phone.\n3. Expand the Arduino code to toggle the Pin 13 LED on when `'1'` is received, and off when `'0'` is received.\n4. Test wireless control from across the room!\n\n### Interactive Terminal: HC-05 Bluetooth AT Command Console\nConfigure your Bluetooth module using the simulated Hayes AT command terminal below. Test AT ping, rename the device, set passkeys, and inspect status LED pulse timing!"
     },
     {
       "stepId": "l11_s10",
@@ -94,7 +98,7 @@
       "stepId": "l11_s14",
       "title": "Comprehensive Knowledge Check",
       "type": "quizCheckpoint",
-      "markdownContent": "Test your mastery of the electrical, programming, and hardware concepts in this module.",
+      "markdownContent": "Test your mastery of UART asynchronous framing, crossed TX/RX lines, SoftwareSerial, and Bluetooth telemetry.",
       "interactiveConfig": {
         "question": "What does UART stand for?",
         "options": [

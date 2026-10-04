@@ -245,73 +245,113 @@ class AssetCurriculumDataSource {
         "stepId": "l02_s01",
         "title": "Give the Monster Its Voice",
         "type": "story",
-        "markdownContent": "### Give the Monster Its Voice\nThe Arduino is the robot's brain, but the brain needs instructions.\n\nYour computer is where you write those instructions.\n\nThe Arduino IDE is the workbench that lets you write Arduino programs, check code, compile programs, upload them to the board, and communicate with the board.\n\nThink of the process as:\n**Write \u2192 Check \u2192 Compile \u2192 Upload \u2192 Run**"
+        "markdownContent": "The Arduino is the robot's brain, but the brain needs instructions.\n\nYour computer is where you write those instructions. The **Arduino IDE** (Integrated Development Environment) is the workbench that lets you write sketches, verify syntax, compile machine binaries, upload them to the board, and monitor serial communications.\n\nThink of the engineering workflow as:\n```\nWrite Code \u2794 Check Syntax \u2794 Compile Binary \u2794 Upload Flash \u2794 Run Hardware\n```\n\nIn this lesson, you will set up your development station, select your communication port, and explore how firmware lifecycles work."
       },
       {
         "stepId": "l02_s02",
         "title": "Prior Knowledge Check: Computer Programs & USB",
         "type": "story",
-        "markdownContent": "Ask the learner:\n\n### Question 1\nHave you ever written a computer program before?\n- Yes.\n- A little.\n- No.\n\n### Question 2\nWhat do you think a program is?\n- Instructions for a computer.\n- A battery.\n- A USB cable.\n\n### Question 3\nWhat do you think USB is used for in this project?\n- Connecting the computer and Arduino.\n- Supplying unlimited power to every component.\n- Making the Arduino wireless.\n\nDo not block beginners based on their answers. If they already know these concepts, allow them to move quickly through the explanation."
+        "interactiveWidgetType": "priorKnowledgeCheck",
+        "interactiveConfig": {
+          "questions": [
+            {
+              "question": "Have you ever written a computer program before?",
+              "options": [
+                "Yes, I have written code before.",
+                "A little bit / block coding.",
+                "No, this is my very first time!"
+              ],
+              "correctIndex": null,
+              "explanation": "No prior coding experience is required! Monster Lab teaches you step-by-step."
+            },
+            {
+              "question": "What is a computer program?",
+              "options": [
+                "Step-by-step instructions that tell a computer what to do",
+                "An electrical battery that stores power",
+                "A special type of USB cable"
+              ],
+              "correctIndex": 0,
+              "explanation": "A program is a sequence of precise instructions executed by a computer."
+            },
+            {
+              "question": "What is the USB cable used for in Monster Lab?",
+              "options": [
+                "Connecting the computer to upload code and supply 5V DC power",
+                "Supplying infinite high voltage to motors",
+                "Making the Arduino wirelessly communicate"
+              ],
+              "correctIndex": 0,
+              "explanation": "USB provides both serial communications for code uploading and regulated 5V power."
+            }
+          ]
+        },
+        "markdownContent": "Before setting up your programming workbench, let's check your foundational knowledge about computer software and USB hardware.\n\nAnswer the 3 self-reflection questions below to calibrate your learning path!"
       },
       {
         "stepId": "l02_s03",
         "title": "What Is an IDE? The Programmer's Workbench",
         "type": "story",
-        "markdownContent": "IDE stands for Integrated Development Environment.\n\nThink of it as a programming workbench. Instead of using one program to write code, another to compile it, and another to send it to the board, the Arduino IDE puts the important tools together.\n\n### Vocabulary\n- **IDE:** Software used to write and work with programs.\n- **Sketch:** Arduino's name for a program/project.\n- **Compile:** Convert source code into a form the Arduino can use.\n- **Upload:** Send the compiled program from the computer to the Arduino.\n- **Port:** A communication connection the computer uses to communicate with a device."
+        "markdownContent": "**IDE** stands for **Integrated Development Environment**.\n\nThink of it as a master workshop for robotics software. Instead of using a text editor to write code, a separate command-line terminal to compile it, and a third utility to flash the microcontroller chip, the Arduino IDE bundles all essential tools into one unified workbench.\n\n### Core Vocabulary\n- **IDE**: Unified software used to write, compile, and upload sketches.\n- **Sketch**: An Arduino program file ending in `.ino`.\n- **Compile**: The process of translating human-readable C++ instructions into binary machine code.\n- **Upload**: Transmitting the compiled machine hex binary from PC memory into microcontroller flash storage.\n- **Port**: The virtual serial communication channel (e.g. `COM3` or `/dev/ttyUSB0`) connecting your PC to the board."
       },
       {
         "stepId": "l02_s04",
         "title": "Compilation & Flashing: What Happens When You Upload?",
         "type": "visualExplanation",
-        "markdownContent": "When you press Upload, several things happen.\n\n### Step 1 \u2014 Write code\nYou create a sketch.\n\n### Step 2 \u2014 Check the code\nThe IDE looks for problems that prevent the program from being compiled.\n\n### Step 3 \u2014 Compile\nThe computer translates the source code into machine instructions appropriate for the board.\n\n### Step 4 \u2014 Communicate\nThe computer sends the program through the USB connection.\n\n### Step 5 \u2014 Run\nThe Arduino stores and executes the program.\n\n### Think About It\nDoes pressing Upload magically create the program?\n\n**No.** The computer has already converted the source code and then sends the resulting program to the board."
+        "interactiveWidgetType": "compilationPipelineSimulator",
+        "markdownContent": "When you click **Upload** in the IDE, your computer does not send C++ words directly to the ATmega328P chip. Microcontrollers cannot read English or C++! They only understand raw hexadecimal binary opcodes.\n\n### The 4-Stage Build & Flash Pipeline:\n1. **Human Source Code**: You write C++ functions (`setup()` and `loop()`).\n2. **Syntax Verification & Lexing**: The compiler checks grammar, matching braces `{ }`, and semicolons `;`.\n3. **Binary Compilation (avr-g++)**: Converts C++ text into machine opcodes (Intel HEX format).\n4. **Hardware Flash Flashing (avrdude)**: Streams bytes over USB serial into the Optiboot bootloader in flash memory.\n\nStep through each stage in the pipeline simulator below to see how code transforms into machine reality!"
       },
       {
         "stepId": "l02_s05",
         "title": "Connecting the USB Cable Safely",
         "type": "physicalTask",
-        "markdownContent": "The USB cable provides an important connection between the computer and Arduino.\n\nDepending on the board and setup, USB can provide power, data communication, program uploads, and serial communication.\n\n### Physical Mission\n1. Find the USB connector on the Arduino.\n2. Find the USB connector on the computer.\n3. Inspect the cable for damage.\n4. Connect the cable.\n5. Look for the Arduino power indicator.\n6. Confirm the board is receiving power.\n\n### Safety\n- Do not force the connector.\n- Do not connect damaged cables.\n- Do not intentionally short power and ground."
+        "markdownContent": "Connect your Arduino Uno development board to your computer using the standard USB Type-B cable.\n\n### Step-by-Step Connection Procedure:\n1. **Inspect Your Workspace**: Ensure your table is completely dry, clean, and free of loose conductive metal clippings or staples.\n2. **Plug Board End**: Firmly insert the square **USB Type-B** plug into the silver receptacle on your Arduino Uno until it clicks.\n3. **Plug Computer End**: Insert the flat rectangular **USB Type-A** plug into a powered USB port on your PC or laptop.\n4. **Verify Power Beacon**: Look at the Arduino Uno. The green surface-mount LED labeled **ON** should glow solid green, indicating regulated 5V power!"
       },
       {
         "stepId": "l02_s06",
         "title": "What Is a Port? Serial COM Ports & Device Drivers",
         "type": "story",
-        "markdownContent": "Your computer may have many devices connected to it. The operating system needs a way to identify which communication connection belongs to the Arduino.\n\nThat connection appears as a serial or COM port. The exact name depends on the computer and operating system.\n\nThink:\n**Computer \u2192 Port \u2192 USB \u2192 Arduino**\n\n### Prediction\nIf the Arduino is unplugged, should the Arduino's port normally remain available as the same active device?\n\n**Usually no.** The available port list can change when devices are connected or disconnected.\n\n\nThe IDE needs to know which Arduino board you are programming.\n\nFor this project, select:\n**Arduino Uno**\n\nDifferent boards can have different processors, pin layouts, memory, communication hardware, and programming requirements.\n\nChoosing the wrong board can cause uploads to fail or produce unexpected behavior.\n\n### Guided Task\nHave the learner open:\n**Tools \u2192 Board \u2192 Arduino Uno**\n\nThen verify the selected board.\n\n\nNow select the communication port belonging to the Arduino.\n\nHave the learner:\n1. Open the port selection.\n2. Note which ports are currently visible.\n3. Disconnect the Arduino.\n4. Check the list again.\n5. Reconnect the Arduino.\n6. Identify the port that appears or returns.\n7. Select it.\n\nThis turns port selection into something the learner can understand instead of simply being told which item to click."
+        "interactiveWidgetType": "portSelectorBench",
+        "markdownContent": "A **port** is the communication channel your computer uses to identify and talk to external USB devices.\n\nOn Windows, ports are assigned names like `COM1`, `COM3`, `COM4`. On macOS and Linux, they appear as `/dev/cu.usbmodem...` or `/dev/ttyUSB0`.\n\nWhen you plug in the Arduino, an onboard interface chip (ATmega16U2 or CH340) creates a virtual UART serial communication bridge.\n\nIn the IDE menu under **Tools > Board**, choose **Arduino Uno**. Under **Tools > Port**, select the port corresponding to your Uno. Practice configuring the board and port in the virtual bench below, and initiate the serial handshake to flash TX and RX LEDs!"
       },
       {
         "stepId": "l02_s07",
         "title": "First Look at Arduino Code: setup() and loop() Structure",
         "type": "codeExperiment",
-        "markdownContent": "Before uploading a full project, look at this tiny sketch:\n\n    void setup() {\n      Serial.begin(9600);\n    }\n\n    void loop() {\n    }\n\n### What Does This Mean?\n- **void setup():** A function that runs when the Arduino starts or resets.\n- **Serial.begin(9600):** Starts serial communication at a speed called the baud rate.\n- **void loop():** The function Arduino repeatedly runs.\n- The empty loop means this example does not currently have anything repeating.\n\n### Coding Basics\nThis introduces functions, parentheses, braces, statements, numbers, and semicolons.\n\nThe learner does not need to memorize these yet. The goal is recognizing that code has structure."
+        "interactiveWidgetType": "ideLifecycleSimulator",
+        "markdownContent": "Every Arduino sketch is built around two fundamental functions:\n\n```cpp\nvoid setup() {\n  // Hardware configuration \u2014 runs ONCE at boot or reset\n  pinMode(13, OUTPUT);\n}\n\nvoid loop() {\n  // Perpetual cycle \u2014 runs REPEATEDLY forever\n  digitalWrite(13, HIGH);\n  delay(1000);\n  digitalWrite(13, LOW);\n  delay(1000);\n}\n```\n\n- `setup()`: Initializes GPIO pin directions and communications. It runs exactly once when power is applied.\n- `loop()`: The infinite heartbeat of your robot. Once `setup()` finishes, the microcontroller jumps into `loop()` and orbits perpetually.\n\nRun the interactive lifecycle simulator below to watch `setup()` illuminate its beacon once, followed by the continuous orbit of `loop()`!"
       },
       {
         "stepId": "l02_s08",
         "title": "Code Prediction Challenge: Empty Setup vs Unbounded Loops",
         "type": "codeExperiment",
-        "markdownContent": "### Prediction 1\nIf setup() runs when the Arduino starts, will this happen repeatedly every second?\n\n**No.**\n\n### Prediction 2\nWhat does 9600 represent?\n- The serial communication speed.\n- The Arduino pin number.\n- The amount of memory.\n\n**Answer:** Serial communication speed/baud rate.\n\n### Prediction 3\nWhat happens inside the empty loop?\nNothing from this example is being repeatedly executed."
+        "markdownContent": "Analyze and predict how the microcontroller executes when code structure changes:\n\n### Prediction Challenge 1: Empty setup(), Active loop()\nIf `setup()` is completely empty, does the Arduino freeze?\n*Answer:* No! `setup()` finishes in nanoseconds and immediately begins cycling `loop()`.\n\n### Prediction Challenge 2: Active setup(), Empty loop()\nIf an LED is turned ON inside `setup()`, and `loop()` has no code inside its braces `{ }`, what does the LED do?\n*Answer:* The LED turns ON in `setup()` and stays ON forever! The microcontroller continues running `loop()` endlessly at 16 MHz, maintaining the pin voltage state.\n\n> **Core Principle**: A microcontroller never powers down or \"exits\" unless electrical power is disconnected."
       },
       {
         "stepId": "l02_s09",
         "title": "Real-World Systems: NASA Mars Rovers & Embedded Firmware",
         "type": "visualExplanation",
-        "markdownContent": "Professional developers use similar workflows. They write software, build or compile it, send it to a target system, test it, observe the result, and fix problems.\n\nEmbedded engineers do this with robots, drones, industrial controllers, sensors, automotive electronics, and smart appliances.\n\nMonster Lab is introducing the same basic engineering workflow."
+        "markdownContent": "The `setup()` and `loop()` firmware architecture powers mission-critical robotics worldwide:\n\n- **NASA Mars Rovers (Curiosity & Perseverance)**: Execute diagnostic sensor self-tests upon wake-up (`setup()`), then run autonomous hazard-avoidance cycles continuously (`loop()`).\n- **Automotive Airbag Control Units**: Initialize SPI accelerometer calibrations at engine start, then monitor vehicle deceleration thresholds every 100 microseconds in an unbroken loop.\n- **Commercial Drones**: Zero out gyroscope bias on launch pads, then calculate motor thrust adjustments 400 times per second during flight."
       },
       {
         "stepId": "l02_s10",
         "title": "Troubleshooting Lab Station: Port Not Found & Driver Issues",
         "type": "story",
-        "markdownContent": "Walk through the basic workflow:\n1. Connect Arduino.\n2. Open Arduino IDE.\n3. Select Arduino Uno.\n4. Select the correct port.\n5. Open or enter a simple sketch.\n6. Verify the code.\n7. Upload the sketch.\n8. Watch the IDE for the upload result.\n\nExplain the difference:\n**Verify \u2192 checks/compiles the sketch.**\n**Upload \u2192 sends the program to the Arduino.**\n\nThe learner should understand that these are not the same button.\n\n\n### Scenario A \u2014 No Port\nThe Arduino is plugged in, but no new port appears.\n\nAsk the learner to check:\n- Is the USB cable connected?\n- Is the cable capable of data communication?\n- Is the board powered?\n- Is the cable damaged?\n- Is the correct USB port being used?\n- Does the operating system recognize the device?\n\n### Scenario B \u2014 Upload Fails\nAsk:\n- Is the correct board selected?\n- Is the correct port selected?\n- Is another program using the serial port?\n- Is the USB connection stable?\n- Did the code compile successfully?\n\n### Scenario C \u2014 Wrong Board\nThe learner selected a different board model.\n\nAsk why this might cause problems.\n\nExpected reasoning: The IDE needs to know what hardware it is programming so it can compile and upload the program correctly."
+        "interactiveWidgetType": "portTroubleshootingBench",
+        "markdownContent": "If the Arduino IDE reports *\"Port Not Found\"* or errors out during upload, do not panic! Professional robotics engineers use systematic triage:\n\n1. **Check Physical Connection**: Is the USB cable fully seated into the jack?\n2. **Check Port Selection**: Is the active Arduino COM port chosen, or an internal motherboard port like COM1?\n3. **Check USB Drivers**: Does your board use a CH340 or CP2102 chip that requires an OS device driver?\n4. **Check Board Power**: Does the green ON LED illuminate, proving 5V power?\n\nInspect each diagnostic check in the triage bench below, resolve all 4 faults, and restore full communication link!"
       },
       {
         "stepId": "l02_s11",
         "title": "Workshop Safety: Electrostatic Discharge (ESD) & Surge Prevention",
         "type": "story",
-        "markdownContent": "### Workshop Safety: Electrostatic Discharge (ESD) & Surge Prevention\n\nMicrocontrollers are sensitive CMOS semiconductor devices. A spark of static electricity that you can barely feel (under 3,000 volts) can permanently puncture internal silicon MOSFET gate oxide layers!\n\n**Best Safety Practices:**\n- Touch a grounded metal object before picking up your Arduino board.\n- Hold boards by the edges\u2014never press fingers directly across exposed IC pins or header solder pads.\n- Keep conductive liquids, soda cans, and metal rulers away from your active wiring workspace.\n- Always disconnect USB power before moving wires or inserting IC components."
+        "interactiveWidgetType": "esdSafetyCheck",
+        "markdownContent": "Microcontrollers are sensitive CMOS semiconductor devices. A spark of static electricity under 3,000 volts\u2014too faint for human fingers to feel\u2014can permanently destroy internal silicon transistor gate oxide layers!\n\n### The 3 Golden Rules of ESD Defense:\n1. **Touch Grounded Metal**: Touch a metal desk frame or radiator before handling boards to discharge accumulated static charge to 0V.\n2. **Avoid Static Generators**: Never assemble circuits directly on synthetic carpet or wool blankets.\n3. **Grip PCB Edges**: Always pick up boards by the outer fiberglass edges. Never touch exposed IC pins or header pins directly with your fingers.\n\nPractice proper ESD grounding in the interactive lab below to bring your static voltage potential down to a safe 0 Volts!"
       },
       {
         "stepId": "l02_s12",
         "title": "Station Setup Review & Competencies",
         "type": "story",
-        "markdownContent": "### You Learned\n- The Arduino IDE is the programming workbench.\n- Arduino sketches are programs.\n- Verify/compile and Upload are different operations.\n- USB can provide power and data communication.\n- A port identifies a computer communication connection.\n- The IDE must know which board you are programming.\n- setup() runs during startup or reset.\n- loop() repeats.\n- Uploading code is part of an engineering test cycle.\n\n### Monster Lab Workflow\n**Connect \u2192 Select Board \u2192 Select Port \u2192 Write \u2192 Verify \u2192 Upload \u2192 Test \u2192 Troubleshoot**"
+        "markdownContent": "Congratulations! You have set up your Monster Lab development station. Review your core competencies:\n\n- You understand how the Arduino IDE coordinates writing, verifying, compiling, and flashing code.\n- You know how to identify and select target microcontroller boards and serial communication ports.\n- You recognize the vital roles of `setup()` (initialization, runs 1x) and `loop()` (perpetual execution).\n- You can systematically troubleshoot disconnected ports and missing USB bridge drivers.\n- You apply electrostatic discharge (ESD) safety protocols to protect your hardware.\n\nComplete the comprehensive 8-question assessment below to earn your XP and proceed to Lesson 03!"
       },
       {
         "stepId": "l02_s13",
@@ -430,87 +470,127 @@ class AssetCurriculumDataSource {
     "steps": [
       {
         "stepId": "l03_s01",
-        "title": "Mission Introduction",
+        "title": "Supercharge Your Monster's Brain",
         "type": "story",
-        "markdownContent": "### Supercharge Your Monster's Brain\nRobots rely on specialized integrated circuits: real-time clocks, OLEDs, and motor drivers. Controlling a 16x2 LCD display via raw 8-bit parallel pulses requires toggling 16 pins and managing microsecond timing. If engineers had to write low-level bit-banging code for every display, building a robot would take months!\n\nLibraries package proven, robust C++ code written by senior engineers so learners can command complex hardware with high-level functions like `lcd.print(\"Monster Online!\");`.\n\n```\nCode Sketch \u2192 #include <LiquidCrystal_I2C.h> \u2192 Library Object (0x27) \u2192 I2C Bus (A4/A5) \u2192 PCF8574 Backpack \u2192 LCD\n```"
+        "markdownContent": "Robots rely on specialized external modules: character displays, motor drivers, gyro sensors, and real-time clocks. Controlling a 16x2 LCD display via raw 8-bit parallel pulses requires toggling 16 separate pins and managing microsecond pulse timings.\n\nIf robotics engineers had to write low-level bit-banging code for every single display, building a project would take months!\n\n**Libraries** package proven, robust C++ driver code written by experienced engineers so you can command complex hardware with high-level functions like `lcd.print(\"Monster Online!\");`.\n\n```\nYour Sketch \u2794 #include <LiquidCrystal_I2C.h> \u2794 Library Driver \u2794 I2C Bus (A4/A5) \u2794 16x2 LCD Display\n```\n\nIn this lesson, you will install external libraries, deconstruct preprocessor syntax, and calibrate an I2C character LCD display!"
       },
       {
         "stepId": "l03_s02",
-        "title": "Prior Knowledge Check",
+        "title": "Prior Knowledge Check: Microcontroller Libraries",
         "type": "story",
-        "markdownContent": "Before diving into libraries, verify foundational concepts:\n1. **What is source code?** Human-readable C++ instructions written in the IDE editor.\n2. **What happens during compilation?** Source code translates into machine instructions (hex binary) for the ATmega328P.\n3. **Why do microcontrollers need external modules?** To interact with the physical world through displays, sensors, and actuators."
+        "interactiveWidgetType": "priorKnowledgeCheck",
+        "interactiveConfig": {
+          "questions": [
+            {
+              "question": "What is the primary role of a software library in Arduino?",
+              "options": [
+                "Providing pre-written functions and drivers that manage complex hardware protocols",
+                "Increasing the physical clock frequency of the ATmega328P processor",
+                "Converting alternating current (AC) into direct current (DC)"
+              ],
+              "correctIndex": 0,
+              "explanation": "Libraries encapsulate hundreds of lines of timing and register code into clean function calls."
+            },
+            {
+              "question": "What is a C++ header file (.h)?",
+              "options": [
+                "A file containing class definitions, method prototypes, and constants exposed by a library",
+                "A physical header pin soldered onto the Arduino Uno development board",
+                "A power cable connector for lithium-polymer batteries"
+              ],
+              "correctIndex": 0,
+              "explanation": "Header files define the interface and available methods exposed by an external library."
+            },
+            {
+              "question": "How many communication signal wires does the I2C protocol require?",
+              "options": [
+                "Only 2 shared wires (SDA for data, SCL for clock)",
+                "16 separate parallel wires",
+                "8 analog wires"
+              ],
+              "correctIndex": 0,
+              "explanation": "I2C operates over just two shared bus wires (SDA and SCL), dramatically simplifying wiring."
+            }
+          ]
+        },
+        "markdownContent": "Before working with modular drivers and display backpacks, let's verify your understanding of code abstraction and bus communication.\n\nAnswer the 3 self-check questions below to test your baseline knowledge!"
       },
       {
         "stepId": "l03_s03",
-        "title": "Core Concept & Vocabulary",
+        "title": "The Power of Libraries: Raw Registers vs Clean Abstraction",
         "type": "story",
-        "markdownContent": "- **Library:** A reusable collection of code providing functions and classes for specific hardware devices or algorithms.\n- **`#include`:** A preprocessor directive that injects header declarations into your sketch before compilation begins.\n- **Header File (`.h`):** Defines the class interface, constants, and available methods exposed by the library.\n- **Constructor / Instantiation:** Creating an active object variable representing physical hardware in memory.\n- **API (Application Programming Interface):** The set of commands and methods exposed by the library to control the device."
+        "interactiveWidgetType": "libraryConceptDiagram",
+        "markdownContent": "Why do professional embedded engineers rely on libraries? Look at the difference:\n\n### Without Library (Bit-Banging Raw Hardware)\nDriving an I2C LCD directly requires over 500 lines of complex register manipulation (`TWCR`, `TWDR`), manual I2C start/stop condition pulses, splitting each character into two 4-bit nibbles, and microsecond delay loops.\n\n### With Library (Modular Abstraction)\nWith the `LiquidCrystal_I2C` library, all 500 lines of timing pulses are packaged away. You only need two clean function calls:\n```cpp\nlcd.init();\nlcd.print(\"Monster Online!\");\n```\n\nToggle between both architectures in the diagram below to see how libraries supercharge development!"
       },
       {
         "stepId": "l03_s04",
-        "title": "How It Works: Signal Flow & Hardware Registers",
+        "title": "How It Works: Finding & Installing Libraries",
         "type": "visualExplanation",
-        "markdownContent": "When you invoke `#include <LiquidCrystal_I2C.h>`, the C++ compiler links pre-compiled routines that handle the complex I2C protocol.\n\n1. Your code calls `lcd.print(\"Hello\")`.\n2. The library converts characters into ASCII byte streams.\n3. The library packages bytes into I2C packets directed at hexadecimal address `0x27`.\n4. The hardware I2C bus (`SDA` / `SCL`) shifts the bits across to the PCF8574 backpack.\n5. The backpack expands the serial bytes back into parallel pulses that toggle the HD44780 LCD controller."
+        "interactiveWidgetType": "libraryManagerSimulator",
+        "markdownContent": "The Arduino IDE includes a built-in **Library Manager** connected to an open-source global registry of thousands of community-verified drivers.\n\n### How to Install a Library in Arduino IDE:\n1. Open **Tools > Manage Libraries...** (or click the Library Manager icon on the left sidebar).\n2. Type the name of the library (for example, `LiquidCrystal_I2C`) into the search box.\n3. Locate the verified library authored by Frank de Brabander.\n4. Click **Install**. The IDE downloads the header files (`.h`), C++ implementations (`.cpp`), and example sketches directly into your `~/Arduino/libraries/` folder.\n\nTest the interactive Library Manager below to search, download, and install `LiquidCrystal_I2C`!"
       },
       {
         "stepId": "l03_s05",
-        "title": "Hardware Mission: Component & Pin Inspection",
+        "title": "Hardware Mission: The 16x2 LCD Display & Contrast Potentiometer",
         "type": "physicalTask",
-        "markdownContent": "Examine `comp_07` (16x2 LCD Display):\n1. **Backpack Inspection:** Turn the display over. Notice the black daughterboard soldered to the back\u2014this is the I2C backpack.\n2. **Pin Identification:** Count the 4 interface pins:\n   - `GND`: Ground return path.\n   - `VCC`: 5V power supply.\n   - `SDA`: Serial Data line (connects to Uno `A4`).\n   - `SCL`: Serial Clock line (connects to Uno `A5`).\n3. **Compare Pins:** Notice that without the backpack, you would need to wire 16 individual pins to your Arduino!\n4. **Contrast Potentiometer:** Locate the small blue square trimmer potentiometer on the backpack. This adjusts display liquid-crystal contrast."
+        "interactiveWidgetType": "lcdContrastSimulator",
+        "markdownContent": "Examine your **16x2 Character LCD Display with I2C Backpack** (`comp_07`):\n\n### Key Hardware Landmarks:\n1. **The I2C Backpack**: Turn the module over. Notice the black printed circuit board soldered to the back. This contains the PCF8574 I/O expander chip.\n2. **The 4-Pin Header**: Without this backpack, you would need 16 jumper wires! With I2C, you only need 4:\n   - `GND`: Ground 0V return path\n   - `VCC`: +5V power supply\n   - `SDA`: Serial Data (connects to Uno Pin A4)\n   - `SCL`: Serial Clock (connects to Uno Pin A5)\n3. **The Blue Contrast Trimmer**: Locate the small blue square potentiometer with the brass screw on the back. It controls liquid crystal bias voltage (V0).\n\nThe #1 troubleshooting issue is misadjusted contrast! Tune the virtual trimmer potentiometer screw below to find the sweet spot between blank screen and solid white blocks."
       },
       {
         "stepId": "l03_s06",
-        "title": "Coding Basics: Syntax & Control Structures",
+        "title": "Coding Basics: Deconstructing the #include Directive",
         "type": "story",
-        "markdownContent": "In C++, libraries frequently use Object-Oriented Programming (OOP):\n- **Class:** The blueprint (e.g., `LiquidCrystal_I2C`).\n- **Object Instance:** The physical device you control (e.g., `lcd`).\n- **Constructor Call:** `LiquidCrystal_I2C lcd(0x27, 16, 2);` creates the object, specifying its 7-bit I2C address (`0x27`), column count (`16`), and row count (`2`)."
+        "interactiveWidgetType": "includeSyntaxDeconstruction",
+        "markdownContent": "To use an installed library, your sketch must instruct the C++ compiler to load its interface definitions:\n\n```cpp\n#include <LiquidCrystal_I2C.h>\n```\n\n### Syntax Breakdown:\n- `#`: Preprocessor flag indicating a compiler directive evaluated before compilation begins.\n- `include`: Command instructing the compiler to literally insert the contents of the header file.\n- `< >`: Angle brackets tell the compiler to search the system/installed libraries directory.\n- `.h`: The header file extension containing class definitions and function signatures.\n\nTap each syntax token below to inspect its rules and avoid common syntax traps!"
       },
       {
         "stepId": "l03_s07",
-        "title": "Code Walkthrough: Annotated Sketch",
+        "title": "Code Walkthrough: Annotated LiquidCrystal_I2C Sketch",
         "type": "codeExperiment",
-        "markdownContent": "```cpp\n#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n\n// Set I2C address to 0x27 for a 16 chars and 2 line display\nLiquidCrystal_I2C lcd(0x27, 16, 2);\n\nvoid setup() {\n  lcd.init();          // Initialize LCD hardware and join I2C bus\n  lcd.backlight();     // Turn on the LED backlight\n  lcd.setCursor(0, 0); // Position cursor at Column 0, Row 0\n  lcd.print(\"Monster Lab!\");\n  lcd.setCursor(0, 1); // Position cursor at Column 0, Row 1\n  lcd.print(\"System Active\");\n}\n\nvoid loop() {\n  // Static display - loop remains idle\n}\n```\n\n### Line-by-Line Breakdown:\n- `line 1-2`: Imports the Wire (I2C) and LiquidCrystal_I2C libraries.\n- `line 5`: Instantiates `lcd` at address `0x27` with 16 columns and 2 rows.\n- `line 8`: `lcd.init()` configures the LCD controller registers.\n- `line 9`: `lcd.backlight()` powers the backlight LED.\n- `line 10-13`: Sets cursor positions and prints greeting text."
+        "markdownContent": "Examine a complete sketch driving the 16x2 character display:\n\n```cpp\n#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n\n// Create the LCD object: Address 0x27, 16 columns, 2 rows\nLiquidCrystal_I2C lcd(0x27, 16, 2);\n\nvoid setup() {\n  lcd.init();          // Initialize LCD hardware over I2C\n  lcd.backlight();     // Turn on the blue LED backlight\n  lcd.setCursor(0, 0); // Column 0, Row 0\n  lcd.print(\"Monster Lab!\");\n  lcd.setCursor(0, 1); // Column 0, Row 1\n  lcd.print(\"System Active\");\n}\n\nvoid loop() {\n  // Static display \u2014 loop remains idle\n}\n```\n\n### Key Function Calls:\n- `LiquidCrystal_I2C lcd(...)`: The **constructor**. Instantiates an object named `lcd` at hex address `0x27`.\n- `lcd.init()`: Configures internal HD44780 controller registers over the I2C bus.\n- `lcd.backlight()`: Powers on the display illumination LED.\n- `lcd.setCursor(col, row)`: Places the writing cursor at the specified zero-indexed grid coordinate."
       },
       {
         "stepId": "l03_s08",
-        "title": "Code Prediction: Hypothesis & Deductions",
+        "title": "Code Prediction: Missing Backlight & Out-of-Bounds Cursors",
         "type": "codeExperiment",
-        "markdownContent": "- **Prediction 1:** What happens if `lcd.backlight()` is omitted or commented out?\n  *Answer:* Text is rendered on the liquid crystals, but without the backlight LED, it is nearly invisible unless illuminated by an external flashlight.\n- **Prediction 2:** What happens if `lcd.setCursor(16, 0)` is used?\n  *Answer:* The cursor is placed beyond the 16 visible columns (columns 0\u201315), causing characters to wrap off-screen or into hidden DDRAM registers."
+        "markdownContent": "Practice scientific engineering deductions before flashing code:\n\n### Prediction 1: What happens if lcd.backlight() is omitted?\n*Answer:* The characters are still generated by the liquid crystal molecules, but without the LED backlight, the dark blue screen is nearly impossible to read without shining a flashlight directly onto it!\n\n### Prediction 2: What happens if you call lcd.setCursor(16, 0)?\n*Answer:* Columns are zero-indexed from 0 to 15. Column 16 is off the visible screen! The characters will wrap into hidden DDRAM display memory registers and remain invisible."
       },
       {
         "stepId": "l03_s09",
-        "title": "Guided Experiment: Parameter Modulation",
+        "title": "Guided Experiment: Dynamic Uptime Counter",
         "type": "codeExperiment",
-        "markdownContent": "Make a controlled change to the sketch:\n1. Replace `lcd.print(\"System Active\");` with dynamic elapsed seconds:\n   ```cpp\n   void loop() {\n     lcd.setCursor(0, 1);\n     lcd.print(\"Uptime: \");\n     lcd.print(millis() / 1000);\n     lcd.print(\"s \");\n     delay(500);\n   }\n   ```\n2. Predict what will happen on Row 1.\n3. Upload and observe the dynamic counter updating every half second."
+        "markdownContent": "Let's make the display dynamic! Instead of static text, we can update Row 1 continuously with live system uptime:\n\n```cpp\nvoid loop() {\n  lcd.setCursor(0, 1);\n  lcd.print(\"Uptime: \");\n  lcd.print(millis() / 1000);\n  lcd.print(\"s   \"); // Extra spaces erase trailing old digits\n  delay(500);\n}\n```\n\n### Why the trailing spaces matter:\nWhen a 2-digit number (e.g. `99`) rolls over to a 3-digit number (`100`), or drops back down, older characters remain in LCD RAM unless explicitly overwritten with space characters `\"   \"`!"
       },
       {
         "stepId": "l03_s10",
-        "title": "Real-World Robotics: Industrial & Aerospace Systems",
+        "title": "Real-World Robotics: Hardware Abstraction Layers",
         "type": "visualExplanation",
-        "markdownContent": "Modern aerospace systems, 3D printers, and industrial robotics do not write low-level register drivers for every display or motor. Aerospace engineering relies on Hardware Abstraction Layers (HAL) and certified driver libraries to guarantee safety, modularity, and rapid maintenance."
+        "markdownContent": "The modular library architecture you learned is used in every advanced engineering discipline:\n\n- **Autonomous Electric Vehicles**: Autonomous drive computers don't send raw PWM pulses to motor windings directly. They call driver libraries: `motorController.setTorqueNm(240);`.\n- **Medical Ventilators**: Airflow sensors and solenoid valves are controlled through certified Hardware Abstraction Layers (HAL) to prevent timing glitches.\n- **3D Printers**: Firmware like Marlin uses stepper motor and thermal thermistor libraries to coordinate micro-stepping smoothly."
       },
       {
         "stepId": "l03_s11",
-        "title": "Troubleshooting Challenge: Diagnostic Scenarios",
+        "title": "Troubleshooting Challenge: Missing Header & Blank Displays",
         "type": "story",
-        "markdownContent": "### Symptom 1: Compiler Error\n- **Error:** `fatal error: LiquidCrystal_I2C.h: No such file or directory`.\n- **Diagnosis:** The library was never installed in the IDE, or the folder name contains illegal characters.\n- **Remedy:** Open **Tools > Manage Libraries...**, search for `LiquidCrystal_I2C`, and click Install.\n\n### Symptom 2: Blank Screen / Solid White Boxes\n- **Symptom:** Display lights up bright blue with 16 solid white rectangular boxes on Row 1, but no text appears.\n- **Diagnosis:** The contrast potentiometer is set too high, or the I2C address is `0x3F` instead of `0x27`.\n- **Remedy:** Turn the blue contrast potentiometer on the back of the backpack with a small screwdriver until text emerges from the boxes."
+        "interactiveWidgetType": "missingLibraryTroubleshooting",
+        "markdownContent": "You verify a sketch and the compiler halts with a bright red fatal error:\n\n```\nfatal error: LiquidCrystal_I2C.h: No such file or directory\n#include <LiquidCrystal_I2C.h>\n         ^~~~~~~~~~~~~~~~~~~~~\ncompilation terminated.\n```\n\nThis means the preprocessor searched your system libraries folder and could not find the file `LiquidCrystal_I2C.h`.\n\nResolve this compilation failure in the interactive triage station below by installing the missing library!"
       },
       {
         "stepId": "l03_s12",
-        "title": "Workshop Safety & Hardware Care",
+        "title": "Workshop Safety & Hardware Care: LCD Voltage Ratings",
         "type": "story",
-        "markdownContent": "- Verify whether the LCD backpack requires 5V or 3.3V logic. Connecting 5V to a 3.3V-only display can permanently fry the display controller.\n- Never adjust backpack potentiometers using metal screwdrivers while powered if exposed traces or power rails are nearby.\n- Disconnect USB power before rewiring I2C jumper wires."
+        "markdownContent": "Protect your LCD modules and microcontroller with these workshop rules:\n\n1. **Check Operating Voltage**: Most character LCD backpacks run on 5V. Supplying 5V power to a 3.3V-only display can permanently fry its internal driver chip.\n2. **Disconnect Power Before Rewiring**: Never move or rewire `VCC`, `GND`, `SDA`, or `SCL` jumper wires while the USB cable is plugged in.\n3. **Use Plastic or Insulated Screwdrivers**: When adjusting the blue contrast trimmer on the back of the backpack, use a small insulated trimmer tool to avoid accidentally shorting adjacent exposed solder pads."
       },
       {
         "stepId": "l03_s13",
         "title": "Final Review & Competencies",
         "type": "story",
-        "markdownContent": "- Libraries encapsulate complex protocols into clean, reusable functions.\n- The preprocessor directive `#include` makes library classes and functions available.\n- Hardware devices like the I2C LCD backpack use 7-bit hex addresses (e.g. `0x27`).\n- Always check the IDE Library Manager when a missing header error occurs.\n- Up next in Lesson 04: The core execution loop of all microcontroller firmware: `setup()` and `loop()`."
+        "markdownContent": "Outstanding work! Let's review the key competencies you mastered in Lesson 03:\n\n- You understand how libraries encapsulate low-level register bit-banging into clean C++ functions.\n- You know how to search and install community libraries using the Arduino IDE Library Manager.\n- You can deconstruct the `#include <LibraryName.h>` preprocessor syntax.\n- You know how to calibrate LCD liquid crystal contrast using the blue backpack trimmer potentiometer.\n- You can diagnose and fix `'No such file or directory'` compiler errors.\n\nComplete the 8-question assessment below to earn your XP and proceed to Lesson 04!"
       },
       {
         "stepId": "l03_s14",
         "title": "Comprehensive Knowledge Check",
         "type": "quizCheckpoint",
-        "markdownContent": "Test your mastery of the electrical, programming, and hardware concepts in this module.",
+        "markdownContent": "Test your mastery of Arduino libraries, header syntax, I2C addressing, and LCD contrast tuning.",
         "interactiveConfig": {
           "question": "What is the primary purpose of an Arduino library?",
           "options": [
@@ -622,87 +702,126 @@ class AssetCurriculumDataSource {
     "steps": [
       {
         "stepId": "l04_s01",
-        "title": "Mission Introduction",
+        "title": "The Never-Sleeping Monster Brain",
         "type": "story",
-        "markdownContent": "### The Never-Sleeping Monster Brain\nUnlike desktop programs that launch, calculate a spreadsheet, and quit, a robot's brain must never terminate. It must continuously sense obstacles, calculate trajectory updates, and control motors thousands of times per second until power is switched off.\n\nIn this lesson, you will master the two fundamental functions of embedded systems: `setup()`\u2014the one-time initialization routine\u2014and `loop()`\u2014the perpetual heartbeat of your monster robot."
+        "markdownContent": "Unlike desktop programs that launch, calculate a spreadsheet, and quit, a robot's brain must never terminate! It must continuously monitor distance sensors, evaluate obstacle hazards, and drive motors thousands of times per second until battery power is switched off.\n\nIn this lesson, you will master the two fundamental functions of embedded systems: `setup()`\u2014the one-time initialization routine\u2014and `loop()`\u2014the perpetual heartbeat of your monster robot. You will also unlock the **Serial Monitor**, the primary debugging terminal that lets your Arduino talk directly to your computer screen.\n\n```\nPower On \u2794 setup() Initial Setup \u2794 while(1) { loop(); Serial Telemetry; } Forever\n```"
       },
       {
         "stepId": "l04_s02",
-        "title": "Prior Knowledge Check",
+        "title": "Prior Knowledge Check: Firmware Loops & Semicolons",
         "type": "story",
-        "markdownContent": "1. **What happens when an Arduino Uno is plugged into USB?** The bootloader initializes the chip and executes the program stored in flash memory.\n2. **What does the COM port represent?** The virtual serial communications link between computer and Arduino."
+        "interactiveWidgetType": "priorKnowledgeCheck",
+        "interactiveConfig": {
+          "questions": [
+            {
+              "question": "How many times does code inside void setup() execute after board startup or reset?",
+              "options": [
+                "Exactly once",
+                "Continuously in an infinite loop",
+                "Ten times per second"
+              ],
+              "correctIndex": 0,
+              "explanation": "setup() runs exactly once upon microcontroller startup or hardware reset."
+            },
+            {
+              "question": "What is the primary role of void loop() in robotics firmware?",
+              "options": [
+                "To repeatedly run sensing, decision logic, and actuator commands forever",
+                "To shut down the Arduino when code calculations finish",
+                "To format internal flash storage"
+              ],
+              "correctIndex": 0,
+              "explanation": "Embedded microcontrollers run loop() perpetually to react to real-time physical events."
+            },
+            {
+              "question": "What character must terminate every standard C++ instruction statement in Arduino?",
+              "options": [
+                "Semicolon (;)",
+                "Colon (:)",
+                "Period (.)"
+              ],
+              "correctIndex": 0,
+              "explanation": "In C++, semicolons are mandatory statement terminators."
+            }
+          ]
+        },
+        "markdownContent": "Before exploring serial telemetry and syntax debugging, test your baseline understanding of microcontroller lifecycles.\n\nComplete the 3 questions below to prepare for the lesson!"
       },
       {
         "stepId": "l04_s03",
-        "title": "Core Concept & Vocabulary",
+        "title": "Core Concept & Vocabulary: Functions, Blocks & Baud Rates",
         "type": "story",
-        "markdownContent": "- **`setup()`:** A function executed exactly once upon board power-up or hardware reset button press. Used for configuring pins and starting communication.\n- **`loop()`:** A function executed repeatedly and continuously forever. Houses sensing, decision logic, and actuator commands.\n- **Statement:** A single executable instruction that must end with a semicolon `;`.\n- **Baud Rate:** Communication speed in symbols/bits per second (e.g., 9600 baud = 960 characters/sec with 10-bit framing).\n- **Serial Monitor:** An interactive terminal console embedded in the IDE for bidirectional text communication with the board."
+        "markdownContent": "Master the foundational vocabulary of embedded software:\n\n### Core Vocabulary\n- **`setup()`**: Executes exactly once upon board power-up or hardware reset. Used for pin modes and UART startup.\n- **`loop()`**: Executes repeatedly forever in an unbroken cycle.\n- **Statement**: A single executable instruction that must conclude with a semicolon `;`.\n- **Code Block (`{ }`)**: Curly braces group multiple statements into a single function or conditional block.\n- **Baud Rate**: The transmission speed in bits per second (e.g., 9600 baud = ~960 characters per second).\n- **Serial Monitor**: An interactive terminal console embedded in the Arduino IDE for text communication with the board."
       },
       {
         "stepId": "l04_s04",
-        "title": "How It Works: Signal Flow & Hardware Registers",
+        "title": "How It Works: Microcontroller Heartbeat & 16 MHz Clocks",
         "type": "visualExplanation",
-        "markdownContent": "The microcontroller execution lifecycle proceeds through distinct phases:\n\n```\nPower On / Reset\n       \u2193\nClock Oscillator Stabilizes (16 MHz)\n       \u2193\nOptiboot Bootloader Runs (Checks for USB Upload)\n       \u2193 (If no upload)\nmain() Jump\n       \u2193\nExecutes setup() Once\n       \u2193\nwhile(1) { loop(); } (Runs Forever)\n```"
+        "interactiveWidgetType": "executionSpeedVisualizer",
+        "markdownContent": "The ATmega328P microcontroller is powered by a 16 MHz quartz crystal oscillator. That means the processor ticks **16 million times every single second** (each clock tick is just 62.5 nanoseconds!).\n\nHuman eyes have a flicker fusion limit of ~60 Hz (16.6 milliseconds), and human reaction time is ~200 milliseconds (200,000,000 nanoseconds!).\n\nIf you toggle an LED ON and OFF inside `loop()` without `delay()`, the LED flips millions of times per second. To human eyes, it appears as a solid dim light due to Persistence of Vision!\n\nCompare 16 MHz CPU execution speed against human perception in the visual clock simulator below to understand why `delay()` is essential."
       },
       {
         "stepId": "l04_s05",
-        "title": "Hardware Mission: Component & Pin Inspection",
+        "title": "Hardware Mission: Uno Reset Button & TX/RX Telemetry LEDs",
         "type": "physicalTask",
-        "markdownContent": "Examine your Arduino Uno R3 (`comp_uno`):\n1. **Reset Switch:** Locate the red or yellow pushbutton in the upper-left corner near the USB connector. Pressing this pulls the ATmega328P `RESET` pin to GND, restarting the program at `setup()`.\n2. **TX and RX LEDs:** Locate the two tiny surface-mount LEDs labeled `TX` (Transmit) and `RX` (Receive) near Digital Pins 0 and 1.\n3. **Observation Task:** Connect the board to USB. Notice how TX and RX flash rapidly when sketches are uploaded or serial text transmits."
+        "markdownContent": "Pick up your Arduino Uno (`comp_uno`) and locate two critical hardware features:\n\n### 1. The Hardware Reset Switch\nLocate the red or yellow pushbutton in the top-left corner near the USB connector. Pressing this switch pulls the ATmega328P `RESET` pin to GND (0V), restarting program execution from the very beginning of `setup()`!\n\n### 2. The TX and RX Telemetry LEDs\nLook closely near Digital Pins 0 and 1. Notice the two tiny surface-mount LEDs labeled **TX** (Transmit) and **RX** (Receive).\n\nWhenever your sketch sends text to the Serial Monitor via `Serial.print()`, the **TX** LED flashes amber. Whenever your computer sends characters into the Arduino, the **RX** LED flashes amber!"
       },
       {
         "stepId": "l04_s06",
-        "title": "Coding Basics: Syntax & Control Structures",
+        "title": "Coding Basics: Spotting & Fixing Syntax Errors",
         "type": "story",
-        "markdownContent": "- **Function Syntax:** `void setup() { ... }`. `void` means the function returns no value.\n- **Curly Braces `{}`:** Group multiple instructions into an executable code block. Every `{` must have a matching `}`.\n- **Semicolons `;`:** Mark the conclusion of an instruction statement. Omitting a semicolon causes a compiler syntax error."
+        "interactiveWidgetType": "syntaxErrorDebugger",
+        "markdownContent": "The C++ compiler is extremely strict. A single misplaced character stops your code from building entirely:\n\n### 3 Most Common Rookie Syntax Traps:\n1. **Missing Semicolon**: Forgetting `;` at the end of a statement (`pinMode(13, OUTPUT)`).\n2. **Case Sensitivity Errors**: Writing `digitalwrite` instead of camelCase `digitalWrite` (C++ treats lowercase and uppercase as totally different names!).\n3. **Unmatched Curly Braces**: Forgetting the closing `}` on a function block.\n\nInspect the code editor below, spot all 3 syntax bugs, and apply fixes to achieve a clean build!"
       },
       {
         "stepId": "l04_s07",
-        "title": "Code Walkthrough: Annotated Sketch",
+        "title": "Code Walkthrough: Serial.print() vs Serial.println()",
         "type": "codeExperiment",
-        "markdownContent": "```cpp\nvoid setup() {\n  Serial.begin(9600); // Initialize hardware UART at 9600 baud\n  Serial.println(\"--- Monster Lab Online ---\");\n  Serial.println(\"System Initialized Successfully.\");\n}\n\nvoid loop() {\n  Serial.print(\"Heartbeat ping at timestamp: \");\n  Serial.println(millis());\n  delay(1000); // Pause for 1000 milliseconds (1 second) before repeating\n}\n```\n\n### Breakdown:\n- `Serial.begin(9600)`: Powers on the ATmega328P USART hardware and sets baud generator registers.\n- `Serial.println(...)`: Sends ASCII characters followed by carriage return `\\r` and line feed `\\n`.\n- `millis()`: Returns the number of milliseconds since the Arduino began running the current sketch.\n- `delay(1000)`: Halts execution for 1000 ms, regulating loop cadence."
+        "interactiveWidgetType": "serialPrintExperiment",
+        "markdownContent": "How does the Arduino send information to your computer screen? Through the `Serial` object!\n\n```cpp\nvoid setup() {\n  Serial.begin(9600); // Start serial UART at 9600 bits per second\n}\n\nvoid loop() {\n  Serial.print(\"MONSTER \");   // Prints text on current line\n  Serial.println(\"ONLINE\");   // Prints text and moves to next line (\\r\\n)\n  delay(1000);\n}\n```\n\n### The Critical Difference:\n- `Serial.print()`: Outputs characters without a line break. Repeated prints concatenate side-by-side horizontally.\n- `Serial.println()`: Outputs characters followed by an invisible Carriage Return `\\r` and Line Feed `\\n`. Moves the cursor to line 2.\n\nToggle between `print` and `println` in the interactive telemetry experiment below to see how terminal output is formatted!"
       },
       {
         "stepId": "l04_s08",
-        "title": "Code Prediction: Hypothesis & Deductions",
+        "title": "Code Prediction: Setup Loops vs Missing Serial.begin",
         "type": "codeExperiment",
-        "markdownContent": "- **Prediction 1:** What happens if `Serial.println(\"Booting...\");` is placed inside `loop()` instead of `setup()`?\n  *Answer:* It prints continuously every loop cycle rather than once at startup.\n- **Prediction 2:** What happens if `Serial.begin(9600)` is omitted from `setup()`?\n  *Answer:* The hardware UART baud rate generator is not configured; no text will transmit over USB, and the Serial Monitor will stay completely blank."
+        "markdownContent": "Make predictions about serial telemetry behavior before testing in hardware:\n\n### Prediction 1: What happens if Serial.println(\"Booting...\") is placed inside loop() instead of setup()?\n*Answer:* Instead of printing once upon startup, it prints repeatedly every single loop cycle, flooding the Serial Monitor console!\n\n### Prediction 2: What happens if Serial.begin(9600) is omitted from setup()?\n*Answer:* The hardware UART baud rate generator registers are never initialized. The ATmega328P will not send bytes over USB, and the Serial Monitor will stay completely blank!"
       },
       {
         "stepId": "l04_s09",
-        "title": "Guided Experiment: Parameter Modulation",
+        "title": "Guided Experiment: Accelerating Telemetry Cadence",
         "type": "codeExperiment",
-        "markdownContent": "1. Change `delay(1000);` to `delay(250);`.\n2. Predict the new transmission frequency: 4 pings per second instead of 1.\n3. Upload sketch, open Serial Monitor, and observe the accelerated telemetry cadence."
+        "markdownContent": "Let's modify loop cadence and observe the telemetry output rate:\n\n```cpp\nvoid loop() {\n  Serial.print(\"Ping at timestamp: \");\n  Serial.println(millis());\n  delay(250); // Changed from 1000 ms to 250 ms\n}\n```\n\n### Observations:\n1. `millis()` is a built-in Arduino timer function returning the number of milliseconds elapsed since the board powered on.\n2. By reducing `delay(1000)` to `delay(250)`, the board sends **4 telemetry readings every second** instead of 1.\n3. Notice the TX LED on the Uno: it flashes 4 times per second in perfect synchrony with the loop!"
       },
       {
         "stepId": "l04_s10",
-        "title": "Real-World Robotics: Industrial & Aerospace Systems",
+        "title": "Real-World Robotics: NASA Rovers & Automotive State Machines",
         "type": "visualExplanation",
-        "markdownContent": "Automotive electronic control units (ECUs), NASA planetary rovers, and medical infusion pumps execute identical state loops:\n- `setup()`: Perform sensor self-test, verify battery voltage, zero actuators.\n- `loop()`: Read obstacle sensors, update kinematics math, drive steering servos within rigid cycle deadlines."
+        "markdownContent": "The `setup()`, `loop()`, and `Serial` logging pattern is standard across aerospace and automotive robotics:\n\n- **NASA Mars Rovers**: Telemetry transmitters stream engineering packet frames over X-band radio back to Earth's Deep Space Network using calibrated bitrates.\n- **Automotive CAN Bus Diagnostics**: Mechanics plug OBD-II diagnostic scanners into cars to read serial diagnostic trouble codes (DTCs) generated by engine loop telemetry.\n- **Industrial Packaging Arms**: Factory automation PLCs cycle 1,000 times per second, streaming serial telemetry to factory supervisory control systems."
       },
       {
         "stepId": "l04_s11",
-        "title": "Troubleshooting Challenge: Diagnostic Scenarios",
+        "title": "Troubleshooting Challenge: Garbled Serial & Baud Rates",
         "type": "story",
-        "markdownContent": "### Symptom 1: Garbled Characters in Serial Monitor\n- **Symptom:** Serial Monitor prints `\u2e2e\u2e2ex\u2e2ef\u2e2e` or strange inverted symbols.\n- **Diagnosis:** Baud rate mismatch! The sketch specified `9600`, but the Serial Monitor dropdown in the lower right is set to 115200 or 57600.\n- **Remedy:** Click the baud rate dropdown and select `9600 baud`.\n\n### Symptom 2: Compiler Error on Braces / Semicolons\n- **Symptom:** `error: expected ';' before '}' token`.\n- **Diagnosis:** The statement directly preceding line X is missing its terminating `;`.\n- **Remedy:** Locate the unclosed statement and add `;`."
+        "interactiveWidgetType": "serialMonitorSimulator",
+        "markdownContent": "You open the Serial Monitor and instead of clean English text, you see strange inverted question marks and scrambled symbols:\n\n```\n\u2e2e\u2e2ex~??\u2e2ef\u2e2e\u2e2e\u2592\u2592\n```\n\nThis is the #1 Serial Monitor bug: **Baud Rate Mismatch**!\n\nIf your sketch specifies `Serial.begin(9600);` (9600 bits per second), but the Serial Monitor selector dropdown is set to `115200 baud`, the computer clock samples the electrical wire 12 times faster than the Arduino sends bits! The bit frames get completely scrambled.\n\nSwitch baud rates in the Serial Monitor simulator below to synchronize communication and restore legible text!"
       },
       {
         "stepId": "l04_s12",
-        "title": "Workshop Safety & Hardware Care",
+        "title": "Workshop Safety & Hardware Care: USB Power & Non-Conductive Surfaces",
         "type": "story",
-        "markdownContent": "- Never plug or unplug shield headers or jumper wires into the 5V and GND rail while the USB cable is supplying power, as accidental shorts can trigger computer USB port overcurrent shutdown.\n- Place the Arduino on a non-conductive surface (wood, plastic, or antistatic mat)\u2014never on metal workbench surfaces or foil wrappers."
+        "markdownContent": "Observe these essential safety protocols when programming microcontrollers:\n\n1. **Non-Conductive Work Surfaces**: Always rest your Arduino Uno on a wood desk, cardboard, or antistatic mat. Resting an active board on a metal ruler, laptop aluminum shell, or anti-static bag can short bottom header pins!\n2. **USB Port Protection**: Never insert or remove jumper wires into the `5V` and `GND` headers while the USB cable is plugged in. Accidental wire bridges can trip computer USB overcurrent protection shutdown.\n3. **Safe USB Cable Unplugging**: Grip the molded connector body when disconnecting USB cables\u2014never pull on the flexible wire cord."
       },
       {
         "stepId": "l04_s13",
         "title": "Final Review & Competencies",
         "type": "story",
-        "markdownContent": "- The microcontroller execution model relies on `setup()` for configuration and `loop()` for ongoing autonomy.\n- Semicolons, braces, and matching baud rates are non-negotiable fundamentals of embedded software.\n- The Serial Monitor provides an essential telemetry window into your robot's thoughts.\n- Up next in Lesson 05: Moving from digital text to physical photons with the Blink circuit."
+        "markdownContent": "Fantastic progress! Let's review the fundamental engineering competencies you mastered in Lesson 04:\n\n- You understand the embedded execution model: `setup()` runs once at boot; `loop()` runs continuously forever.\n- You know why 16 MHz microcontrollers require `delay()` to bridge the speed gap to human perception.\n- You can identify and fix semicolons, camelCase functions, and unmatched curly braces.\n- You understand how `Serial.print()` concatenates and `Serial.println()` inserts clean newlines.\n- You know how to resolve garbled serial text by matching baud rates.\n\nComplete the 8-question assessment below to earn your XP and get ready for Lesson 05: Your first physical circuit!"
       },
       {
         "stepId": "l04_s14",
         "title": "Comprehensive Knowledge Check",
         "type": "quizCheckpoint",
-        "markdownContent": "Test your mastery of the electrical, programming, and hardware concepts in this module.",
+        "markdownContent": "Test your mastery of microcontroller execution cycles, C++ syntax rules, and UART Serial Monitor telemetry.",
         "interactiveConfig": {
           "question": "How many times does code inside `void setup()` execute after startup?",
           "options": [
@@ -814,88 +933,126 @@ class AssetCurriculumDataSource {
     "steps": [
       {
         "stepId": "l05_s01",
-        "title": "Mission Introduction",
+        "title": "Awaken the Beast: Creating Physical Photons",
         "type": "story",
-        "markdownContent": "### Awaken the Beast: Creating Physical Photons\nSoftware becomes robotics when binary logic gates physically manipulate the physical universe. Turning an LED on and off is the \"Hello World\" of embedded engineering, validating that the microcontroller output transistors can source and sink electrical current under software command.\n\nIn this mission, you will command electrical charges through silicon gates to create visible light on your Arduino board!\n\n```\nPORTB5 Register \u2192 Internal P-MOSFET Closes \u2192 Pin 13 at 5V \u2192 Current Flows \u2192 SMD LED Glows \u2192 GND Return\n```"
+        "markdownContent": "Software becomes robotics when binary logic gates physically manipulate the physical universe. Turning an LED on and off is the foundational 'Hello World' of physical computing, proving that your software commands can source and sink electric current through semiconductor transistors.\n\nIn this mission, you will command electrical charges through silicon gates to create visible light on your Arduino board!\n\n```\nPORTB5 Register \u2794 Internal P-MOSFET Closes \u2794 Pin 13 at 5V \u2794 Current Flows \u2794 SMD LED Glows \u2794 GND Return\n```"
       },
       {
         "stepId": "l05_s02",
-        "title": "Prior Knowledge Check",
+        "title": "Prior Knowledge Check: Digital Signals & Ground",
         "type": "story",
-        "markdownContent": "1. **What is a digital signal?** An electrical signal that exists in one of two discrete states: HIGH or LOW.\n2. **What is GND?** Ground\u2014the 0V reference return path required for electric current to complete a circuit loop."
+        "interactiveWidgetType": "priorKnowledgeCheck",
+        "interactiveConfig": {
+          "questions": [
+            {
+              "question": "What is an electrical digital signal in Arduino?",
+              "options": [
+                "A signal that exists in one of two discrete states: HIGH (+5V) or LOW (0V)",
+                "A continuous wave that changes smoothly through infinite values",
+                "A radio wave transmitted without physical wires"
+              ],
+              "correctIndex": 0,
+              "explanation": "Digital signals exist in two binary states: HIGH (+5V) or LOW (0V Ground)."
+            },
+            {
+              "question": "What is GND (Ground) used for in an electrical circuit?",
+              "options": [
+                "A 0V common reference and essential return path for electric current",
+                "A high-voltage power booster that accelerates motors",
+                "A data storage buffer inside microcontroller RAM"
+              ],
+              "correctIndex": 0,
+              "explanation": "Ground (GND) is the 0V reference potential and essential return path required for electric current to complete a loop."
+            },
+            {
+              "question": "What happens if an external circuit lacks a return path to GND?",
+              "options": [
+                "No electric current can flow, and the circuit remains inactive",
+                "The circuit will draw double current",
+                "The microcontroller will crash immediately"
+              ],
+              "correctIndex": 0,
+              "explanation": "Electricity only flows through a closed conductive loop that returns to Ground."
+            }
+          ]
+        },
+        "markdownContent": "Before commanding hardware outputs, let's verify your baseline understanding of voltage potentials and Ground reference paths.\n\nComplete the 3 questions below to prepare for the lab!"
       },
       {
         "stepId": "l05_s03",
-        "title": "Core Concept & Vocabulary",
+        "title": "5mm LED Anatomy & Polarity Inspection",
         "type": "story",
-        "markdownContent": "- **`digitalWrite()`:** Function that commands an output pin to 5V (`HIGH`) or 0V (`LOW`).\n- **`pinMode()`:** Function that configures internal silicon transistors for high-impedance listening (`INPUT`) or low-impedance driving (`OUTPUT`).\n- **`OUTPUT`:** Push-pull driver mode capable of sourcing or sinking electrical current to external components.\n- **`delay()`:** Pauses microcontroller execution for a specified number of milliseconds (1/1000th of a second).\n- **Built-in LED (Pin 13):** The surface-mount amber LED hardwired directly to Digital Pin 13 on the Uno PCB."
+        "interactiveWidgetType": "ledPolarityInspector",
+        "markdownContent": "LED stands for **Light Emitting Diode**. Because it is a diode, electricity can only flow through it in one forward direction!\n\n### Anatomical Clues:\n- **Cathode (\u2212)**: Connects to Ground (GND). Features a larger triangular **anvil** flag inside the clear epoxy bulb, a **shorter lead**, and a **flat edge** along the plastic rim collar.\n- **Anode (+)**: Connects to positive voltage (+5V). Features a smaller **post** contact inside the epoxy and a **longer lead**.\n\nUse the interactive cutaway inspector below to inspect internal electrodes and observe how reversing polarity blocks photon emission!"
       },
       {
         "stepId": "l05_s04",
-        "title": "How It Works: Signal Flow & Hardware Registers",
+        "title": "How It Works: Breadboard Spring Clips & Current Paths",
         "type": "visualExplanation",
-        "markdownContent": "Inside the ATmega328P microcontroller chip:\n1. Executing `digitalWrite(13, HIGH)` sets bit 5 of the `PORTB` register.\n2. An internal P-channel MOSFET turns on, connecting Pin 13 to the internal 5.0V power rail.\n3. Current (~5\u201310 mA) flows out through Pin 13, passes through an on-board 1k\u03a9 SMD series resistor, enters the amber LED anode, excites photons across the semiconductor bandgap, exits the cathode, and returns to `GND`.\n4. Executing `digitalWrite(13, LOW)` turns on an internal N-channel MOSFET, tying Pin 13 directly to `GND` (0V). With no voltage difference across the LED, current stops flowing and the light extinguishes."
+        "interactiveWidgetType": "breadboardInternalBusInspector",
+        "markdownContent": "Solderless breadboards allow engineers to build circuits without permanent solder. Beneath the plastic faceplate lie rows of stamped spring metal clips.\n\n### Breadboard Internal Routing:\n1. **Terminal Strips**: Horizontal groups of 5 tie-points (a-b-c-d-e and f-g-h-i-j) are electrically joined by an internal spring clip.\n2. **Center Ravine**: A central trench divides the left and right strips so dual-inline IC pins do not short together.\n3. **Power Bus Rails**: Vertical continuous columns (+ and \u2212) run the full length of the board to distribute 5V and GND everywhere.\n\nUse the interactive continuity probe below to test breadboard connections and discover where current flows!"
       },
       {
         "stepId": "l05_s05",
-        "title": "Hardware Mission: Component & Pin Inspection",
+        "title": "Hardware Mission: The On-Board Pin 13 'L' Silkscreen Tour",
         "type": "physicalTask",
-        "markdownContent": "Inspect your Arduino Uno R3 (`comp_uno`):\n1. **Locate the 'L' LED:** Look between the digital pin headers (Pins 8\u201313) and the main microcontroller chip. Find the tiny rectangular amber LED labeled with a silkscreened `L`.\n2. **Trace the Silkscreen:** Follow the fine copper PCB trace running between Digital Pin 13 and the `L` indicator.\n3. **Power Verification:** Notice the green `ON` LED nearby. The green LED shows the 5V power bus is energized, while the amber `L` LED is completely under software control!"
+        "markdownContent": "Examine your Arduino Uno R3 board (`comp_uno`):\n\n### Hardware Inspection:\n1. **Locate the 'L' LED**: Look between the digital pin headers (Pins 8\u201313) and the main microcontroller chip. Find the tiny amber surface-mount diode labeled with a silkscreened `L`.\n2. **Trace the Silkscreen**: Follow the fine copper trace on the PCB linking Digital Pin 13 to the `L` indicator.\n3. **Power Indicator**: Notice the green `ON` LED nearby. The green LED proves the 5V power bus is energized, while the amber `L` LED is directly driven by your sketch firmware!\n4. **On-Board Protection**: The Uno PCB already includes a built-in SMD series resistor for Pin 13, making it 100% safe to flash without external breadboard wiring."
       },
       {
         "stepId": "l05_s06",
-        "title": "Coding Basics: Syntax & Control Structures",
+        "title": "Coding Basics: pinMode(OUTPUT) & HIGH/LOW Constants",
         "type": "story",
-        "markdownContent": "- **Constants in Arduino Core:** `HIGH` is defined as integer `1`; `LOW` is defined as integer `0`.\n- **`OUTPUT` Mode:** Must be declared in `setup()` before `digitalWrite()` can deliver active drive current. Without `pinMode(OUTPUT)`, the pin remains in high-impedance `INPUT` mode."
+        "markdownContent": "Microcontroller pins are versatile: by default, they boot into high-impedance `INPUT` mode to prevent accidental short circuits.\n\n### Core Commands:\n- `pinMode(pin, OUTPUT);`: Commands internal push-pull MOSFET transistors to actively drive current.\n- `digitalWrite(pin, HIGH);`: Connects the pin to the positive +5.0V supply rail (sources current).\n- `digitalWrite(pin, LOW);`: Connects the pin to the 0V Ground reference (sinks current).\n- `delay(ms);`: Freezes microcontroller execution for the specified milliseconds so human eyes can perceive state changes."
       },
       {
         "stepId": "l05_s07",
-        "title": "Code Walkthrough: Annotated Sketch",
+        "title": "Code Walkthrough: The Canonical Blink Sketch",
         "type": "codeExperiment",
-        "markdownContent": "```cpp\nconst int ledPin = 13; // Built-in LED pin\n\nvoid setup() {\n  pinMode(ledPin, OUTPUT); // Configure Pin 13 as a low-impedance output\n}\n\nvoid loop() {\n  digitalWrite(ledPin, HIGH); // Drive Pin 13 to 5V (turn LED ON)\n  delay(1000);                // Maintain state for 1000 ms (1 second)\n  digitalWrite(ledPin, LOW);  // Drive Pin 13 to 0V (turn LED OFF)\n  delay(1000);                // Maintain state for 1000 ms (1 second)\n}\n```\n\n### Key Elements:\n- `const int ledPin = 13;`: Descriptive constant prevents accidental pin number modification.\n- `pinMode(ledPin, OUTPUT);`: Switches internal transistors from high-impedance mode to active push-pull driver.\n- `digitalWrite(ledPin, HIGH)`: Sinks current through LED to ground.\n- `delay(1000)`: Freezes execution so the human eye has time to observe the lit state."
+        "markdownContent": "Here is the foundational Blink sketch executed by millions of roboticists:\n\n```cpp\nconst int ledPin = 13; // Built-in LED pin\n\nvoid setup() {\n  pinMode(ledPin, OUTPUT); // Configure Pin 13 as a low-impedance driver\n}\n\nvoid loop() {\n  digitalWrite(ledPin, HIGH); // Drive Pin 13 to 5V (turn LED ON)\n  delay(1000);                // Maintain state for 1000 ms (1 second)\n  digitalWrite(ledPin, LOW);  // Drive Pin 13 to 0V (turn LED OFF)\n  delay(1000);                // Maintain state for 1000 ms (1 second)\n}\n```\n\n### Key Rules:\n- `const int ledPin = 13;` prevents accidental reassignment.\n- If you forget `delay()` after `LOW`, the LED turns back ON in nanoseconds, making the OFF state invisible to humans!"
       },
       {
         "stepId": "l05_s08",
-        "title": "Code Prediction: Hypothesis & Deductions",
+        "title": "Code Prediction: Silicon Limits & Series Resistors",
         "type": "codeExperiment",
-        "markdownContent": "- **Prediction 1:** What happens if `delay(1000)` is changed to `delay(10)` for both ON and OFF states?\n  *Answer:* The LED flashes at 50 Hz. Due to human *persistence of vision*, the eye cannot resolve individual flashes; it appears steadily lit at approximately half brightness.\n- **Prediction 2:** What happens if `pinMode(13, OUTPUT)` is omitted from `setup()`?\n  *Answer:* Pin 13 defaults to high-impedance `INPUT`. `digitalWrite(HIGH)` merely enables the weak internal 30k\u03a9 pull-up resistor, making the LED illuminate so faintly it is barely visible in a dark room."
+        "interactiveWidgetType": "resistorOhmLawSimulator",
+        "markdownContent": "What happens when wiring external LEDs to Arduino pins? Microcontroller silicon has physical electrical limits!\n\n### Ohm's Law in Action:\n$$I = \\frac{V_{supply} - V_{forward}}{R} = \\frac{5.0\\text{V} - 2.0\\text{V}}{R}$$\n\nAn ATmega328P output pin has an absolute maximum continuous rating of **20 mA** (40 mA absolute destruction limit). Wiring an external LED without a current-limiting resistor (< 100\u03a9) causes catastrophic overcurrent, destroying the pin driver FET!\n\nExplore resistor values in the Ohm's Law simulator below to see safe operating currents vs blowout hazards!"
       },
       {
         "stepId": "l05_s09",
-        "title": "Guided Experiment: Parameter Modulation",
+        "title": "Guided Experiment: Blink Cadence & Persistence of Vision",
         "type": "codeExperiment",
-        "markdownContent": "1. Create an asymmetric \"strobe heartbeat\" cadence:\n   ```cpp\n   digitalWrite(ledPin, HIGH);\n   delay(100); // Quick flash\n   digitalWrite(ledPin, LOW);\n   delay(900); // Long pause\n   ```\n2. Predict the pattern, upload, and observe the rapid pulse effect used in drone navigation beacons.",
-        "interactiveWidgetType": "blinkSimulator"
+        "interactiveWidgetType": "blinkTimingLab",
+        "markdownContent": "What happens when the blink frequency becomes extremely fast?\n\nHuman eyes have an optical reset latency of approximately 30 milliseconds (**Persistence of Vision**). When an LED toggles faster than 30 Hz (delays under 30ms), retinal cone cells cannot reset before the next photon packet arrives. The individual flashes fuse into a solid, continuous glow at reduced brightness!\n\nAdjust `delay(HIGH)` and `delay(LOW)` in the Timing Lab below to explore asymmetric cadences and trigger POV optical fusion!"
       },
       {
         "stepId": "l05_s10",
-        "title": "Real-World Robotics: Industrial & Aerospace Systems",
+        "title": "Real-World Robotics: Satellite Beacons & Heartbeat Signals",
         "type": "visualExplanation",
-        "markdownContent": "Status indicator lights on satellites, medical ventilators, automated factory cells, and quadcopter flight controllers use pulsed blink patterns to convey hardware health, error codes, and battery telemetry even if primary video screens crash."
+        "markdownContent": "Flashing LEDs are vital engineering diagnostic tools across aerospace and medical systems:\n\n- **CubeSats & Drones**: Navigation strobes flash asymmetric patterns (100ms ON / 900ms OFF) to minimize battery drain while maintaining high-visibility beacon tracking.\n- **Medical Ventilators & Pacemakers**: Microcontroller firmware toggles a dedicated hardware 'heartbeat' LED on every main loop iteration. If the CPU hangs in a deadlock, the heartbeat LED freezes, alerting attending doctors.\n- **Autonomous Factory AGVs**: Colored flashing strobes convey vehicle status: amber for transit, blue for barcode scanning, red for safety obstruction stop."
       },
       {
         "stepId": "l05_s11",
-        "title": "Troubleshooting Challenge: Diagnostic Scenarios",
+        "title": "Troubleshooting Challenge: Inverted Delays & Floating Gates",
         "type": "story",
-        "markdownContent": "### Symptom 1: LED Stays Solid ON and Never Blinks\n- **Diagnosis:** Missing second `delay()`, or both `digitalWrite` calls are set to `HIGH`.\n- **Remedy:** Verify that `digitalWrite(ledPin, LOW)` is followed by a `delay()`.\n\n### Symptom 2: Upload Fails (`programmer is not responding`)\n- **Diagnosis:** The USB cable lost connection or the wrong COM port is selected in the IDE.\n- **Remedy:** Check USB connection, confirm `Tools > Port`, and retry upload."
+        "markdownContent": "Master common beginner hardware bugs:\n\n### Symptom 1: LED Stays Solid ON and Never Blinks\n- **Cause**: Missing second `delay()`, or both `digitalWrite` calls are set to `HIGH`.\n- **Fix**: Ensure `digitalWrite(ledPin, LOW)` is followed by a `delay()` of at least 100ms.\n\n### Symptom 2: LED Glows Extremely Dimly\n- **Cause**: Forgot `pinMode(ledPin, OUTPUT);` in `setup()`! In `INPUT` mode, `digitalWrite(HIGH)` merely enables the weak internal 30k\u03a9 pull-up resistor (~0.1 mA current).\n- **Fix**: Add `pinMode(ledPin, OUTPUT);` inside `setup()`."
       },
       {
         "stepId": "l05_s12",
-        "title": "Workshop Safety & Hardware Care",
+        "title": "Workshop Safety & Limits: Pin Current Limits (20mA Continuous)",
         "type": "story",
-        "markdownContent": "- **Pin Current Limits:** An ATmega328P output pin has an absolute maximum current rating of 40 mA (recommended 20 mA continuous).\n- **Current Limiting Resistors:** Never wire an external LED directly between an Uno pin and GND without a 220\u03a9\u20131k\u03a9 current-limiting resistor, or the pin's internal driver FET will burn out.\n- The built-in Pin 13 LED already has a built-in SMD resistor on the PCB, making it safe for immediate experimentation."
+        "markdownContent": "Always treat microcontroller silicon with care:\n\n1. **Never Exceed 20 mA**: The ATmega328P can supply up to 20 mA per pin. Total current across all pins combined must not exceed 200 mA.\n2. **Always Use 220\u03a9\u20131k\u03a9 Series Resistors**: When wiring external LEDs on a breadboard, always place a 220\u03a9 or 330\u03a9 resistor in series with the anode or cathode.\n3. **Power Down Before Rewiring**: Disconnect the USB cable before plugging wires into the breadboard to prevent accidental short circuits across 5V and GND."
       },
       {
         "stepId": "l05_s13",
         "title": "Final Review & Competencies",
         "type": "story",
-        "markdownContent": "- Digital outputs switch between 5V (`HIGH`) and 0V (`LOW`).\n- `pinMode(OUTPUT)` enables the push-pull transistor drivers.\n- `delay()` regulates timing; rapid toggling (>50Hz) triggers persistence of vision.\n- Respect pin current limits (20mA) to preserve microcontroller silicon.\n- Up next in Lesson 06: Reading continuous analog voltages with a potentiometer and 10-bit ADC."
+        "markdownContent": "Outstanding work! In Lesson 05, you created your first physical light output:\n\n- You defined digital output states: 5V (`HIGH`) and 0V (`LOW`).\n- You learned why `pinMode(OUTPUT)` is mandatory to engage push-pull transistor drivers.\n- You inspected 5mm LED polarity (anvil Cathode \u2212 vs post Anode +) and breadboard bus clips.\n- You calculated current via Ohm's Law and respected the 20 mA continuous pin limit.\n- You explored blinking cadences and retinal persistence of vision (POV) fusion.\n\nTake the 8-question assessment below to claim your XP and advance to Lesson 06: Reading analog signals!"
       },
       {
         "stepId": "l05_s14",
         "title": "Comprehensive Knowledge Check",
         "type": "quizCheckpoint",
-        "markdownContent": "Test your mastery of the electrical, programming, and hardware concepts in this module.",
+        "markdownContent": "Test your mastery of digital output voltage states, LED polarity, Ohm's law, and persistence of vision.",
         "interactiveConfig": {
           "question": "What voltage level does `digitalWrite(pin, HIGH)` produce on an Arduino Uno?",
           "options": [
@@ -1009,88 +1166,126 @@ class AssetCurriculumDataSource {
     "steps": [
       {
         "stepId": "l06_s01",
-        "title": "Mission Introduction",
+        "title": "Sense the Spectrum: Analog Perception",
         "type": "story",
-        "markdownContent": "### Sense the Spectrum: Analog Perception\nThe physical world is not simply ON or OFF. Temperatures rise and fall smoothly, battery voltages drain gradually, and robot steering angles vary continuously. A potentiometer gives your monster robot continuous analog perception, allowing it to sense fine gradients like steering angles, robotic arm joint positions, and motor throttle.\n\n```\n5V Power \u2192 Carbon Track \u2192 Wiper Picks Off Voltage \u2192 ATmega328P 10-bit ADC \u2192 Integer (0 to 1023)\n```"
+        "markdownContent": "The physical universe is not merely binary ON or OFF. Temperatures rise and fall smoothly, robot battery charges drain gradually, and steering angles vary continuously. A potentiometer gives your monster robot continuous analog perception, allowing it to sense fine gradients like steering angles, joint positions, and motor throttle.\n\nIn this mission, you will wire a 10k\u03a9 rotary potentiometer to Analog Pin A0 and convert raw 10-bit integers into true voltage measurements!\n\n```\n5V Power \u2794 Carbon Track \u2794 Wiper Picks Off Voltage \u2794 ATmega328P 10-bit ADC \u2794 Integer (0 to 1023)\n```"
       },
       {
         "stepId": "l06_s02",
-        "title": "Prior Knowledge Check",
+        "title": "Prior Knowledge Check: Digital vs Analog Perception",
         "type": "story",
-        "markdownContent": "1. **What does `digitalRead()` return?** Only binary `HIGH` (1) or `LOW` (0).\n2. **What voltage does the Arduino Uno provide on its 5V rail?** Regulated 5.0 Volts DC."
+        "interactiveWidgetType": "priorKnowledgeCheck",
+        "interactiveConfig": {
+          "questions": [
+            {
+              "question": "What values does digitalRead() return on an Arduino Uno?",
+              "options": [
+                "Only binary HIGH (1) or LOW (0)",
+                "Continuous decimal voltages from 0.0V to 5.0V",
+                "Frequencies between 20 Hz and 20 kHz"
+              ],
+              "correctIndex": 0,
+              "explanation": "Digital inputs only measure two binary states: HIGH or LOW."
+            },
+            {
+              "question": "What voltage does the Arduino Uno provide on its regulated 5V power rail?",
+              "options": [
+                "A regulated 5.0 Volts DC",
+                "120 Volts AC",
+                "3.3 Volts AC"
+              ],
+              "correctIndex": 0,
+              "explanation": "The Uno onboard voltage regulator supplies a steady 5.0V DC."
+            },
+            {
+              "question": "Why is an analog input required for robotic steering wheels or dials?",
+              "options": [
+                "Because rotary angles vary continuously over a smooth spectrum of values",
+                "Because analog pins use less battery power than digital pins",
+                "Because digital pins cannot connect to breadboards"
+              ],
+              "correctIndex": 0,
+              "explanation": "Physical phenomena like angles, pressures, and temperatures are continuous and require analog-to-digital conversion."
+            }
+          ]
+        },
+        "markdownContent": "Before wiring variable resistors, let's verify your baseline understanding of discrete digital logic versus continuous analog voltages.\n\nAnswer the 3 self-check questions below to calibrate your knowledge!"
       },
       {
         "stepId": "l06_s03",
-        "title": "Core Concept & Vocabulary",
+        "title": "Core Concept & Vocabulary: Potentiometers & Voltage Dividers",
         "type": "story",
-        "markdownContent": "- **Potentiometer:** A three-terminal variable resistor with a rotating shaft connected to an internal wiper contact.\n- **Voltage Divider:** A circuit of two resistances in series that divides an input voltage into a proportional output fraction.\n- **ADC (Analog-to-Digital Converter):** An on-chip silicon peripheral that translates continuous analog voltage into a binary integer.\n- **10-Bit Resolution:** $2^{10} = 1024$ discrete measurement steps (~4.88 mV per step on a 5.0V reference).\n- **`analogRead()`:** Built-in function that samples an analog pin (`A0`\u2013`A5`) and returns an integer from 0 to 1023."
+        "interactiveWidgetType": "voltageDividerCutaway",
+        "markdownContent": "A **potentiometer** is a 3-terminal variable resistor with a rotating shaft connected to an internal wiper contact.\n\n### The Voltage Division Principle:\nInside `comp_20`, a horseshoe-shaped carbon track connects Terminal 1 (5V) and Terminal 3 (GND). As the shaft rotates, Center Terminal 2 (Wiper) sweeps across the resistive material, splitting total resistance into two parts ($R_1$ and $R_2$):\n\n$$V_{out} = V_{in} \\times \\frac{R_2}{R_1 + R_2} = 5.0\\text{V} \\times \\text{ratio}$$\n\nRotate the virtual knob in the cutaway visualizer below to see how the wiper divides voltage between 0.00V and 5.00V!"
       },
       {
         "stepId": "l06_s04",
-        "title": "How It Works: Signal Flow & Hardware Registers",
+        "title": "How It Works: 10-Bit ADC Successive Approximation Quantization",
         "type": "visualExplanation",
-        "markdownContent": "Inside `comp_20`:\n1. A horseshoe-shaped resistive carbon track connects Outer Terminal 1 and Outer Terminal 3 (total resistance $\\approx 10\\text{k}\\Omega$).\n2. Outer Pin 1 connects to `5V`, and Outer Pin 3 connects to `GND`.\n3. Turning the knob sweeps Center Wiper Pin 2 across the track, splitting it into two resistances ($R_1$ and $R_2$):\n   $$V_{\\text{out}} = 5.0\\text{V} \\times \\frac{R_2}{R_1 + R_2}$$\n4. The output voltage connects to Uno Pin `A0`.\n5. The ATmega328P's successive-approximation 10-bit ADC quantizes the voltage into an integer:\n   $$\\text{ADC Count} = \\text{round}\\left(V_{\\text{in}} \\times \\frac{1023}{5.0\\text{V}}\\right)$$"
+        "interactiveWidgetType": "adcSamplingVisualizer",
+        "markdownContent": "Because digital processors only compute in binary bits, the ATmega328P contains an on-chip **Analog-to-Digital Converter (ADC)**.\n\n### 10-Bit Quantization Details:\n- **Resolution**: $2^{10} = 1024$ discrete steps (from 0 to 1023).\n- **Step Voltage Size**: $\\frac{5000\\text{ mV}}{1023} \\approx 4.8876\\text{ mV}$ per ADC count.\n- **Formula**: $\\text{ADC Count} = \\text{round}\\left(V_{in} \\times \\frac{1023}{5.0\\text{V}}\\right)$\n- **Reconstructed Voltage**: $V = \\text{count} \\times \\frac{5.0\\text{V}}{1023}$\n\nUse the interactive visualizer below to explore how continuous analog voltages are sliced into 10-bit integer staircase steps!"
       },
       {
         "stepId": "l06_s05",
-        "title": "Hardware Mission: Component & Pin Inspection",
+        "title": "Hardware Mission: Breadboard Potentiometer 3-Pin Wiring",
         "type": "physicalTask",
-        "markdownContent": "Examine `comp_20` (10k\u03a9 Potentiometer) and `comp_breadboard`:\n1. **Pin Identification:** Notice the 3 pins protruding from the bottom:\n   - Pin 1 (Outer Leg): Connect to Uno `5V`.\n   - Pin 2 (Center Wiper): Connect to Uno `A0`.\n   - Pin 3 (Outer Leg): Connect to Uno `GND`.\n2. **Breadboard Placement:** Insert the potentiometer into the breadboard across three separate terminal tie-point rows (e.g., Rows 10, 11, 12). Never place all three pins in the same row!\n3. **Connect Jumpers:** Run a red jumper from Uno `5V` to breadboard Row 10, a yellow jumper from Uno `A0` to Row 11, and a black jumper from Uno `GND` to Row 12."
+        "interactiveWidgetType": "wiperPinoutChecker",
+        "markdownContent": "Examine your 10k\u03a9 Rotary Potentiometer (`comp_20`) and solderless breadboard (`comp_breadboard`):\n\n### 3-Pin Terminal Assignment:\n- **Pin 1 (Outer Leg)**: Connects to Uno +5V rail.\n- **Pin 2 (Center Wiper)**: Connects to Uno Analog In Pin `A0`.\n- **Pin 3 (Outer Leg)**: Connects to Uno Ground (GND) rail.\n\n\u26a0\ufe0f **The Dead Short Trap**: Never connect the center wiper directly to 5V or GND! If the wiper touches GND while an outer leg is on 5V, turning the knob to the end of travel creates a 0-ohm dead short, tripping your computer's USB overcurrent protection!\n\nInspect and verify wiring configurations in the pinout checker below before powering your physical circuit!"
       },
       {
         "stepId": "l06_s06",
-        "title": "Coding Basics: Syntax & Control Structures",
+        "title": "Coding Basics: analogRead(A0) & Voltage Conversion Math",
         "type": "story",
-        "markdownContent": "- Unlike digital pins, Uno analog input pins (`A0`\u2013`A5`) do not require `pinMode()` prior to calling `analogRead()`. The ADC multiplexer hardware automatically configures the pin during conversion.\n- `float` data types store decimal numbers for true voltage calculations."
+        "markdownContent": "Reading analog signals in Arduino firmware is straightforward:\n\n### Key Rules:\n- **No `pinMode()` Required**: Unlike digital pins, Uno analog input pins (`A0`\u2013`A5`) do not require `pinMode()` in `setup()`. The ADC multiplexer hardware automatically configures the pin during conversion.\n- **`analogRead(A0)`**: Samples the pin voltage and returns an integer between `0` (for 0.0V) and `1023` (for 5.0V).\n- **Conversion Math**: `float voltage = rawValue * (5.0 / 1023.0);` translates the count into true physical Volts.\n- **Conversion Time**: An ADC conversion on the Uno takes approximately 100 microseconds (about 10,000 samples per second)."
       },
       {
         "stepId": "l06_s07",
-        "title": "Code Walkthrough: Annotated Sketch",
+        "title": "Code Walkthrough: Continuous Telemetry Stream",
         "type": "codeExperiment",
-        "markdownContent": "```cpp\nconst int potPin = A0;\n\nvoid setup() {\n  Serial.begin(9600); // Initialize telemetry link\n}\n\nvoid loop() {\n  int rawValue = analogRead(potPin);          // Read ADC count (0 to 1023)\n  float voltage = rawValue * (5.0 / 1023.0);  // Convert count to true voltage\n\n  Serial.print(\"ADC Count: \");\n  Serial.print(rawValue);\n  Serial.print(\" | Voltage: \");\n  Serial.print(voltage, 2);\n  Serial.println(\" V\");\n\n  delay(200); // 5 Hz update rate for readable telemetry\n}\n```\n\n### Breakdown:\n- `analogRead(potPin)`: Takes approximately 100 microseconds to sample and hold the analog voltage and execute the 10-bit conversion.\n- `voltage = rawValue * (5.0 / 1023.0)`: Scales the integer count to physical volts.\n- `Serial.print(voltage, 2)`: Prints the float formatted to 2 decimal places."
+        "markdownContent": "Here is the canonical sketch for reading potentiometer telemetry:\n\n```cpp\nconst int potPin = A0; // Center wiper connected to A0\n\nvoid setup() {\n  Serial.begin(9600); // Initialize telemetry communication\n}\n\nvoid loop() {\n  int rawValue = analogRead(potPin);         // Read ADC count (0 to 1023)\n  float voltage = rawValue * (5.0 / 1023.0); // Convert to true voltage\n\n  Serial.print(\"ADC Count: \");\n  Serial.print(rawValue);\n  Serial.print(\" | Voltage: \");\n  Serial.print(voltage, 2);\n  Serial.println(\" V\");\n\n  delay(200); // 5 Hz telemetry cadence for human readability\n}\n```\n\nOpen the Serial Monitor at 9600 baud. As you rotate the potentiometer shaft clockwise and counterclockwise, watch the values glide smoothly between `0` and `1023`!"
       },
       {
         "stepId": "l06_s08",
-        "title": "Code Prediction: Hypothesis & Deductions",
+        "title": "Code Prediction: ADC Midpoints & Reference Voltages",
         "type": "codeExperiment",
-        "markdownContent": "- **Prediction 1:** What will `analogRead(A0)` return if the knob is rotated exactly midway?\n  *Answer:* Approximately 511 to 512 counts (~2.50 Volts).\n- **Prediction 2:** What happens if you swap the wires connected to Outer Pin 1 and Outer Pin 3?\n  *Answer:* The rotation polarity reverses (turning clockwise decreases rather than increases the count)."
+        "markdownContent": "Make predictions about analog conversion values before testing:\n\n### Prediction 1: Exactly what integer count will analogRead(A0) return when the potentiometer is centered at 2.50 Volts?\n*Answer:* $1023 \\times \\frac{2.5}{5.0} = 511.5 \\approx 511$ or $512$.\n\n### Prediction 2: What happens if you connect the potentiometer's outer legs to 3.3V and GND instead of 5V?\n*Answer:* When turned fully clockwise to 3.3V, `analogRead()` reads $1023 \\times \\frac{3.3}{5.0} \\approx 675$. The top third of the integer scale (676\u20131023) will never be reached!"
       },
       {
         "stepId": "l06_s09",
-        "title": "Guided Experiment: Parameter Modulation",
+        "title": "Guided Experiment: Sensor Scaling & Moving Average Filter",
         "type": "codeExperiment",
-        "markdownContent": "1. Combine Lesson 05 and 06: use `rawValue` directly as the delay period for the Pin 13 LED:\n   ```cpp\n   digitalWrite(13, HIGH);\n   delay(rawValue);\n   digitalWrite(13, LOW);\n   delay(rawValue);\n   ```\n2. Turn the knob and observe how physical rotation directly modulates the LED's blinking speed.",
-        "interactiveWidgetType": "potentiometerSimulator"
+        "interactiveWidgetType": "analogReadNoiseFilter",
+        "markdownContent": "Real-world robotics sensors pick up electrical noise from nearby motors and power supplies. What happens when an analog pin is left completely disconnected (**floating input**)?\n\nBecause the ATmega328P ADC has an input impedance exceeding 100 M\u03a9, an unconnected pin acts like an antenna, picking up 60Hz ambient EMI!\n\nIn robotics firmware, engineers implement **Exponential Moving Average (EMA)** software filters:\n```cpp\nsmoothedVal = (0.2 * rawVal) + (0.8 * smoothedVal);\n```\n\nTest floating inputs, ground references, and digital filtering in the interactive laboratory below!"
       },
       {
         "stepId": "l06_s10",
-        "title": "Real-World Robotics: Industrial & Aerospace Systems",
+        "title": "Real-World Robotics: Joint Angles & Throttle Pedals",
         "type": "visualExplanation",
-        "markdownContent": "Radio transmitter control sticks, aircraft throttle quadrants, electric vehicle accelerator pedals, and industrial robotic arm joint potentiometers all use rotary voltage division for position telemetry."
+        "markdownContent": "Potentiometers and voltage dividers are fundamental components across industrial machines:\n\n- **Robotic Arm Servo Joints**: Precision rotary potentiometers inside robot joints provide closed-loop angular feedback so the controller knows the arm's exact 3D orientation.\n- **Electric Vehicle Throttle Pedals**: Dual-redundant rotary potentiometers measure accelerator pedal angle. Redundant tracks ensure that if one wiper wears out, the car safely idles rather than accelerating runaway!\n- **Radio Volume & Audio Consoles**: Audio mixing consoles use motorized linear slide potentiometers (faders) to adjust channel gain."
       },
       {
         "stepId": "l06_s11",
-        "title": "Troubleshooting Challenge: Diagnostic Scenarios",
+        "title": "Troubleshooting Challenge: Floating Inputs & Dead Short Traps",
         "type": "story",
-        "markdownContent": "### Symptom 1: Potentiometer Gets Burning Hot!\n- **Diagnosis:** Dead short! 5V and GND were connected across an outer pin and the center wiper, creating an unrestricted short when turned to the stop.\n- **Remedy:** Unplug USB immediately! Verify that 5V and GND connect to the two *outer* legs, and A0 connects to the *center* wiper.\n\n### Symptom 2: Serial Readings Jump Erratically (e.g., 100, 950, 40)\n- **Diagnosis:** Floating input! The center wiper wire is loose or plugged into the wrong breadboard row, acting as an antenna picking up ambient 60Hz electromagnetic noise.\n- **Remedy:** Firmly seat the wiper wire into the center pin's terminal row."
+        "markdownContent": "Diagnose the top 2 analog input failures:\n\n### Symptom 1: Reading Jumps Wildly Even When Not Touching the Knob\n- **Diagnosis**: Floating input! The center wiper wire is plugged into the wrong breadboard row, or a jumper wire is loose.\n- **Fix**: Confirm that the yellow wiper jumper wire is in the exact same breadboard tie-point column as Pin 2.\n\n### Symptom 2: Reading Stays Locked at 0 or 1023 and Never Changes\n- **Diagnosis**: Both outer pins are plugged into the same power rail (e.g., both into GND or both into 5V), or the wiper pin is bent underneath the pot.\n- **Fix**: Inspect the pot underside to ensure all 3 pins entered distinct breadboard rows."
       },
       {
         "stepId": "l06_s12",
-        "title": "Workshop Safety & Hardware Care",
+        "title": "Workshop Safety & Breadboard Placement Rules",
         "type": "story",
-        "markdownContent": "- Never apply more than 5.0V to an analog pin on an Uno R3. Exceeding 5.5V will forward-bias the internal silicon clamping diodes and destroy the ADC multiplexer.\n- Avoid applying mechanical torque beyond the physical rotation stops of the potentiometer."
+        "markdownContent": "Observe these critical breadboard installation guidelines:\n\n1. **Never Insert All 3 Pins Into the Same Breadboard Row**: A breadboard row connects all 5 holes together! Inserting all 3 potentiometer pins into row 10 creates a dead short across 5V and GND!\n2. **Gentle Lead Pressure**: Potentiometer pins can bend if forced into tight breadboard holes. Align all 3 pins vertically before applying gentle downward pressure.\n3. **Quiescent Current Awareness**: A 10k\u03a9 potentiometer connected between 5V and GND draws only $I = \\frac{5\\text{V}}{10\\text{k}\\Omega} = 0.5\\text{ mA}$ of continuous power."
       },
       {
         "stepId": "l06_s13",
         "title": "Final Review & Competencies",
         "type": "story",
-        "markdownContent": "- Potentiometers act as variable voltage dividers producing 0.0V to 5.0V.\n- The 10-bit ADC quantizes analog voltages into integers from 0 to 1023 (~4.88 mV per count).\n- Solderless breadboards connect rows horizontally\u2014keep pins in separate rows.\n- Up next in Lesson 07: Modulating digital duty cycles with PWM to mix colors on an RGB LED."
+        "markdownContent": "Fantastic progress! In Lesson 06, you gave your monster robot continuous analog senses:\n\n- You distinguished discrete binary states from continuous analog voltages.\n- You understood voltage division math: $V_{out} = V_{in} \\times \\frac{R_2}{R_1 + R_2}$.\n- You mastered 10-bit ADC quantization ($2^{10} = 1024$ levels, ~4.89 mV per step).\n- You wired a 3-pin potentiometer safely, avoiding destructive dead short traps.\n- You filtered high-impedance floating noise using moving average algorithms.\n\nComplete the 8-question assessment below to earn your XP and proceed to Lesson 07: Mixing colors with RGB LEDs and PWM!"
       },
       {
         "stepId": "l06_s14",
         "title": "Comprehensive Knowledge Check",
         "type": "quizCheckpoint",
-        "markdownContent": "Test your mastery of the electrical, programming, and hardware concepts in this module.",
+        "markdownContent": "Test your mastery of potentiometer voltage division, 10-bit ADC sampling, and analog telemetry.",
         "interactiveConfig": {
           "question": "What range of integer values is returned by `analogRead()` on an Arduino Uno?",
           "options": [
@@ -1203,88 +1398,126 @@ class AssetCurriculumDataSource {
     "steps": [
       {
         "stepId": "l07_s01",
-        "title": "Mission Introduction",
+        "title": "Expressive Monsters: Crafting Living Light",
         "type": "story",
-        "markdownContent": "### Expressive Monsters: Crafting Living Light\nMonsters need emotion and visual expression! By combining three primary wavelengths of light\u2014Red, Green, and Blue\u2014at varying intensities, we can create any color in the visible rainbow, from energetic yellow to menacing purple or calm cyan.\n\nBecause the Arduino Uno does not have true analog output voltage DACs on its digital pins, we use high-speed silicon pulsing\u2014Pulse Width Modulation\u2014to fool the human eye into perceiving smooth brightness levels!\n\n```\nTimer Register OCR1A \u2192 High-Speed 490Hz Pulse Train \u2192 Duty Cycle Average \u2192 Eye Cone Cells \u2192 Perceived Color\n```"
+        "markdownContent": "Robots need emotion and visual expression! By combining three primary wavelengths of light\u2014Red, Green, and Blue\u2014at varying intensities, we can create any color in the visible rainbow, from energetic yellow to menacing purple or calm cyan.\n\nBecause the Arduino Uno does not have true analog output voltage DACs on its digital headers, we use high-speed silicon pulsing\u2014**Pulse Width Modulation (PWM)**\u2014to fool the human eye into perceiving smooth brightness gradients!\n\n```\nTimer Register OCR1A \u2794 High-Speed 490Hz Pulse Train \u2794 Duty Cycle Average \u2794 Eye Cone Cells \u2794 Perceived Color\n```"
       },
       {
         "stepId": "l07_s02",
-        "title": "Prior Knowledge Check",
+        "title": "Prior Knowledge Check: Diodes & Voltage Outputs",
         "type": "story",
-        "markdownContent": "1. **How does an LED emit light?** Electric current passes forward through a semiconductor diode junction, releasing photons.\n2. **Why does an LED need a series resistor?** To limit forward current and prevent the semiconductor die from thermal runaway."
+        "interactiveWidgetType": "priorKnowledgeCheck",
+        "interactiveConfig": {
+          "questions": [
+            {
+              "question": "How does a Light Emitting Diode (LED) generate illumination?",
+              "options": [
+                "Forward electric current excites electrons across a semiconductor bandgap, releasing photons",
+                "A tungsten filament burns inside an inert vacuum bulb",
+                "Chemical reactions combust liquid electrolytes"
+              ],
+              "correctIndex": 0,
+              "explanation": "LEDs produce electroluminescence when electrons cross a forward-biased semiconductor junction."
+            },
+            {
+              "question": "Why must every color channel of an RGB LED have its own series resistor?",
+              "options": [
+                "Because each color die has a different forward voltage drop and requires dedicated current limiting",
+                "To increase the speed of light emission",
+                "To ground the USB connector"
+              ],
+              "correctIndex": 0,
+              "explanation": "Red (~2.0V), Green (~3.2V), and Blue (~3.2V) have different forward voltages and each need independent current limiters."
+            },
+            {
+              "question": "Can the Arduino Uno output true variable DC voltages (like 2.5V) on standard digital pins?",
+              "options": [
+                "No, Uno digital pins only switch between 0V and 5V; they use high-speed PWM pulsing to simulate intermediate levels",
+                "Yes, every pin has an on-chip digital-to-analog converter (DAC)",
+                "Yes, but only when running on battery power"
+              ],
+              "correctIndex": 0,
+              "explanation": "The Uno lacks analog DAC outputs on digital headers; it uses Pulse Width Modulation (PWM) to simulate intermediate voltages."
+            }
+          ]
+        },
+        "markdownContent": "Before mixing optical light beams and configuring PWM timer registers, let's test your baseline understanding of semiconductor diodes and voltage driving.\n\nAnswer the 3 self-check questions below to calibrate your knowledge!"
       },
       {
         "stepId": "l07_s03",
-        "title": "Core Concept & Vocabulary",
+        "title": "Core Concept & Vocabulary: Common Cathode vs Common Anode",
         "type": "story",
-        "markdownContent": "- **RGB LED:** A single component packaging three independent semiconductor dies (Red, Green, Blue) sharing common electrical pins.\n- **Common Cathode:** Configuration where all three LEDs share a single negative Ground (`-`) lead.\n- **Pulse Width Modulation (PWM):** Digital technique of switching an output between 5V and 0V hundreds of times per second to simulate intermediate voltages.\n- **Duty Cycle:** The ratio or percentage of time a square wave pulse remains in the `HIGH` state during one full period.\n- **`analogWrite()`:** Built-in function generating 8-bit PWM (0 = 0% duty cycle / 0V average; 255 = 100% duty cycle / 5V continuous)."
+        "interactiveWidgetType": "commonCathodeVsAnodeDiagram",
+        "markdownContent": "An RGB LED packages three independent semiconductor dies (Red, Green, Blue) into a single 5mm plastic lens with 4 leads sharing a single common pin.\n\n### The Two Packaging Standards:\n- **Common Cathode (CC)**: The shared longest lead is connected to **Ground (0V)**. Logic is **Active-HIGH** (`analogWrite(pin, 255)` produces 100% brightness).\n- **Common Anode (CA)**: The shared longest lead is connected to **+5V (VCC)**. Logic is **Active-LOW** (sinks current; `analogWrite(pin, 0)` produces 100% brightness, requiring `255 - value` in code).\n\nToggle between Common Cathode and Common Anode in the schematic below to explore current paths and software logic inversion!"
       },
       {
         "stepId": "l07_s04",
-        "title": "How It Works: Signal Flow & Hardware Registers",
+        "title": "How It Works: High-Speed 490Hz PWM Pulse Trains",
         "type": "visualExplanation",
-        "markdownContent": "Human photoreceptor cone cells cannot resolve light pulses cycling faster than approximately 60 Hz (persistence of vision).\n1. The ATmega328P hardware timers oscillate at ~490 Hz (Pins 9, 10, 11, 3) or ~980 Hz (Pins 5, 6).\n2. Setting `analogWrite(pin, 127)` configures the timer to drive the pin to 5V for 50% of the period, and 0V for the remaining 50%.\n3. The human eye integrates this photon flux, perceiving exactly 50% brightness.\n4. By mixing different duty cycles across Red, Green, and Blue channels, the three primary wavelengths stimulate retina cone cells in varying proportions to synthesize over 16 million colors!"
+        "interactiveWidgetType": "pwmDutyCycleVisualizer",
+        "markdownContent": "Human retina cone cells cannot resolve individual light flashes cycling faster than ~60 Hz due to persistence of vision.\n\n### Pulse Width Modulation (PWM) Physics:\n1. ATmega328P hardware timers oscillate output pins at ~490 Hz (or 980 Hz), giving a cycle period of $T \\approx 2.04\\text{ ms}$.\n2. When you execute `analogWrite(pin, 127)`, the timer holds the pin at 5V for 50% of the period, and 0V for the other 50% (**50% Duty Cycle**).\n3. The human eye integrates this high-speed photon flux, perceiving a steady 50% brightness!\n4. Effective average voltage: $V_{average} = 5.0\\text{V} \\times \\frac{\\text{value}}{255}$.\n\nUse the interactive oscilloscope below to inspect pulse waveforms, high-time vs low-time durations, and perceived LED photon flux!"
       },
       {
         "stepId": "l07_s05",
-        "title": "Hardware Mission: Component & Pin Inspection",
+        "title": "Hardware Mission: 4-Pin RGB LED Leadout & Breadboard Wiring",
         "type": "physicalTask",
-        "markdownContent": "Examine a 4-pin 5mm Common Cathode RGB LED:\n1. **Lead Identification:** Hold the LED with the flat edge on the plastic rim facing right:\n   - Lead 1 (Outer Leg): Red Anode\n   - Lead 2 (Longest Leg): Common Cathode (GND)\n   - Lead 3: Green Anode\n   - Lead 4 (Outer Leg): Blue Anode\n2. **Breadboard Insertion:** Insert the 4 leads into 4 adjacent breadboard rows.\n3. **Current Limiting Resistors:** Connect a 220\u03a9 or 330\u03a9 resistor to Lead 1 (Red), Lead 3 (Green), and Lead 4 (Blue). Connect Lead 2 directly to Uno `GND`.\n4. **PWM Pin Wiring:** Connect Red resistor to Pin 9, Green resistor to Pin 10, and Blue resistor to Pin 11."
+        "markdownContent": "Examine your 4-pin 5mm Common Cathode RGB LED and breadboard (`comp_breadboard`):\n\n### Lead Identification Tour:\nHold the LED with the flat edge on the plastic rim collar facing right:\n1. **Lead 1 (Outer Left)**: Red Anode (Forward drop $V_f \\approx 2.0\\text{V}$)\n2. **Lead 2 (Longest Pin)**: Common Cathode (Connects directly to Uno **GND**)\n3. **Lead 3**: Green Anode (Forward drop $V_f \\approx 3.2\\text{V}$)\n4. **Lead 4 (Outer Right)**: Blue Anode (Forward drop $V_f \\approx 3.2\\text{V}$)\n\n### Resistor Wiring:\nNever share a single resistor on the common pin! Connect a separate 220\u03a9 or 330\u03a9 resistor to Lead 1 (Red), Lead 3 (Green), and Lead 4 (Blue). Because red, green, and blue dies have different forward voltage drops, sharing one resistor causes brightness dipping whenever multiple colors illuminate."
       },
       {
         "stepId": "l07_s06",
-        "title": "Coding Basics: Syntax & Control Structures",
+        "title": "Coding Basics: Identifying Hardware PWM Pins & Timers",
         "type": "story",
-        "markdownContent": "- `analogWrite(pin, value)` does NOT generate true analog DC voltage; it modulates hardware timer compare registers.\n- Valid values are integers from `0` to `255` (8-bit quantization)."
+        "interactiveWidgetType": "pwmPinIdentifier",
+        "markdownContent": "Can you call `analogWrite()` on any Uno pin? **No!** Only pins wired to internal hardware timer compare registers support PWM.\n\n### Finding the PWM Tilde (~):\nLook at the silkscreen on your Arduino Uno next to digital header pins: only pins marked with a tilde `~` (Pins 3, 5, 6, 9, 10, 11) support PWM:\n- **Pins 5 & 6**: Controlled by **Timer0** at **980 Hz** (shared with `millis()` and `delay()`).\n- **Pins 9 & 10**: Controlled by **Timer1** (16-bit) at **490 Hz**.\n- **Pins 3 & 11**: Controlled by **Timer2** (8-bit) at **490 Hz**.\n\n\u26a0\ufe0f **The Non-PWM Trap**: If you call `analogWrite(8, 128)` on non-PWM Pin 8, it only performs binary threshold switching (>=128 is HIGH, <128 is LOW)!\n\nTest and identify all Uno PWM pins in the interactive checker below!"
       },
       {
         "stepId": "l07_s07",
-        "title": "Code Walkthrough: Annotated Sketch",
+        "title": "Code Walkthrough: 8-Bit analogWrite() & Helper Functions",
         "type": "codeExperiment",
-        "markdownContent": "```cpp\nconst int redPin = 9;\nconst int greenPin = 10;\nconst int bluePin = 11;\n\nvoid setup() {\n  pinMode(redPin, OUTPUT);\n  pinMode(greenPin, OUTPUT);\n  pinMode(bluePin, OUTPUT);\n}\n\nvoid setColor(int r, int g, int b) {\n  analogWrite(redPin, constrain(r, 0, 255));\n  analogWrite(greenPin, constrain(g, 0, 255));\n  analogWrite(bluePin, constrain(b, 0, 255));\n}\n\nvoid loop() {\n  setColor(255, 0, 255);   // Purple (Red + Blue)\n  delay(1000);\n  setColor(255, 120, 0);   // Monster Amber/Orange\n  delay(1000);\n  setColor(0, 255, 255);   // Cyan (Green + Blue)\n  delay(1000);\n}\n```\n\n### Breakdown:\n- `setColor(...)`: Modular helper function encapsulating multi-channel mixing.\n- `constrain(val, 0, 255)`: Defensive programming ensuring PWM values stay within the valid 8-bit window.\n- In `loop()`, high-level colors transition every second."
+        "markdownContent": "Here is how to control an RGB LED with clean modular firmware:\n\n```cpp\nconst int redPin = 9;   // PWM Pin ~9\nconst int greenPin = 10;// PWM Pin ~10\nconst int bluePin = 11; // PWM Pin ~11\n\nvoid setup() {\n  pinMode(redPin, OUTPUT);\n  pinMode(greenPin, OUTPUT);\n  pinMode(bluePin, OUTPUT);\n}\n\nvoid setColor(int red, int green, int blue) {\n  analogWrite(redPin, constrain(red, 0, 255));\n  analogWrite(greenPin, constrain(green, 0, 255));\n  analogWrite(bluePin, constrain(blue, 0, 255));\n}\n\nvoid loop() {\n  setColor(255, 0, 0);   // Pure Red\n  delay(1000);\n  setColor(0, 255, 0);   // Pure Green\n  delay(1000);\n  setColor(0, 0, 255);   // Pure Blue\n  delay(1000);\n  setColor(255, 255, 0); // Yellow (Red + Green)\n  delay(1000);\n}\n```\n\nBy wrapping `analogWrite()` inside a custom `setColor()` function, your sketch becomes clean and readable!"
       },
       {
         "stepId": "l07_s08",
-        "title": "Code Prediction: Hypothesis & Deductions",
+        "title": "Code Prediction: Inverted Logic & Duty Cycle Math",
         "type": "codeExperiment",
-        "markdownContent": "- **Prediction 1:** What color appears when `setColor(255, 255, 0)` executes?\n  *Answer:* Bright Yellow (equal parts full-intensity Red and Green light).\n- **Prediction 2:** What happens if you plug the Blue LED jumper into Digital Pin 8 instead of Pin 11?\n  *Answer:* Digital Pin 8 does NOT support hardware PWM on the Uno; `analogWrite(8, 128)` will not produce variable dimming\u2014it will jump abruptly between fully on and fully off."
+        "markdownContent": "Predict color mixing results before testing on the breadboard:\n\n### Prediction 1: What color does setColor(255, 0, 255) synthesize?\n*Answer:* Full Red combined with full Blue produces vivid **Magenta / Purple**!\n\n### Prediction 2: What happens if you accidentally plug a Common Anode RGB LED into this sketch?\n*Answer:* Because Common Anode uses active-LOW logic, calling `setColor(255, 0, 0)` will produce Cyan instead of Red (Red turns OFF while Green and Blue turn fully ON)!"
       },
       {
         "stepId": "l07_s09",
-        "title": "Guided Experiment: Parameter Modulation",
+        "title": "Guided Experiment: Additive Optical Color Mixing Lab",
         "type": "codeExperiment",
-        "markdownContent": "1. Wire the Potentiometer from Lesson 06 into Analog Pin `A0`.\n2. Map its reading to the Blue channel while keeping Red fixed at 128:\n   ```cpp\n   int knob = analogRead(A0);\n   int blueVal = map(knob, 0, 1023, 0, 255);\n   setColor(128, 0, blueVal);\n   ```\n3. Rotate the knob to dial smoothly between deep red, magenta, and bright violet!",
-        "interactiveWidgetType": "rgbMixer"
+        "interactiveWidgetType": "rgbColorSynthesizer",
+        "markdownContent": "Time to blend optical wavelengths! In additive color physics:\n\n- **Red + Green = Yellow**\n- **Green + Blue = Cyan**\n- **Red + Blue = Magenta**\n- **Red + Green + Blue = White**\n\nUse the 3-channel optical synthesizer below to mix Red, Green, and Blue light beams into a central frosted lens, inspect the resulting hex color codes, and generate exact Arduino firmware commands!"
       },
       {
         "stepId": "l07_s10",
-        "title": "Real-World Robotics: Industrial & Aerospace Systems",
+        "title": "Real-World Robotics: Quadcopter Navigation Beacons & RGB Mood Lighting",
         "type": "visualExplanation",
-        "markdownContent": "Full-color gaming PC illumination, automotive dynamic ambient lighting, smart home lightbulbs (Philips Hue), and multi-colored warning beacons on autonomous warehouse rovers rely on multi-channel PWM color synthesis."
+        "markdownContent": "RGB optical mixing and PWM are used extensively in modern robotics:\n\n- **Quadcopter Flight Navigation**: Drones mount high-intensity RGB LEDs under motor arms: solid green for GPS lock, flashing yellow for return-to-home, and pulsing red for low battery.\n- **Autonomous Delivery Rovers**: Ground rovers project animated light halos on pavements to signal pedestrians whether they are yielding or turning.\n- **Smart Speaker Rings**: Ambient home assistants use 16-channel RGB PWM shift registers to create fluid rotation and pulsing voice feedback animations."
       },
       {
         "stepId": "l07_s11",
-        "title": "Troubleshooting Challenge: Diagnostic Scenarios",
+        "title": "Troubleshooting Challenge: Reversed Common Anode & Non-PWM Pin Traps",
         "type": "story",
-        "markdownContent": "### Symptom 1: Inverted Brightness\n- **Symptom:** Passing `255` turns the LED off, and passing `0` turns it fully on.\n- **Diagnosis:** Common Anode LED! You have a common anode component whose shared lead is connected to 5V instead of GND.\n- **Remedy:** Connect common lead to 5V and invert code logic: `analogWrite(pin, 255 - value)`.\n\n### Symptom 2: Red Is Blindingly Bright, Blue Is Very Dim\n- **Diagnosis:** Forward voltage disparity: Red diodes have a lower forward drop ($V_f \\approx 1.8\\text{V}$), while Blue diodes require $V_f \\approx 3.2\\text{V}$.\n- **Remedy:** Use a higher value resistor (330\u03a9 or 470\u03a9) on the Red anode line to balance luminous intensity."
+        "markdownContent": "Solve the two most common RGB LED hardware bugs:\n\n### Trap 1: Colors Are Inverted (e.g. Red command shows Cyan)\n- **Diagnosis**: You have a Common Anode LED instead of Common Cathode! The shared pin is wired to GND or expecting active-HIGH driving.\n- **Fix**: Wire the common pin to +5V, and invert firmware values: `analogWrite(pin, 255 - value);`.\n\n### Trap 2: One Color Only Snaps ON or OFF Without Dimming\n- **Diagnosis**: That color channel is connected to a non-PWM pin (such as Pin 7, 8, 12, or 13)!\n- **Fix**: Move the jumper wire to a PWM pin marked with a tilde `~` (3, 5, 6, 9, 10, or 11)."
       },
       {
         "stepId": "l07_s12",
-        "title": "Workshop Safety & Hardware Care",
+        "title": "Workshop Safety & Independent Resistor Protection",
         "type": "story",
-        "markdownContent": "- Never connect all three color leads directly to 5V or output pins without current-limiting resistors. Three concurrent short circuits can draw >120mA, tripping thermal protection.\n- Ensure the longest pin (cathode) connects to GND, not 5V, to prevent reverse voltage breakdown."
+        "markdownContent": "Keep your components protected with these electrical rules:\n\n1. **Never Omit Current Limiting Resistors**: Each of the 3 internal LED dies requires its own 220\u03a9\u2013330\u03a9 resistor to prevent thermal runaway.\n2. **Separate Resistors Prevent Brightness Droop**: Because Red has a 2.0V forward voltage while Green/Blue have ~3.2V, putting a single shared resistor on the cathode will cause Red to steal all the current, extinguishing the other colors!\n3. **Respect Total Package Heat**: Running all three channels at 100% brightness (White) draws ~45 mA total, well within Uno limits when equipped with proper resistors."
       },
       {
         "stepId": "l07_s13",
         "title": "Final Review & Competencies",
         "type": "story",
-        "markdownContent": "- Additive optics combines Red, Green, and Blue light to create full-spectrum color.\n- PWM modulates duty cycles at hundreds of hertz to simulate variable voltage without true DACs.\n- Always use series resistors on each color channel to balance currents and prevent burnouts.\n- Up next in Lesson 08: Reading mechanical pushbuttons, debouncing, and internal pull-up resistors."
+        "markdownContent": "Magnificent job! In Lesson 07, you unlocked full optical color synthesis:\n\n- You mastered additive optical color mixing (combining Red, Green, and Blue light).\n- You distinguished Common Cathode (Active-HIGH, shared GND) from Common Anode (Active-LOW, shared 5V).\n- You understood high-speed 490Hz/980Hz PWM duty cycles and average voltage simulation.\n- You located Uno hardware PWM pins marked with `~` (3, 5, 6, 9, 10, 11) and their timers.\n- You wrote modular helper functions (`setColor()`) with 8-bit `analogWrite()` (0\u2013255).\n\nComplete the 8-question assessment below to earn your XP and wrap up Tier 1 physical outputs!"
       },
       {
         "stepId": "l07_s14",
         "title": "Comprehensive Knowledge Check",
         "type": "quizCheckpoint",
-        "markdownContent": "Test your mastery of the electrical, programming, and hardware concepts in this module.",
+        "markdownContent": "Test your mastery of RGB color synthesis, PWM duty cycles, Common Cathode pinouts, and hardware timers.",
         "interactiveConfig": {
           "question": "What does PWM stand for?",
           "options": [
@@ -1411,13 +1644,15 @@ class AssetCurriculumDataSource {
         "stepId": "l08_s03",
         "title": "Core Concept & Vocabulary",
         "type": "story",
-        "markdownContent": "- **`digitalRead()`:** Function that measures an input pin, returning `HIGH` (if voltage $\\ge 3.0\\text{V}$) or `LOW` (if voltage $\\le 1.5\\text{V}$).\n- **Floating Pin:** An unconnected high-impedance input pin that acts as an antenna, picking up stray electromagnetic fields and oscillating erratically.\n- **Pull-Up Resistor:** A resistor connecting an input pin to 5V, guaranteeing a stable, deterministic `HIGH` state when a switch is open.\n- **`INPUT_PULLUP`:** Built-in mode configuring the ATmega328P's internal 20k\u03a9\u201350k\u03a9 pull-up resistor, eliminating the need for an external breadboard resistor.\n- **Active-Low Logic:** Circuit architecture where 0V (`LOW`) signals the active/pressed state, and 5V (`HIGH`) signals idle.\n- **Switch Bounce:** Microsecond mechanical vibrations when switch metal contacts collide, creating multiple rapid false triggers."
+        "interactiveWidgetType": "floatingPinSimulator",
+        "markdownContent": "- **`digitalRead()`:** Function that measures an input pin, returning `HIGH` (if voltage $\\ge 3.0\\text{V}$) or `LOW` (if voltage $\\le 1.5\\text{V}$).\n- **Floating Pin:** An unconnected high-impedance input pin that acts as an antenna, picking up stray electromagnetic fields and oscillating erratically.\n- **Pull-Up Resistor:** A resistor connecting an input pin to 5V, guaranteeing a stable, deterministic `HIGH` state when a switch is open.\n- **`INPUT_PULLUP`:** Built-in mode configuring the ATmega328P's internal 20k\u03a9\u201350k\u03a9 pull-up resistor, eliminating the need for an external breadboard resistor.\n- **Active-Low Logic:** Circuit architecture where 0V (`LOW`) signals the active/pressed state, and 5V (`HIGH`) signals idle.\n- **Switch Bounce:** Microsecond mechanical vibrations when switch metal contacts collide, creating multiple rapid false triggers.\n\n### Interactive Mission: Test High-Impedance Floating Pins\nExplore the interactive simulator below to observe how an unconnected input pin oscillates erratically from environmental electromagnetic noise. Switch between Floating, Pull-Up, and Pull-Down to observe how pull resistors stabilize logic levels!"
       },
       {
         "stepId": "l08_s04",
         "title": "How It Works: Signal Flow & Hardware Registers",
         "type": "visualExplanation",
-        "markdownContent": "Inside the ATmega328P input buffer:\n1. When configured with `INPUT_PULLUP`, an internal P-FET engages a ~30k\u03a9 resistor tied to 5V.\n2. When the external button is open (unpressed), tiny leakage currents flow through the pull-up, holding the pin securely at 5.0V (`HIGH`).\n3. When the button is pressed, it shorts the pin directly to Ground (0V). Because the internal pull-up has a high 30k\u03a9 resistance, only $\\frac{5\\text{V}}{30\\text{k}\\Omega} \\approx 0.16\\text{ mA}$ flows harmlessly to ground.\n4. The input Schmitt trigger detects 0V and reports `LOW`."
+        "interactiveWidgetType": "internalPullupCircuitDiagram",
+        "markdownContent": "Inside the ATmega328P input buffer:\n1. When configured with `INPUT_PULLUP`, an internal P-FET engages a ~30k\u03a9 resistor tied to 5V.\n2. When the external button is open (unpressed), tiny leakage currents flow through the pull-up, holding the pin securely at 5.0V (`HIGH`).\n3. When the button is pressed, it shorts the pin directly to Ground (0V). Because the internal pull-up has a high 30k\u03a9 resistance, only $\\frac{5\\text{V}}{30\\text{k}\\Omega} \\approx 0.16\\text{ mA}$ flows harmlessly to ground.\n4. The input Schmitt trigger detects 0V and reports `LOW`.\n\n### Interactive Schematic: ATmega328P Internal Pull-Up Resistor\nExamine the interactive schematic below. Toggle `pinMode(pin, INPUT_PULLUP)` and press the button to observe the harmless 0.25mA drain to GND and verify active-low logic (unpressed = HIGH, pressed = LOW)!"
       },
       {
         "stepId": "l08_s05",
@@ -1429,7 +1664,8 @@ class AssetCurriculumDataSource {
         "stepId": "l08_s06",
         "title": "Coding Basics: Syntax & Control Structures",
         "type": "story",
-        "markdownContent": "Because of active-low logic:\n```cpp\nif (digitalRead(buttonPin) == LOW) {\n  // ACTION: Button IS physically pressed!\n} else {\n  // IDLE: Button is released!\n}\n```"
+        "interactiveWidgetType": "activeLowLogicChecker",
+        "markdownContent": "Because of active-low logic:\n```cpp\nif (digitalRead(buttonPin) == LOW) {\n  // ACTION: Button IS physically pressed!\n} else {\n  // IDLE: Button is released!\n}\n```\n\n### Interactive Bench: Test Active-Low Inverted Logic\nTest the logic checker below. Press the virtual button to evaluate `if (digitalRead(buttonPin) == LOW)` and verify that physical button presses illuminate the built-in Pin 13 LED!"
       },
       {
         "stepId": "l08_s07",
@@ -1447,7 +1683,8 @@ class AssetCurriculumDataSource {
         "stepId": "l08_s09",
         "title": "Guided Experiment: Parameter Modulation",
         "type": "codeExperiment",
-        "markdownContent": "1. Create a push-to-toggle counter:\n   ```cpp\n   int count = 0;\n   void loop() {\n     if (digitalRead(buttonPin) == LOW) {\n       count++;\n       Serial.print(\"Press Count: \");\n       Serial.println(count);\n       delay(200); // Simple software debounce delay\n     }\n   }\n   ```\n2. Press the button quickly and observe how a 200ms delay prevents mechanical switch bounce from registering 5 presses for 1 physical click."
+        "interactiveWidgetType": "switchBounceVisualizer",
+        "markdownContent": "1. Create a push-to-toggle counter:\n   ```cpp\n   int count = 0;\n   void loop() {\n     if (digitalRead(buttonPin) == LOW) {\n       count++;\n       Serial.print(\"Press Count: \");\n       Serial.println(count);\n       delay(200); // Simple software debounce delay\n     }\n   }\n   ```\n2. Press the button quickly and observe how a 200ms delay prevents mechanical switch bounce from registering 5 presses for 1 physical click.\n\n### Interactive Oscilloscope: Microsecond Switch Bounce\nPress the button on the oscilloscope below to observe microsecond contact chatter. Toggle debounce mode and adjust the software delay window to eliminate false clicks!"
       },
       {
         "stepId": "l08_s10",
@@ -1477,7 +1714,7 @@ class AssetCurriculumDataSource {
         "stepId": "l08_s14",
         "title": "Comprehensive Knowledge Check",
         "type": "quizCheckpoint",
-        "markdownContent": "Test your mastery of the electrical, programming, and hardware concepts in this module.",
+        "markdownContent": "Test your mastery of digital inputs, floating pins, active-low logic, and debouncing.",
         "interactiveConfig": {
           "question": "What state does a pin configured with `INPUT_PULLUP` read when the button is open (unpressed)?",
           "options": [
@@ -1606,19 +1843,22 @@ class AssetCurriculumDataSource {
         "stepId": "l09_s03",
         "title": "Core Concept & Vocabulary",
         "type": "story",
-        "markdownContent": "- **I2C (Inter-Integrated Circuit):** A synchronous, multi-target, bidirectional communication bus developed by Philips Semiconductor.\n- **SDA (Serial Data):** The bidirectional line over which data bytes travel.\n- **SCL (Serial Clock):** The synchronizing clock pulse train generated exclusively by the Controller.\n- **Controller (Master):** The device that initiates bus communication and generates SCL clock pulses (the Uno).\n- **Target (Slave):** Peripheral devices listening on the bus, responding only when their unique 7-bit address is called.\n- **7-Bit Address:** A unique identifier allowing up to 128 devices to share the bus without wire conflicts.\n- **ACK / NACK:** Acknowledge (0) or Not Acknowledge (1) bit returned by a target device to confirm packet receipt.\n- **Open-Drain / Pull-Up:** Hardware architecture where lines are passively held at 5V by resistors and pulled to GND by transistors."
+        "interactiveWidgetType": "i2cPullupChecker",
+        "markdownContent": "- **I2C (Inter-Integrated Circuit):** A synchronous, multi-target, bidirectional communication bus developed by Philips Semiconductor.\n- **SDA (Serial Data):** The bidirectional line over which data bytes travel.\n- **SCL (Serial Clock):** The synchronizing clock pulse train generated exclusively by the Controller.\n- **Controller (Master):** The device that initiates bus communication and generates SCL clock pulses (the Uno).\n- **Target (Slave):** Peripheral devices listening on the bus, responding only when their unique 7-bit address is called.\n- **7-Bit Address:** A unique identifier allowing up to 128 devices to share the bus without wire conflicts.\n- **ACK / NACK:** Acknowledge (0) or Not Acknowledge (1) bit returned by a target device to confirm packet receipt.\n- **Open-Drain / Pull-Up:** Hardware architecture where lines are passively held at 5V by resistors and pulled to GND by transistors.\n\n### Interactive Circuit Lab: Open-Drain & Pull-Up Resistors\nTest the open-drain schematic below. Select different pull-up resistor values (proper 4.7k\u03a9 vs missing vs weak 100k\u03a9) to observe waveform rise times and see why I2C lines cannot float!"
       },
       {
         "stepId": "l09_s04",
         "title": "How It Works: Signal Flow & Hardware Registers",
         "type": "visualExplanation",
-        "markdownContent": "Communication on the I2C bus follows rigid timing:\n1. **Start Condition:** Controller pulls `SDA` LOW while `SCL` remains HIGH.\n2. **Address Frame:** Controller transmits 7 address bits followed by a Read/Write bit (0 for Write, 1 for Read).\n3. **Target ACK:** The target device whose internal address matches pulls `SDA` LOW during clock cycle 9.\n4. **Data Transmission:** Data bytes are transferred 8 bits at a time, each followed by an ACK bit.\n5. **Stop Condition:** Controller transitions `SDA` from LOW to HIGH while `SCL` is HIGH, releasing the bus."
+        "interactiveWidgetType": "i2cBusTimingDiagram",
+        "markdownContent": "Communication on the I2C bus follows rigid timing:\n1. **Start Condition:** Controller pulls `SDA` LOW while `SCL` remains HIGH.\n2. **Address Frame:** Controller transmits 7 address bits followed by a Read/Write bit (0 for Write, 1 for Read).\n3. **Target ACK:** The target device whose internal address matches pulls `SDA` LOW during clock cycle 9.\n4. **Data Transmission:** Data bytes are transferred 8 bits at a time, each followed by an ACK bit.\n5. **Stop Condition:** Controller transitions `SDA` from LOW to HIGH while `SCL` is HIGH, releasing the bus.\n\n### Interactive Timing Oscilloscope: The I2C Protocol Frame\nStep through the logic analyzer capture below to observe the START condition, 7-bit address frame, R/W bit, peripheral ACK pulse on clock cycle 9, and STOP condition!"
       },
       {
         "stepId": "l09_s05",
         "title": "Hardware Mission: Component & Pin Inspection",
         "type": "physicalTask",
-        "markdownContent": "Examine `comp_07` (16x2 LCD) and `comp_10` (DS3231 RTC Module):\n1. **Parallel Bus Wiring:** Insert both components onto the breadboard.\n2. **Shared Power:** Connect both `VCC` pins to the breadboard 5V power rail, and both `GND` pins to the Ground rail.\n3. **Shared Data & Clock:**\n   - Connect BOTH `SDA` pins together and run a single wire to Uno Pin `A4`.\n   - Connect BOTH `SCL` pins together and run a single wire to Uno Pin `A5`.\n4. *Notice: Even with two complex peripherals attached, you still have nearly all of your Arduino's digital and analog pins completely free!*"
+        "interactiveWidgetType": "i2cDaisyChainSimulator",
+        "markdownContent": "Examine `comp_07` (16x2 LCD) and `comp_10` (DS3231 RTC Module):\n1. **Parallel Bus Wiring:** Insert both components onto the breadboard.\n2. **Shared Power:** Connect both `VCC` pins to the breadboard 5V power rail, and both `GND` pins to the Ground rail.\n3. **Shared Data & Clock:**\n   - Connect BOTH `SDA` pins together and run a single wire to Uno Pin `A4`.\n   - Connect BOTH `SCL` pins together and run a single wire to Uno Pin `A5`.\n4. *Notice: Even with two complex peripherals attached, you still have nearly all of your Arduino's digital and analog pins completely free!*\n\n### Interactive Bus Builder: Multi-Device Daisy-Chaining & Collisions\nAttach peripherals to the shared 2-wire bus below. Connect the LCD (`0x27`) and RTC (`0x68`) simultaneously, then attach a duplicate sensor to observe and resolve an address collision!"
       },
       {
         "stepId": "l09_s06",
@@ -1630,7 +1870,8 @@ class AssetCurriculumDataSource {
         "stepId": "l09_s07",
         "title": "Code Walkthrough: Annotated Sketch",
         "type": "codeExperiment",
-        "markdownContent": "```cpp\n#include <Wire.h>\n\nvoid setup() {\n  Wire.begin();        // Join I2C bus as Controller\n  Serial.begin(9600);\n  Serial.println(\"\\n--- I2C Hardware Bus Scanner ---\");\n}\n\nvoid loop() {\n  byte count = 0;\n  for (byte address = 1; address < 127; address++) {\n    Wire.beginTransmission(address);\n    byte error = Wire.endTransmission();\n\n    if (error == 0) { // Target device acknowledged ping!\n      Serial.print(\"Discovered I2C device at address: 0x\");\n      if (address < 16) Serial.print(\"0\");\n      Serial.println(address, HEX);\n      count++;\n    }\n  }\n  Serial.print(\"Scan complete. Total devices detected: \");\n  Serial.println(count);\n  delay(5000);\n}\n```\n\n### Breakdown:\n- The loop iterates through valid 7-bit addresses ($1$ to $126$).\n- `Wire.endTransmission()` returns `0` if an ACK was received, proving a device is alive at that address.\n- Addresses are printed in standardized hexadecimal format."
+        "interactiveWidgetType": "i2cAddressScanner",
+        "markdownContent": "```cpp\n#include <Wire.h>\n\nvoid setup() {\n  Wire.begin();        // Join I2C bus as Controller\n  Serial.begin(9600);\n  Serial.println(\"\\n--- I2C Hardware Bus Scanner ---\");\n}\n\nvoid loop() {\n  byte count = 0;\n  for (byte address = 1; address < 127; address++) {\n    Wire.beginTransmission(address);\n    byte error = Wire.endTransmission();\n\n    if (error == 0) { // Target device acknowledged ping!\n      Serial.print(\"Discovered I2C device at address: 0x\");\n      if (address < 16) Serial.print(\"0\");\n      Serial.println(address, HEX);\n      count++;\n    }\n  }\n  Serial.print(\"Scan complete. Total devices detected: \");\n  Serial.println(count);\n  delay(5000);\n}\n```\n\n### Breakdown:\n- The loop iterates through valid 7-bit addresses ($1$ to $126$).\n- `Wire.endTransmission()` returns `0` if an ACK was received, proving a device is alive at that address.\n- Addresses are printed in standardized hexadecimal format.\n\n### Interactive Terminal: Run the I2C Address Scanner\nRun the simulated serial terminal below to probe 7-bit addresses 0x01 through 0x7E and discover active I2C peripherals in real time!"
       },
       {
         "stepId": "l09_s08",
@@ -1672,7 +1913,7 @@ class AssetCurriculumDataSource {
         "stepId": "l09_s14",
         "title": "Comprehensive Knowledge Check",
         "type": "quizCheckpoint",
-        "markdownContent": "Test your mastery of the electrical, programming, and hardware concepts in this module.",
+        "markdownContent": "Test your mastery of I2C bus communications, open-drain pull-ups, and device addressing.",
         "interactiveConfig": {
           "question": "What are the names of the two communication lines used by the I2C protocol?",
           "options": [
@@ -1800,19 +2041,22 @@ class AssetCurriculumDataSource {
         "stepId": "l10_s03",
         "title": "Core Concept & Vocabulary",
         "type": "story",
-        "markdownContent": "- **SPI (Serial Peripheral Interface):** A 4-wire, full-duplex, high-speed synchronous serial interface.\n- **MOSI (Master Out Slave In):** Data line carrying bytes from the Arduino to the peripheral.\n- **MISO (Master In Slave Out):** Data line carrying bytes from the peripheral back into the Arduino.\n- **SCK (Serial Clock):** High-frequency clock generated by the Uno (up to 8 MHz) that latches bits on each edge.\n- **CS / SS (Chip Select / Slave Select):** Dedicated active-low pin that awakens a specific peripheral chip.\n- **Full-Duplex:** Simultaneous transmission and reception of data in both directions during the exact same clock pulse."
+        "interactiveWidgetType": "spiVsI2cComparison",
+        "markdownContent": "- **SPI (Serial Peripheral Interface):** A 4-wire, full-duplex, high-speed synchronous serial interface.\n- **MOSI (Master Out Slave In):** Data line carrying bytes from the Arduino to the peripheral.\n- **MISO (Master In Slave Out):** Data line carrying bytes from the peripheral back into the Arduino.\n- **SCK (Serial Clock):** High-frequency clock generated by the Uno (up to 8 MHz) that latches bits on each edge.\n- **CS / SS (Chip Select / Slave Select):** Dedicated active-low pin that awakens a specific peripheral chip.\n- **Full-Duplex:** Simultaneous transmission and reception of data in both directions during the exact same clock pulse.\n\n### Interactive Matrix: SPI vs. I2C Engineering Decisions\nReview the trade-off matrix below and tackle the 3 engineering design challenges to decide between SPI and I2C based on bandwidth, wire count, and peripheral constraints!"
       },
       {
         "stepId": "l10_s04",
         "title": "How It Works: Signal Flow & Hardware Registers",
         "type": "visualExplanation",
-        "markdownContent": "SPI functions as two linked 8-bit shift registers forming a circular ring:\n1. The Arduino pulls the target's dedicated `CS` pin `LOW` (0V).\n2. For each tick of the `SCK` line:\n   - The Master shifts 1 bit out on `MOSI` and samples 1 bit on `MISO`.\n   - The Target simultaneously shifts 1 bit out on `MISO` and samples 1 bit on `MOSI`.\n3. After 8 clock pulses, an entire byte has traveled in both directions simultaneously!\n4. The Arduino pulls `CS` `HIGH` (5V), placing the target's MISO output pin into high-impedance state so other chips can use the bus."
+        "interactiveWidgetType": "spiFullDuplexVisualizer",
+        "markdownContent": "SPI functions as two linked 8-bit shift registers forming a circular ring:\n1. The Arduino pulls the target's dedicated `CS` pin `LOW` (0V).\n2. For each tick of the `SCK` line:\n   - The Master shifts 1 bit out on `MOSI` and samples 1 bit on `MISO`.\n   - The Target simultaneously shifts 1 bit out on `MISO` and samples 1 bit on `MOSI`.\n3. After 8 clock pulses, an entire byte has traveled in both directions simultaneously!\n4. The Arduino pulls `CS` `HIGH` (5V), placing the target's MISO output pin into high-impedance state so other chips can use the bus.\n\n### Interactive Shift Register Visualizer: Full-Duplex Transmission\nStep through the clock pulses on the circular shift register ring below to watch Master and Slave simultaneously exchange bytes over MOSI and MISO on shared SCK ticks!"
       },
       {
         "stepId": "l10_s05",
         "title": "Hardware Mission: Component & Pin Inspection",
         "type": "physicalTask",
-        "markdownContent": "Examine `comp_23` (RC522 RFID Module) and `comp_15` (8x8 Dot Matrix):\n1. **Header Inspection:** Locate the pin labels on the module headers:\n   - Find `MOSI` (sometimes labeled `SI` or `DIN`).\n   - Find `MISO` (sometimes labeled `SO` or `DOUT`).\n   - Find `SCK` (sometimes labeled `CLK`).\n   - Find `SDA / NSS / CS` (Chip Select).\n2. **Uno Hardware SPI Pins:**\n   - Digital Pin 11: `MOSI`\n   - Digital Pin 12: `MISO`\n   - Digital Pin 13: `SCK`\n   - Digital Pin 10: Standard hardware `SS` / `CS`"
+        "interactiveWidgetType": "chipSelectArbitrator",
+        "markdownContent": "Examine `comp_23` (RC522 RFID Module) and `comp_15` (8x8 Dot Matrix):\n1. **Header Inspection:** Locate the pin labels on the module headers:\n   - Find `MOSI` (sometimes labeled `SI` or `DIN`).\n   - Find `MISO` (sometimes labeled `SO` or `DOUT`).\n   - Find `SCK` (sometimes labeled `CLK`).\n   - Find `SDA / NSS / CS` (Chip Select).\n2. **Uno Hardware SPI Pins:**\n   - Digital Pin 11: `MOSI`\n   - Digital Pin 12: `MISO`\n   - Digital Pin 13: `SCK`\n   - Digital Pin 10: Standard hardware `SS` / `CS`\n\n### Interactive Bus Arbitrator: Chip Select & Tri-State Standby\nToggle the CS lines below to activate the RC522 RFID reader and 8x8 Dot Matrix display. Observe High-Impedance (Hi-Z) tri-state standby and see why multiple CS pins must never be pulled LOW simultaneously!"
       },
       {
         "stepId": "l10_s06",
@@ -1836,7 +2080,8 @@ class AssetCurriculumDataSource {
         "stepId": "l10_s09",
         "title": "Guided Experiment: Parameter Modulation",
         "type": "codeExperiment",
-        "markdownContent": "1. Add a second SPI target using Digital Pin 9 as `chipSelectPin2`.\n2. Modify the code to query Target 1, set CS1 HIGH, query Target 2, and set CS2 HIGH.\n3. Observe how independent CS pins share the exact same 3 data/clock wires without address collision."
+        "interactiveWidgetType": "spiClockPolarityPhaseLab",
+        "markdownContent": "1. Add a second SPI target using Digital Pin 9 as `chipSelectPin2`.\n2. Modify the code to query Target 1, set CS1 HIGH, query Target 2, and set CS2 HIGH.\n3. Observe how independent CS pins share the exact same 3 data/clock wires without address collision.\n\n### Interactive Timing Lab: SPI Clock Polarity (CPOL) & Phase (CPHA)\nExplore SPI Modes 0, 1, 2, and 3 below. Observe how clock idle levels and leading vs trailing sample edges change the timing of SPI transfers and generate Arduino `SPISettings`!"
       },
       {
         "stepId": "l10_s10",
@@ -1866,7 +2111,7 @@ class AssetCurriculumDataSource {
         "stepId": "l10_s14",
         "title": "Comprehensive Knowledge Check",
         "type": "quizCheckpoint",
-        "markdownContent": "Test your mastery of the electrical, programming, and hardware concepts in this module.",
+        "markdownContent": "Test your mastery of the SPI protocol, full-duplex transmission, chip select arbitration, and clock polarity.",
         "interactiveConfig": {
           "question": "What does SPI stand for?",
           "options": [
@@ -1999,13 +2244,15 @@ class AssetCurriculumDataSource {
         "stepId": "l11_s04",
         "title": "How It Works: Signal Flow & Hardware Registers",
         "type": "visualExplanation",
-        "markdownContent": "UART serial framing operates without a clock line:\n1. **Idle State:** The serial line sits at continuous HIGH (5V or 3.3V).\n2. **Start Bit:** The transmitter pulls the line LOW for exactly 1 bit duration ($\\frac{1}{9600\\text{ baud}} \\approx 104.16\\ \\mu\\text{s}$). This falling edge triggers the receiver's internal clock timer.\n3. **Data Sampling:** The receiver counts clock ticks and samples the line state in the exact middle of each of the subsequent 8 bit windows.\n4. **Stop Bit:** The transmitter pulls the line HIGH for at least 1 bit duration to conclude the frame and re-establish the idle level."
+        "interactiveWidgetType": "uartFrameVisualizer",
+        "markdownContent": "UART serial framing operates without a clock line:\n1. **Idle State:** The serial line sits at continuous HIGH (5V or 3.3V).\n2. **Start Bit:** The transmitter pulls the line LOW for exactly 1 bit duration ($\\frac{1}{9600\\text{ baud}} \\approx 104.16\\ \\mu\\text{s}$). This falling edge triggers the receiver's internal clock timer.\n3. **Data Sampling:** The receiver counts clock ticks and samples the line state in the exact middle of each of the subsequent 8 bit windows.\n4. **Stop Bit:** The transmitter pulls the line HIGH for at least 1 bit duration to conclude the frame and re-establish the idle level.\n\n### Interactive Waveform Visualizer: UART Packet Anatomy\nExplore asynchronous UART packet framing below. Observe how the line idles HIGH (+5V), pulls LOW for the Start Bit, sends 8 data bits LSB-first, and returns HIGH for the Stop Bit!"
       },
       {
         "stepId": "l11_s05",
         "title": "Hardware Mission: Component & Pin Inspection",
         "type": "physicalTask",
-        "markdownContent": "Examine `comp_29` (HC-05 Bluetooth Module):\n1. **Pin Inspection:** Locate the header pins: `VCC`, `GND`, `TXD`, `RXD`, `STATE`, `EN`.\n2. **Power Wiring:** Connect Module `VCC` to Uno `5V`, and Module `GND` to Uno `GND`.\n3. **Receive Line (Direct):** Connect Module `TXD` (which outputs safe 3.3V logic) directly to Uno Digital Pin 10 (`SoftwareSerial RX`).\n4. **Transmit Line (Voltage Divider):** Uno Pin 11 outputs 5.0V, but the HC-05 RXD pin accepts only 3.3V maximum!\n   - Connect Uno Pin 11 to one leg of a 1k\u03a9 resistor.\n   - Connect the other leg of the 1k\u03a9 resistor to a breadboard node.\n   - Connect the breadboard node to HC-05 `RXD`.\n   - Connect a 2k\u03a9 resistor from the breadboard node to `GND`.\n   - *Result: $V_{\\text{out}} = 5\\text{V} \\times \\frac{2\\text{k}\\Omega}{1\\text{k}\\Omega + 2\\text{k}\\Omega} = 3.33\\text{V}$ (perfect protection!).*"
+        "interactiveWidgetType": "txRxCrossWireChecker",
+        "markdownContent": "Examine `comp_29` (HC-05 Bluetooth Module):\n1. **Pin Inspection:** Locate the header pins: `VCC`, `GND`, `TXD`, `RXD`, `STATE`, `EN`.\n2. **Power Wiring:** Connect Module `VCC` to Uno `5V`, and Module `GND` to Uno `GND`.\n3. **Receive Line (Direct):** Connect Module `TXD` (which outputs safe 3.3V logic) directly to Uno Digital Pin 10 (`SoftwareSerial RX`).\n4. **Transmit Line (Voltage Divider):** Uno Pin 11 outputs 5.0V, but the HC-05 RXD pin accepts only 3.3V maximum!\n   - Connect Uno Pin 11 to one leg of a 1k\u03a9 resistor.\n   - Connect the other leg of the 1k\u03a9 resistor to a breadboard node.\n   - Connect the breadboard node to HC-05 `RXD`.\n   - Connect a 2k\u03a9 resistor from the breadboard node to `GND`.\n   - *Result: $V_{\\text{out}} = 5\\text{V} \\times \\frac{2\\text{k}\\Omega}{1\\text{k}\\Omega + 2\\text{k}\\Omega} = 3.33\\text{V}$ (perfect protection!).*\n\n### Interactive Breadboard Checker: TX/RX Cross-Wiring & Voltage Divider\nTest your serial wiring below to avoid the classic TX-to-TX beginner trap and verify that the 1k\u03a9 / 2k\u03a9 voltage divider protects delicate 3.3V wireless RX pins!"
       },
       {
         "stepId": "l11_s06",
@@ -2023,13 +2270,15 @@ class AssetCurriculumDataSource {
         "stepId": "l11_s08",
         "title": "Code Prediction: Hypothesis & Deductions",
         "type": "codeExperiment",
-        "markdownContent": "- **Prediction 1:** What happens if the Bluetooth module transmits at 38400 baud while `bluetooth.begin()` is set to 9600?\n  *Answer:* Severe bit sampling timing errors: incoming characters will appear as corrupted gibberish symbols.\n- **Prediction 2:** What happens if you plug Bluetooth TX directly into Arduino Hardware Pin 0 (RX) while trying to upload code via USB?\n  *Answer:* USB code upload fails with an `avrdude` sync error because the ATmega16U2 USB chip and the Bluetooth module fight to drive Pin 0 simultaneously."
+        "interactiveWidgetType": "baudRateMismatchDemo",
+        "markdownContent": "- **Prediction 1:** What happens if the Bluetooth module transmits at 38400 baud while `bluetooth.begin()` is set to 9600?\n  *Answer:* Severe bit sampling timing errors: incoming characters will appear as corrupted gibberish symbols.\n- **Prediction 2:** What happens if you plug Bluetooth TX directly into Arduino Hardware Pin 0 (RX) while trying to upload code via USB?\n  *Answer:* USB code upload fails with an `avrdude` sync error because the ATmega16U2 USB chip and the Bluetooth module fight to drive Pin 0 simultaneously.\n\n### Interactive Timing Lab: Baud Rate Clock Mismatch & Framing Errors\nExperiment with mismatched baud rates below. Observe how clock drift produces framing errors and corrupted gibberish when sender and receiver clocks disagree!"
       },
       {
         "stepId": "l11_s09",
         "title": "Guided Experiment: Parameter Modulation",
         "type": "codeExperiment",
-        "markdownContent": "1. Pair a smartphone or laptop to the HC-05 module using a Bluetooth terminal application (e.g. Serial Bluetooth Terminal).\n2. Type command `'1'` on the phone.\n3. Expand the Arduino code to toggle the Pin 13 LED on when `'1'` is received, and off when `'0'` is received.\n4. Test wireless control from across the room!"
+        "interactiveWidgetType": "bluetoothAtCommandTerminal",
+        "markdownContent": "1. Pair a smartphone or laptop to the HC-05 module using a Bluetooth terminal application (e.g. Serial Bluetooth Terminal).\n2. Type command `'1'` on the phone.\n3. Expand the Arduino code to toggle the Pin 13 LED on when `'1'` is received, and off when `'0'` is received.\n4. Test wireless control from across the room!\n\n### Interactive Terminal: HC-05 Bluetooth AT Command Console\nConfigure your Bluetooth module using the simulated Hayes AT command terminal below. Test AT ping, rename the device, set passkeys, and inspect status LED pulse timing!"
       },
       {
         "stepId": "l11_s10",
@@ -2059,7 +2308,7 @@ class AssetCurriculumDataSource {
         "stepId": "l11_s14",
         "title": "Comprehensive Knowledge Check",
         "type": "quizCheckpoint",
-        "markdownContent": "Test your mastery of the electrical, programming, and hardware concepts in this module.",
+        "markdownContent": "Test your mastery of UART asynchronous framing, crossed TX/RX lines, SoftwareSerial, and Bluetooth telemetry.",
         "interactiveConfig": {
           "question": "What does UART stand for?",
           "options": [
@@ -2195,19 +2444,22 @@ class AssetCurriculumDataSource {
         "stepId": "l12_s04",
         "title": "How It Works: Signal Flow & Hardware Registers",
         "type": "visualExplanation",
-        "markdownContent": "When current passes through the motor coils:\n1. Electric current creates a magnetic field that interacts with permanent magnets, generating rotational torque (Lorentz Force).\n2. When the control transistor abruptly opens:\n   - Current drops rapidly ($\\frac{di}{dt} \\to -\\infty$).\n   - The collapsing magnetic field induces a reverse high-voltage spike according to Lenz's Law: $V = -L \\frac{di}{dt}$.\n   - Without protection, this 60V+ spike arcs across transistor junctions, destroying the driver.\n3. The **Flyback Diode** (or the L293D's internal clamping diodes) becomes forward-biased by this negative spike, safely shunting current through the coil resistance as mild heat."
+        "interactiveWidgetType": "inductiveKickbackSimulator",
+        "markdownContent": "When current passes through the motor coils:\n1. Electric current creates a magnetic field that interacts with permanent magnets, generating rotational torque (Lorentz Force).\n2. When the control transistor abruptly opens:\n   - Current drops rapidly ($\\frac{di}{dt} \\to -\\infty$).\n   - The collapsing magnetic field induces a reverse high-voltage spike according to Lenz's Law: $V = -L \\frac{di}{dt}$.\n   - Without protection, this 60V+ spike arcs across transistor junctions, destroying the driver.\n3. The **Flyback Diode** (or the L293D's internal clamping diodes) becomes forward-biased by this negative spike, safely shunting current through the coil resistance as mild heat.\n\n### Interactive Coil Simulator: Inductive Kickback & Flyback Clamping\nSimulate an inductive motor coil when power turns off. Observe the dangerous 85V+ reverse spike caused by Lenz's Law and see how an antiparallel 1N4007 flyback diode safely clamps current!"
       },
       {
         "stepId": "l12_s05",
         "title": "Hardware Mission: Component & Pin Inspection",
         "type": "physicalTask",
-        "markdownContent": "Examine `comp_l293d` (16-pin Dual H-Bridge IC) and `comp_33` (DC Motor):\n1. **IC Notch Orientation:** Locate the semi-circular notch on the top of the L293D chip. Pin 1 is immediately to the left of the notch.\n2. **Pin Identification:**\n   - Pin 16 ($V_{CC1}$): Logic 5V (from Arduino 5V).\n   - Pin 8 ($V_{CC2}$): Motor Power (connect to external 6V\u20139V battery pack).\n   - Pins 4, 5, 12, 13: Ground heat-sink pins (connect to common Ground).\n   - Pin 1 (Enable 1): PWM speed input (connect to Uno PWM Pin 9).\n   - Pin 2 (Input 1): Direction Leg A (connect to Uno Pin 8).\n   - Pin 7 (Input 2): Direction Leg B (connect to Uno Pin 7).\n   - Pins 3 & 6 (Outputs 1 & 2): Connect directly to the two terminals of the DC motor."
+        "interactiveWidgetType": "externalMotorPowerLab",
+        "markdownContent": "Examine `comp_l293d` (16-pin Dual H-Bridge IC) and `comp_33` (DC Motor):\n1. **IC Notch Orientation:** Locate the semi-circular notch on the top of the L293D chip. Pin 1 is immediately to the left of the notch.\n2. **Pin Identification:**\n   - Pin 16 ($V_{CC1}$): Logic 5V (from Arduino 5V).\n   - Pin 8 ($V_{CC2}$): Motor Power (connect to external 6V\u20139V battery pack).\n   - Pins 4, 5, 12, 13: Ground heat-sink pins (connect to common Ground).\n   - Pin 1 (Enable 1): PWM speed input (connect to Uno PWM Pin 9).\n   - Pin 2 (Input 1): Direction Leg A (connect to Uno Pin 8).\n   - Pin 7 (Input 2): Direction Leg B (connect to Uno Pin 7).\n   - Pins 3 & 6 (Outputs 1 & 2): Connect directly to the two terminals of the DC motor.\n\n### Interactive Electrical Bench: Motor Power Isolation & Common Ground\nExplore why high-current motors (1-2A stall) cause severe brownout crashes when powered from the Arduino 5V regulator, and verify proper external battery power with a shared Common Ground!"
       },
       {
         "stepId": "l12_s06",
         "title": "Coding Basics: Syntax & Control Structures",
         "type": "story",
-        "markdownContent": "Direction Truth Table for L293D:\n- `IN1 = HIGH, IN2 = LOW`: Motor spins Forward.\n- `IN1 = LOW, IN2 = HIGH`: Motor spins Reverse.\n- `IN1 = IN2 (both LOW or both HIGH)`: Motor stops / active dynamic brake.\n- Speed is commanded by pulsing the Enable pin: `analogWrite(enablePin, speed)`."
+        "interactiveWidgetType": "hBridgeDirectionSwitch",
+        "markdownContent": "Direction Truth Table for L293D:\n- `IN1 = HIGH, IN2 = LOW`: Motor spins Forward.\n- `IN1 = LOW, IN2 = HIGH`: Motor spins Reverse.\n- `IN1 = IN2 (both LOW or both HIGH)`: Motor stops / active dynamic brake.\n- Speed is commanded by pulsing the Enable pin: `analogWrite(enablePin, speed)`.\n\n### Interactive Circuit Schematic: 4-Transistor H-Bridge & Shoot-Through Protection\nControl the H-Bridge switches below to reverse DC motor polarity, activate dynamic regenerative braking, and avoid catastrophic shoot-through short circuits!"
       },
       {
         "stepId": "l12_s07",
@@ -2225,7 +2477,8 @@ class AssetCurriculumDataSource {
         "stepId": "l12_s09",
         "title": "Guided Experiment: Parameter Modulation",
         "type": "codeExperiment",
-        "markdownContent": "1. Wire the Potentiometer from Lesson 06 to `A0`.\n2. Map readings so:\n   - Full clockwise: Full speed forward.\n   - Center (512): Stopped.\n   - Full counter-clockwise: Full speed reverse.\n3. Test your custom robotic throttle control!"
+        "interactiveWidgetType": "servoPulseWidthModulator",
+        "markdownContent": "1. Wire the Potentiometer from Lesson 06 to `A0`.\n2. Map readings so:\n   - Full clockwise: Full speed forward.\n   - Center (512): Stopped.\n   - Full counter-clockwise: Full speed reverse.\n3. Test your custom robotic throttle control!\n\n### Interactive PWM Generator: 50Hz Servo Pulse Width Modulator\nAdjust the 50Hz PWM pulse width between 1.0ms (0\u00b0), 1.5ms (90\u00b0), and 2.0ms (180\u00b0) below to command the virtual servo horn with precise microsecond timing!"
       },
       {
         "stepId": "l12_s10",
@@ -2255,7 +2508,7 @@ class AssetCurriculumDataSource {
         "stepId": "l12_s14",
         "title": "Comprehensive Knowledge Check",
         "type": "quizCheckpoint",
-        "markdownContent": "Test your mastery of the electrical, programming, and hardware concepts in this module.",
+        "markdownContent": "Test your mastery of inductive kickback, flyback diodes, H-bridge motor drivers, and servo PWM modulation.",
         "interactiveConfig": {
           "question": "What causes inductive kickback spikes when a motor is suddenly turned off?",
           "options": [

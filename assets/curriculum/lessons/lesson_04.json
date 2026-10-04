@@ -13,87 +13,126 @@
   "steps": [
     {
       "stepId": "l04_s01",
-      "title": "Mission Introduction",
+      "title": "The Never-Sleeping Monster Brain",
       "type": "story",
-      "markdownContent": "### The Never-Sleeping Monster Brain\nUnlike desktop programs that launch, calculate a spreadsheet, and quit, a robot's brain must never terminate. It must continuously sense obstacles, calculate trajectory updates, and control motors thousands of times per second until power is switched off.\n\nIn this lesson, you will master the two fundamental functions of embedded systems: `setup()`\u2014the one-time initialization routine\u2014and `loop()`\u2014the perpetual heartbeat of your monster robot."
+      "markdownContent": "Unlike desktop programs that launch, calculate a spreadsheet, and quit, a robot's brain must never terminate! It must continuously monitor distance sensors, evaluate obstacle hazards, and drive motors thousands of times per second until battery power is switched off.\n\nIn this lesson, you will master the two fundamental functions of embedded systems: `setup()`\u2014the one-time initialization routine\u2014and `loop()`\u2014the perpetual heartbeat of your monster robot. You will also unlock the **Serial Monitor**, the primary debugging terminal that lets your Arduino talk directly to your computer screen.\n\n```\nPower On \u2794 setup() Initial Setup \u2794 while(1) { loop(); Serial Telemetry; } Forever\n```"
     },
     {
       "stepId": "l04_s02",
-      "title": "Prior Knowledge Check",
+      "title": "Prior Knowledge Check: Firmware Loops & Semicolons",
       "type": "story",
-      "markdownContent": "1. **What happens when an Arduino Uno is plugged into USB?** The bootloader initializes the chip and executes the program stored in flash memory.\n2. **What does the COM port represent?** The virtual serial communications link between computer and Arduino."
+      "interactiveWidgetType": "priorKnowledgeCheck",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "How many times does code inside void setup() execute after board startup or reset?",
+            "options": [
+              "Exactly once",
+              "Continuously in an infinite loop",
+              "Ten times per second"
+            ],
+            "correctIndex": 0,
+            "explanation": "setup() runs exactly once upon microcontroller startup or hardware reset."
+          },
+          {
+            "question": "What is the primary role of void loop() in robotics firmware?",
+            "options": [
+              "To repeatedly run sensing, decision logic, and actuator commands forever",
+              "To shut down the Arduino when code calculations finish",
+              "To format internal flash storage"
+            ],
+            "correctIndex": 0,
+            "explanation": "Embedded microcontrollers run loop() perpetually to react to real-time physical events."
+          },
+          {
+            "question": "What character must terminate every standard C++ instruction statement in Arduino?",
+            "options": [
+              "Semicolon (;)",
+              "Colon (:)",
+              "Period (.)"
+            ],
+            "correctIndex": 0,
+            "explanation": "In C++, semicolons are mandatory statement terminators."
+          }
+        ]
+      },
+      "markdownContent": "Before exploring serial telemetry and syntax debugging, test your baseline understanding of microcontroller lifecycles.\n\nComplete the 3 questions below to prepare for the lesson!"
     },
     {
       "stepId": "l04_s03",
-      "title": "Core Concept & Vocabulary",
+      "title": "Core Concept & Vocabulary: Functions, Blocks & Baud Rates",
       "type": "story",
-      "markdownContent": "- **`setup()`:** A function executed exactly once upon board power-up or hardware reset button press. Used for configuring pins and starting communication.\n- **`loop()`:** A function executed repeatedly and continuously forever. Houses sensing, decision logic, and actuator commands.\n- **Statement:** A single executable instruction that must end with a semicolon `;`.\n- **Baud Rate:** Communication speed in symbols/bits per second (e.g., 9600 baud = 960 characters/sec with 10-bit framing).\n- **Serial Monitor:** An interactive terminal console embedded in the IDE for bidirectional text communication with the board."
+      "markdownContent": "Master the foundational vocabulary of embedded software:\n\n### Core Vocabulary\n- **`setup()`**: Executes exactly once upon board power-up or hardware reset. Used for pin modes and UART startup.\n- **`loop()`**: Executes repeatedly forever in an unbroken cycle.\n- **Statement**: A single executable instruction that must conclude with a semicolon `;`.\n- **Code Block (`{ }`)**: Curly braces group multiple statements into a single function or conditional block.\n- **Baud Rate**: The transmission speed in bits per second (e.g., 9600 baud = ~960 characters per second).\n- **Serial Monitor**: An interactive terminal console embedded in the Arduino IDE for text communication with the board."
     },
     {
       "stepId": "l04_s04",
-      "title": "How It Works: Signal Flow & Hardware Registers",
+      "title": "How It Works: Microcontroller Heartbeat & 16 MHz Clocks",
       "type": "visualExplanation",
-      "markdownContent": "The microcontroller execution lifecycle proceeds through distinct phases:\n\n```\nPower On / Reset\n       \u2193\nClock Oscillator Stabilizes (16 MHz)\n       \u2193\nOptiboot Bootloader Runs (Checks for USB Upload)\n       \u2193 (If no upload)\nmain() Jump\n       \u2193\nExecutes setup() Once\n       \u2193\nwhile(1) { loop(); } (Runs Forever)\n```"
+      "interactiveWidgetType": "executionSpeedVisualizer",
+      "markdownContent": "The ATmega328P microcontroller is powered by a 16 MHz quartz crystal oscillator. That means the processor ticks **16 million times every single second** (each clock tick is just 62.5 nanoseconds!).\n\nHuman eyes have a flicker fusion limit of ~60 Hz (16.6 milliseconds), and human reaction time is ~200 milliseconds (200,000,000 nanoseconds!).\n\nIf you toggle an LED ON and OFF inside `loop()` without `delay()`, the LED flips millions of times per second. To human eyes, it appears as a solid dim light due to Persistence of Vision!\n\nCompare 16 MHz CPU execution speed against human perception in the visual clock simulator below to understand why `delay()` is essential."
     },
     {
       "stepId": "l04_s05",
-      "title": "Hardware Mission: Component & Pin Inspection",
+      "title": "Hardware Mission: Uno Reset Button & TX/RX Telemetry LEDs",
       "type": "physicalTask",
-      "markdownContent": "Examine your Arduino Uno R3 (`comp_uno`):\n1. **Reset Switch:** Locate the red or yellow pushbutton in the upper-left corner near the USB connector. Pressing this pulls the ATmega328P `RESET` pin to GND, restarting the program at `setup()`.\n2. **TX and RX LEDs:** Locate the two tiny surface-mount LEDs labeled `TX` (Transmit) and `RX` (Receive) near Digital Pins 0 and 1.\n3. **Observation Task:** Connect the board to USB. Notice how TX and RX flash rapidly when sketches are uploaded or serial text transmits."
+      "markdownContent": "Pick up your Arduino Uno (`comp_uno`) and locate two critical hardware features:\n\n### 1. The Hardware Reset Switch\nLocate the red or yellow pushbutton in the top-left corner near the USB connector. Pressing this switch pulls the ATmega328P `RESET` pin to GND (0V), restarting program execution from the very beginning of `setup()`!\n\n### 2. The TX and RX Telemetry LEDs\nLook closely near Digital Pins 0 and 1. Notice the two tiny surface-mount LEDs labeled **TX** (Transmit) and **RX** (Receive).\n\nWhenever your sketch sends text to the Serial Monitor via `Serial.print()`, the **TX** LED flashes amber. Whenever your computer sends characters into the Arduino, the **RX** LED flashes amber!"
     },
     {
       "stepId": "l04_s06",
-      "title": "Coding Basics: Syntax & Control Structures",
+      "title": "Coding Basics: Spotting & Fixing Syntax Errors",
       "type": "story",
-      "markdownContent": "- **Function Syntax:** `void setup() { ... }`. `void` means the function returns no value.\n- **Curly Braces `{}`:** Group multiple instructions into an executable code block. Every `{` must have a matching `}`.\n- **Semicolons `;`:** Mark the conclusion of an instruction statement. Omitting a semicolon causes a compiler syntax error."
+      "interactiveWidgetType": "syntaxErrorDebugger",
+      "markdownContent": "The C++ compiler is extremely strict. A single misplaced character stops your code from building entirely:\n\n### 3 Most Common Rookie Syntax Traps:\n1. **Missing Semicolon**: Forgetting `;` at the end of a statement (`pinMode(13, OUTPUT)`).\n2. **Case Sensitivity Errors**: Writing `digitalwrite` instead of camelCase `digitalWrite` (C++ treats lowercase and uppercase as totally different names!).\n3. **Unmatched Curly Braces**: Forgetting the closing `}` on a function block.\n\nInspect the code editor below, spot all 3 syntax bugs, and apply fixes to achieve a clean build!"
     },
     {
       "stepId": "l04_s07",
-      "title": "Code Walkthrough: Annotated Sketch",
+      "title": "Code Walkthrough: Serial.print() vs Serial.println()",
       "type": "codeExperiment",
-      "markdownContent": "```cpp\nvoid setup() {\n  Serial.begin(9600); // Initialize hardware UART at 9600 baud\n  Serial.println(\"--- Monster Lab Online ---\");\n  Serial.println(\"System Initialized Successfully.\");\n}\n\nvoid loop() {\n  Serial.print(\"Heartbeat ping at timestamp: \");\n  Serial.println(millis());\n  delay(1000); // Pause for 1000 milliseconds (1 second) before repeating\n}\n```\n\n### Breakdown:\n- `Serial.begin(9600)`: Powers on the ATmega328P USART hardware and sets baud generator registers.\n- `Serial.println(...)`: Sends ASCII characters followed by carriage return `\\r` and line feed `\\n`.\n- `millis()`: Returns the number of milliseconds since the Arduino began running the current sketch.\n- `delay(1000)`: Halts execution for 1000 ms, regulating loop cadence."
+      "interactiveWidgetType": "serialPrintExperiment",
+      "markdownContent": "How does the Arduino send information to your computer screen? Through the `Serial` object!\n\n```cpp\nvoid setup() {\n  Serial.begin(9600); // Start serial UART at 9600 bits per second\n}\n\nvoid loop() {\n  Serial.print(\"MONSTER \");   // Prints text on current line\n  Serial.println(\"ONLINE\");   // Prints text and moves to next line (\\r\\n)\n  delay(1000);\n}\n```\n\n### The Critical Difference:\n- `Serial.print()`: Outputs characters without a line break. Repeated prints concatenate side-by-side horizontally.\n- `Serial.println()`: Outputs characters followed by an invisible Carriage Return `\\r` and Line Feed `\\n`. Moves the cursor to line 2.\n\nToggle between `print` and `println` in the interactive telemetry experiment below to see how terminal output is formatted!"
     },
     {
       "stepId": "l04_s08",
-      "title": "Code Prediction: Hypothesis & Deductions",
+      "title": "Code Prediction: Setup Loops vs Missing Serial.begin",
       "type": "codeExperiment",
-      "markdownContent": "- **Prediction 1:** What happens if `Serial.println(\"Booting...\");` is placed inside `loop()` instead of `setup()`?\n  *Answer:* It prints continuously every loop cycle rather than once at startup.\n- **Prediction 2:** What happens if `Serial.begin(9600)` is omitted from `setup()`?\n  *Answer:* The hardware UART baud rate generator is not configured; no text will transmit over USB, and the Serial Monitor will stay completely blank."
+      "markdownContent": "Make predictions about serial telemetry behavior before testing in hardware:\n\n### Prediction 1: What happens if Serial.println(\"Booting...\") is placed inside loop() instead of setup()?\n*Answer:* Instead of printing once upon startup, it prints repeatedly every single loop cycle, flooding the Serial Monitor console!\n\n### Prediction 2: What happens if Serial.begin(9600) is omitted from setup()?\n*Answer:* The hardware UART baud rate generator registers are never initialized. The ATmega328P will not send bytes over USB, and the Serial Monitor will stay completely blank!"
     },
     {
       "stepId": "l04_s09",
-      "title": "Guided Experiment: Parameter Modulation",
+      "title": "Guided Experiment: Accelerating Telemetry Cadence",
       "type": "codeExperiment",
-      "markdownContent": "1. Change `delay(1000);` to `delay(250);`.\n2. Predict the new transmission frequency: 4 pings per second instead of 1.\n3. Upload sketch, open Serial Monitor, and observe the accelerated telemetry cadence."
+      "markdownContent": "Let's modify loop cadence and observe the telemetry output rate:\n\n```cpp\nvoid loop() {\n  Serial.print(\"Ping at timestamp: \");\n  Serial.println(millis());\n  delay(250); // Changed from 1000 ms to 250 ms\n}\n```\n\n### Observations:\n1. `millis()` is a built-in Arduino timer function returning the number of milliseconds elapsed since the board powered on.\n2. By reducing `delay(1000)` to `delay(250)`, the board sends **4 telemetry readings every second** instead of 1.\n3. Notice the TX LED on the Uno: it flashes 4 times per second in perfect synchrony with the loop!"
     },
     {
       "stepId": "l04_s10",
-      "title": "Real-World Robotics: Industrial & Aerospace Systems",
+      "title": "Real-World Robotics: NASA Rovers & Automotive State Machines",
       "type": "visualExplanation",
-      "markdownContent": "Automotive electronic control units (ECUs), NASA planetary rovers, and medical infusion pumps execute identical state loops:\n- `setup()`: Perform sensor self-test, verify battery voltage, zero actuators.\n- `loop()`: Read obstacle sensors, update kinematics math, drive steering servos within rigid cycle deadlines."
+      "markdownContent": "The `setup()`, `loop()`, and `Serial` logging pattern is standard across aerospace and automotive robotics:\n\n- **NASA Mars Rovers**: Telemetry transmitters stream engineering packet frames over X-band radio back to Earth's Deep Space Network using calibrated bitrates.\n- **Automotive CAN Bus Diagnostics**: Mechanics plug OBD-II diagnostic scanners into cars to read serial diagnostic trouble codes (DTCs) generated by engine loop telemetry.\n- **Industrial Packaging Arms**: Factory automation PLCs cycle 1,000 times per second, streaming serial telemetry to factory supervisory control systems."
     },
     {
       "stepId": "l04_s11",
-      "title": "Troubleshooting Challenge: Diagnostic Scenarios",
+      "title": "Troubleshooting Challenge: Garbled Serial & Baud Rates",
       "type": "story",
-      "markdownContent": "### Symptom 1: Garbled Characters in Serial Monitor\n- **Symptom:** Serial Monitor prints `\u2e2e\u2e2ex\u2e2ef\u2e2e` or strange inverted symbols.\n- **Diagnosis:** Baud rate mismatch! The sketch specified `9600`, but the Serial Monitor dropdown in the lower right is set to 115200 or 57600.\n- **Remedy:** Click the baud rate dropdown and select `9600 baud`.\n\n### Symptom 2: Compiler Error on Braces / Semicolons\n- **Symptom:** `error: expected ';' before '}' token`.\n- **Diagnosis:** The statement directly preceding line X is missing its terminating `;`.\n- **Remedy:** Locate the unclosed statement and add `;`."
+      "interactiveWidgetType": "serialMonitorSimulator",
+      "markdownContent": "You open the Serial Monitor and instead of clean English text, you see strange inverted question marks and scrambled symbols:\n\n```\n\u2e2e\u2e2ex~??\u2e2ef\u2e2e\u2e2e\u2592\u2592\n```\n\nThis is the #1 Serial Monitor bug: **Baud Rate Mismatch**!\n\nIf your sketch specifies `Serial.begin(9600);` (9600 bits per second), but the Serial Monitor selector dropdown is set to `115200 baud`, the computer clock samples the electrical wire 12 times faster than the Arduino sends bits! The bit frames get completely scrambled.\n\nSwitch baud rates in the Serial Monitor simulator below to synchronize communication and restore legible text!"
     },
     {
       "stepId": "l04_s12",
-      "title": "Workshop Safety & Hardware Care",
+      "title": "Workshop Safety & Hardware Care: USB Power & Non-Conductive Surfaces",
       "type": "story",
-      "markdownContent": "- Never plug or unplug shield headers or jumper wires into the 5V and GND rail while the USB cable is supplying power, as accidental shorts can trigger computer USB port overcurrent shutdown.\n- Place the Arduino on a non-conductive surface (wood, plastic, or antistatic mat)\u2014never on metal workbench surfaces or foil wrappers."
+      "markdownContent": "Observe these essential safety protocols when programming microcontrollers:\n\n1. **Non-Conductive Work Surfaces**: Always rest your Arduino Uno on a wood desk, cardboard, or antistatic mat. Resting an active board on a metal ruler, laptop aluminum shell, or anti-static bag can short bottom header pins!\n2. **USB Port Protection**: Never insert or remove jumper wires into the `5V` and `GND` headers while the USB cable is plugged in. Accidental wire bridges can trip computer USB overcurrent protection shutdown.\n3. **Safe USB Cable Unplugging**: Grip the molded connector body when disconnecting USB cables\u2014never pull on the flexible wire cord."
     },
     {
       "stepId": "l04_s13",
       "title": "Final Review & Competencies",
       "type": "story",
-      "markdownContent": "- The microcontroller execution model relies on `setup()` for configuration and `loop()` for ongoing autonomy.\n- Semicolons, braces, and matching baud rates are non-negotiable fundamentals of embedded software.\n- The Serial Monitor provides an essential telemetry window into your robot's thoughts.\n- Up next in Lesson 05: Moving from digital text to physical photons with the Blink circuit."
+      "markdownContent": "Fantastic progress! Let's review the fundamental engineering competencies you mastered in Lesson 04:\n\n- You understand the embedded execution model: `setup()` runs once at boot; `loop()` runs continuously forever.\n- You know why 16 MHz microcontrollers require `delay()` to bridge the speed gap to human perception.\n- You can identify and fix semicolons, camelCase functions, and unmatched curly braces.\n- You understand how `Serial.print()` concatenates and `Serial.println()` inserts clean newlines.\n- You know how to resolve garbled serial text by matching baud rates.\n\nComplete the 8-question assessment below to earn your XP and get ready for Lesson 05: Your first physical circuit!"
     },
     {
       "stepId": "l04_s14",
       "title": "Comprehensive Knowledge Check",
       "type": "quizCheckpoint",
-      "markdownContent": "Test your mastery of the electrical, programming, and hardware concepts in this module.",
+      "markdownContent": "Test your mastery of microcontroller execution cycles, C++ syntax rules, and UART Serial Monitor telemetry.",
       "interactiveConfig": {
         "question": "How many times does code inside `void setup()` execute after startup?",
         "options": [

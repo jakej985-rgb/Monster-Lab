@@ -13,88 +13,126 @@
   "steps": [
     {
       "stepId": "l05_s01",
-      "title": "Mission Introduction",
+      "title": "Awaken the Beast: Creating Physical Photons",
       "type": "story",
-      "markdownContent": "### Awaken the Beast: Creating Physical Photons\nSoftware becomes robotics when binary logic gates physically manipulate the physical universe. Turning an LED on and off is the \"Hello World\" of embedded engineering, validating that the microcontroller output transistors can source and sink electrical current under software command.\n\nIn this mission, you will command electrical charges through silicon gates to create visible light on your Arduino board!\n\n```\nPORTB5 Register \u2192 Internal P-MOSFET Closes \u2192 Pin 13 at 5V \u2192 Current Flows \u2192 SMD LED Glows \u2192 GND Return\n```"
+      "markdownContent": "Software becomes robotics when binary logic gates physically manipulate the physical universe. Turning an LED on and off is the foundational 'Hello World' of physical computing, proving that your software commands can source and sink electric current through semiconductor transistors.\n\nIn this mission, you will command electrical charges through silicon gates to create visible light on your Arduino board!\n\n```\nPORTB5 Register \u2794 Internal P-MOSFET Closes \u2794 Pin 13 at 5V \u2794 Current Flows \u2794 SMD LED Glows \u2794 GND Return\n```"
     },
     {
       "stepId": "l05_s02",
-      "title": "Prior Knowledge Check",
+      "title": "Prior Knowledge Check: Digital Signals & Ground",
       "type": "story",
-      "markdownContent": "1. **What is a digital signal?** An electrical signal that exists in one of two discrete states: HIGH or LOW.\n2. **What is GND?** Ground\u2014the 0V reference return path required for electric current to complete a circuit loop."
+      "interactiveWidgetType": "priorKnowledgeCheck",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What is an electrical digital signal in Arduino?",
+            "options": [
+              "A signal that exists in one of two discrete states: HIGH (+5V) or LOW (0V)",
+              "A continuous wave that changes smoothly through infinite values",
+              "A radio wave transmitted without physical wires"
+            ],
+            "correctIndex": 0,
+            "explanation": "Digital signals exist in two binary states: HIGH (+5V) or LOW (0V Ground)."
+          },
+          {
+            "question": "What is GND (Ground) used for in an electrical circuit?",
+            "options": [
+              "A 0V common reference and essential return path for electric current",
+              "A high-voltage power booster that accelerates motors",
+              "A data storage buffer inside microcontroller RAM"
+            ],
+            "correctIndex": 0,
+            "explanation": "Ground (GND) is the 0V reference potential and essential return path required for electric current to complete a loop."
+          },
+          {
+            "question": "What happens if an external circuit lacks a return path to GND?",
+            "options": [
+              "No electric current can flow, and the circuit remains inactive",
+              "The circuit will draw double current",
+              "The microcontroller will crash immediately"
+            ],
+            "correctIndex": 0,
+            "explanation": "Electricity only flows through a closed conductive loop that returns to Ground."
+          }
+        ]
+      },
+      "markdownContent": "Before commanding hardware outputs, let's verify your baseline understanding of voltage potentials and Ground reference paths.\n\nComplete the 3 questions below to prepare for the lab!"
     },
     {
       "stepId": "l05_s03",
-      "title": "Core Concept & Vocabulary",
+      "title": "5mm LED Anatomy & Polarity Inspection",
       "type": "story",
-      "markdownContent": "- **`digitalWrite()`:** Function that commands an output pin to 5V (`HIGH`) or 0V (`LOW`).\n- **`pinMode()`:** Function that configures internal silicon transistors for high-impedance listening (`INPUT`) or low-impedance driving (`OUTPUT`).\n- **`OUTPUT`:** Push-pull driver mode capable of sourcing or sinking electrical current to external components.\n- **`delay()`:** Pauses microcontroller execution for a specified number of milliseconds (1/1000th of a second).\n- **Built-in LED (Pin 13):** The surface-mount amber LED hardwired directly to Digital Pin 13 on the Uno PCB."
+      "interactiveWidgetType": "ledPolarityInspector",
+      "markdownContent": "LED stands for **Light Emitting Diode**. Because it is a diode, electricity can only flow through it in one forward direction!\n\n### Anatomical Clues:\n- **Cathode (\u2212)**: Connects to Ground (GND). Features a larger triangular **anvil** flag inside the clear epoxy bulb, a **shorter lead**, and a **flat edge** along the plastic rim collar.\n- **Anode (+)**: Connects to positive voltage (+5V). Features a smaller **post** contact inside the epoxy and a **longer lead**.\n\nUse the interactive cutaway inspector below to inspect internal electrodes and observe how reversing polarity blocks photon emission!"
     },
     {
       "stepId": "l05_s04",
-      "title": "How It Works: Signal Flow & Hardware Registers",
+      "title": "How It Works: Breadboard Spring Clips & Current Paths",
       "type": "visualExplanation",
-      "markdownContent": "Inside the ATmega328P microcontroller chip:\n1. Executing `digitalWrite(13, HIGH)` sets bit 5 of the `PORTB` register.\n2. An internal P-channel MOSFET turns on, connecting Pin 13 to the internal 5.0V power rail.\n3. Current (~5\u201310 mA) flows out through Pin 13, passes through an on-board 1k\u03a9 SMD series resistor, enters the amber LED anode, excites photons across the semiconductor bandgap, exits the cathode, and returns to `GND`.\n4. Executing `digitalWrite(13, LOW)` turns on an internal N-channel MOSFET, tying Pin 13 directly to `GND` (0V). With no voltage difference across the LED, current stops flowing and the light extinguishes."
+      "interactiveWidgetType": "breadboardInternalBusInspector",
+      "markdownContent": "Solderless breadboards allow engineers to build circuits without permanent solder. Beneath the plastic faceplate lie rows of stamped spring metal clips.\n\n### Breadboard Internal Routing:\n1. **Terminal Strips**: Horizontal groups of 5 tie-points (a-b-c-d-e and f-g-h-i-j) are electrically joined by an internal spring clip.\n2. **Center Ravine**: A central trench divides the left and right strips so dual-inline IC pins do not short together.\n3. **Power Bus Rails**: Vertical continuous columns (+ and \u2212) run the full length of the board to distribute 5V and GND everywhere.\n\nUse the interactive continuity probe below to test breadboard connections and discover where current flows!"
     },
     {
       "stepId": "l05_s05",
-      "title": "Hardware Mission: Component & Pin Inspection",
+      "title": "Hardware Mission: The On-Board Pin 13 'L' Silkscreen Tour",
       "type": "physicalTask",
-      "markdownContent": "Inspect your Arduino Uno R3 (`comp_uno`):\n1. **Locate the 'L' LED:** Look between the digital pin headers (Pins 8\u201313) and the main microcontroller chip. Find the tiny rectangular amber LED labeled with a silkscreened `L`.\n2. **Trace the Silkscreen:** Follow the fine copper PCB trace running between Digital Pin 13 and the `L` indicator.\n3. **Power Verification:** Notice the green `ON` LED nearby. The green LED shows the 5V power bus is energized, while the amber `L` LED is completely under software control!"
+      "markdownContent": "Examine your Arduino Uno R3 board (`comp_uno`):\n\n### Hardware Inspection:\n1. **Locate the 'L' LED**: Look between the digital pin headers (Pins 8\u201313) and the main microcontroller chip. Find the tiny amber surface-mount diode labeled with a silkscreened `L`.\n2. **Trace the Silkscreen**: Follow the fine copper trace on the PCB linking Digital Pin 13 to the `L` indicator.\n3. **Power Indicator**: Notice the green `ON` LED nearby. The green LED proves the 5V power bus is energized, while the amber `L` LED is directly driven by your sketch firmware!\n4. **On-Board Protection**: The Uno PCB already includes a built-in SMD series resistor for Pin 13, making it 100% safe to flash without external breadboard wiring."
     },
     {
       "stepId": "l05_s06",
-      "title": "Coding Basics: Syntax & Control Structures",
+      "title": "Coding Basics: pinMode(OUTPUT) & HIGH/LOW Constants",
       "type": "story",
-      "markdownContent": "- **Constants in Arduino Core:** `HIGH` is defined as integer `1`; `LOW` is defined as integer `0`.\n- **`OUTPUT` Mode:** Must be declared in `setup()` before `digitalWrite()` can deliver active drive current. Without `pinMode(OUTPUT)`, the pin remains in high-impedance `INPUT` mode."
+      "markdownContent": "Microcontroller pins are versatile: by default, they boot into high-impedance `INPUT` mode to prevent accidental short circuits.\n\n### Core Commands:\n- `pinMode(pin, OUTPUT);`: Commands internal push-pull MOSFET transistors to actively drive current.\n- `digitalWrite(pin, HIGH);`: Connects the pin to the positive +5.0V supply rail (sources current).\n- `digitalWrite(pin, LOW);`: Connects the pin to the 0V Ground reference (sinks current).\n- `delay(ms);`: Freezes microcontroller execution for the specified milliseconds so human eyes can perceive state changes."
     },
     {
       "stepId": "l05_s07",
-      "title": "Code Walkthrough: Annotated Sketch",
+      "title": "Code Walkthrough: The Canonical Blink Sketch",
       "type": "codeExperiment",
-      "markdownContent": "```cpp\nconst int ledPin = 13; // Built-in LED pin\n\nvoid setup() {\n  pinMode(ledPin, OUTPUT); // Configure Pin 13 as a low-impedance output\n}\n\nvoid loop() {\n  digitalWrite(ledPin, HIGH); // Drive Pin 13 to 5V (turn LED ON)\n  delay(1000);                // Maintain state for 1000 ms (1 second)\n  digitalWrite(ledPin, LOW);  // Drive Pin 13 to 0V (turn LED OFF)\n  delay(1000);                // Maintain state for 1000 ms (1 second)\n}\n```\n\n### Key Elements:\n- `const int ledPin = 13;`: Descriptive constant prevents accidental pin number modification.\n- `pinMode(ledPin, OUTPUT);`: Switches internal transistors from high-impedance mode to active push-pull driver.\n- `digitalWrite(ledPin, HIGH)`: Sinks current through LED to ground.\n- `delay(1000)`: Freezes execution so the human eye has time to observe the lit state."
+      "markdownContent": "Here is the foundational Blink sketch executed by millions of roboticists:\n\n```cpp\nconst int ledPin = 13; // Built-in LED pin\n\nvoid setup() {\n  pinMode(ledPin, OUTPUT); // Configure Pin 13 as a low-impedance driver\n}\n\nvoid loop() {\n  digitalWrite(ledPin, HIGH); // Drive Pin 13 to 5V (turn LED ON)\n  delay(1000);                // Maintain state for 1000 ms (1 second)\n  digitalWrite(ledPin, LOW);  // Drive Pin 13 to 0V (turn LED OFF)\n  delay(1000);                // Maintain state for 1000 ms (1 second)\n}\n```\n\n### Key Rules:\n- `const int ledPin = 13;` prevents accidental reassignment.\n- If you forget `delay()` after `LOW`, the LED turns back ON in nanoseconds, making the OFF state invisible to humans!"
     },
     {
       "stepId": "l05_s08",
-      "title": "Code Prediction: Hypothesis & Deductions",
+      "title": "Code Prediction: Silicon Limits & Series Resistors",
       "type": "codeExperiment",
-      "markdownContent": "- **Prediction 1:** What happens if `delay(1000)` is changed to `delay(10)` for both ON and OFF states?\n  *Answer:* The LED flashes at 50 Hz. Due to human *persistence of vision*, the eye cannot resolve individual flashes; it appears steadily lit at approximately half brightness.\n- **Prediction 2:** What happens if `pinMode(13, OUTPUT)` is omitted from `setup()`?\n  *Answer:* Pin 13 defaults to high-impedance `INPUT`. `digitalWrite(HIGH)` merely enables the weak internal 30k\u03a9 pull-up resistor, making the LED illuminate so faintly it is barely visible in a dark room."
+      "interactiveWidgetType": "resistorOhmLawSimulator",
+      "markdownContent": "What happens when wiring external LEDs to Arduino pins? Microcontroller silicon has physical electrical limits!\n\n### Ohm's Law in Action:\n$$I = \\frac{V_{supply} - V_{forward}}{R} = \\frac{5.0\\text{V} - 2.0\\text{V}}{R}$$\n\nAn ATmega328P output pin has an absolute maximum continuous rating of **20 mA** (40 mA absolute destruction limit). Wiring an external LED without a current-limiting resistor (< 100\u03a9) causes catastrophic overcurrent, destroying the pin driver FET!\n\nExplore resistor values in the Ohm's Law simulator below to see safe operating currents vs blowout hazards!"
     },
     {
       "stepId": "l05_s09",
-      "title": "Guided Experiment: Parameter Modulation",
+      "title": "Guided Experiment: Blink Cadence & Persistence of Vision",
       "type": "codeExperiment",
-      "markdownContent": "1. Create an asymmetric \"strobe heartbeat\" cadence:\n   ```cpp\n   digitalWrite(ledPin, HIGH);\n   delay(100); // Quick flash\n   digitalWrite(ledPin, LOW);\n   delay(900); // Long pause\n   ```\n2. Predict the pattern, upload, and observe the rapid pulse effect used in drone navigation beacons.",
-      "interactiveWidgetType": "blinkSimulator"
+      "interactiveWidgetType": "blinkTimingLab",
+      "markdownContent": "What happens when the blink frequency becomes extremely fast?\n\nHuman eyes have an optical reset latency of approximately 30 milliseconds (**Persistence of Vision**). When an LED toggles faster than 30 Hz (delays under 30ms), retinal cone cells cannot reset before the next photon packet arrives. The individual flashes fuse into a solid, continuous glow at reduced brightness!\n\nAdjust `delay(HIGH)` and `delay(LOW)` in the Timing Lab below to explore asymmetric cadences and trigger POV optical fusion!"
     },
     {
       "stepId": "l05_s10",
-      "title": "Real-World Robotics: Industrial & Aerospace Systems",
+      "title": "Real-World Robotics: Satellite Beacons & Heartbeat Signals",
       "type": "visualExplanation",
-      "markdownContent": "Status indicator lights on satellites, medical ventilators, automated factory cells, and quadcopter flight controllers use pulsed blink patterns to convey hardware health, error codes, and battery telemetry even if primary video screens crash."
+      "markdownContent": "Flashing LEDs are vital engineering diagnostic tools across aerospace and medical systems:\n\n- **CubeSats & Drones**: Navigation strobes flash asymmetric patterns (100ms ON / 900ms OFF) to minimize battery drain while maintaining high-visibility beacon tracking.\n- **Medical Ventilators & Pacemakers**: Microcontroller firmware toggles a dedicated hardware 'heartbeat' LED on every main loop iteration. If the CPU hangs in a deadlock, the heartbeat LED freezes, alerting attending doctors.\n- **Autonomous Factory AGVs**: Colored flashing strobes convey vehicle status: amber for transit, blue for barcode scanning, red for safety obstruction stop."
     },
     {
       "stepId": "l05_s11",
-      "title": "Troubleshooting Challenge: Diagnostic Scenarios",
+      "title": "Troubleshooting Challenge: Inverted Delays & Floating Gates",
       "type": "story",
-      "markdownContent": "### Symptom 1: LED Stays Solid ON and Never Blinks\n- **Diagnosis:** Missing second `delay()`, or both `digitalWrite` calls are set to `HIGH`.\n- **Remedy:** Verify that `digitalWrite(ledPin, LOW)` is followed by a `delay()`.\n\n### Symptom 2: Upload Fails (`programmer is not responding`)\n- **Diagnosis:** The USB cable lost connection or the wrong COM port is selected in the IDE.\n- **Remedy:** Check USB connection, confirm `Tools > Port`, and retry upload."
+      "markdownContent": "Master common beginner hardware bugs:\n\n### Symptom 1: LED Stays Solid ON and Never Blinks\n- **Cause**: Missing second `delay()`, or both `digitalWrite` calls are set to `HIGH`.\n- **Fix**: Ensure `digitalWrite(ledPin, LOW)` is followed by a `delay()` of at least 100ms.\n\n### Symptom 2: LED Glows Extremely Dimly\n- **Cause**: Forgot `pinMode(ledPin, OUTPUT);` in `setup()`! In `INPUT` mode, `digitalWrite(HIGH)` merely enables the weak internal 30k\u03a9 pull-up resistor (~0.1 mA current).\n- **Fix**: Add `pinMode(ledPin, OUTPUT);` inside `setup()`."
     },
     {
       "stepId": "l05_s12",
-      "title": "Workshop Safety & Hardware Care",
+      "title": "Workshop Safety & Limits: Pin Current Limits (20mA Continuous)",
       "type": "story",
-      "markdownContent": "- **Pin Current Limits:** An ATmega328P output pin has an absolute maximum current rating of 40 mA (recommended 20 mA continuous).\n- **Current Limiting Resistors:** Never wire an external LED directly between an Uno pin and GND without a 220\u03a9\u20131k\u03a9 current-limiting resistor, or the pin's internal driver FET will burn out.\n- The built-in Pin 13 LED already has a built-in SMD resistor on the PCB, making it safe for immediate experimentation."
+      "markdownContent": "Always treat microcontroller silicon with care:\n\n1. **Never Exceed 20 mA**: The ATmega328P can supply up to 20 mA per pin. Total current across all pins combined must not exceed 200 mA.\n2. **Always Use 220\u03a9\u20131k\u03a9 Series Resistors**: When wiring external LEDs on a breadboard, always place a 220\u03a9 or 330\u03a9 resistor in series with the anode or cathode.\n3. **Power Down Before Rewiring**: Disconnect the USB cable before plugging wires into the breadboard to prevent accidental short circuits across 5V and GND."
     },
     {
       "stepId": "l05_s13",
       "title": "Final Review & Competencies",
       "type": "story",
-      "markdownContent": "- Digital outputs switch between 5V (`HIGH`) and 0V (`LOW`).\n- `pinMode(OUTPUT)` enables the push-pull transistor drivers.\n- `delay()` regulates timing; rapid toggling (>50Hz) triggers persistence of vision.\n- Respect pin current limits (20mA) to preserve microcontroller silicon.\n- Up next in Lesson 06: Reading continuous analog voltages with a potentiometer and 10-bit ADC."
+      "markdownContent": "Outstanding work! In Lesson 05, you created your first physical light output:\n\n- You defined digital output states: 5V (`HIGH`) and 0V (`LOW`).\n- You learned why `pinMode(OUTPUT)` is mandatory to engage push-pull transistor drivers.\n- You inspected 5mm LED polarity (anvil Cathode \u2212 vs post Anode +) and breadboard bus clips.\n- You calculated current via Ohm's Law and respected the 20 mA continuous pin limit.\n- You explored blinking cadences and retinal persistence of vision (POV) fusion.\n\nTake the 8-question assessment below to claim your XP and advance to Lesson 06: Reading analog signals!"
     },
     {
       "stepId": "l05_s14",
       "title": "Comprehensive Knowledge Check",
       "type": "quizCheckpoint",
-      "markdownContent": "Test your mastery of the electrical, programming, and hardware concepts in this module.",
+      "markdownContent": "Test your mastery of digital output voltage states, LED polarity, Ohm's law, and persistence of vision.",
       "interactiveConfig": {
         "question": "What voltage level does `digitalWrite(pin, HIGH)` produce on an Arduino Uno?",
         "options": [

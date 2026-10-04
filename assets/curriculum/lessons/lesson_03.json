@@ -14,87 +14,127 @@
   "steps": [
     {
       "stepId": "l03_s01",
-      "title": "Mission Introduction",
+      "title": "Supercharge Your Monster's Brain",
       "type": "story",
-      "markdownContent": "### Supercharge Your Monster's Brain\nRobots rely on specialized integrated circuits: real-time clocks, OLEDs, and motor drivers. Controlling a 16x2 LCD display via raw 8-bit parallel pulses requires toggling 16 pins and managing microsecond timing. If engineers had to write low-level bit-banging code for every display, building a robot would take months!\n\nLibraries package proven, robust C++ code written by senior engineers so learners can command complex hardware with high-level functions like `lcd.print(\"Monster Online!\");`.\n\n```\nCode Sketch \u2192 #include <LiquidCrystal_I2C.h> \u2192 Library Object (0x27) \u2192 I2C Bus (A4/A5) \u2192 PCF8574 Backpack \u2192 LCD\n```"
+      "markdownContent": "Robots rely on specialized external modules: character displays, motor drivers, gyro sensors, and real-time clocks. Controlling a 16x2 LCD display via raw 8-bit parallel pulses requires toggling 16 separate pins and managing microsecond pulse timings.\n\nIf robotics engineers had to write low-level bit-banging code for every single display, building a project would take months!\n\n**Libraries** package proven, robust C++ driver code written by experienced engineers so you can command complex hardware with high-level functions like `lcd.print(\"Monster Online!\");`.\n\n```\nYour Sketch \u2794 #include <LiquidCrystal_I2C.h> \u2794 Library Driver \u2794 I2C Bus (A4/A5) \u2794 16x2 LCD Display\n```\n\nIn this lesson, you will install external libraries, deconstruct preprocessor syntax, and calibrate an I2C character LCD display!"
     },
     {
       "stepId": "l03_s02",
-      "title": "Prior Knowledge Check",
+      "title": "Prior Knowledge Check: Microcontroller Libraries",
       "type": "story",
-      "markdownContent": "Before diving into libraries, verify foundational concepts:\n1. **What is source code?** Human-readable C++ instructions written in the IDE editor.\n2. **What happens during compilation?** Source code translates into machine instructions (hex binary) for the ATmega328P.\n3. **Why do microcontrollers need external modules?** To interact with the physical world through displays, sensors, and actuators."
+      "interactiveWidgetType": "priorKnowledgeCheck",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What is the primary role of a software library in Arduino?",
+            "options": [
+              "Providing pre-written functions and drivers that manage complex hardware protocols",
+              "Increasing the physical clock frequency of the ATmega328P processor",
+              "Converting alternating current (AC) into direct current (DC)"
+            ],
+            "correctIndex": 0,
+            "explanation": "Libraries encapsulate hundreds of lines of timing and register code into clean function calls."
+          },
+          {
+            "question": "What is a C++ header file (.h)?",
+            "options": [
+              "A file containing class definitions, method prototypes, and constants exposed by a library",
+              "A physical header pin soldered onto the Arduino Uno development board",
+              "A power cable connector for lithium-polymer batteries"
+            ],
+            "correctIndex": 0,
+            "explanation": "Header files define the interface and available methods exposed by an external library."
+          },
+          {
+            "question": "How many communication signal wires does the I2C protocol require?",
+            "options": [
+              "Only 2 shared wires (SDA for data, SCL for clock)",
+              "16 separate parallel wires",
+              "8 analog wires"
+            ],
+            "correctIndex": 0,
+            "explanation": "I2C operates over just two shared bus wires (SDA and SCL), dramatically simplifying wiring."
+          }
+        ]
+      },
+      "markdownContent": "Before working with modular drivers and display backpacks, let's verify your understanding of code abstraction and bus communication.\n\nAnswer the 3 self-check questions below to test your baseline knowledge!"
     },
     {
       "stepId": "l03_s03",
-      "title": "Core Concept & Vocabulary",
+      "title": "The Power of Libraries: Raw Registers vs Clean Abstraction",
       "type": "story",
-      "markdownContent": "- **Library:** A reusable collection of code providing functions and classes for specific hardware devices or algorithms.\n- **`#include`:** A preprocessor directive that injects header declarations into your sketch before compilation begins.\n- **Header File (`.h`):** Defines the class interface, constants, and available methods exposed by the library.\n- **Constructor / Instantiation:** Creating an active object variable representing physical hardware in memory.\n- **API (Application Programming Interface):** The set of commands and methods exposed by the library to control the device."
+      "interactiveWidgetType": "libraryConceptDiagram",
+      "markdownContent": "Why do professional embedded engineers rely on libraries? Look at the difference:\n\n### Without Library (Bit-Banging Raw Hardware)\nDriving an I2C LCD directly requires over 500 lines of complex register manipulation (`TWCR`, `TWDR`), manual I2C start/stop condition pulses, splitting each character into two 4-bit nibbles, and microsecond delay loops.\n\n### With Library (Modular Abstraction)\nWith the `LiquidCrystal_I2C` library, all 500 lines of timing pulses are packaged away. You only need two clean function calls:\n```cpp\nlcd.init();\nlcd.print(\"Monster Online!\");\n```\n\nToggle between both architectures in the diagram below to see how libraries supercharge development!"
     },
     {
       "stepId": "l03_s04",
-      "title": "How It Works: Signal Flow & Hardware Registers",
+      "title": "How It Works: Finding & Installing Libraries",
       "type": "visualExplanation",
-      "markdownContent": "When you invoke `#include <LiquidCrystal_I2C.h>`, the C++ compiler links pre-compiled routines that handle the complex I2C protocol.\n\n1. Your code calls `lcd.print(\"Hello\")`.\n2. The library converts characters into ASCII byte streams.\n3. The library packages bytes into I2C packets directed at hexadecimal address `0x27`.\n4. The hardware I2C bus (`SDA` / `SCL`) shifts the bits across to the PCF8574 backpack.\n5. The backpack expands the serial bytes back into parallel pulses that toggle the HD44780 LCD controller."
+      "interactiveWidgetType": "libraryManagerSimulator",
+      "markdownContent": "The Arduino IDE includes a built-in **Library Manager** connected to an open-source global registry of thousands of community-verified drivers.\n\n### How to Install a Library in Arduino IDE:\n1. Open **Tools > Manage Libraries...** (or click the Library Manager icon on the left sidebar).\n2. Type the name of the library (for example, `LiquidCrystal_I2C`) into the search box.\n3. Locate the verified library authored by Frank de Brabander.\n4. Click **Install**. The IDE downloads the header files (`.h`), C++ implementations (`.cpp`), and example sketches directly into your `~/Arduino/libraries/` folder.\n\nTest the interactive Library Manager below to search, download, and install `LiquidCrystal_I2C`!"
     },
     {
       "stepId": "l03_s05",
-      "title": "Hardware Mission: Component & Pin Inspection",
+      "title": "Hardware Mission: The 16x2 LCD Display & Contrast Potentiometer",
       "type": "physicalTask",
-      "markdownContent": "Examine `comp_07` (16x2 LCD Display):\n1. **Backpack Inspection:** Turn the display over. Notice the black daughterboard soldered to the back\u2014this is the I2C backpack.\n2. **Pin Identification:** Count the 4 interface pins:\n   - `GND`: Ground return path.\n   - `VCC`: 5V power supply.\n   - `SDA`: Serial Data line (connects to Uno `A4`).\n   - `SCL`: Serial Clock line (connects to Uno `A5`).\n3. **Compare Pins:** Notice that without the backpack, you would need to wire 16 individual pins to your Arduino!\n4. **Contrast Potentiometer:** Locate the small blue square trimmer potentiometer on the backpack. This adjusts display liquid-crystal contrast."
+      "interactiveWidgetType": "lcdContrastSimulator",
+      "markdownContent": "Examine your **16x2 Character LCD Display with I2C Backpack** (`comp_07`):\n\n### Key Hardware Landmarks:\n1. **The I2C Backpack**: Turn the module over. Notice the black printed circuit board soldered to the back. This contains the PCF8574 I/O expander chip.\n2. **The 4-Pin Header**: Without this backpack, you would need 16 jumper wires! With I2C, you only need 4:\n   - `GND`: Ground 0V return path\n   - `VCC`: +5V power supply\n   - `SDA`: Serial Data (connects to Uno Pin A4)\n   - `SCL`: Serial Clock (connects to Uno Pin A5)\n3. **The Blue Contrast Trimmer**: Locate the small blue square potentiometer with the brass screw on the back. It controls liquid crystal bias voltage (V0).\n\nThe #1 troubleshooting issue is misadjusted contrast! Tune the virtual trimmer potentiometer screw below to find the sweet spot between blank screen and solid white blocks."
     },
     {
       "stepId": "l03_s06",
-      "title": "Coding Basics: Syntax & Control Structures",
+      "title": "Coding Basics: Deconstructing the #include Directive",
       "type": "story",
-      "markdownContent": "In C++, libraries frequently use Object-Oriented Programming (OOP):\n- **Class:** The blueprint (e.g., `LiquidCrystal_I2C`).\n- **Object Instance:** The physical device you control (e.g., `lcd`).\n- **Constructor Call:** `LiquidCrystal_I2C lcd(0x27, 16, 2);` creates the object, specifying its 7-bit I2C address (`0x27`), column count (`16`), and row count (`2`)."
+      "interactiveWidgetType": "includeSyntaxDeconstruction",
+      "markdownContent": "To use an installed library, your sketch must instruct the C++ compiler to load its interface definitions:\n\n```cpp\n#include <LiquidCrystal_I2C.h>\n```\n\n### Syntax Breakdown:\n- `#`: Preprocessor flag indicating a compiler directive evaluated before compilation begins.\n- `include`: Command instructing the compiler to literally insert the contents of the header file.\n- `< >`: Angle brackets tell the compiler to search the system/installed libraries directory.\n- `.h`: The header file extension containing class definitions and function signatures.\n\nTap each syntax token below to inspect its rules and avoid common syntax traps!"
     },
     {
       "stepId": "l03_s07",
-      "title": "Code Walkthrough: Annotated Sketch",
+      "title": "Code Walkthrough: Annotated LiquidCrystal_I2C Sketch",
       "type": "codeExperiment",
-      "markdownContent": "```cpp\n#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n\n// Set I2C address to 0x27 for a 16 chars and 2 line display\nLiquidCrystal_I2C lcd(0x27, 16, 2);\n\nvoid setup() {\n  lcd.init();          // Initialize LCD hardware and join I2C bus\n  lcd.backlight();     // Turn on the LED backlight\n  lcd.setCursor(0, 0); // Position cursor at Column 0, Row 0\n  lcd.print(\"Monster Lab!\");\n  lcd.setCursor(0, 1); // Position cursor at Column 0, Row 1\n  lcd.print(\"System Active\");\n}\n\nvoid loop() {\n  // Static display - loop remains idle\n}\n```\n\n### Line-by-Line Breakdown:\n- `line 1-2`: Imports the Wire (I2C) and LiquidCrystal_I2C libraries.\n- `line 5`: Instantiates `lcd` at address `0x27` with 16 columns and 2 rows.\n- `line 8`: `lcd.init()` configures the LCD controller registers.\n- `line 9`: `lcd.backlight()` powers the backlight LED.\n- `line 10-13`: Sets cursor positions and prints greeting text."
+      "markdownContent": "Examine a complete sketch driving the 16x2 character display:\n\n```cpp\n#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n\n// Create the LCD object: Address 0x27, 16 columns, 2 rows\nLiquidCrystal_I2C lcd(0x27, 16, 2);\n\nvoid setup() {\n  lcd.init();          // Initialize LCD hardware over I2C\n  lcd.backlight();     // Turn on the blue LED backlight\n  lcd.setCursor(0, 0); // Column 0, Row 0\n  lcd.print(\"Monster Lab!\");\n  lcd.setCursor(0, 1); // Column 0, Row 1\n  lcd.print(\"System Active\");\n}\n\nvoid loop() {\n  // Static display \u2014 loop remains idle\n}\n```\n\n### Key Function Calls:\n- `LiquidCrystal_I2C lcd(...)`: The **constructor**. Instantiates an object named `lcd` at hex address `0x27`.\n- `lcd.init()`: Configures internal HD44780 controller registers over the I2C bus.\n- `lcd.backlight()`: Powers on the display illumination LED.\n- `lcd.setCursor(col, row)`: Places the writing cursor at the specified zero-indexed grid coordinate."
     },
     {
       "stepId": "l03_s08",
-      "title": "Code Prediction: Hypothesis & Deductions",
+      "title": "Code Prediction: Missing Backlight & Out-of-Bounds Cursors",
       "type": "codeExperiment",
-      "markdownContent": "- **Prediction 1:** What happens if `lcd.backlight()` is omitted or commented out?\n  *Answer:* Text is rendered on the liquid crystals, but without the backlight LED, it is nearly invisible unless illuminated by an external flashlight.\n- **Prediction 2:** What happens if `lcd.setCursor(16, 0)` is used?\n  *Answer:* The cursor is placed beyond the 16 visible columns (columns 0\u201315), causing characters to wrap off-screen or into hidden DDRAM registers."
+      "markdownContent": "Practice scientific engineering deductions before flashing code:\n\n### Prediction 1: What happens if lcd.backlight() is omitted?\n*Answer:* The characters are still generated by the liquid crystal molecules, but without the LED backlight, the dark blue screen is nearly impossible to read without shining a flashlight directly onto it!\n\n### Prediction 2: What happens if you call lcd.setCursor(16, 0)?\n*Answer:* Columns are zero-indexed from 0 to 15. Column 16 is off the visible screen! The characters will wrap into hidden DDRAM display memory registers and remain invisible."
     },
     {
       "stepId": "l03_s09",
-      "title": "Guided Experiment: Parameter Modulation",
+      "title": "Guided Experiment: Dynamic Uptime Counter",
       "type": "codeExperiment",
-      "markdownContent": "Make a controlled change to the sketch:\n1. Replace `lcd.print(\"System Active\");` with dynamic elapsed seconds:\n   ```cpp\n   void loop() {\n     lcd.setCursor(0, 1);\n     lcd.print(\"Uptime: \");\n     lcd.print(millis() / 1000);\n     lcd.print(\"s \");\n     delay(500);\n   }\n   ```\n2. Predict what will happen on Row 1.\n3. Upload and observe the dynamic counter updating every half second."
+      "markdownContent": "Let's make the display dynamic! Instead of static text, we can update Row 1 continuously with live system uptime:\n\n```cpp\nvoid loop() {\n  lcd.setCursor(0, 1);\n  lcd.print(\"Uptime: \");\n  lcd.print(millis() / 1000);\n  lcd.print(\"s   \"); // Extra spaces erase trailing old digits\n  delay(500);\n}\n```\n\n### Why the trailing spaces matter:\nWhen a 2-digit number (e.g. `99`) rolls over to a 3-digit number (`100`), or drops back down, older characters remain in LCD RAM unless explicitly overwritten with space characters `\"   \"`!"
     },
     {
       "stepId": "l03_s10",
-      "title": "Real-World Robotics: Industrial & Aerospace Systems",
+      "title": "Real-World Robotics: Hardware Abstraction Layers",
       "type": "visualExplanation",
-      "markdownContent": "Modern aerospace systems, 3D printers, and industrial robotics do not write low-level register drivers for every display or motor. Aerospace engineering relies on Hardware Abstraction Layers (HAL) and certified driver libraries to guarantee safety, modularity, and rapid maintenance."
+      "markdownContent": "The modular library architecture you learned is used in every advanced engineering discipline:\n\n- **Autonomous Electric Vehicles**: Autonomous drive computers don't send raw PWM pulses to motor windings directly. They call driver libraries: `motorController.setTorqueNm(240);`.\n- **Medical Ventilators**: Airflow sensors and solenoid valves are controlled through certified Hardware Abstraction Layers (HAL) to prevent timing glitches.\n- **3D Printers**: Firmware like Marlin uses stepper motor and thermal thermistor libraries to coordinate micro-stepping smoothly."
     },
     {
       "stepId": "l03_s11",
-      "title": "Troubleshooting Challenge: Diagnostic Scenarios",
+      "title": "Troubleshooting Challenge: Missing Header & Blank Displays",
       "type": "story",
-      "markdownContent": "### Symptom 1: Compiler Error\n- **Error:** `fatal error: LiquidCrystal_I2C.h: No such file or directory`.\n- **Diagnosis:** The library was never installed in the IDE, or the folder name contains illegal characters.\n- **Remedy:** Open **Tools > Manage Libraries...**, search for `LiquidCrystal_I2C`, and click Install.\n\n### Symptom 2: Blank Screen / Solid White Boxes\n- **Symptom:** Display lights up bright blue with 16 solid white rectangular boxes on Row 1, but no text appears.\n- **Diagnosis:** The contrast potentiometer is set too high, or the I2C address is `0x3F` instead of `0x27`.\n- **Remedy:** Turn the blue contrast potentiometer on the back of the backpack with a small screwdriver until text emerges from the boxes."
+      "interactiveWidgetType": "missingLibraryTroubleshooting",
+      "markdownContent": "You verify a sketch and the compiler halts with a bright red fatal error:\n\n```\nfatal error: LiquidCrystal_I2C.h: No such file or directory\n#include <LiquidCrystal_I2C.h>\n         ^~~~~~~~~~~~~~~~~~~~~\ncompilation terminated.\n```\n\nThis means the preprocessor searched your system libraries folder and could not find the file `LiquidCrystal_I2C.h`.\n\nResolve this compilation failure in the interactive triage station below by installing the missing library!"
     },
     {
       "stepId": "l03_s12",
-      "title": "Workshop Safety & Hardware Care",
+      "title": "Workshop Safety & Hardware Care: LCD Voltage Ratings",
       "type": "story",
-      "markdownContent": "- Verify whether the LCD backpack requires 5V or 3.3V logic. Connecting 5V to a 3.3V-only display can permanently fry the display controller.\n- Never adjust backpack potentiometers using metal screwdrivers while powered if exposed traces or power rails are nearby.\n- Disconnect USB power before rewiring I2C jumper wires."
+      "markdownContent": "Protect your LCD modules and microcontroller with these workshop rules:\n\n1. **Check Operating Voltage**: Most character LCD backpacks run on 5V. Supplying 5V power to a 3.3V-only display can permanently fry its internal driver chip.\n2. **Disconnect Power Before Rewiring**: Never move or rewire `VCC`, `GND`, `SDA`, or `SCL` jumper wires while the USB cable is plugged in.\n3. **Use Plastic or Insulated Screwdrivers**: When adjusting the blue contrast trimmer on the back of the backpack, use a small insulated trimmer tool to avoid accidentally shorting adjacent exposed solder pads."
     },
     {
       "stepId": "l03_s13",
       "title": "Final Review & Competencies",
       "type": "story",
-      "markdownContent": "- Libraries encapsulate complex protocols into clean, reusable functions.\n- The preprocessor directive `#include` makes library classes and functions available.\n- Hardware devices like the I2C LCD backpack use 7-bit hex addresses (e.g. `0x27`).\n- Always check the IDE Library Manager when a missing header error occurs.\n- Up next in Lesson 04: The core execution loop of all microcontroller firmware: `setup()` and `loop()`."
+      "markdownContent": "Outstanding work! Let's review the key competencies you mastered in Lesson 03:\n\n- You understand how libraries encapsulate low-level register bit-banging into clean C++ functions.\n- You know how to search and install community libraries using the Arduino IDE Library Manager.\n- You can deconstruct the `#include <LibraryName.h>` preprocessor syntax.\n- You know how to calibrate LCD liquid crystal contrast using the blue backpack trimmer potentiometer.\n- You can diagnose and fix `'No such file or directory'` compiler errors.\n\nComplete the 8-question assessment below to earn your XP and proceed to Lesson 04!"
     },
     {
       "stepId": "l03_s14",
       "title": "Comprehensive Knowledge Check",
       "type": "quizCheckpoint",
-      "markdownContent": "Test your mastery of the electrical, programming, and hardware concepts in this module.",
+      "markdownContent": "Test your mastery of Arduino libraries, header syntax, I2C addressing, and LCD contrast tuning.",
       "interactiveConfig": {
         "question": "What is the primary purpose of an Arduino library?",
         "options": [
