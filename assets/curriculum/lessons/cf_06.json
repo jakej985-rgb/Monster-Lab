@@ -1,0 +1,117 @@
+{
+  "id": "cf_06",
+  "title": "Arduino Code Basics",
+  "summary": "Understand the complete structure of an Arduino sketch.",
+  "tier": "rookie",
+  "estimatedMinutes": 10,
+  "courseId": "coding_foundations",
+  "sortOrder": 6,
+  "isOptional": true,
+  "prerequisites": [
+    "cf_05"
+  ],
+  "componentIds": [],
+  "steps": [
+    {
+      "stepId": "cf_06_s01",
+      "title": "Arduino Sketch Structure",
+      "type": "story",
+      "markdownContent": "An Arduino sketch has a specific structure. It starts with `#include` for libraries, then global variables."
+    },
+    {
+      "stepId": "cf_06_s02",
+      "title": "Setup",
+      "type": "story",
+      "markdownContent": "The `setup()` function runs exactly once when power is applied. It's used for configurations like `pinMode()`."
+    },
+    {
+      "stepId": "cf_06_s03",
+      "title": "Loop",
+      "type": "story",
+      "markdownContent": "The `loop()` function runs repeatedly, forever. It contains the main behavior of your program, using functions like `digitalWrite()` and `delay()`."
+    },
+    {
+      "stepId": "cf_06_s04",
+      "title": "Compilation & Uploading",
+      "type": "story",
+      "markdownContent": "Code is compiled (translated to machine instructions) and uploaded to the board via USB."
+    },
+    {
+      "stepId": "cf_06_s05",
+      "title": "IDE Lifecycle",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "ideLifecycleSimulator",
+      "markdownContent": "Watch the setup() and then loop() cycle.",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "cf_06_s06",
+      "title": "Deconstruct Blink",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "codeDeconstruction",
+      "markdownContent": "Deconstruct the full Blink sketch.",
+      "interactiveConfig": {
+        "codeSnippet": "void setup() {\n  pinMode(13, OUTPUT);\n}\nvoid loop() {\n  digitalWrite(13, HIGH);\n  delay(1000);\n  digitalWrite(13, LOW);\n  delay(1000);\n}"
+      }
+    },
+    {
+      "stepId": "cf_06_s07",
+      "title": "Compilation Pipeline",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "compilationPipelineSimulator",
+      "markdownContent": "Simulate the compilation process.",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "cf_06_s08",
+      "title": "Knowledge Check",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test what you learned about the sketch structure.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "How many times does `setup()` run?",
+            "options": [
+              "Never",
+              "Once",
+              "Forever"
+            ],
+            "correctIndex": 1,
+            "explanation": "Setup runs once at startup to initialize settings."
+          },
+          {
+            "question": "Where should you put code that needs to repeat continuously?",
+            "options": [
+              "setup()",
+              "loop()",
+              "At the top of the file"
+            ],
+            "correctIndex": 1,
+            "explanation": "The loop() function repeats its contents indefinitely."
+          },
+          {
+            "question": "What does compiling do?",
+            "options": [
+              "Turns on the Arduino",
+              "Translates code into machine instructions",
+              "Fixes your wiring"
+            ],
+            "correctIndex": 1,
+            "explanation": "Compilation translates human-readable C++ into binary machine code."
+          },
+          {
+            "question": "What is a global variable?",
+            "options": [
+              "A variable inside loop()",
+              "A variable accessible everywhere",
+              "An error"
+            ],
+            "correctIndex": 1,
+            "explanation": "Variables declared outside of functions are global and can be used anywhere in the sketch."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 15
+}

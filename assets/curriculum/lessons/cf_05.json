@@ -1,0 +1,93 @@
+{
+  "id": "cf_05",
+  "title": "Loops",
+  "summary": "Learn how to repeat actions in code.",
+  "tier": "rookie",
+  "estimatedMinutes": 10,
+  "courseId": "coding_foundations",
+  "sortOrder": 5,
+  "isOptional": true,
+  "prerequisites": [
+    "cf_04"
+  ],
+  "componentIds": [],
+  "steps": [
+    {
+      "stepId": "cf_05_s01",
+      "title": "Why Loops?",
+      "type": "story",
+      "markdownContent": "Loops let you repeat actions without copying code. If you want an LED to blink 10 times, you don't need 10 blink commands."
+    },
+    {
+      "stepId": "cf_05_s02",
+      "title": "For Loops",
+      "type": "story",
+      "markdownContent": "A `for` loop counts. Example: `for (int i = 0; i < 5; i++) { ... }` runs 5 times, with `i` acting as a counter."
+    },
+    {
+      "stepId": "cf_05_s03",
+      "title": "While Loops",
+      "type": "story",
+      "markdownContent": "A `while` loop runs as long as a condition is true. It can be infinite if the condition never becomes false. Arduino's main `loop()` is an intentional infinite loop!"
+    },
+    {
+      "stepId": "cf_05_s04",
+      "title": "Visualize a Loop",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "executionSpeedVisualizer",
+      "markdownContent": "Visualize a `for` loop counting from 0 to 4.",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "cf_05_s05",
+      "title": "Predict Loop Behavior",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "engineeringPrediction",
+      "markdownContent": "How many times will this loop run?",
+      "interactiveConfig": {
+        "codeSnippet": "for (int i = 1; i <= 3; i++) {\n  blink();\n}"
+      }
+    },
+    {
+      "stepId": "cf_05_s06",
+      "title": "Knowledge Check",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test what you learned about loops.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "Why do we use loops?",
+            "options": [
+              "To slow down the program",
+              "To repeat actions without writing duplicate code",
+              "To make decisions"
+            ],
+            "correctIndex": 1,
+            "explanation": "Loops automate repetition, keeping code clean and short."
+          },
+          {
+            "question": "What is `i` in a typical `for` loop?",
+            "options": [
+              "A function",
+              "A counter variable",
+              "An error"
+            ],
+            "correctIndex": 1,
+            "explanation": "The counter variable tracks how many times the loop has run."
+          },
+          {
+            "question": "What kind of loop does Arduino use continuously?",
+            "options": [
+              "A finite for loop",
+              "An infinite loop",
+              "It doesn't use loops"
+            ],
+            "correctIndex": 1,
+            "explanation": "The main loop() function repeats forever to keep processing."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 15
+}

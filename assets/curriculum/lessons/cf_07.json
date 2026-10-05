@@ -1,0 +1,93 @@
+{
+  "id": "cf_07",
+  "title": "Read and Predict Code",
+  "summary": "Learn how to read, predict, and debug code.",
+  "tier": "rookie",
+  "estimatedMinutes": 10,
+  "courseId": "coding_foundations",
+  "sortOrder": 7,
+  "isOptional": true,
+  "prerequisites": [
+    "cf_06"
+  ],
+  "componentIds": [],
+  "steps": [
+    {
+      "stepId": "cf_07_s01",
+      "title": "Reading Unfamiliar Code",
+      "type": "story",
+      "markdownContent": "Look for structure first: identify the variables, the `setup()` function, and the `loop()`. Trace execution step by step."
+    },
+    {
+      "stepId": "cf_07_s02",
+      "title": "Spotting Errors",
+      "type": "story",
+      "markdownContent": "A syntax error (missing `;`, wrong bracket) stops code from compiling. A logic error (a condition that is never true) compiles but behaves incorrectly."
+    },
+    {
+      "stepId": "cf_07_s03",
+      "title": "Scientific Engineering Method",
+      "type": "story",
+      "markdownContent": "Read the code \u2192 Predict what it will do \u2192 Test it \u2192 Observe the results \u2192 Explain why it happened."
+    },
+    {
+      "stepId": "cf_07_s04",
+      "title": "Syntax Error Debugger",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "syntaxErrorDebugger",
+      "markdownContent": "Find and fix syntax errors in this code.",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "cf_07_s05",
+      "title": "Engineering Prediction",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "engineeringPrediction",
+      "markdownContent": "Predict the LED state based on this code logic.",
+      "interactiveConfig": {
+        "codeSnippet": "int count = 0;\nvoid loop() {\n  count++;\n  if (count > 5) {\n    digitalWrite(13, HIGH);\n  }\n}"
+      }
+    },
+    {
+      "stepId": "cf_07_s06",
+      "title": "Knowledge Check",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test what you learned about code reading and debugging.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What is a syntax error?",
+            "options": [
+              "A mistake in the wiring",
+              "A typo or grammar mistake in the code",
+              "The code doing the wrong thing"
+            ],
+            "correctIndex": 1,
+            "explanation": "Syntax errors violate the rules of the programming language."
+          },
+          {
+            "question": "What is a logic error?",
+            "options": [
+              "Code that won't compile",
+              "A mistake in the wiring",
+              "Code that compiles but does the wrong thing"
+            ],
+            "correctIndex": 2,
+            "explanation": "Logic errors occur when the code is grammatically correct but logically flawed."
+          },
+          {
+            "question": "What should you do before running unfamiliar code?",
+            "options": [
+              "Just upload it",
+              "Read and trace it step by step",
+              "Delete it"
+            ],
+            "correctIndex": 1,
+            "explanation": "Tracing code helps you predict behavior and find errors."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 15
+}

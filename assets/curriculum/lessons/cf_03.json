@@ -1,0 +1,93 @@
+{
+  "id": "cf_03",
+  "title": "Operators and Decisions",
+  "summary": "Learn how your program can make decisions based on conditions.",
+  "tier": "rookie",
+  "estimatedMinutes": 10,
+  "courseId": "coding_foundations",
+  "sortOrder": 3,
+  "isOptional": true,
+  "prerequisites": [
+    "cf_02"
+  ],
+  "componentIds": [],
+  "steps": [
+    {
+      "stepId": "cf_03_s01",
+      "title": "Operators",
+      "type": "story",
+      "markdownContent": "You can use arithmetic operators like `+`, `-`, `*`, and `/` to calculate values. Comparison operators like `==`, `!=`, `<`, `>`, `<=`, `>=` compare values and result in `true` or `false`."
+    },
+    {
+      "stepId": "cf_03_s02",
+      "title": "Making Decisions with If",
+      "type": "story",
+      "markdownContent": "An `if` statement lets your code make decisions: `if (condition) { do this; }`. It only runs the block if the condition is true."
+    },
+    {
+      "stepId": "cf_03_s03",
+      "title": "If / Else",
+      "type": "story",
+      "markdownContent": "Use `else` to specify what happens when the condition is false."
+    },
+    {
+      "stepId": "cf_03_s04",
+      "title": "Decision Simulator",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "decisionSimulator",
+      "markdownContent": "Press the virtual button and watch the if/else branch execute.",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "cf_03_s05",
+      "title": "Predict Output",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "engineeringPrediction",
+      "markdownContent": "Predict the output of this if/else chain.",
+      "interactiveConfig": {
+        "codeSnippet": "int temp = 30;\nif (temp > 25) {\n  digitalWrite(13, HIGH);\n} else {\n  digitalWrite(13, LOW);\n}"
+      }
+    },
+    {
+      "stepId": "cf_03_s06",
+      "title": "Knowledge Check",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test what you learned about operators and decisions.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "Which operator checks if two values are equal?",
+            "options": [
+              "=",
+              "==",
+              "!="
+            ],
+            "correctIndex": 1,
+            "explanation": "== compares values, while = assigns a value."
+          },
+          {
+            "question": "What does an `if` statement do?",
+            "options": [
+              "Repeats code",
+              "Executes code only if a condition is true",
+              "Creates a variable"
+            ],
+            "correctIndex": 1,
+            "explanation": "If statements create decision branches based on conditions."
+          },
+          {
+            "question": "When does the `else` block run?",
+            "options": [
+              "Always",
+              "When the if condition is true",
+              "When the if condition is false"
+            ],
+            "correctIndex": 2,
+            "explanation": "Else provides a fallback when the initial condition is not met."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 15
+}

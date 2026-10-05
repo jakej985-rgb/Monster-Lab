@@ -1,0 +1,93 @@
+{
+  "id": "cf_04",
+  "title": "Functions",
+  "summary": "Learn how to reuse code using functions.",
+  "tier": "rookie",
+  "estimatedMinutes": 10,
+  "courseId": "coding_foundations",
+  "sortOrder": 4,
+  "isOptional": true,
+  "prerequisites": [
+    "cf_03"
+  ],
+  "componentIds": [],
+  "steps": [
+    {
+      "stepId": "cf_04_s01",
+      "title": "What is a Function?",
+      "type": "story",
+      "markdownContent": "A function is a named block of reusable instructions. It helps avoid repeating code and keeps your program organized."
+    },
+    {
+      "stepId": "cf_04_s02",
+      "title": "Calling Functions",
+      "type": "story",
+      "markdownContent": "You use a function by calling its name followed by parentheses: `blink();`. Sometimes you pass parameters, like `digitalWrite(13, HIGH);`."
+    },
+    {
+      "stepId": "cf_04_s03",
+      "title": "Return Values",
+      "type": "story",
+      "markdownContent": "Some functions give back a result (like `digitalRead()`). If a function doesn't give anything back, it uses the keyword `void`."
+    },
+    {
+      "stepId": "cf_04_s04",
+      "title": "Deconstruct a Function Call",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "codeDeconstruction",
+      "markdownContent": "Deconstruct `digitalWrite(13, HIGH)` token by token.",
+      "interactiveConfig": {
+        "codeSnippet": "digitalWrite(13, HIGH);"
+      }
+    },
+    {
+      "stepId": "cf_04_s05",
+      "title": "Execution Speed Visualizer",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "executionSpeedVisualizer",
+      "markdownContent": "Watch how calling a function executes its block of code.",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "cf_04_s06",
+      "title": "Knowledge Check",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test what you learned about functions.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What is a function?",
+            "options": [
+              "A named block of reusable instructions",
+              "A type of variable",
+              "A physical component"
+            ],
+            "correctIndex": 0,
+            "explanation": "Functions bundle instructions so they can be reused easily."
+          },
+          {
+            "question": "What does `void` mean?",
+            "options": [
+              "The function is broken",
+              "The function returns no value",
+              "The function takes no parameters"
+            ],
+            "correctIndex": 1,
+            "explanation": "Void indicates that the function performs an action but doesn't return a data value."
+          },
+          {
+            "question": "What are the values passed inside the parentheses called?",
+            "options": [
+              "Variables",
+              "Operators",
+              "Parameters"
+            ],
+            "correctIndex": 2,
+            "explanation": "Parameters (or arguments) provide data to the function."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 15
+}

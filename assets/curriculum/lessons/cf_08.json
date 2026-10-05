@@ -1,0 +1,137 @@
+{
+  "id": "cf_08",
+  "title": "Your First Program",
+  "summary": "Combine everything to pass the Coding Foundations assessment.",
+  "tier": "rookie",
+  "estimatedMinutes": 10,
+  "courseId": "coding_foundations",
+  "sortOrder": 8,
+  "isOptional": true,
+  "prerequisites": [
+    "cf_07"
+  ],
+  "componentIds": [],
+  "steps": [
+    {
+      "stepId": "cf_08_s01",
+      "title": "Bringing It All Together",
+      "type": "story",
+      "markdownContent": "You now know about statements, variables, operators, if/else decisions, functions, loops, and the structure of an Arduino sketch."
+    },
+    {
+      "stepId": "cf_08_s02",
+      "title": "Mentally Writing a Sketch",
+      "type": "story",
+      "markdownContent": "Given a hardware goal, identify the necessary global variables, configure pins in `setup()`, and write the logic in `loop()`."
+    },
+    {
+      "stepId": "cf_08_s03",
+      "title": "Compilation Simulation",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "compilationPipelineSimulator",
+      "markdownContent": "Review how code goes from text to binary.",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "cf_08_s04",
+      "title": "Final Debugging",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "syntaxErrorDebugger",
+      "markdownContent": "One last bug hunt before the placement assessment.",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "cf_08_s05",
+      "title": "Placement Assessment",
+      "type": "quizCheckpoint",
+      "markdownContent": "Pass this 8-question assessment to complete Coding Foundations.",
+      "interactiveConfig": {
+        "isPlacementAssessment": true,
+        "passingScore": 6,
+        "questions": [
+          {
+            "question": "What is a variable?",
+            "options": [
+              "A physical component",
+              "A named storage container in memory",
+              "An error"
+            ],
+            "correctIndex": 1,
+            "explanation": "Variables store data."
+          },
+          {
+            "question": "Which operator means 'is equal to'?",
+            "options": [
+              "=",
+              "==",
+              "!="
+            ],
+            "correctIndex": 1,
+            "explanation": "== is the equality comparison operator."
+          },
+          {
+            "question": "What is an `if` statement used for?",
+            "options": [
+              "Making decisions based on conditions",
+              "Repeating code forever",
+              "Declaring a variable"
+            ],
+            "correctIndex": 0,
+            "explanation": "If statements allow conditional execution."
+          },
+          {
+            "question": "What does a function do?",
+            "options": [
+              "Groups code into a reusable named block",
+              "Stops the program",
+              "Adds two numbers"
+            ],
+            "correctIndex": 0,
+            "explanation": "Functions organize and reuse code."
+          },
+          {
+            "question": "What is the purpose of a `for` loop?",
+            "options": [
+              "To make a decision",
+              "To run code a specific number of times",
+              "To end the program"
+            ],
+            "correctIndex": 1,
+            "explanation": "For loops repeat code for a counted number of iterations."
+          },
+          {
+            "question": "When does the `setup()` function run?",
+            "options": [
+              "Once, when the Arduino turns on",
+              "Forever in a loop",
+              "Never"
+            ],
+            "correctIndex": 0,
+            "explanation": "Setup is for initialization at startup."
+          },
+          {
+            "question": "What runs continuously on an Arduino?",
+            "options": [
+              "setup()",
+              "loop()",
+              "variables"
+            ],
+            "correctIndex": 1,
+            "explanation": "The loop function runs repeatedly."
+          },
+          {
+            "question": "If your code is missing a semicolon, what type of error is it?",
+            "options": [
+              "Logic Error",
+              "Syntax Error",
+              "Hardware Error"
+            ],
+            "correctIndex": 1,
+            "explanation": "Missing punctuation is a syntax error."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 15
+}

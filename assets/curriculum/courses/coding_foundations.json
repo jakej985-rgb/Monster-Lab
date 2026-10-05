@@ -1,0 +1,22 @@
+{
+  "id": "coding_foundations",
+  "title": "Coding Foundations",
+  "summary": "Learn programming from scratch. Understand what code is, how variables work, how decisions are made, and how loops save time \u2014 before writing your first Arduino sketch.",
+  "lessonIds": [
+    "cf_01",
+    "cf_02",
+    "cf_03",
+    "cf_04",
+    "cf_05",
+    "cf_06",
+    "cf_07",
+    "cf_08"
+  ],
+  "isOptional": true,
+  "placementLessonId": "cf_08",
+  "prerequisites": [
+    "lesson_01"
+  ],
+  "xpReward": 100,
+  "estimatedMinutes": 90
+}

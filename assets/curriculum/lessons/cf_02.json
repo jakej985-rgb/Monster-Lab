@@ -1,0 +1,95 @@
+{
+  "id": "cf_02",
+  "title": "Variables",
+  "summary": "Learn how to store and change data using variables.",
+  "tier": "rookie",
+  "estimatedMinutes": 10,
+  "courseId": "coding_foundations",
+  "sortOrder": 2,
+  "isOptional": true,
+  "prerequisites": [
+    "cf_01"
+  ],
+  "componentIds": [],
+  "steps": [
+    {
+      "stepId": "cf_02_s01",
+      "title": "What is a Variable?",
+      "type": "story",
+      "markdownContent": "A variable is like a named box that holds a value. You can read what's in the box, or change it."
+    },
+    {
+      "stepId": "cf_02_s02",
+      "title": "Declaring Variables",
+      "type": "story",
+      "markdownContent": "To use a variable, you must declare its type and name: `int age = 10;`. Common types include `int` for integers, `float` for decimals, `bool` for true/false, and `String` for text."
+    },
+    {
+      "stepId": "cf_02_s03",
+      "title": "Why Variables Matter",
+      "type": "story",
+      "markdownContent": "Variables let you store sensor readings, keep score, or count how many times an event has happened."
+    },
+    {
+      "stepId": "cf_02_s04",
+      "title": "Deconstruct a Variable Declaration",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "codeDeconstruction",
+      "markdownContent": "Inspect `int ledPin = 13;` token by token.",
+      "interactiveConfig": {
+        "codeSnippet": "int ledPin = 13;"
+      }
+    },
+    {
+      "stepId": "cf_02_s05",
+      "title": "Predict the Variable Value",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "engineeringPrediction",
+      "markdownContent": "What is the value of `x` after these assignments?",
+      "interactiveConfig": {
+        "codeSnippet": "int x = 5;\nx = x + 3;"
+      }
+    },
+    {
+      "stepId": "cf_02_s06",
+      "title": "Knowledge Check",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test what you learned about variables.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What is a variable?",
+            "options": [
+              "A named box that holds a value",
+              "A type of sensor",
+              "A function"
+            ],
+            "correctIndex": 0,
+            "explanation": "A variable stores information for your program to use."
+          },
+          {
+            "question": "Which type holds true/false?",
+            "options": [
+              "int",
+              "bool",
+              "String"
+            ],
+            "correctIndex": 1,
+            "explanation": "The bool type holds boolean true or false values."
+          },
+          {
+            "question": "What happens when you reassign a variable?",
+            "options": [
+              "It holds both values",
+              "It crashes",
+              "The old value is replaced"
+            ],
+            "correctIndex": 2,
+            "explanation": "Assigning a new value overwrites the old value in the box."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 15
+}

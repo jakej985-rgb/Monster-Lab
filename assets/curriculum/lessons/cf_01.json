@@ -1,0 +1,86 @@
+{
+  "id": "cf_01",
+  "title": "What Is Code?",
+  "summary": "Learn what programs are and how they execute top-to-bottom.",
+  "tier": "rookie",
+  "estimatedMinutes": 10,
+  "courseId": "coding_foundations",
+  "sortOrder": 1,
+  "isOptional": true,
+  "prerequisites": [
+    "lesson_01"
+  ],
+  "componentIds": [],
+  "steps": [
+    {
+      "stepId": "cf_01_s01",
+      "title": "What Are Programs?",
+      "type": "story",
+      "markdownContent": "Programs are instructions a computer follows. Just like a recipe tells a chef how to bake a cake, a program tells a computer what to do."
+    },
+    {
+      "stepId": "cf_01_s02",
+      "title": "Statements",
+      "type": "story",
+      "markdownContent": "A single instruction in code is called a statement. In Arduino (C++), every statement must end in a semicolon `;`."
+    },
+    {
+      "stepId": "cf_01_s03",
+      "title": "Top-to-Bottom Flow",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "Programs run top-to-bottom, one statement at a time. The computer does exactly what you tell it\u2014nothing more."
+    },
+    {
+      "stepId": "cf_01_s04",
+      "title": "Deconstruct a Program",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "codeDeconstruction",
+      "markdownContent": "Let's look at a simple program and break it down into statements.",
+      "interactiveConfig": {
+        "codeSnippet": "digitalWrite(13, HIGH);\ndelay(1000);\ndigitalWrite(13, LOW);"
+      }
+    },
+    {
+      "stepId": "cf_01_s05",
+      "title": "Knowledge Check",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test what you learned about programs and statements.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What is a program?",
+            "options": [
+              "A random string of text",
+              "Instructions a computer follows",
+              "A physical component"
+            ],
+            "correctIndex": 1,
+            "explanation": "A program is a set of instructions a computer follows to perform a task."
+          },
+          {
+            "question": "What must every statement end with in C++?",
+            "options": [
+              ".",
+              ",",
+              ";"
+            ],
+            "correctIndex": 2,
+            "explanation": "Every statement must end with a semicolon."
+          },
+          {
+            "question": "How do programs run?",
+            "options": [
+              "Bottom-to-top",
+              "Randomly",
+              "Top-to-bottom"
+            ],
+            "correctIndex": 2,
+            "explanation": "Programs execute sequentially from top to bottom."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 15
+}
