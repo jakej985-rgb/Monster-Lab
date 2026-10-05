@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/routing/route_constants.dart';
+// TODO: Agent 1 will add this provider
+import '../../shared/providers.dart';
 import '../../shared/widgets/monster_card.dart';
 
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(settingsNotifierProvider);
+    final notifier = ref.read(settingsNotifierProvider.notifier);
 
-class _SettingsScreenState extends State<SettingsScreen> {
-  bool _soundEnabled = true;
-  bool _highContrast = false;
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
       body: ListView(
@@ -26,18 +24,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
               children: [
                 SwitchListTile(
                   title: const Text('Sound Effects & Audio Chimes'),
-                  subtitle: const Text(
-                      'Plays celebratory chimes on milestones and clicks.'),
-                  value: _soundEnabled,
-                  onChanged: (val) => setState(() => _soundEnabled = val),
+                  subtitle: const Text('Plays celebratory chimes on milestones and clicks.'),
+                  value: settings.soundEnabled,
+                  onChanged: (val) => notifier.setSoundEnabled(val),
                 ),
                 const Divider(),
                 SwitchListTile(
                   title: const Text('High Contrast Mode'),
+                  subtitle: const Text('Increases visual borders and pin label contrast.'),
+                  value: settings.highContrast,
+                  onChanged: (val) => notifier.setHighContrast(val),
+                ),
+                const Divider(),
+                SwitchListTile(
+                  title: const Text('Immersive Lesson Mode'),
                   subtitle: const Text(
-                      'Increases visual borders and pin label contrast.'),
-                  value: _highContrast,
-                  onChanged: (val) => setState(() => _highContrast = val),
+                      'Hide system navigation controls while learning for a more immersive full-screen experience.'),
+                  value: settings.immersiveLessonMode,
+                  onChanged: (val) => notifier.setImmersiveLessonMode(val),
                 ),
               ],
             ),
