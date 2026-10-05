@@ -6,12 +6,15 @@ import '../../shared/providers.dart';
 import '../../shared/widgets/monster_button.dart';
 import '../../shared/widgets/monster_card.dart';
 import '../../shared/widgets/monster_markdown.dart';
+import '../../shared/widgets/immersive_lesson_controller.dart';
+import '../../shared/widgets/lesson_action_bar.dart';
 import 'activities/activity_registry.dart';
 import 'widgets/blink_simulator_widget.dart';
 import 'widgets/potentiometer_simulator_widget.dart';
 import 'widgets/rgb_mixer_widget.dart';
 import 'widgets/board_inspector_widget.dart';
 import 'widgets/quiz_checkpoint_widget.dart';
+import '../../shared/widgets/expandable_lesson_image.dart';
 
 class LessonDetailScreen extends ConsumerStatefulWidget {
   final String lessonId;
@@ -103,7 +106,8 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
     final activeProfile = ref.watch(activeProfileProvider);
     final activeProgress = ref.watch(activeProgressProvider);
 
-    return Scaffold(
+    return ImmersiveLessonController(
+      child: Scaffold(
       appBar: AppBar(
         title: const Text('Learn Lab Session'),
       ),
@@ -124,75 +128,75 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
 
           return Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Step Progress Bar
-                LinearProgressIndicator(
-                  value: (_currentStepIndex + 1) / steps.length,
-                  backgroundColor: AppColors.surfaceContainerLight,
-                  valueColor:
-                      const AlwaysStoppedAnimation(AppColors.primaryViolet),
-                  minHeight: 8,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                const SizedBox(height: 14),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text(
-                      'Step ${_currentStepIndex + 1} of ${steps.length}',
-                      style: const TextStyle(
-                        color: AppColors.primaryViolet,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
-                      ),
+                    // Step Progress Bar
+                    LinearProgressIndicator(
+                      value: (_currentStepIndex + 1) / steps.length,
+                      backgroundColor: AppColors.surfaceContainerLight,
+                      valueColor:
+                          const AlwaysStoppedAnimation(AppColors.primaryViolet),
+                      minHeight: 8,
+                      borderRadius: BorderRadius.circular(4),
                     ),
-                    Text(
-                      '${lesson.estimatedMinutes} min • +${lesson.xpReward} XP',
-                      style: const TextStyle(
-                        color: AppColors.textSecondaryLight,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  currentStep.title,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 18),
-                ),
-                const SizedBox(height: 12),
+                    const SizedBox(height: 14),
 
-                // Main Interactive Content Area
-                Expanded(
-                  child: ListView(
-                    children: [
-                      // Story / Explanation Markdown Card
-                      MonsterCard(
-                        child: MonsterMarkdown(
-                          data: currentStep.markdownContent,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Optional Illustration Asset
-                      if (currentStep.illustrationAsset != null &&
-                          currentStep.illustrationAsset!.isNotEmpty) ...[
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.asset(
-                            currentStep.illustrationAsset!,
-                            fit: BoxFit.contain,
-                            errorBuilder: (context, error, stackTrace) =>
-                                const SizedBox.shrink(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Step ${_currentStepIndex + 1} of ${steps.length}',
+                          style: const TextStyle(
+                            color: AppColors.primaryViolet,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        Text(
+                          '${lesson.estimatedMinutes} min • +${lesson.xpReward} XP',
+                          style: const TextStyle(
+                            color: AppColors.textSecondaryLight,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ],
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      currentStep.title,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 18),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Main Interactive Content Area
+                    Expanded(
+                      child: ListView(
+                        children: [
+                          // Story / Explanation Markdown Card
+                          MonsterCard(
+                            child: MonsterMarkdown(
+                              data: currentStep.markdownContent,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Optional Illustration Asset
+                          if (currentStep.illustrationAsset != null &&
+                              currentStep.illustrationAsset!.isNotEmpty) ...[
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: ExpandableLessonImage(
+                                assetPath: currentStep.illustrationAsset!,
+                                semanticsLabel: currentStep.title,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
 
                       // Interactive Activities & Simulators (routed via ActivityRegistry with legacy fallback)
                       if (ActivityRegistry.hasActivity(
@@ -297,7 +301,8 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                 const SizedBox(height: 12),
 
                 // Navigation Button
-                MonsterButton(
+                LessonActionBar(
+                  enabled: !_isCompleting,
                   label: _currentStepIndex < steps.length - 1
                       ? 'Next Step'
                       : (_isCompleting
@@ -353,10 +358,12 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                         },
                 ),
               ],
-            ),
-          );
+            );
+          }),
+        );
         },
       ),
+    ),
     );
   }
 

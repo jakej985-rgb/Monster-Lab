@@ -3,6 +3,19 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../features/lab/widgets/arduino_syntax_highlighter.dart';
 
+import 'package:markdown/markdown.dart' as md;
+import 'responsive_code_block.dart';
+
+class _CodeBlockBuilder extends MarkdownElementBuilder {
+  @override
+  Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) {
+    final code = element.textContent;
+    // We can only reliably wrap code blocks with ResponsiveCodeBlock
+    // if we want to support that. But based on instructions:
+    return ResponsiveCodeBlock(code: code);
+  }
+}
+
 /// Bridges the Monster Lab ArduinoSyntaxHighlighter to flutter_markdown's SyntaxHighlighter
 class ArduinoSyntaxHighlighterBridge extends SyntaxHighlighter {
   @override
@@ -105,6 +118,9 @@ class MonsterMarkdown extends StatelessWidget {
       selectable: selectable,
       styleSheet: markdownStyleSheet,
       syntaxHighlighter: ArduinoSyntaxHighlighterBridge(),
+      builders: {
+        'code': _CodeBlockBuilder(),
+      },
     );
   }
 }
