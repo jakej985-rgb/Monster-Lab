@@ -1,0 +1,73 @@
+{
+  "id": "l2a_04",
+  "title": "The Build Lab",
+  "summary": "Step-by-step guided hardware builds. Learn how to follow diagrams safely.",
+  "tier": "rookie",
+  "estimatedMinutes": 3,
+  "courseId": "lesson_2a",
+  "sortOrder": 4,
+  "isOptional": false,
+  "prerequisites": [
+    "l2a_03"
+  ],
+  "componentIds": [],
+  "steps": [
+    {
+      "stepId": "l2a_04_s01",
+      "title": "Welcome to the Build Lab",
+      "type": "story",
+      "markdownContent": "The **Build Lab** is where the magic happens. This is where you get your hands dirty and wire up real circuits.\n\nEvery project has a Build Lab section showing you exactly where to plug in every wire and component."
+    },
+    {
+      "stepId": "l2a_04_s02",
+      "title": "Following the Blueprint",
+      "type": "story",
+      "markdownContent": "Build Lab diagrams are step-by-step blueprints.\n\nInstead of throwing a complex diagram at you, Monster Lab breaks it down. You'll add one wire or part at a time, making it impossible to get lost."
+    },
+    {
+      "stepId": "l2a_04_s03",
+      "title": "Will It Work?",
+      "type": "story",
+      "interactiveWidgetType": "engineeringPrediction",
+      "markdownContent": "Always check your work before powering on. If you miss a wire, the circuit won't work.\n\nLook at the scenario below. Based on what you know about closed loops, predict if this circuit will work!"
+    },
+    {
+      "stepId": "l2a_04_s04",
+      "title": "Checking Your Ground",
+      "type": "story",
+      "interactiveWidgetType": "groundTroubleshooting",
+      "markdownContent": "The most common mistake in the Build Lab is a disconnected **Ground (GND)** wire.\n\nIf ground is disconnected, electricity can't flow. Practice finding the ground problem in the circuit below."
+    },
+    {
+      "stepId": "l2a_04_s05",
+      "title": "Quick Check",
+      "type": "quizCheckpoint",
+      "markdownContent": "Let's review the Build Lab.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What do you do in the Build Lab?",
+            "options": [
+              "Follow step-by-step diagrams to wire up physical circuits",
+              "Write C++ code",
+              "Take quizzes"
+            ],
+            "correctIndex": 0,
+            "explanation": "The Build Lab gives you the blueprints to construct your hardware."
+          },
+          {
+            "question": "What is the most common wiring mistake to check for?",
+            "options": [
+              "Using the wrong color LED",
+              "A disconnected Ground (GND) wire",
+              "Plugging in the USB cable too slowly"
+            ],
+            "correctIndex": 1,
+            "explanation": "If the ground wire isn't securely connected, the circuit is open and nothing will work."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

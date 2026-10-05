@@ -1,0 +1,89 @@
+{
+  "id": "l2a_07",
+  "title": "Safe Hardware Workflow",
+  "summary": "The Golden Rules of hardware. Keep your components safe from short circuits and static shock.",
+  "tier": "rookie",
+  "estimatedMinutes": 3,
+  "courseId": "lesson_2a",
+  "sortOrder": 7,
+  "isOptional": false,
+  "prerequisites": [
+    "l2a_06"
+  ],
+  "componentIds": [],
+  "steps": [
+    {
+      "stepId": "l2a_07_s01",
+      "title": "Safety First!",
+      "type": "story",
+      "markdownContent": "Unlike software, hardware can be permanently broken if you make a mistake.\n\nPlugging a wire into the wrong place can cause a **short circuit**, instantly destroying an LED or even your Arduino board. You must learn the Safe Hardware Workflow."
+    },
+    {
+      "stepId": "l2a_07_s02",
+      "title": "The First Golden Rule",
+      "type": "story",
+      "markdownContent": "**Always unplug your Arduino from USB power before changing any wiring.**\n\nNever pull wires or plug in new components while the green ON light is lit. Build the circuit dead, then bring it to life."
+    },
+    {
+      "stepId": "l2a_07_s03",
+      "title": "The Second Golden Rule",
+      "type": "story",
+      "markdownContent": "**Double-check every connection before plugging the USB cable back in.**\n\nCompare your physical breadboard to the Monster Lab diagram. Check the Ground wire, the Power wire, and component orientation (like LED legs). Only plug it in when you are 100% sure."
+    },
+    {
+      "stepId": "l2a_07_s04",
+      "title": "Beware the Static Shock (ESD)",
+      "type": "story",
+      "interactiveWidgetType": "esdSafetyCheck",
+      "markdownContent": "Have you ever dragged your socks on carpet and shocked a doorknob? That's **Electrostatic Discharge (ESD)**.\n\nWhile a shock feels tiny to you, it acts like a lightning bolt to an Arduino chip. Always touch a grounded piece of metal (like a metal table leg or computer case) before picking up a bare circuit board to discharge yourself."
+    },
+    {
+      "stepId": "l2a_07_s05",
+      "title": "Inspect the Circuit",
+      "type": "story",
+      "interactiveWidgetType": "groundTroubleshooting",
+      "markdownContent": "Let's practice the Second Golden Rule. Inspect the circuit below before we 'plug it in'. \n\nIs there anything unsafe or disconnected?"
+    },
+    {
+      "stepId": "l2a_07_s06",
+      "title": "Safety Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Safety is critical. You must get all these questions right to pass.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What is the First Golden Rule of wiring?",
+            "options": [
+              "Always use red wires",
+              "Always unplug power before changing wires",
+              "Always work fast"
+            ],
+            "correctIndex": 1,
+            "explanation": "Never modify a live circuit. Always disconnect power first."
+          },
+          {
+            "question": "What should you do before picking up an Arduino board?",
+            "options": [
+              "Wash your hands",
+              "Touch a grounded piece of metal to discharge static electricity",
+              "Put on gloves"
+            ],
+            "correctIndex": 1,
+            "explanation": "Discharging ESD prevents static shocks from destroying sensitive microchips."
+          },
+          {
+            "question": "When is it safe to plug the USB cable in?",
+            "options": [
+              "Immediately after placing the first part",
+              "While you are holding the wires",
+              "Only after you have double-checked all connections against the diagram"
+            ],
+            "correctIndex": 2,
+            "explanation": "Double-check your work first to prevent short circuits upon power-up."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

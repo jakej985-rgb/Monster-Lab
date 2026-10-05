@@ -1,0 +1,73 @@
+{
+  "id": "l2a_03",
+  "title": "The Parts Lab",
+  "summary": "Discover your component library. Learn how to search, browse, and understand your hardware.",
+  "tier": "rookie",
+  "estimatedMinutes": 3,
+  "courseId": "lesson_2a",
+  "sortOrder": 3,
+  "isOptional": false,
+  "prerequisites": [
+    "l2a_02"
+  ],
+  "componentIds": [],
+  "steps": [
+    {
+      "stepId": "l2a_03_s01",
+      "title": "Welcome to the Parts Lab",
+      "type": "story",
+      "markdownContent": "The **Parts Lab** is your digital hardware encyclopedia.\n\nIt lists every single component, wire, sensor, and board you'll use in Monster Lab. It's the perfect place to go when you encounter a new part and want to know how it works."
+    },
+    {
+      "stepId": "l2a_03_s02",
+      "title": "Finding Your Parts",
+      "type": "story",
+      "markdownContent": "You can find parts in two ways:\n\n1. **Browse**: Scroll through categories like Boards, Outputs, Inputs, and Power.\n2. **Search**: Type the name of a part (like 'LED' or 'Resistor') in the search bar to find it instantly.\n\nAlways know your parts before you build!"
+    },
+    {
+      "stepId": "l2a_03_s03",
+      "title": "Reading a Component Page",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "boardLabelDragDrop",
+      "markdownContent": "When you open a part's page, you'll see crucial information:\n- **What it is**: A simple explanation.\n- **Pins**: Which pin is power, ground, or signal.\n- **Wiring Tips**: Important safety warnings, like 'Always use a resistor with an LED!'\n\nTry matching these part names to their functions below!"
+    },
+    {
+      "stepId": "l2a_03_s04",
+      "title": "Input or Output?",
+      "type": "story",
+      "interactiveWidgetType": "inputOutputClassification",
+      "markdownContent": "One of the most important things to know about a part is whether it's an **Input** (a sensor) or an **Output** (an actuator).\n\nThe Parts Lab will always tell you this. Practice classifying some common parts below!"
+    },
+    {
+      "stepId": "l2a_03_s05",
+      "title": "Quick Check",
+      "type": "quizCheckpoint",
+      "markdownContent": "Let's test your Parts Lab knowledge.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What is the Parts Lab used for?",
+            "options": [
+              "Writing code",
+              "Looking up information about hardware components",
+              "Building circuits"
+            ],
+            "correctIndex": 1,
+            "explanation": "The Parts Lab is your encyclopedia for understanding your physical components."
+          },
+          {
+            "question": "What important safety information can you find in the Parts Lab?",
+            "options": [
+              "How to hold a soldering iron",
+              "Wiring tips and pin layouts for a specific component",
+              "Safety glasses requirements"
+            ],
+            "correctIndex": 1,
+            "explanation": "Component pages show you exactly how to wire a part safely, including which pins are power and ground."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

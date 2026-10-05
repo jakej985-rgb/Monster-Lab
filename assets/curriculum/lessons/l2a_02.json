@@ -1,0 +1,93 @@
+{
+  "id": "l2a_02",
+  "title": "The Learn Lab",
+  "summary": "Explore where all your interactive lessons live and learn how to navigate them.",
+  "tier": "rookie",
+  "estimatedMinutes": 3,
+  "courseId": "lesson_2a",
+  "sortOrder": 2,
+  "isOptional": false,
+  "prerequisites": [
+    "l2a_01"
+  ],
+  "componentIds": [],
+  "steps": [
+    {
+      "stepId": "l2a_02_s01",
+      "title": "Welcome to the Learn Lab",
+      "type": "story",
+      "markdownContent": "The **Learn Lab** is your headquarters. It's the screen where all your lessons are listed, just like a table of contents in a book.\n\nWhenever you're ready to start a new mission, you come here to select your next lesson."
+    },
+    {
+      "stepId": "l2a_02_s02",
+      "title": "Difficulty Tiers",
+      "type": "story",
+      "markdownContent": "Lessons are organized into four difficulty tiers:\n\n1. **Rookie**: The basics. You are here!\n2. **Builder**: Intermediate circuits and code.\n3. **Engineer**: Advanced logic and sensors.\n4. **Monster Master**: Complex robots and final projects.\n\nYou have to complete the early tiers to unlock the later ones."
+    },
+    {
+      "stepId": "l2a_02_s03",
+      "title": "Navigating a Lesson",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "When you open a lesson, you'll see a series of **steps**. You're looking at a step right now!\n\n- Read the text.\n- Interact with any diagrams or simulators.\n- Tap the **Next Step** button to move forward.\n\nExplore the layout diagram below to see how a lesson screen works."
+    },
+    {
+      "stepId": "l2a_02_s04",
+      "title": "Completing Lessons",
+      "type": "story",
+      "markdownContent": "When you reach the final step of a lesson, you'll usually find a **Quiz Checkpoint**. You must pass the quiz to finish the lesson.\n\nOnce finished, you'll earn **XP** (Experience Points) and the next lesson will automatically unlock!"
+    },
+    {
+      "stepId": "l2a_02_s05",
+      "title": "Tier Check",
+      "type": "story",
+      "interactiveWidgetType": "miniQuiz",
+      "markdownContent": "Let's see if you remember the difficulty tiers. Answer the questions below!",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "Which tier is for beginners starting out?",
+            "options": [
+              "Monster Master",
+              "Engineer",
+              "Rookie"
+            ],
+            "correctIndex": 2,
+            "explanation": "Rookie is the starting tier where everyone begins their journey."
+          }
+        ]
+      }
+    },
+    {
+      "stepId": "l2a_02_s06",
+      "title": "Quick Check",
+      "type": "quizCheckpoint",
+      "markdownContent": "Let's review the Learn Lab.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What do you do in the Learn Lab?",
+            "options": [
+              "Find and read interactive lessons",
+              "Buy Arduino boards",
+              "Write C++ code"
+            ],
+            "correctIndex": 0,
+            "explanation": "The Learn Lab is where you find all your educational content and lessons."
+          },
+          {
+            "question": "How do you progress through a lesson?",
+            "options": [
+              "Wait 5 minutes",
+              "Read the content and tap the Next Step button",
+              "Shake the device"
+            ],
+            "correctIndex": 1,
+            "explanation": "You control your own pace by tapping the Next Step button when you're ready."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

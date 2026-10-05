@@ -1,0 +1,91 @@
+{
+  "id": "l2a_06",
+  "title": "Progress, XP & Badges",
+  "summary": "Learn how to level up, earn badges, and track your progress in Monster Lab.",
+  "tier": "rookie",
+  "estimatedMinutes": 3,
+  "courseId": "lesson_2a",
+  "sortOrder": 6,
+  "isOptional": false,
+  "prerequisites": [
+    "l2a_05"
+  ],
+  "componentIds": [],
+  "steps": [
+    {
+      "stepId": "l2a_06_s01",
+      "title": "Earning XP",
+      "type": "story",
+      "markdownContent": "As you complete lessons, quizzes, and challenges, you earn **XP** (Experience Points).\n\nXP is a measure of your robotics knowledge. The more you learn, the more XP you get!"
+    },
+    {
+      "stepId": "l2a_06_s02",
+      "title": "Leveling Up",
+      "type": "story",
+      "markdownContent": "Collect enough XP, and your overall **Level** will increase.\n\nLeveling up proves you're becoming a more advanced robotics engineer. You'll need high levels to unlock the hardest projects later on."
+    },
+    {
+      "stepId": "l2a_06_s03",
+      "title": "Badges of Honor",
+      "type": "story",
+      "markdownContent": "You can also earn **Badges** for special achievements, like getting a perfect score on a safety quiz, or completing all the challenges in a tier.\n\nCheck your profile to see all the badges you've earned."
+    },
+    {
+      "stepId": "l2a_06_s04",
+      "title": "Saved Progress",
+      "type": "story",
+      "markdownContent": "Monster Lab automatically saves your progress.\n\nIf you leave a lesson halfway through, you can come back later and pick up right where you left off.\n\n*Note: You only earn XP for completing a lesson the first time. Re-doing a lesson is great for review, but won't double your XP!*"
+    },
+    {
+      "stepId": "l2a_06_s05",
+      "title": "XP Rules",
+      "type": "story",
+      "interactiveWidgetType": "miniQuiz",
+      "markdownContent": "Let's make sure you understand the XP rules.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "Can you earn XP for completing the same lesson twice?",
+            "options": [
+              "Yes",
+              "No"
+            ],
+            "correctIndex": 1,
+            "explanation": "You only earn the XP reward the first time you complete a lesson."
+          }
+        ]
+      }
+    },
+    {
+      "stepId": "l2a_06_s06",
+      "title": "Quick Check",
+      "type": "quizCheckpoint",
+      "markdownContent": "Let's review XP and progress.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What happens when you collect enough XP?",
+            "options": [
+              "You lose your badges",
+              "Your overall Level increases",
+              "The app restarts"
+            ],
+            "correctIndex": 1,
+            "explanation": "Accumulating XP increases your Level, showing your growth as an engineer."
+          },
+          {
+            "question": "How do you earn Badges?",
+            "options": [
+              "By buying them",
+              "By asking the teacher",
+              "By completing special achievements, like perfect quizzes"
+            ],
+            "correctIndex": 2,
+            "explanation": "Badges are unlocked by completing specific achievements in the app."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

@@ -1,0 +1,73 @@
+{
+  "id": "l2a_01",
+  "title": "What Is Monster Lab?",
+  "summary": "Monster Lab is an app that teaches you to build real Arduino robots.",
+  "tier": "rookie",
+  "estimatedMinutes": 3,
+  "courseId": "lesson_2a",
+  "sortOrder": 1,
+  "isOptional": false,
+  "prerequisites": [
+    "lesson_01"
+  ],
+  "componentIds": [],
+  "steps": [
+    {
+      "stepId": "l2a_01_s01",
+      "title": "Your Robot Mentor",
+      "type": "story",
+      "markdownContent": "Welcome to **Monster Lab**!\n\nMonster Lab is an interactive app that replaces a traditional teacher. It acts as your personal robot mentor, teaching you how to build real Arduino circuits and code them from scratch.\n\nEverything you need to know is right here in the app. Let's explore how it works!"
+    },
+    {
+      "stepId": "l2a_01_s02",
+      "title": "Software Meets Hardware",
+      "type": "story",
+      "markdownContent": "Here's the magic: Monster Lab is the **software** that teaches you how to build physical **hardware**.\n\nYou'll use this app to read lessons, study wiring diagrams, and practice coding logic. Then, you'll put your device down and build the real circuits with your own hands.\n\nFinally, you'll upload real code to your Arduino board using a computer."
+    },
+    {
+      "stepId": "l2a_01_s03",
+      "title": "The Learning Path",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "Every project in Monster Lab follows a specific path to turn you into a robotics master.\n\n1. **Learn**: Read the interactive lesson.\n2. **Explore**: Study the new parts in the Parts Lab.\n3. **Build**: Wire up the circuit in the Build Lab.\n4. **Code**: Write and upload the sketch in the Code Lab.\n5. **Test**: See if your robot works.\n6. **Troubleshoot**: Fix bugs and wiring mistakes.\n7. **Master**: Complete optional challenges for more XP.\n\nCheck out the flow diagram below to see your journey!"
+    },
+    {
+      "stepId": "l2a_01_s04",
+      "title": "The Big Picture",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "realWorldSystemDiagram",
+      "markdownContent": "How do all the pieces fit together? You have the Monster Lab app, your computer running the Arduino IDE, the Arduino board, and electronic components.\n\nExplore the interactive system diagram below to see how information flows from the app to your brain, and from your computer to the robot!"
+    },
+    {
+      "stepId": "l2a_01_s05",
+      "title": "Quick Check",
+      "type": "quizCheckpoint",
+      "markdownContent": "Let's make sure you understand the core mission of Monster Lab.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What is the purpose of Monster Lab?",
+            "options": [
+              "To act as your robot mentor and teach you Arduino",
+              "To play video games",
+              "To buy electronic parts"
+            ],
+            "correctIndex": 0,
+            "explanation": "Monster Lab is your personal guide to mastering Arduino and robotics."
+          },
+          {
+            "question": "In the Monster Lab path, what do you do after you Build your circuit?",
+            "options": [
+              "Take it apart immediately",
+              "Code it in the Code Lab",
+              "Throw it away"
+            ],
+            "correctIndex": 1,
+            "explanation": "After building the hardware, you move to the Code Lab to write the software!"
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

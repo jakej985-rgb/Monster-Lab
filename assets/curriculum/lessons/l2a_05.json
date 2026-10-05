@@ -1,0 +1,93 @@
+{
+  "id": "l2a_05",
+  "title": "The Code Lab & Challenges",
+  "summary": "Discover where to find your code, what an experiment is, and how to conquer optional challenges.",
+  "tier": "rookie",
+  "estimatedMinutes": 3,
+  "courseId": "lesson_2a",
+  "sortOrder": 5,
+  "isOptional": false,
+  "prerequisites": [
+    "l2a_04"
+  ],
+  "componentIds": [],
+  "steps": [
+    {
+      "stepId": "l2a_05_s01",
+      "title": "Welcome to the Code Lab",
+      "type": "story",
+      "markdownContent": "Once your hardware is built, you need to give it a brain. That's what the **Code Lab** is for.\n\nThe Code Lab gives you the exact C++ sketches you need to upload to your Arduino to make your circuit come alive."
+    },
+    {
+      "stepId": "l2a_05_s02",
+      "title": "The IDE Connection",
+      "type": "story",
+      "markdownContent": "You don't type code directly into Monster Lab on your phone or tablet to run it. \n\nInstead, you use a computer running the **Arduino IDE** (Integrated Development Environment). You'll copy the code from the Code Lab, paste it into the IDE on your computer, and click **Upload**.\n\nWe'll cover exactly how the IDE works in the next lesson!"
+    },
+    {
+      "stepId": "l2a_05_s03",
+      "title": "The Upload Pipeline",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "compilationPipelineSimulator",
+      "markdownContent": "When you click Upload, your code goes on a journey. It gets **Compiled** (translated into machine language) and then sent over the USB cable to the Arduino's memory.\n\nWatch the pipeline simulator below to see how your text becomes a running program!"
+    },
+    {
+      "stepId": "l2a_05_s04",
+      "title": "What are Challenges?",
+      "type": "story",
+      "markdownContent": "After you finish a lesson's main code, you'll unlock **Challenges**.\n\nChallenges are optional, extra-hard missions where you have to modify the code or the wiring yourself, without step-by-step instructions. They are the best way to earn extra XP and prove you've mastered the concept!"
+    },
+    {
+      "stepId": "l2a_05_s05",
+      "title": "Code Lab Review",
+      "type": "story",
+      "interactiveWidgetType": "miniQuiz",
+      "markdownContent": "Let's check your understanding of the Code Lab.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "Where do you actually upload code to the Arduino?",
+            "options": [
+              "Directly from the Monster Lab app on your phone",
+              "From the Arduino IDE on a computer",
+              "You don't need to upload code"
+            ],
+            "correctIndex": 1,
+            "explanation": "You use the Arduino IDE on your computer to compile and upload the sketches."
+          }
+        ]
+      }
+    },
+    {
+      "stepId": "l2a_05_s06",
+      "title": "Quick Check",
+      "type": "quizCheckpoint",
+      "markdownContent": "Let's review.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What are Challenges?",
+            "options": [
+              "Mandatory quizzes",
+              "Optional, extra-hard missions to modify code or wiring",
+              "A list of broken parts"
+            ],
+            "correctIndex": 1,
+            "explanation": "Challenges are optional missions that test your mastery and give you extra XP."
+          },
+          {
+            "question": "What happens when code is 'compiled'?",
+            "options": [
+              "It is deleted",
+              "It is printed on paper",
+              "It is translated from C++ into machine language the Arduino understands"
+            ],
+            "correctIndex": 2,
+            "explanation": "Compilation turns human-readable code into machine instructions."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

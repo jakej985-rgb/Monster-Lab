@@ -1,0 +1,22 @@
+{
+  "id": "lesson_2a",
+  "title": "Lesson 2A — Meet Monster Lab",
+  "summary": "Learn how Monster Lab works — the Learn Lab, Parts Lab, Build Lab, Code Lab, Challenges, XP, and safe hardware workflow — before diving into real builds.",
+  "lessonIds": [
+    "l2a_01",
+    "l2a_02",
+    "l2a_03",
+    "l2a_04",
+    "l2a_05",
+    "l2a_06",
+    "l2a_07",
+    "l2a_08"
+  ],
+  "isOptional": false,
+  "placementLessonId": null,
+  "prerequisites": [
+    "lesson_01"
+  ],
+  "xpReward": 75,
+  "estimatedMinutes": 15
+}

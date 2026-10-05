@@ -1,0 +1,114 @@
+{
+  "id": "l2a_08",
+  "title": "Orientation Challenge",
+  "summary": "Prove you know your way around Monster Lab in this final orientation challenge.",
+  "tier": "rookie",
+  "estimatedMinutes": 3,
+  "courseId": "lesson_2a",
+  "sortOrder": 8,
+  "isOptional": false,
+  "prerequisites": [
+    "l2a_07"
+  ],
+  "componentIds": [],
+  "steps": [
+    {
+      "stepId": "l2a_08_s01",
+      "title": "The Full Map",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "You've seen all the pieces. Let's look at the full Monster Lab map one last time.\n\n- **Learn Lab**: Read lessons.\n- **Parts Lab**: Learn about hardware.\n- **Build Lab**: Wire the circuit.\n- **Code Lab**: Copy the code.\n- **Challenges**: Go beyond the basics.\n\nReview the flow below."
+    },
+    {
+      "stepId": "l2a_08_s02",
+      "title": "Final Exam",
+      "type": "quizCheckpoint",
+      "markdownContent": "This is it! An 8-question exam covering everything you learned in Lesson 2A.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What is the correct order for a new project?",
+            "options": [
+              "Code -> Build -> Learn",
+              "Learn -> Build -> Code",
+              "Build -> Code -> Parts"
+            ],
+            "correctIndex": 1,
+            "explanation": "Always Learn the theory, Build the hardware, then upload the Code."
+          },
+          {
+            "question": "Where do you go to find the pinout for a new sensor?",
+            "options": [
+              "The Parts Lab",
+              "The Code Lab",
+              "The Challenges section"
+            ],
+            "correctIndex": 0,
+            "explanation": "The Parts Lab is the encyclopedia for all hardware components."
+          },
+          {
+            "question": "What is the most important thing to do before wiring a circuit?",
+            "options": [
+              "Turn the computer on",
+              "Disconnect the Arduino from power",
+              "Open the Code Lab"
+            ],
+            "correctIndex": 1,
+            "explanation": "Always build circuits 'dead' by disconnecting power first."
+          },
+          {
+            "question": "Where do you find the step-by-step wiring diagrams?",
+            "options": [
+              "The Learn Lab",
+              "The Build Lab",
+              "The Code Lab"
+            ],
+            "correctIndex": 1,
+            "explanation": "The Build Lab contains all physical assembly instructions."
+          },
+          {
+            "question": "Where do you actually upload code to the Arduino?",
+            "options": [
+              "Inside the Monster Lab app",
+              "Using the Arduino IDE on a computer",
+              "Inside the Build Lab"
+            ],
+            "correctIndex": 1,
+            "explanation": "The Arduino IDE on a computer is required to compile and upload code over USB."
+          },
+          {
+            "question": "How do you earn extra XP in a project?",
+            "options": [
+              "Reading the lesson twice",
+              "Completing optional Challenges",
+              "Closing the app"
+            ],
+            "correctIndex": 1,
+            "explanation": "Challenges offer bonus XP for proving your mastery."
+          },
+          {
+            "question": "How do you earn Badges?",
+            "options": [
+              "Completing special achievements",
+              "They are given randomly",
+              "You start with all of them"
+            ],
+            "correctIndex": 0,
+            "explanation": "Badges are rewards for specific accomplishments like perfect safety quizzes."
+          },
+          {
+            "question": "What is ESD?",
+            "options": [
+              "A type of LED",
+              "Electrostatic Discharge (static shock) that can damage boards",
+              "Extra System Data"
+            ],
+            "correctIndex": 1,
+            "explanation": "ESD is static electricity that must be discharged before touching bare circuit boards."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}
