@@ -5,7 +5,7 @@
   "tier": "builder",
   "estimatedMinutes": 18,
   "prerequisites": [
-    "lesson_02"
+    "l2b_08"
   ],
   "componentIds": [
     "comp_uno",

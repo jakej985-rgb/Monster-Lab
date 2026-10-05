@@ -15,6 +15,8 @@ abstract class ProgressRepository {
       String learnerId, String challengeId, int xpReward);
   Future<void> recordQuizScore(
       String learnerId, String quizId, int score, int xpReward);
+  Future<bool> completeCourse(String learnerId, String courseId, int xpReward);
+  Future<void> markPlacementPassed(String learnerId, String courseId);
   Future<void> recordActivity(String learnerId, LastActivityInfo activity);
   Future<void> resetProgress(String learnerId);
 }

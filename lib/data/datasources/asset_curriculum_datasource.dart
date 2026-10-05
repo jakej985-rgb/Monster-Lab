@@ -4,6 +4,7 @@ import '../../domain/models/lesson_model.dart';
 import '../../domain/models/component_model.dart';
 import '../../domain/models/project_model.dart';
 import '../../domain/models/challenge_model.dart';
+import '../../domain/models/course_model.dart';
 
 class AssetCurriculumDataSource {
   final AssetBundle _assetBundle;
@@ -19,6 +20,42 @@ class AssetCurriculumDataSource {
     } catch (_) {
       return null;
     }
+  }
+
+  static List<CourseModel>? _cachedBaselineCourses;
+
+  List<CourseModel> getBaselineCourses() {
+    return _cachedBaselineCourses ??= [
+      const CourseModel(
+        id: 'coding_foundations',
+        title: 'Coding Foundations',
+        summary: 'Learn the core programming concepts required for Monster Lab.',
+        lessonIds: ['cf_01', 'cf_02', 'cf_03', 'cf_04', 'cf_05', 'cf_06', 'cf_07', 'cf_08'],
+        isOptional: true,
+        placementLessonId: 'cf_01',
+        prerequisites: [],
+        xpReward: 500,
+        estimatedMinutes: 60,
+      ),
+      const CourseModel(
+        id: 'lesson_2a',
+        title: 'Course 2A: Basic Sensors',
+        summary: 'Explore basic analog and digital sensors.',
+        lessonIds: ['l2a_01', 'l2a_02', 'l2a_03', 'l2a_04', 'l2a_05', 'l2a_06', 'l2a_07', 'l2a_08'],
+        prerequisites: ['lesson_01'],
+        xpReward: 600,
+        estimatedMinutes: 90,
+      ),
+      const CourseModel(
+        id: 'lesson_2b',
+        title: 'Course 2B: Actuators',
+        summary: 'Control physical movement with servos and motors.',
+        lessonIds: ['l2b_01', 'l2b_02', 'l2b_03', 'l2b_04', 'l2b_05', 'l2b_06', 'l2b_07', 'l2b_08'],
+        prerequisites: ['lesson_2a'],
+        xpReward: 600,
+        estimatedMinutes: 90,
+      ),
+    ];
   }
 
   static List<Lesson>? _cachedBaselineLessons;
@@ -2604,6 +2641,79 @@ class AssetCurriculumDataSource {
       }
     ],
     "xpReward": 100
+  }
+  ,
+  {
+    "id": "l2a_01", "title": "2A Stub 1", "summary": "", "tier": "rookie", "estimatedMinutes": 2, "prerequisites": ["lesson_01"], "componentIds": [], "steps": [{"stepId": "l2a_01_s01", "title": "Step 1", "type": "story", "markdownContent": "Stub"}], "xpReward": 10
+  },
+  {
+    "id": "l2a_02", "title": "2A Stub 2", "summary": "", "tier": "rookie", "estimatedMinutes": 2, "prerequisites": ["l2a_01"], "componentIds": [], "steps": [{"stepId": "l2a_02_s01", "title": "Step 1", "type": "story", "markdownContent": "Stub"}], "xpReward": 10
+  },
+  {
+    "id": "l2a_03", "title": "2A Stub 3", "summary": "", "tier": "rookie", "estimatedMinutes": 2, "prerequisites": ["l2a_02"], "componentIds": [], "steps": [{"stepId": "l2a_03_s01", "title": "Step 1", "type": "story", "markdownContent": "Stub"}], "xpReward": 10
+  },
+  {
+    "id": "l2a_04", "title": "2A Stub 4", "summary": "", "tier": "rookie", "estimatedMinutes": 2, "prerequisites": ["l2a_03"], "componentIds": [], "steps": [{"stepId": "l2a_04_s01", "title": "Step 1", "type": "story", "markdownContent": "Stub"}], "xpReward": 10
+  },
+  {
+    "id": "l2a_05", "title": "2A Stub 5", "summary": "", "tier": "rookie", "estimatedMinutes": 2, "prerequisites": ["l2a_04"], "componentIds": [], "steps": [{"stepId": "l2a_05_s01", "title": "Step 1", "type": "story", "markdownContent": "Stub"}], "xpReward": 10
+  },
+  {
+    "id": "l2a_06", "title": "2A Stub 6", "summary": "", "tier": "rookie", "estimatedMinutes": 2, "prerequisites": ["l2a_05"], "componentIds": [], "steps": [{"stepId": "l2a_06_s01", "title": "Step 1", "type": "story", "markdownContent": "Stub"}], "xpReward": 10
+  },
+  {
+    "id": "l2a_07", "title": "2A Stub 7", "summary": "", "tier": "rookie", "estimatedMinutes": 2, "prerequisites": ["l2a_06"], "componentIds": [], "steps": [{"stepId": "l2a_07_s01", "title": "Step 1", "type": "story", "markdownContent": "Stub"}], "xpReward": 10
+  },
+  {
+    "id": "l2a_08", "title": "2A Stub 8", "summary": "", "tier": "rookie", "estimatedMinutes": 2, "prerequisites": ["l2a_07"], "componentIds": [], "steps": [{"stepId": "l2a_08_s01", "title": "Step 1", "type": "story", "markdownContent": "Stub"}], "xpReward": 10
+  },
+  {
+    "id": "cf_01", "title": "CF Stub 1", "summary": "", "tier": "rookie", "estimatedMinutes": 2, "prerequisites": [], "componentIds": [], "steps": [{"stepId": "cf_01_s01", "title": "Step 1", "type": "story", "markdownContent": "Stub"}], "xpReward": 10
+  },
+  {
+    "id": "cf_02", "title": "CF Stub 2", "summary": "", "tier": "rookie", "estimatedMinutes": 2, "prerequisites": ["cf_01"], "componentIds": [], "steps": [{"stepId": "cf_02_s01", "title": "Step 1", "type": "story", "markdownContent": "Stub"}], "xpReward": 10
+  },
+  {
+    "id": "cf_03", "title": "CF Stub 3", "summary": "", "tier": "rookie", "estimatedMinutes": 2, "prerequisites": ["cf_02"], "componentIds": [], "steps": [{"stepId": "cf_03_s01", "title": "Step 1", "type": "story", "markdownContent": "Stub"}], "xpReward": 10
+  },
+  {
+    "id": "cf_04", "title": "CF Stub 4", "summary": "", "tier": "rookie", "estimatedMinutes": 2, "prerequisites": ["cf_03"], "componentIds": [], "steps": [{"stepId": "cf_04_s01", "title": "Step 1", "type": "story", "markdownContent": "Stub"}], "xpReward": 10
+  },
+  {
+    "id": "cf_05", "title": "CF Stub 5", "summary": "", "tier": "rookie", "estimatedMinutes": 2, "prerequisites": ["cf_04"], "componentIds": [], "steps": [{"stepId": "cf_05_s01", "title": "Step 1", "type": "story", "markdownContent": "Stub"}], "xpReward": 10
+  },
+  {
+    "id": "cf_06", "title": "CF Stub 6", "summary": "", "tier": "rookie", "estimatedMinutes": 2, "prerequisites": ["cf_05"], "componentIds": [], "steps": [{"stepId": "cf_06_s01", "title": "Step 1", "type": "story", "markdownContent": "Stub"}], "xpReward": 10
+  },
+  {
+    "id": "cf_07", "title": "CF Stub 7", "summary": "", "tier": "rookie", "estimatedMinutes": 2, "prerequisites": ["cf_06"], "componentIds": [], "steps": [{"stepId": "cf_07_s01", "title": "Step 1", "type": "story", "markdownContent": "Stub"}], "xpReward": 10
+  },
+  {
+    "id": "cf_08", "title": "CF Stub 8", "summary": "", "tier": "rookie", "estimatedMinutes": 2, "prerequisites": ["cf_07"], "componentIds": [], "steps": [{"stepId": "cf_08_s01", "title": "Step 1", "type": "story", "markdownContent": "Stub"}], "xpReward": 10
+  },
+  {
+    "id": "l2b_01", "title": "2B Stub 1", "summary": "", "tier": "rookie", "estimatedMinutes": 2, "prerequisites": ["lesson_2a"], "componentIds": [], "steps": [{"stepId": "l2b_01_s01", "title": "Step 1", "type": "story", "markdownContent": "Stub"}], "xpReward": 10
+  },
+  {
+    "id": "l2b_02", "title": "2B Stub 2", "summary": "", "tier": "rookie", "estimatedMinutes": 2, "prerequisites": ["l2b_01"], "componentIds": [], "steps": [{"stepId": "l2b_02_s01", "title": "Step 1", "type": "story", "markdownContent": "Stub"}], "xpReward": 10
+  },
+  {
+    "id": "l2b_03", "title": "2B Stub 3", "summary": "", "tier": "rookie", "estimatedMinutes": 2, "prerequisites": ["l2b_02"], "componentIds": [], "steps": [{"stepId": "l2b_03_s01", "title": "Step 1", "type": "story", "markdownContent": "Stub"}], "xpReward": 10
+  },
+  {
+    "id": "l2b_04", "title": "2B Stub 4", "summary": "", "tier": "rookie", "estimatedMinutes": 2, "prerequisites": ["l2b_03"], "componentIds": [], "steps": [{"stepId": "l2b_04_s01", "title": "Step 1", "type": "story", "markdownContent": "Stub"}], "xpReward": 10
+  },
+  {
+    "id": "l2b_05", "title": "2B Stub 5", "summary": "", "tier": "rookie", "estimatedMinutes": 2, "prerequisites": ["l2b_04"], "componentIds": [], "steps": [{"stepId": "l2b_05_s01", "title": "Step 1", "type": "story", "markdownContent": "Stub"}], "xpReward": 10
+  },
+  {
+    "id": "l2b_06", "title": "2B Stub 6", "summary": "", "tier": "rookie", "estimatedMinutes": 2, "prerequisites": ["l2b_05"], "componentIds": [], "steps": [{"stepId": "l2b_06_s01", "title": "Step 1", "type": "story", "markdownContent": "Stub"}], "xpReward": 10
+  },
+  {
+    "id": "l2b_07", "title": "2B Stub 7", "summary": "", "tier": "rookie", "estimatedMinutes": 2, "prerequisites": ["l2b_06"], "componentIds": [], "steps": [{"stepId": "l2b_07_s01", "title": "Step 1", "type": "story", "markdownContent": "Stub"}], "xpReward": 10
+  },
+  {
+    "id": "l2b_08", "title": "2B Stub 8", "summary": "", "tier": "rookie", "estimatedMinutes": 2, "prerequisites": ["l2b_07"], "componentIds": [], "steps": [{"stepId": "l2b_08_s01", "title": "Step 1", "type": "story", "markdownContent": "Stub"}], "xpReward": 10
   }
 ]''';
 

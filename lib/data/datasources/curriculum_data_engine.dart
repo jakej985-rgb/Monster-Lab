@@ -6,6 +6,7 @@ import '../../domain/models/component_model.dart';
 import '../../domain/models/project_model.dart';
 import '../../domain/models/challenge_model.dart';
 import '../../domain/models/badge_model.dart';
+import '../../domain/models/course_model.dart';
 import 'asset_curriculum_datasource.dart';
 
 class CurriculumDataEngine {
@@ -14,6 +15,7 @@ class CurriculumDataEngine {
 
   bool _isInitialized = false;
   Future<void>? _initFuture;
+  final Map<String, CourseModel> _courses = {};
   final Map<String, Lesson> _lessons = {};
   final Map<String, ComponentModel> _components = {};
   final Map<String, ProjectModel> _projects = {};
@@ -51,6 +53,24 @@ class CurriculumDataEngine {
         }
       } catch (_) {
         // Badges optional in fallback
+      }
+
+      // 1.5. Load Courses
+      try {
+        if (manifest['courses'] != null) {
+          final courseIds = List<String>.from(manifest['courses'] as List);
+          final courseJsons = await Future.wait(
+            courseIds.map((cid) =>
+                _assetBundle.loadString('assets/curriculum/courses/$cid.json')),
+          );
+          for (final cJson in courseJsons) {
+            final course =
+                CourseModel.fromJson(jsonDecode(cJson) as Map<String, dynamic>);
+            _courses[course.id] = course;
+          }
+        }
+      } catch (_) {
+        // Courses optional during tests
       }
 
       // 2. Load Components
@@ -120,6 +140,11 @@ class CurriculumDataEngine {
   }
 
   void _populateFromFallback() {
+    try {
+      for (final c in _fallbackDataSource.getBaselineCourses()) {
+        _courses[c.id] = c;
+      }
+    } catch (_) {}
     for (final l in _fallbackDataSource.getBaselineLessons()) {
       _lessons[l.id] = l;
     }
@@ -153,6 +178,71 @@ class CurriculumDataEngine {
   }
 
   // --- Query Methods ---
+
+  Future<List<CourseModel>> getCourses() async {
+    if (!_isInitialized) await initialize();
+    return _courses.values.toList();
+  }
+
+  Future<CourseModel> getCourseById(String id) async {
+    if (!_isInitialized) await initialize();
+    final course = _courses[id];
+    if (course == null) {
+      throw Exception('Course $id not found in curriculum engine');
+    }
+    return course;
+  }
+
+  Future<List<Lesson>> getCourseLessons(String courseId) async {
+    if (!_isInitialized) await initialize();
+    final list = _lessons.values.where((l) => l.courseId == courseId).toList();
+    list.sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
+    return list;
+  }
+
+  Future<List<Lesson>> getLessonsOrdered() async {
+    if (!_isInitialized) await initialize();
+
+    final standalone = <Lesson>[];
+    final courseLessons = <String, List<Lesson>>{};
+
+    for (final lesson in _lessons.values) {
+      if (lesson.courseId == null) {
+        standalone.add(lesson);
+      } else {
+        courseLessons.putIfAbsent(lesson.courseId!, () => []).add(lesson);
+      }
+    }
+
+    standalone.sort((a, b) => a.id.compareTo(b.id));
+
+    for (final list in courseLessons.values) {
+      list.sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
+    }
+
+    final result = <Lesson>[];
+
+    final lesson1Index = standalone.indexWhere((l) => l.id == 'lesson_01');
+    if (lesson1Index != -1) {
+      result.add(standalone.removeAt(lesson1Index));
+    }
+
+    if (courseLessons.containsKey('coding_foundations')) {
+      result.addAll(courseLessons['coding_foundations']!);
+    }
+
+    if (courseLessons.containsKey('lesson_2a')) {
+      result.addAll(courseLessons['lesson_2a']!);
+    }
+
+    if (courseLessons.containsKey('lesson_2b')) {
+      result.addAll(courseLessons['lesson_2b']!);
+    }
+
+    result.addAll(standalone);
+
+    return result;
+  }
 
   Future<List<Lesson>> getLessons({DifficultyTier? tier}) async {
     if (!_isInitialized) await initialize();

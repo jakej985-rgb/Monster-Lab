@@ -39,6 +39,8 @@ class LastActivityInfo {
 class LearnerProgressModel {
   final String learnerId;
   final int totalXp;
+  final Set<String> completedCourseIds;
+  final Set<String> placementPassedCourseIds;
   final Set<String> completedLessonIds;
   final Set<String> discoveredComponentIds;
   final Set<String> completedProjectIds;
@@ -52,6 +54,8 @@ class LearnerProgressModel {
   const LearnerProgressModel({
     required this.learnerId,
     this.totalXp = 0,
+    this.completedCourseIds = const {},
+    this.placementPassedCourseIds = const {},
     this.completedLessonIds = const {},
     this.discoveredComponentIds = const {},
     this.completedProjectIds = const {},
@@ -96,6 +100,10 @@ class LearnerProgressModel {
     return LearnerProgressModel(
       learnerId: json['learnerId'] as String,
       totalXp: json['totalXp'] as int? ?? 0,
+      completedCourseIds:
+          Set<String>.from(json['completedCourseIds'] as List? ?? []),
+      placementPassedCourseIds:
+          Set<String>.from(json['placementPassedCourseIds'] as List? ?? []),
       completedLessonIds:
           Set<String>.from(json['completedLessonIds'] as List? ?? []),
       discoveredComponentIds:
@@ -129,6 +137,8 @@ class LearnerProgressModel {
         'learnerId': learnerId,
         'totalXp': totalXp,
         'currentLevel': currentLevel,
+        'completedCourseIds': completedCourseIds.toList(),
+        'placementPassedCourseIds': placementPassedCourseIds.toList(),
         'completedLessonIds': completedLessonIds.toList(),
         'discoveredComponentIds': discoveredComponentIds.toList(),
         'completedProjectIds': completedProjectIds.toList(),
@@ -142,6 +152,8 @@ class LearnerProgressModel {
 
   LearnerProgressModel copyWith({
     int? totalXp,
+    Set<String>? completedCourseIds,
+    Set<String>? placementPassedCourseIds,
     Set<String>? completedLessonIds,
     Set<String>? discoveredComponentIds,
     Set<String>? completedProjectIds,
@@ -155,6 +167,8 @@ class LearnerProgressModel {
     return LearnerProgressModel(
       learnerId: learnerId,
       totalXp: totalXp ?? this.totalXp,
+      completedCourseIds: completedCourseIds ?? this.completedCourseIds,
+      placementPassedCourseIds: placementPassedCourseIds ?? this.placementPassedCourseIds,
       completedLessonIds: completedLessonIds ?? this.completedLessonIds,
       discoveredComponentIds:
           discoveredComponentIds ?? this.discoveredComponentIds,
@@ -166,5 +180,17 @@ class LearnerProgressModel {
       lastActivity: lastActivity ?? this.lastActivity,
       lastSessionDate: lastSessionDate ?? this.lastSessionDate,
     );
+  }
+
+  static LearnerProgressModel migrateFromOldFormat(LearnerProgressModel old) {
+    if (old.completedLessonIds.contains('lesson_02')) {
+      final updatedLessonIds = Set<String>.from(old.completedLessonIds);
+      updatedLessonIds.addAll([
+        'l2b_01', 'l2b_02', 'l2b_03', 'l2b_04',
+        'l2b_05', 'l2b_06', 'l2b_07', 'l2b_08',
+      ]);
+      return old.copyWith(completedLessonIds: updatedLessonIds);
+    }
+    return old;
   }
 }

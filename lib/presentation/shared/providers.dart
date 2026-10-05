@@ -15,6 +15,11 @@ import '../../domain/models/lesson_model.dart';
 import '../../domain/repositories/profile_repository.dart';
 import '../../domain/repositories/progress_repository.dart';
 import '../../domain/repositories/curriculum_repository.dart';
+import '../../domain/models/app_settings.dart';
+import '../../domain/repositories/settings_repository.dart';
+import '../../data/datasources/settings_datasource.dart';
+import '../../data/repositories/settings_repository_impl.dart';
+import '../../domain/models/course_model.dart';
 
 import '../../data/datasources/curriculum_data_engine.dart';
 
@@ -168,6 +173,22 @@ class ActiveProgressNotifier extends StateNotifier<LearnerProgressModel?> {
     return isFirst;
   }
 
+  Future<bool> completeCourse(String courseId, int xpReward) async {
+    final learnerId = _learnerId;
+    if (learnerId == null) return false;
+    final isFirst =
+        await _progressRepo.completeCourse(learnerId, courseId, xpReward);
+    await loadProgress();
+    return isFirst;
+  }
+
+  Future<void> markPlacementPassed(String courseId) async {
+    final learnerId = _learnerId;
+    if (learnerId == null) return;
+    await _progressRepo.markPlacementPassed(learnerId, courseId);
+    await loadProgress();
+  }
+
   Future<bool> completeProject(String projectId, int xpReward,
       [String? badgeId]) async {
     final learnerId = _learnerId;
@@ -187,6 +208,57 @@ class ActiveProgressNotifier extends StateNotifier<LearnerProgressModel?> {
     return isFirst;
   }
 }
+
+final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
+  final storageService = ref.watch(storageServiceProvider);
+  return SettingsRepositoryImpl(SettingsDataSource(storageService));
+});
+
+class SettingsNotifier extends StateNotifier<AppSettings> {
+  final SettingsRepository _repository;
+
+  SettingsNotifier(this._repository) : super(_repository.getSettings());
+
+  Future<void> setImmersiveLessonMode(bool value) async {
+    await _repository.setImmersiveLessonMode(value);
+    state = _repository.getSettings();
+  }
+
+  Future<void> setSoundEnabled(bool value) async {
+    await _repository.setSoundEnabled(value);
+    state = _repository.getSettings();
+  }
+
+  Future<void> setHighContrast(bool value) async {
+    await _repository.setHighContrast(value);
+    state = _repository.getSettings();
+  }
+}
+
+final settingsNotifierProvider =
+    StateNotifierProvider<SettingsNotifier, AppSettings>((ref) {
+  final repo = ref.watch(settingsRepositoryProvider);
+  return SettingsNotifier(repo);
+});
+
+final coursesProvider = FutureProvider<List<CourseModel>>((ref) async {
+  final engine = ref.watch(curriculumDataEngineProvider);
+  return engine.getCourses();
+});
+
+final orderedLessonsProvider = FutureProvider<List<Lesson>>((ref) async {
+  final engine = ref.watch(curriculumDataEngineProvider);
+  return engine.getLessonsOrdered();
+});
+
+final courseProgressProvider = FutureProvider.family<({int completed, int total}), String>((ref, courseId) async {
+  final engine = ref.watch(curriculumDataEngineProvider);
+  final progress = ref.watch(activeProgressProvider);
+  final lessons = await engine.getCourseLessons(courseId);
+  final total = lessons.length;
+  final completed = lessons.where((l) => progress?.completedLessonIds.contains(l.id) ?? false).length;
+  return (completed: completed, total: total);
+});
 
 final hardwareBridgeProvider = Provider<IHardwareBridge>((ref) {
   final bridge = HardwareBridgeService.createDefaultBridge();

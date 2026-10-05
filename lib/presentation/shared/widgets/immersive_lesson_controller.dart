@@ -19,7 +19,6 @@ class ImmersiveLessonController extends ConsumerStatefulWidget {
 class _ImmersiveLessonControllerState
     extends ConsumerState<ImmersiveLessonController>
     with WidgetsBindingObserver {
-  bool _immersiveActive = false;
 
   @override
   void initState() {
@@ -48,11 +47,9 @@ class _ImmersiveLessonControllerState
     final settings = ref.read(settingsNotifierProvider);
     if (settings.immersiveLessonMode) {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-      _immersiveActive = true;
     } else {
       // Normal mode — keep system UI, still use edge-to-edge for proper insets
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-      _immersiveActive = false;
     }
   }
 
