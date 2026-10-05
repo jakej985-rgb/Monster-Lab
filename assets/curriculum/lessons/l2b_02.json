@@ -1,0 +1,77 @@
+{
+  "id": "l2b_02",
+  "title": "Compilation & Flashing Pipeline",
+  "summary": "Understand what happens when you click the Upload button.",
+  "tier": "rookie",
+  "estimatedMinutes": 4,
+  "courseId": "lesson_2b",
+  "sortOrder": 2,
+  "isOptional": false,
+  "prerequisites": ["l2b_01"],
+  "componentIds": ["comp_uno"],
+  "steps": [
+    {
+      "stepId": "l2b_02_s01",
+      "title": "Compilation & Flashing: What Happens When You Upload?",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "compilationPipelineSimulator",
+      "markdownContent": "When you click **Upload** in the IDE, your computer does not send C++ words directly to the ATmega328P chip. Microcontrollers cannot read English or C++! They only understand raw hexadecimal binary opcodes.\n\n### The 4-Stage Build & Flash Pipeline:\n1. **Human Source Code**: You write C++ functions.\n2. **Syntax Verification & Lexing**: The compiler checks grammar, matching braces `{ }`, and semicolons `;`.\n3. **Binary Compilation (avr-g++)**: Converts C++ text into machine opcodes (Intel HEX format).\n4. **Hardware Flash Flashing (avrdude)**: Streams bytes over USB serial into the bootloader in flash memory.\n\nStep through each stage in the pipeline simulator below to see how code transforms into machine reality!"
+    },
+    {
+      "stepId": "l2b_02_s02",
+      "title": "Predict the Pipeline",
+      "type": "story",
+      "interactiveWidgetType": "engineeringPrediction",
+      "markdownContent": "If there's a syntax error like a missing semicolon in your code, which stage fails? Why? Think about the 4-Stage Pipeline.\n\nIt would fail at Stage 2 (Syntax Verification & Lexing). The compiler won't even try to build binary if the C++ grammar is invalid. Let's see if you can predict other failures!"
+    },
+    {
+      "stepId": "l2b_02_s03",
+      "title": "Knowledge Check: Compilation",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check what you learned about compilation.",
+      "interactiveConfig": {
+        "question": "What does compiling do?",
+        "options": [
+          "Converts source code into a form suitable for the target system",
+          "Supplies electricity to the Arduino",
+          "Connects the USB cable"
+        ],
+        "correctIndex": 0,
+        "explanation": "The compiler translates human-readable C++ source text into hexadecimal machine opcodes.",
+        "questions": [
+          {
+            "question": "What does compiling do?",
+            "options": [
+              "Converts source code into a form suitable for the target system",
+              "Supplies electricity to the Arduino",
+              "Connects the USB cable"
+            ],
+            "correctIndex": 0,
+            "explanation": "The compiler translates human-readable C++ source text into hexadecimal machine opcodes."
+          },
+          {
+            "question": "What does Upload do?",
+            "options": [
+              "Sends the compiled program to the Arduino flash memory",
+              "Deletes the Arduino",
+              "Changes the USB cable"
+            ],
+            "correctIndex": 0,
+            "explanation": "Upload transfers compiled hex binary through USB into microcontroller flash memory."
+          },
+          {
+            "question": "Which stage catches missing semicolons?",
+            "options": [
+              "Syntax Verification",
+              "Hardware Flash",
+              "Human Source Code"
+            ],
+            "correctIndex": 0,
+            "explanation": "The syntax verification stage analyzes grammar before attempting compilation."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

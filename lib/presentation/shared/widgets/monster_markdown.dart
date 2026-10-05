@@ -3,6 +3,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../features/lab/widgets/arduino_syntax_highlighter.dart';
 
+// ignore: depend_on_referenced_packages
 import 'package:markdown/markdown.dart' as md;
 import 'responsive_code_block.dart';
 

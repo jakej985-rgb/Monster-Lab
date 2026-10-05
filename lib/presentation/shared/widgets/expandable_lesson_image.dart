@@ -17,7 +17,7 @@ class ExpandableLessonImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget imageWidget = LayoutBuilder(
+    final Widget imageWidget = LayoutBuilder(
       builder: (context, constraints) {
         return Image.asset(
           assetPath,
@@ -40,9 +40,9 @@ class ExpandableLessonImage extends StatelessWidget {
                 color: Colors.black54,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Row(
+              child: const Row(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
+                children: [
                   Icon(Icons.fullscreen, color: Colors.white, size: 16),
                   SizedBox(width: 4),
                   Text(
@@ -63,7 +63,7 @@ class ExpandableLessonImage extends StatelessWidget {
             ? () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
+                  MaterialPageRoute<void>(
                     builder: (_) => FullScreenImageViewer(
                       assetPath: assetPath,
                       semanticsLabel: semanticsLabel,

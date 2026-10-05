@@ -1,0 +1,83 @@
+{
+  "id": "l2b_03",
+  "title": "Connecting, Board & Port Selection",
+  "summary": "Safely connect the USB and choose the right board and port in the IDE.",
+  "tier": "rookie",
+  "estimatedMinutes": 4,
+  "courseId": "lesson_2b",
+  "sortOrder": 3,
+  "isOptional": false,
+  "prerequisites": ["l2b_02"],
+  "componentIds": ["comp_uno"],
+  "steps": [
+    {
+      "stepId": "l2b_03_s01",
+      "title": "Connecting the USB Cable Safely",
+      "type": "physicalTask",
+      "markdownContent": "Connect your Arduino Uno development board to your computer using the standard USB Type-B cable.\n\n### Step-by-Step Connection Procedure:\n1. **Inspect Your Workspace**: Ensure your table is completely dry, clean, and free of loose conductive metal clippings or staples.\n2. **Plug Board End**: Firmly insert the square **USB Type-B** plug into the silver receptacle on your Arduino Uno until it clicks.\n3. **Plug Computer End**: Insert the flat rectangular **USB Type-A** plug into a powered USB port on your PC or laptop.\n4. **Verify Power Beacon**: Look at the Arduino Uno. The green surface-mount LED labeled **ON** should glow solid green, indicating regulated 5V power!"
+    },
+    {
+      "stepId": "l2b_03_s02",
+      "title": "What Is a Port? Serial COM Ports & Device Drivers",
+      "type": "story",
+      "interactiveWidgetType": "portSelectorBench",
+      "markdownContent": "A **port** is the communication channel your computer uses to identify and talk to external USB devices.\n\nOn Windows, ports are assigned names like `COM1`, `COM3`, `COM4`. On macOS and Linux, they appear as `/dev/cu.usbmodem...` or `/dev/ttyUSB0`.\n\nWhen you plug in the Arduino, an onboard interface chip creates a virtual UART serial communication bridge.\n\nIn the IDE menu under **Tools > Board**, choose **Arduino Uno**. Under **Tools > Port**, select the port corresponding to your Uno. Practice configuring the board and port in the virtual bench below!"
+    },
+    {
+      "stepId": "l2b_03_s03",
+      "title": "Troubleshooting Lab Station",
+      "type": "story",
+      "interactiveWidgetType": "portTroubleshootingBench",
+      "markdownContent": "If the Arduino IDE reports *\"Port Not Found\"* or errors out during upload, do not panic! Professional robotics engineers use systematic triage:\n\n1. **Check Physical Connection**: Is the USB cable fully seated into the jack?\n2. **Check Port Selection**: Is the active Arduino COM port chosen, or an internal motherboard port like COM1?\n3. **Check USB Drivers**: Does your board use a CH340 or CP2102 chip that requires an OS device driver?\n4. **Check Board Power**: Does the green ON LED illuminate, proving 5V power?\n\nInspect each diagnostic check in the triage bench below, resolve all 4 faults, and restore full communication link!"
+    },
+    {
+      "stepId": "l2b_03_s04",
+      "title": "Knowledge Check: Board & Port",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your knowledge on boards and ports.",
+      "interactiveConfig": {
+        "question": "Why must you select the correct board?",
+        "options": [
+          "Different boards can use different hardware and programming requirements",
+          "The board name changes the USB cable",
+          "The Arduino cannot store programs"
+        ],
+        "correctIndex": 0,
+        "explanation": "Different microcontroller boards use distinct pin layouts, register maps, and flash sizes.",
+        "questions": [
+          {
+            "question": "Why must you select the correct board?",
+            "options": [
+              "Different boards can use different hardware and programming requirements",
+              "The board name changes the USB cable",
+              "The Arduino cannot store programs"
+            ],
+            "correctIndex": 0,
+            "explanation": "Different microcontroller boards use distinct pin layouts, register maps, and flash sizes."
+          },
+          {
+            "question": "What does the port identify?",
+            "options": [
+              "The computer's communication connection to the Arduino",
+              "The Arduino's battery level",
+              "The program's XP reward"
+            ],
+            "correctIndex": 0,
+            "explanation": "The serial COM port provides the virtual UART communication link between host OS and the Uno board."
+          },
+          {
+            "question": "What should you check if the port is not found?",
+            "options": [
+              "Physical connection and driver installation",
+              "The color of the USB cable",
+              "The room temperature"
+            ],
+            "correctIndex": 0,
+            "explanation": "Physical connection issues and missing drivers are the most common causes of unrecognized ports."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

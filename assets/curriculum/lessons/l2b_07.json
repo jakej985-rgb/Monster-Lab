@@ -1,0 +1,70 @@
+{
+  "id": "l2b_07",
+  "title": "ESD Safety",
+  "summary": "Learn how to protect your electronics from Electrostatic Discharge.",
+  "tier": "rookie",
+  "estimatedMinutes": 3,
+  "courseId": "lesson_2b",
+  "sortOrder": 7,
+  "isOptional": false,
+  "prerequisites": ["l2b_06"],
+  "componentIds": ["comp_uno"],
+  "steps": [
+    {
+      "stepId": "l2b_07_s01",
+      "title": "Workshop Safety: Electrostatic Discharge (ESD)",
+      "type": "story",
+      "interactiveWidgetType": "esdSafetyCheck",
+      "markdownContent": "Microcontrollers are sensitive CMOS semiconductor devices. A spark of static electricity under 3,000 volts\u2014too faint for human fingers to feel\u2014can permanently destroy internal silicon transistor gate oxide layers!\n\n### The 3 Golden Rules of ESD Defense:\n1. **Touch Grounded Metal**: Touch a metal desk frame or radiator before handling boards to discharge accumulated static charge to 0V.\n2. **Avoid Static Generators**: Never assemble circuits directly on synthetic carpet or wool blankets.\n3. **Grip PCB Edges**: Always pick up boards by the outer fiberglass edges. Never touch exposed IC pins or header pins directly with your fingers.\n\nPractice proper ESD grounding in the interactive lab below to bring your static voltage potential down to a safe 0 Volts!"
+    },
+    {
+      "stepId": "l2b_07_s02",
+      "title": "Knowledge Check: Safety",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your ESD safety knowledge.",
+      "interactiveConfig": {
+        "question": "How should you pick up a circuit board?",
+        "options": [
+          "By the outer edges",
+          "By the metal pins",
+          "With a wet towel"
+        ],
+        "correctIndex": 0,
+        "explanation": "Handling by the edges prevents direct discharge into sensitive silicon components.",
+        "questions": [
+          {
+            "question": "How should you pick up a circuit board?",
+            "options": [
+              "By the outer edges",
+              "By the metal pins",
+              "With a wet towel"
+            ],
+            "correctIndex": 0,
+            "explanation": "Handling by the edges prevents direct discharge into sensitive silicon components."
+          },
+          {
+            "question": "What does touching grounded metal do?",
+            "options": [
+              "Discharges static electricity from your body safely",
+              "Charges you up with electricity",
+              "Turns on the computer"
+            ],
+            "correctIndex": 0,
+            "explanation": "It equalizes your voltage potential to 0V, preventing a spark."
+          },
+          {
+            "question": "Can you feel all sparks that destroy microchips?",
+            "options": [
+              "No, some destructive sparks are too small to feel",
+              "Yes, they always hurt",
+              "Sparks cannot destroy microchips"
+            ],
+            "correctIndex": 0,
+            "explanation": "Sparks under 3000V are imperceptible to humans but deadly to microscopic transistors."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

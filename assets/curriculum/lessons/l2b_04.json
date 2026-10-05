@@ -1,0 +1,83 @@
+{
+  "id": "l2b_04",
+  "title": "setup() and loop() Deep Dive",
+  "summary": "Understand the core structure of every Arduino sketch: setup() and loop().",
+  "tier": "rookie",
+  "estimatedMinutes": 4,
+  "courseId": "lesson_2b",
+  "sortOrder": 4,
+  "isOptional": false,
+  "prerequisites": ["l2b_03"],
+  "componentIds": ["comp_uno"],
+  "steps": [
+    {
+      "stepId": "l2b_04_s01",
+      "title": "First Look at Arduino Code: setup() and loop() Structure",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "ideLifecycleSimulator",
+      "markdownContent": "Every Arduino sketch is built around two fundamental functions:\n\n```cpp\nvoid setup() {\n  // Hardware configuration \u2014 runs ONCE at boot or reset\n  pinMode(13, OUTPUT);\n}\n\nvoid loop() {\n  // Perpetual cycle \u2014 runs REPEATEDLY forever\n  digitalWrite(13, HIGH);\n  delay(1000);\n  digitalWrite(13, LOW);\n  delay(1000);\n}\n```\n\n- `setup()`: Initializes GPIO pin directions and communications. It runs exactly once when power is applied.\n- `loop()`: The infinite heartbeat of your robot. Once `setup()` finishes, the microcontroller jumps into `loop()` and orbits perpetually.\n\nRun the interactive lifecycle simulator below to watch `setup()` illuminate its beacon once, followed by the continuous orbit of `loop()`!"
+    },
+    {
+      "stepId": "l2b_04_s02",
+      "title": "Code Prediction Challenge",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "engineeringPrediction",
+      "markdownContent": "Analyze and predict how the microcontroller executes when code structure changes:\n\n### Prediction Challenge 1: Empty setup(), Active loop()\nIf `setup()` is completely empty, does the Arduino freeze?\n*Answer:* No! `setup()` finishes in nanoseconds and immediately begins cycling `loop()`.\n\n### Prediction Challenge 2: Active setup(), Empty loop()\nIf an LED is turned ON inside `setup()`, and `loop()` has no code inside its braces `{ }`, what does the LED do?\n*Answer:* The LED turns ON in `setup()` and stays ON forever! The microcontroller continues running `loop()` endlessly at 16 MHz, maintaining the pin voltage state.\n\n> **Core Principle**: A microcontroller never powers down or \"exits\" unless electrical power is disconnected."
+    },
+    {
+      "stepId": "l2b_04_s03",
+      "title": "Real-World Systems: NASA Mars Rovers & Embedded Firmware",
+      "type": "visualExplanation",
+      "markdownContent": "The `setup()` and `loop()` firmware architecture powers mission-critical robotics worldwide:\n\n- **NASA Mars Rovers (Curiosity & Perseverance)**: Execute diagnostic sensor self-tests upon wake-up (`setup()`), then run autonomous hazard-avoidance cycles continuously (`loop()`).\n- **Automotive Airbag Control Units**: Initialize SPI accelerometer calibrations at engine start, then monitor vehicle deceleration thresholds every 100 microseconds in an unbroken loop.\n- **Commercial Drones**: Zero out gyroscope bias on launch pads, then calculate motor thrust adjustments 400 times per second during flight."
+    },
+    {
+      "stepId": "l2b_04_s04",
+      "title": "Knowledge Check: setup() and loop()",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your knowledge on program structure.",
+      "interactiveConfig": {
+        "question": "What does setup() do?",
+        "options": [
+          "Runs once when the Arduino starts or resets",
+          "Runs continuously forever",
+          "Deletes the sketch"
+        ],
+        "correctIndex": 0,
+        "explanation": "void setup() executes once upon microcontroller boot or hardware reset to initialize peripherals.",
+        "questions": [
+          {
+            "question": "What does setup() do?",
+            "options": [
+              "Runs once when the Arduino starts or resets",
+              "Runs continuously forever",
+              "Deletes the sketch"
+            ],
+            "correctIndex": 0,
+            "explanation": "void setup() executes once upon microcontroller boot or hardware reset to initialize peripherals."
+          },
+          {
+            "question": "What does loop() normally do?",
+            "options": [
+              "Repeatedly runs the code placed inside it",
+              "Selects the USB port",
+              "Compiles the computer's operating system"
+            ],
+            "correctIndex": 0,
+            "explanation": "void loop() is called repeatedly in a perpetual cycle to process real-time events."
+          },
+          {
+            "question": "What happens if loop() is empty?",
+            "options": [
+              "The Arduino keeps running loop() empty endlessly",
+              "The Arduino catches fire",
+              "The Arduino powers down"
+            ],
+            "correctIndex": 0,
+            "explanation": "A microcontroller never exits; it just keeps running the empty loop at full speed."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

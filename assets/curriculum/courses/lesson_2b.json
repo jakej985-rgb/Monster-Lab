@@ -1,0 +1,11 @@
+{
+  "id": "lesson_2b",
+  "title": "Lesson 2B — Arduino IDE Walkthrough",
+  "summary": "Master the Arduino IDE: sketches, Verify, Compile, Upload, board and port selection, Serial Monitor, Libraries, and your first successful upload.",
+  "lessonIds": ["l2b_01","l2b_02","l2b_03","l2b_04","l2b_05","l2b_06","l2b_07","l2b_08"],
+  "isOptional": false,
+  "placementLessonId": null,
+  "prerequisites": ["lesson_2a"],
+  "xpReward": 75,
+  "estimatedMinutes": 20
+}

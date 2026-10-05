@@ -1,0 +1,74 @@
+{
+  "id": "l2b_06",
+  "title": "Libraries Overview",
+  "summary": "Learn what libraries are and how to include them to save time.",
+  "tier": "rookie",
+  "estimatedMinutes": 4,
+  "courseId": "lesson_2b",
+  "sortOrder": 6,
+  "isOptional": false,
+  "prerequisites": ["l2b_05"],
+  "componentIds": ["comp_uno"],
+  "steps": [
+    {
+      "stepId": "l2b_06_s01",
+      "title": "What is a Library?",
+      "type": "story",
+      "interactiveWidgetType": "libraryConceptDiagram",
+      "markdownContent": "A **library** is pre-written code that someone else created to make your life easier.\n\nInstead of writing 500 lines of complex math to talk to a temperature sensor, you can use a library that reduces it to one line: `sensor.readTemp();`.\n\nLibraries exist so engineers don't have to reinvent the wheel for every common component!"
+    },
+    {
+      "stepId": "l2b_06_s02",
+      "title": "How to Use a Library (#include)",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "includeSyntaxDeconstruction",
+      "markdownContent": "To use a library, you add an `#include` line at the very top of your sketch, before `setup()`.\n\n```cpp\n#include <Servo.h>\n```\n\nThis tells the compiler to attach the Servo motor code to your sketch before compiling. If you try to command a servo without including the library, the compiler will fail and give you an error."
+    },
+    {
+      "stepId": "l2b_06_s03",
+      "title": "Arduino Library Manager",
+      "type": "story",
+      "interactiveWidgetType": "libraryManagerSimulator",
+      "markdownContent": "Where do libraries come from? \n\nThe Arduino IDE has a built-in **Library Manager** (under Tools > Manage Libraries). It's like an app store for code! You can search for the sensor or motor you are using, and click Install. Use the simulator below to find and install a library."
+    },
+    {
+      "stepId": "l2b_06_s04",
+      "title": "Knowledge Check: Libraries",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test what you know about libraries.",
+      "interactiveConfig": {
+        "question": "What is a code library?",
+        "options": [
+          "Pre-written code that makes programming hardware easier",
+          "A place to store batteries",
+          "A type of USB cable"
+        ],
+        "correctIndex": 0,
+        "explanation": "Libraries contain complex code wrapped into simple functions so you don't reinvent the wheel.",
+        "questions": [
+          {
+            "question": "What is a code library?",
+            "options": [
+              "Pre-written code that makes programming hardware easier",
+              "A place to store batteries",
+              "A type of USB cable"
+            ],
+            "correctIndex": 0,
+            "explanation": "Libraries contain complex code wrapped into simple functions so you don't reinvent the wheel."
+          },
+          {
+            "question": "Which symbol is used to add a library to your sketch?",
+            "options": [
+              "#include",
+              "Serial.begin",
+              "void setup()"
+            ],
+            "correctIndex": 0,
+            "explanation": "The #include directive tells the compiler to fetch the library files."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

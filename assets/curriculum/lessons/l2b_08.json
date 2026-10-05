@@ -1,0 +1,126 @@
+{
+  "id": "l2b_08",
+  "title": "First Upload + Final Assessment",
+  "summary": "Walk through your first upload and pass the final lesson quiz.",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_2b",
+  "sortOrder": 8,
+  "isOptional": false,
+  "prerequisites": ["l2b_07"],
+  "componentIds": ["comp_uno"],
+  "steps": [
+    {
+      "stepId": "l2b_08_s01",
+      "title": "First Upload Walkthrough",
+      "type": "physicalTask",
+      "interactiveWidgetType": "compilationPipelineSimulator",
+      "markdownContent": "Time to put it all together and upload your first sketch! We will use the built-in Blink example.\n\n1. **Connect**: Plug the Arduino into USB.\n2. **Open Sketch**: In the IDE, go to File > Examples > 01.Basics > Blink.\n3. **Select Board**: Tools > Board > Arduino Uno.\n4. **Select Port**: Tools > Port > [Select your port].\n5. **Verify**: Click the Checkmark button to compile.\n6. **Upload**: Click the Right Arrow button to flash.\n7. **Observe**: Look at the board. The built-in LED near pin 13 should blink on and off every second!"
+    },
+    {
+      "stepId": "l2b_08_s02",
+      "title": "Common Failures",
+      "type": "story",
+      "markdownContent": "If the LED doesn't blink, review these common failures:\n- **Upload Error (avrdude sync)**: You likely chose the wrong Port. Check the Tools > Port menu again.\n- **Compilation Error**: You might have accidentally deleted a semicolon or curly brace `{` in the code.\n- **No Lights At All**: The USB cable isn't pushed in fully, or the port is dead."
+    },
+    {
+      "stepId": "l2b_08_s03",
+      "title": "Comprehensive Knowledge Check",
+      "type": "quizCheckpoint",
+      "markdownContent": "Verify your understanding of IDE compilation, USB device drivers, COM ports, and firmware lifecycles.",
+      "interactiveConfig": {
+        "question": "What does IDE stand for?",
+        "options": [
+          "Integrated Development Environment",
+          "Internal Digital Engine",
+          "Input Device Electronics"
+        ],
+        "correctIndex": 0,
+        "explanation": "IDE stands for Integrated Development Environment\u2014the unified coding and flashing workbench.",
+        "questions": [
+          {
+            "question": "What does IDE stand for?",
+            "options": [
+              "Integrated Development Environment",
+              "Internal Digital Engine",
+              "Input Device Electronics"
+            ],
+            "correctIndex": 0,
+            "explanation": "IDE stands for Integrated Development Environment\u2014the unified coding and flashing workbench."
+          },
+          {
+            "question": "What is an Arduino sketch?",
+            "options": [
+              "An Arduino program/project (.ino file)",
+              "A battery",
+              "A USB port"
+            ],
+            "correctIndex": 0,
+            "explanation": "An Arduino sketch is the C++ program file containing setup() and loop() routines."
+          },
+          {
+            "question": "What does compiling do?",
+            "options": [
+              "Converts source code into a form suitable for the target system",
+              "Supplies electricity to the Arduino",
+              "Connects the USB cable"
+            ],
+            "correctIndex": 0,
+            "explanation": "The compiler translates human-readable C++ source text into hexadecimal machine opcodes."
+          },
+          {
+            "question": "What does Upload do?",
+            "options": [
+              "Sends the program to the Arduino",
+              "Deletes the Arduino",
+              "Changes the USB cable"
+            ],
+            "correctIndex": 0,
+            "explanation": "Upload uses the avrdude utility to transfer compiled hex binary through USB into microcontroller flash memory."
+          },
+          {
+            "question": "Why must you select the correct board?",
+            "options": [
+              "Different boards can use different hardware and programming requirements",
+              "The board name changes the USB cable",
+              "The Arduino cannot store programs"
+            ],
+            "correctIndex": 0,
+            "explanation": "Different microcontroller boards use distinct pin layouts, register maps, and flash sizes."
+          },
+          {
+            "question": "What does the port identify?",
+            "options": [
+              "The computer's communication connection to the Arduino",
+              "The Arduino's battery level",
+              "The program's XP reward"
+            ],
+            "correctIndex": 0,
+            "explanation": "The serial COM port provides the virtual UART communication link between host OS and the Uno board."
+          },
+          {
+            "question": "What does Serial.begin() do?",
+            "options": [
+              "Initializes serial communication to talk to the computer",
+              "Starts a motor",
+              "Deletes the code"
+            ],
+            "correctIndex": 0,
+            "explanation": "It prepares the hardware to send and receive text."
+          },
+          {
+            "question": "What is the difference between setup() and loop()?",
+            "options": [
+              "setup() runs once, loop() runs repeatedly forever",
+              "setup() is optional, loop() is not",
+              "setup() compiles code, loop() uploads it"
+            ],
+            "correctIndex": 0,
+            "explanation": "setup() initializes hardware once on boot. loop() cycles endlessly to process real-time events."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 25
+}

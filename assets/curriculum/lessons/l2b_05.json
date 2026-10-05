@@ -1,0 +1,95 @@
+{
+  "id": "l2b_05",
+  "title": "Serial Monitor & Debugging",
+  "summary": "Learn to talk to your computer with Serial.begin and Serial.println.",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_2b",
+  "sortOrder": 5,
+  "isOptional": false,
+  "prerequisites": ["l2b_04"],
+  "componentIds": ["comp_uno"],
+  "steps": [
+    {
+      "stepId": "l2b_05_s01",
+      "title": "What is Serial Communication?",
+      "type": "story",
+      "markdownContent": "Your Arduino board and computer can talk to each other over the USB cable using **Serial communication**. They send text messages back and forth, one bit at a time (serially).\n\nThis is incredibly useful! You can use it to send commands to the robot or have the robot tell you sensor values. The IDE has a built-in tool called the **Serial Monitor** (under the Tools menu) to view these messages."
+    },
+    {
+      "stepId": "l2b_05_s02",
+      "title": "Serial.begin() in setup()",
+      "type": "codeExperiment",
+      "markdownContent": "Before the Arduino can talk, you must initialize the Serial port in `setup()`.\n\n```cpp\nvoid setup() {\n  Serial.begin(9600);\n}\n```\n\nThe `9600` is the **baud rate** \u2014 the speed at which they talk (9600 bits per second). Both the Arduino and the Serial Monitor window must be set to the exact same baud rate, or the message will look like garbage text!"
+    },
+    {
+      "stepId": "l2b_05_s03",
+      "title": "Serial.println() in loop()",
+      "type": "codeExperiment",
+      "markdownContent": "Once initialized, use `Serial.println()` inside `loop()` to send text.\n\n```cpp\nvoid loop() {\n  Serial.println(\"Hello Monster Lab!\");\n  delay(1000);\n}\n```\n\nThis prints the text and moves to a new line (that's what the `ln` in `println` means). It's great for debugging! If your robot isn't moving, you can print a sensor's value to see what the Arduino is actually reading."
+    },
+    {
+      "stepId": "l2b_05_s04",
+      "title": "Serial Monitor Practice",
+      "type": "story",
+      "interactiveWidgetType": "serialMonitorSimulator",
+      "markdownContent": "Try out the Serial Monitor simulator below. Type a command to see the output from the virtual Arduino!"
+    },
+    {
+      "stepId": "l2b_05_s05",
+      "title": "Baud Rate Mismatch",
+      "type": "story",
+      "interactiveWidgetType": "baudRateMismatchDemo",
+      "markdownContent": "What happens if the baud rate in `Serial.begin(9600)` doesn't match the dropdown in the Serial Monitor? \n\nYou get garbage characters like `\u2E2E\u2E2E\u2E2E`. See what happens in the demo below when the speeds don't match."
+    },
+    {
+      "stepId": "l2b_05_s06",
+      "title": "Knowledge Check: Serial Monitor",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your Serial knowledge.",
+      "interactiveConfig": {
+        "question": "What does Serial.begin() do?",
+        "options": [
+          "Initializes serial communication",
+          "Turns on an LED",
+          "Uploads the code"
+        ],
+        "correctIndex": 0,
+        "explanation": "Serial.begin() prepares the hardware UART to send and receive text at a specific speed.",
+        "questions": [
+          {
+            "question": "What does Serial.begin() do?",
+            "options": [
+              "Initializes serial communication",
+              "Turns on an LED",
+              "Uploads the code"
+            ],
+            "correctIndex": 0,
+            "explanation": "Serial.begin() prepares the hardware UART to send and receive text at a specific speed."
+          },
+          {
+            "question": "Why do we use Serial.println()?",
+            "options": [
+              "To print text and variables for debugging",
+              "To reset the Arduino",
+              "To make the code run faster"
+            ],
+            "correctIndex": 0,
+            "explanation": "It sends readable text to the computer so you can see what the Arduino is doing inside."
+          },
+          {
+            "question": "What happens if the baud rate on the computer doesn't match the Arduino?",
+            "options": [
+              "You see garbage characters (gibberish) instead of text",
+              "The Arduino powers off",
+              "The computer gets a virus"
+            ],
+            "correctIndex": 0,
+            "explanation": "If the two devices expect different bit speeds, the text is interpreted incorrectly."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

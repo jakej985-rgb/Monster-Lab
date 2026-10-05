@@ -1,0 +1,67 @@
+{
+  "id": "l2b_01",
+  "title": "What Is an IDE?",
+  "summary": "Learn what an IDE is and the workflow for writing, compiling, and uploading code.",
+  "tier": "rookie",
+  "estimatedMinutes": 4,
+  "courseId": "lesson_2b",
+  "sortOrder": 1,
+  "isOptional": false,
+  "prerequisites": ["lesson_2a"],
+  "componentIds": ["comp_uno"],
+  "steps": [
+    {
+      "stepId": "l2b_01_s01",
+      "title": "Give the Monster Its Voice",
+      "type": "story",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "The Arduino is the robot's brain, but the brain needs instructions.\n\nYour computer is where you write those instructions. The **Arduino IDE** (Integrated Development Environment) is the workbench that lets you write sketches, verify syntax, compile machine binaries, upload them to the board, and monitor serial communications.\n\nThe Monster Lab will talk to your physical Arduino Uno through this IDE. Think of the engineering workflow as:\n```\nWrite Code \u2794 Check Syntax \u2794 Compile Binary \u2794 Upload Flash \u2794 Run Hardware \u2794 Observe\n```\n\nIn this lesson, you will set up your development station, select your communication port, and explore how firmware lifecycles work."
+    },
+    {
+      "stepId": "l2b_01_s02",
+      "title": "What Is an IDE? The Programmer's Workbench",
+      "type": "story",
+      "interactiveWidgetType": "codeDeconstruction",
+      "markdownContent": "**IDE** stands for **Integrated Development Environment**.\n\nThink of it as a master workshop for robotics software. Instead of using a text editor to write code, a separate command-line terminal to compile it, and a third utility to flash the microcontroller chip, the Arduino IDE bundles all essential tools into one unified workbench.\n\n### Core Vocabulary\n- **IDE**: Unified software used to write, compile, and upload sketches.\n- **Sketch**: An Arduino program file ending in `.ino`.\n- **Compile**: The process of translating human-readable C++ instructions into binary machine code.\n- **Upload**: Transmitting the compiled machine hex binary from PC memory into microcontroller flash storage.\n- **Port**: The virtual serial communication channel (e.g. `COM3` or `/dev/ttyUSB0`) connecting your PC to the board."
+    },
+    {
+      "stepId": "l2b_01_s03",
+      "title": "Knowledge Check: IDE",
+      "type": "quizCheckpoint",
+      "markdownContent": "Verify your understanding of IDE basics.",
+      "interactiveConfig": {
+        "question": "What does IDE stand for?",
+        "options": [
+          "Integrated Development Environment",
+          "Internal Digital Engine",
+          "Input Device Electronics"
+        ],
+        "correctIndex": 0,
+        "explanation": "IDE stands for Integrated Development Environment\u2014the unified coding and flashing workbench.",
+        "questions": [
+          {
+            "question": "What does IDE stand for?",
+            "options": [
+              "Integrated Development Environment",
+              "Internal Digital Engine",
+              "Input Device Electronics"
+            ],
+            "correctIndex": 0,
+            "explanation": "IDE stands for Integrated Development Environment\u2014the unified coding and flashing workbench."
+          },
+          {
+            "question": "What is an Arduino sketch?",
+            "options": [
+              "An Arduino program/project (.ino file)",
+              "A battery",
+              "A USB port"
+            ],
+            "correctIndex": 0,
+            "explanation": "An Arduino sketch is the C++ program file containing setup() and loop() routines."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}
