@@ -70,27 +70,150 @@ Release 0.0.9 introduces major architectural, educational, and mobile UX enhance
   - Added 10 new test suites (19 new tests) covering `CourseModel` serialization, backward-compatible migration logic, lesson ordering sequences, placement bypass logic, course completion XP idempotency, settings persistence, `ExpandableLessonImage`, `LessonActionBar`, and `ResponsiveCodeBlock`.
 
 ## [0.0.8+8] - 2026-10-03
-- Automated push release build bump to v0.0.8.
+
+### Overview & Release Highlights
+Release 0.0.8 marks the complete deployment of the interactive simulation framework, implementing 44 custom interactive activity widgets across Lessons 02 through 12. Every lesson now features specialized, hands-on micro-simulators that reinforce critical electronics and coding concepts prior to physical assembly.
+
+---
+
+### 🚀 Interactive Activity Rollout (44 Specialized Widgets)
+- **Lessons 02–04 (IDE, Libraries, Setup & Loop)**:
+  - Added `CompilationPipelineSimulatorWidget`, `ExecutionSpeedVisualizerWidget`, `IdeLifecycleSimulatorWidget`, and `LibraryDependencyVisualizerWidget`.
+  - *Pedagogical Rationale*: Microcontroller compilation pipelines, infinite loop timing, and header dependencies are inherently abstract. Simulating preprocessor and linker stages visually bridges the gap between text sketches and machine code.
+- **Lessons 05–07 (GPIO, Potentiometers & PWM)**:
+  - Added `BlinkTimingLabWidget`, `CurrentLimitingResistorLabWidget`, `FloatingPinSimulatorWidget`, `AdcSamplingVisualizerWidget`, `AnalogReadNoiseFilterWidget`, `VoltageDividerVisualizerWidget`, `PwmDutyCycleVisualizerWidget`, and `CommonCathodeVsAnodeDiagramWidget`.
+  - *Safety & Hardware Rationale*: Visualizes real electrical risks—such as short circuits from missing current-limiting resistors, erratic readings from floating GPIO pins, and reverse polarity damage on LEDs.
+- **Lessons 08–10 (Digital Inputs, I2C & SPI)**:
+  - Added `ActiveLowLogicCheckerWidget`, `InternalPullupVsPulldownWidget`, `ButtonDebounceVisualizerWidget`, `I2cAddressScannerWidget`, `I2cBitBangSimulatorWidget`, `PullupResistorSizingLabWidget`, `SpiClockPhasePolarityWidget`, and `ChipSelectArbitratorWidget`.
+  - *Engineering Rationale*: Bus collisions and signal bouncing represent frequent beginner traps. Simulating multi-device slave arbitration and oscilloscope waveforms prepares learners for real hardware debugging.
+- **Lessons 11–12 (Serial Communication & Motor Control)**:
+  - Added `BaudRateMismatchDemoWidget`, `UartFrameVisualizerWidget`, `BluetoothAtCommandTerminalWidget`, `HbridgeDirectionSimulatorWidget`, `ExternalMotorPowerLabWidget`, `FlybackDiodeProtectionLabWidget`, and `MotorRpmLoadVisualizerWidget`.
+  - *Hardware Protection Rationale*: Back-EMF voltage spikes from DC motors can destroy microcontrollers. The flyback diode simulator directly demonstrates inductive kickback voltage clamping.
+
+---
+
+### 🏗️ Architecture & Registry
+- Registered all 44 activity widgets in `ActivityRegistry` (`lib/presentation/features/learn/activities/activity_registry.dart`), standardizing configuration schema mapping across all lesson steps.
+
+---
 
 ## [0.0.7+7] - 2026-10-03
-- Automated push release build bump to v0.0.7.
+
+### Overview & Release Highlights
+Release 0.0.7 establishes Phase 22 & 22a: the foundation of the interactive activity engine, a comprehensive redesign of Lesson 01, and the integration of 20 milestone achievement badges.
+
+---
+
+### 🚀 Interactive Activity Framework (Phase 22)
+- **Pluggable Activity Registry**:
+  - Implemented `ActivityRegistry` allowing dynamic runtime resolution of interactive widget builders based on `step.interactiveWidgetType`.
+  - *Architecture Rationale*: Replaces brittle monolithic widget trees with a modular, extensible plugin pattern for interactive learning content.
+
+### 🎨 Lesson 1 Complete Redesign (Phase 22a)
+- **Interactive Uno Board Inspector (`InteractiveBoardInspectorWidget`)**:
+  - Interactive multi-touch board diagram enabling learners to explore ATmega328P pins, USB interface, voltage regulators, and status LEDs.
+- **Board Label Drag-and-Drop Game (`BoardLabelDragDropWidget`)**:
+  - Gamified landmark matching game challenging learners to correctly place hardware labels on an unannotated board canvas.
+- **Ground Troubleshooting Lab (`GroundTroubleshootingWidget`)**:
+  - Interactive electrical circuit simulator highlighting common power connection errors and short circuits.
+  - *Pedagogical Rationale*: Ensures learners understand ground loops and power distribution before wiring physical breadboards.
+
+### 🏆 Milestone Badges Pipeline
+- Integrated 20 custom achievement badges (`badge_audio`, `badge_iot`, `badge_motor`, `badge_rfid`, etc.) awarding XP and profile honors upon completing major milestone projects and challenge tiers.
+
+---
 
 ## [0.0.6+6] - 2026-10-03
-- Automated push release build bump to v0.0.6.
+
+### Overview & Release Highlights
+Release 0.0.6 introduces a multi-question quiz carousel assessment system, deep lesson step expansions, and automated curriculum build tooling.
+
+---
+
+### 🚀 Multi-Question Quiz Assessment Engine
+- **Interactive Quiz Carousel (`QuizCheckpointWidget`)**:
+  - Replaced single static quiz questions with swipeable multi-question assessment carousels featuring immediate per-option rationale explanations, score tracking, and retry mechanics.
+  - *Pedagogical Rationale*: Evaluates deeper conceptual understanding across electronics and programming concepts, reinforcing why wrong answers fail and why correct answers succeed.
+
+### 📚 Curriculum Step Expansion
+- Expanded Lessons 01–12 from 8 steps to 13–14 comprehensive pedagogical steps per lesson, adding detailed troubleshooting rubrics, real-world engineering context, and interactive checkpoint summaries.
+- Created `scripts/compile_expanded_lessons.py` to compile structured lesson Markdown specifications into production curriculum JSON assets.
+
+---
 
 ## [0.0.5+5] - 2026-10-02
-- Automated push release build bump to v0.0.5.
+
+### Overview & Release Highlights
+Release 0.0.5 delivers Phase 21: expanding Monster Lab's curriculum into structured 15–20 minute pedagogical learning modules across all 12 core lessons.
+
+---
+
+### 📚 Curriculum Expansion (Phase 21)
+- **15–20 Minute Learning Modules**:
+  - Redesigned lessons into comprehensive 6-stage learning modules: Concept Hook → Hardware Anatomy → Wiring Lab → Code Deconstruction → Physical Build → Reflection Assessment.
+  - *Pedagogical Rationale*: Initial lessons were overly brief and lacked retention checkpoints. The expanded structure aligns with standard classroom and after-school STEM workshop durations.
+- **Integrated Code Deconstruction**:
+  - Added tokenized code inspection steps (`codeDeconstruction`) allowing learners to inspect syntax tokens, variable definitions, and control structures line-by-line.
+
+---
 
 ## [0.0.4+4] - 2026-10-02
-- Automated push release build bump to v0.0.4.
+
+### Overview & Release Highlights
+Release 0.0.4 introduces learner onboarding with profile customization, progressive parts discovery, the complete 54-part kit catalog, and dynamic home screen curriculum progression.
+
+---
+
+### 🚀 Learner Onboarding & Profiles
+- **Interactive Onboarding Flow**:
+  - Added new-learner onboarding modal with nickname selection, age bracket filtering (7–9, 10–12, 13+), and animated avatar selection.
+  - *UX Rationale*: Adapts interface density and reading levels to the learner's age group while allowing multiple siblings/learners on a single tablet.
+
+### 🔍 Progressive Parts Discovery & 54-Component Catalog
+- **Progressive Discovery Mechanic**:
+  - Components in Parts Lab start locked and dynamically unlock as learners discover and use them in lessons.
+  - Integrated complete 54-part sensor and actuator catalog with high-res photography, pinout descriptions, operating voltages, and real-world analogies.
+
+### 🏠 Home Screen Next Lesson Progression
+- Added dynamic "Continue Lesson" card on the Home Screen that automatically tracks the active learner's curriculum position and launches the next incomplete lesson with a single tap.
+
+---
 
 ## [0.0.3+3] - 2026-10-02
-- Automated push release build bump to v0.0.3.
+
+### Overview & Release Highlights
+Release 0.0.3 integrates automated production Android release signing and GitHub Actions secret management.
+
+---
+
+### 🛠️ Android Production Release Signing
+- Configured Gradle release keystore injection via GitHub Actions secrets (`ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS`).
+- Automated generation of `android/key.properties` during CI builds while maintaining local debug signing fallbacks.
+- *DevOps Rationale*: Automates secure, reproducible Android release APK and AAB compilation without storing signing certificates in source control.
+
+---
 
 ## [0.0.2+2] - 2026-10-02
-- Automated push release build bump to v0.0.2.
 
-## [1.0.0+1] - 2026-09-29
+### Overview & Release Highlights
+Release 0.0.2 implements Phase 19 (Lesson completion and progress persistence reliability) and Phase 20 (Parts Lab photography and visuals overhaul), along with automated web release workflows.
+
+---
+
+### 🐛 Lesson Completion & Progress Reliability (Phase 19)
+- **State Machine & Persistence Hardening**:
+  - Resolved re-entrant storage locks in `ProgressRepositoryImpl` to prevent race conditions during rapid step navigation.
+  - Hardened offline persistence so learner XP, completed steps, and bookmarks persist immediately without data loss.
+
+### 🎨 Parts Lab Photography Overhaul (Phase 20)
+- Added high-definition WebP photography, detailed pinout graphics, and component schematics for all 54 physical kit parts.
+
+### 🌐 Web Release Pipeline
+- Added `scripts/build_web_release.sh` and GitHub Actions repository dispatch workflow for automated Web PWA deployment to M3tal-Hub.
+
+---
+
+## [0.0.1+1] - 2026-09-29
 
 ### Phase 17: Polish and Release Readiness
 - **Multi-Platform Bootstrapping**: Generated clean platform runners for Android, Web (PWA), and Linux desktop.
