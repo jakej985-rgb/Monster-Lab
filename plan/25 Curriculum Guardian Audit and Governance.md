@@ -315,6 +315,93 @@ Flag:
 
 The 15–20 minute target is a useful baseline, not permission to add filler.
 
+## Lesson Order and Learning Sequence Audit
+
+The Curriculum Guardian must independently evaluate whether the **order of the curriculum makes educational sense**, not merely whether every prerequisite is technically present.
+
+Do not assume the current order is correct just because it is documented.
+
+For every course and lesson, ask:
+
+1. What does the learner need to know before this?
+2. Was that knowledge actually taught earlier?
+3. Is the learner ready for the amount of new information being introduced?
+4. Is this the right point to introduce this concept?
+5. Would another lesson or activity make this easier first?
+6. Does the learner get enough practice before the next concept builds on it?
+7. Does the sequence move from concrete to abstract and simple to complex?
+8. Does it move from recognition → understanding → guided practice → independent application?
+9. Does hardware knowledge appear before the learner is expected to use that hardware?
+10. Does programming knowledge appear before code requires it?
+11. Are communication protocols introduced only after the learner understands the concepts they depend on?
+12. Are troubleshooting skills introduced before troubleshooting becomes a major expectation?
+13. Are assessments placed after the material and practice they assess?
+14. Are build projects introduced only after the learner has the skills needed to complete them safely?
+15. Does the sequence avoid unnecessary repetition while still providing useful reinforcement?
+
+### Sequence Principles
+
+Prefer progression such as:
+
+**Orient → Understand → Explore → Practice → Apply → Troubleshoot → Create**
+
+And where appropriate:
+
+**Concrete → Visual → Interactive → Conceptual → Code → Hardware → Independent Challenge**
+
+Flag sequences that:
+
+- Introduce advanced terminology before its foundations.
+- Ask learners to use code concepts before they have learned them.
+- Ask learners to wire hardware before understanding the relevant component.
+- Introduce a library before explaining why it is needed.
+- Introduce `setup()`/`loop()` before learners understand basic program flow.
+- Introduce motors before motor-driver safety and control concepts.
+- Introduce I2C/SPI/UART before the learner has enough understanding of communication and pins.
+- Introduce complex troubleshooting before learners have learned a systematic diagnostic process.
+- Test a concept before meaningful instruction and practice.
+- Place a project before its required skills.
+- Create large jumps in difficulty between adjacent lessons.
+- Repeat a concept unnecessarily instead of building on it.
+- Leave long gaps between teaching a concept and requiring it.
+
+### Recommended Sequence Review
+
+The Guardian must explicitly review the current early sequence:
+
+1. Lesson 1 — What Is Arduino & How Does It Work?
+2. Coding Foundations Course — placement-based.
+3. Lesson 2A — Monster Lab Walkthrough.
+4. Lesson 2B — Arduino IDE Walkthrough.
+5. Lesson 3 — Libraries.
+6. Lesson 4 — `setup()` and `loop()`.
+7. Lesson 5 — Blink.
+8. Continue the Arduino curriculum.
+
+The Guardian may recommend changing this order if the evidence shows a better learning progression.
+
+If a change is recommended, explain:
+
+- Current order.
+- Proposed order.
+- Why the change improves learning.
+- What prerequisite relationship caused the change.
+- What existing plans/references must be updated.
+- Whether the change affects learner progress or IDs.
+
+### Sequence Approval
+
+The curriculum cannot receive final approval until the Guardian confirms:
+
+- The lesson order is pedagogically coherent.
+- Each lesson prepares the learner for the next meaningful concept.
+- No major prerequisite is taught too late.
+- Difficulty increases at a reasonable rate.
+- Practice occurs before independent application.
+- Assessments occur after instruction and practice.
+- Projects occur after the skills they require.
+- The overall path makes sense to a new learner.
+
 ## Prerequisite Graph Audit
 
 Build a complete dependency graph for the current curriculum.
