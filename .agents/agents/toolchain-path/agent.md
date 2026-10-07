@@ -32,13 +32,17 @@ Never download an SDK because a preferred path is absent. Never install a second
 If a requested tool is missing, report NOT FOUND and what was checked.
 
 ## Discovery order
-1. Inspect relevant environment variables.
-2. Resolve the executable through PATH.
-3. Verify the executable and version.
-4. Check the pre-approved candidate locations in .agents/toolchain-paths.yaml.
-5. Verify every discovered candidate.
-6. Identify the ACTIVE installation.
-7. Return executable path, root path when meaningful, version, discovery source, and alternate installations.
+1. Quick deterministic lookup: Run `python3 scripts/toolchain_report.py --tool <name>` or inspect `.agents/toolchain-report.md`.
+2. Inspect relevant environment variables.
+3. Resolve the executable through PATH.
+4. Verify the executable and version.
+5. Check the pre-approved candidate locations in `.agents/toolchain-paths.yaml`.
+6. Verify every discovered candidate.
+7. Identify the ACTIVE installation.
+8. Return executable path, root path when meaningful, version, discovery source, and alternate installations.
+
+Note on Antigravity sandbox:
+On this Linux host, Flutter is at `/opt/flutter/bin/flutter` and Dart is at `/opt/flutter/bin/cache/dart-sdk/bin/dart` (symlinks in `/usr/bin/flutter` and `/usr/bin/dart`). Because `/opt` is outside the standard sandbox container, commands executing Flutter/Dart via `run_command` MUST specify `BypassSandbox: true`.
 
 PATH and explicit environment variables are preferred over candidate paths.
 

@@ -9,17 +9,17 @@ flutter:
   environment: [FLUTTER_ROOT]
   executables: [flutter, flutter.bat]
   candidates:
-    linux: [/opt/flutter, /usr/bin, $HOME/flutter, $HOME/development/flutter, $HOME/sdk/flutter, $HOME/.flutter, /usr/local/flutter, /snap/flutter/current]
-    macos: [$HOME/flutter, $HOME/development/flutter, $HOME/.flutter, /opt/flutter, /usr/local/flutter, /opt/homebrew/opt/flutter, /opt/homebrew/Caskroom/flutter]
-    windows: [$USERPROFILE/flutter, $USERPROFILE/development/flutter, $LOCALAPPDATA/flutter, $PROGRAMFILES/flutter, $PROGRAMFILES_X86/flutter, C:/src/flutter]
+    linux: [/opt/flutter/bin, /opt/flutter, /usr/bin, $HOME/sdk/flutter/bin, $HOME/flutter/bin, $HOME/flutter, $HOME/development/flutter, $HOME/sdk/flutter, $HOME/.flutter, /usr/local/flutter, /snap/flutter/current]
+    macos: [$HOME/flutter/bin, $HOME/flutter, $HOME/development/flutter, $HOME/.flutter, /opt/flutter/bin, /opt/flutter, /usr/local/flutter, /opt/homebrew/opt/flutter, /opt/homebrew/Caskroom/flutter]
+    windows: [$USERPROFILE/flutter/bin, $USERPROFILE/flutter, $USERPROFILE/development/flutter, $LOCALAPPDATA/flutter, $PROGRAMFILES/flutter, $PROGRAMFILES_X86/flutter, C:/src/flutter]
 
 dart:
   environment: [DART_SDK]
   executables: [dart, dart.bat]
   candidates:
-    linux: [/opt/flutter/bin/cache/dart-sdk, /opt/flutter, /usr/bin, $HOME/.dart-sdk, $HOME/dart-sdk, /opt/dart-sdk, /usr/local/dart-sdk, $HOME/flutter/bin/cache/dart-sdk, $HOME/sdk/flutter/bin/cache/dart-sdk]
-    macos: [$HOME/.dart-sdk, $HOME/dart-sdk, /opt/dart-sdk, /usr/local/dart-sdk, /opt/homebrew/opt/dart, $HOME/flutter/bin/cache/dart-sdk]
-    windows: [$USERPROFILE/dart-sdk, $LOCALAPPDATA/dart-sdk, $PROGRAMFILES/dart-sdk, $USERPROFILE/flutter/bin/cache/dart-sdk]
+    linux: [/opt/flutter/bin, /opt/flutter/bin/cache/dart-sdk/bin, /opt/flutter/bin/cache/dart-sdk, /opt/flutter, /usr/bin, $HOME/sdk/flutter/bin, $HOME/flutter/bin, $HOME/.dart-sdk, $HOME/dart-sdk, /opt/dart-sdk, /usr/local/dart-sdk, $HOME/flutter/bin/cache/dart-sdk, $HOME/sdk/flutter/bin/cache/dart-sdk]
+    macos: [$HOME/flutter/bin, $HOME/.dart-sdk, $HOME/dart-sdk, /opt/dart-sdk, /usr/local/dart-sdk, /opt/homebrew/opt/dart, $HOME/flutter/bin/cache/dart-sdk]
+    windows: [$USERPROFILE/flutter/bin, $USERPROFILE/dart-sdk, $LOCALAPPDATA/dart-sdk, $PROGRAMFILES/dart-sdk, $USERPROFILE/flutter/bin/cache/dart-sdk]
 
 python:
   environment: [PYTHONHOME, VIRTUAL_ENV]

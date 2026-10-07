@@ -86,11 +86,14 @@ A toolchain report becomes STALE and must be re-run whenever:
 ## Discovery Protocol
 
 When invoked, the Toolchain Report Agent:
-1. Inspects the repository's configuration files (`pubspec.yaml`, `scripts/validate_curriculum.py`, `.github/workflows/ci.yml`, `.github/workflows/release.yml`) to determine exact repository toolchain requirements.
-2. Checks environment variables (`FLUTTER_ROOT`, `DART_SDK`, `PYTHONHOME`, `JAVA_HOME`, `ANDROID_HOME`, etc.).
-3. Checks current `PATH` resolution via `which <exe>` or equivalent verification commands.
-4. Reads `.agents/toolchain-paths.yaml` to evaluate approved candidate paths for the current operating system.
-5. Verifies executable permissions and queries versions using safe non-destructive flags (`--version`, `-version`).
+1. **Primary Discovery Step**: Run `python3 scripts/toolchain_report.py` (or inspect `.agents/toolchain-report.md`). This script handles cross-platform path resolution, symlinks, sandbox environments, and version extraction.
+2. Inspects the repository's configuration files (`pubspec.yaml`, `scripts/validate_curriculum.py`, `.github/workflows/ci.yml`, `.github/workflows/release.yml`) to verify compatibility.
+3. Checks environment variables (`FLUTTER_ROOT`, `DART_SDK`, `PYTHONHOME`, `JAVA_HOME`, `ANDROID_HOME`, etc.).
+4. Checks current `PATH` resolution via `which <exe>` or equivalent verification commands.
+5. Reads `.agents/toolchain-paths.yaml` and `.agents/toolchain-report.md` for confirmed binary paths:
+   - On this Linux host: Flutter is installed at `/opt/flutter/bin/flutter` and Dart at `/opt/flutter/bin/dart` (and `/opt/flutter/bin/cache/dart-sdk/bin/dart`).
+   - Symlinks exist at `/usr/bin/flutter` and `/usr/bin/dart`.
+   - **Sandbox Note**: In Antigravity agent environments, `/opt` is outside the standard workspace sandbox. Commands invoking or verifying Flutter/Dart must run with `BypassSandbox: true` to access `/opt/flutter`.
 6. Identifies the ACTIVE installation, catalogs ALTERNATES, reports MISSING tools, and flags any version CONFLICTS.
 7. Emits the final report with clear facts on paths for the calling agent.
 

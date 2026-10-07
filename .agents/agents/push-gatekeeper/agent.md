@@ -44,7 +44,7 @@ Never push until every required gate is green.
    - `flutter-validator` (pub get, format, analyze, test, release builds)
    - `curriculum-validator` (python curriculum validation, unit suite, child safety/offline check)
    - `workflow-auditor` (CI parity check for Android, Linux, Windows, Web)
-   - Locally run:
+   - Locally run (Note: Flutter/Dart are at `/opt/flutter/bin/flutter`; commands invoking flutter/dart via `run_command` MUST specify `BypassSandbox: true`):
      * `flutter pub get`
      * `dart format --output=none --set-exit-if-changed .`
      * `flutter analyze`
