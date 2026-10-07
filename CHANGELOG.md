@@ -6,6 +6,16 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.1.2+12] - 2026-10-07
+
+### Overview & Release Highlights
+Release 0.1.2 introduces updates across 1 commits.
+
+### 🛠️ Developer Toolchains & CI/CD
+- **feat(release): enforce versioned-only release packages, attach release changelog, and connect push-gatekeeper to changelog agent** (`9de5570`):
+  - *What Changed*: Updated release CI and gatekeeper to use versioned releases and release changelog generation.
+  - *Why*: Enforces strict versioning to avoid OS package duplication and improves GitHub release page descriptions.
+
 ## [0.1.1+11] - 2026-10-07
 
 ### Overview & Release Highlights
