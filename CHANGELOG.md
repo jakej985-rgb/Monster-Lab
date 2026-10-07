@@ -7,7 +7,19 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 ---
 
 ## [0.1.3+13] - 2026-10-07
-- Automated push release build bump to v0.1.3.
+
+### Overview & Release Highlights
+Release **0.1.3** resolves a critical CI/CD build stall on GitHub Actions Ubuntu runners during the `Install Linux build dependencies` step and enforces robust network and execution timeouts across all release packaging jobs.
+
+---
+
+### 🐛 Bug Fixes & Stability
+- **Resolved Ubuntu Runner `apt-get` Interactive Hang**:
+  - *Problem*: GitHub Actions Ubuntu runners (`ubuntu-latest` / Ubuntu 24.04) stalled indefinitely during Linux desktop dependency installation.
+  - *Root Cause*: Installing system packages such as `libgtk-3-dev` triggered Ubuntu 24.04's `needrestart` hook, which defaulted to an interactive curses terminal prompt waiting for user input on non-existent stdin. In addition, unconstrained network connections lacked timeout thresholds.
+  - *Resolution*: Configured `DEBIAN_FRONTEND=noninteractive`, configured `needrestart` automatic mode (`$nrconf{restart} = "a"` in `/etc/needrestart/conf.d/99-autorestart.conf`), and set explicit apt connection timeouts (`Acquire::http::Timeout=20`) with dpkg `--force-confdef`/`--force-confold`.
+  - *Fail-Safe Protection*: Added `timeout-minutes: 5` to the dependency step and `timeout-minutes: 30` to Ubuntu and Windows runner jobs to guarantee builds never hang.
+
 
 ## [0.1.2+12] - 2026-10-07
 
