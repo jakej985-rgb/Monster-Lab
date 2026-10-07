@@ -19,6 +19,7 @@ agents:
   - .agents/agents/curriculum-validator/agent.md
   - .agents/agents/workflow-auditor/agent.md
   - .agents/agents/repair-agent/agent.md
+  - .agents/agents/release-changelog/agent.md
 ---
 
 # System Prompt
@@ -60,7 +61,11 @@ Never push until every required gate is green.
 9. Version Bump (starts at v0.0.1 and increments 0.0.1 every push):
    - Run `python3 scripts/bump_version.py`
    - Synchronizes `pubspec.yaml`, `lib/core/constants/app_version.dart`, Windows installer, `Runner.rc`, `Dockerfile`, and `CHANGELOG.md`.
-10. Before committing or pushing, re-check:
+10. Release Changelog & Description Generation:
+   - Invoke `release-changelog` (`.agents/agents/release-changelog/agent.md`) or run `python3 scripts/generate_release_changelog.py --version v[semver]`.
+   - Ensure `CHANGELOG.md` contains the comprehensive "What Changed, Why, and User/Architectural Impact" release notes.
+   - Upon release creation/publication, ensure the GitHub release description contains this full detailed changelog rather than generic GitHub compare URLs or unversioned placeholders.
+11. Before committing or pushing, re-check:
    - `git status --short`
    - `git diff --check`
    - intended diff only
@@ -69,11 +74,11 @@ Never push until every required gate is green.
    - no conflict markers
    - tests and builds match the current exact working tree
    - child-safety & offline invariants intact (COPPA/FERPA compliance, zero telemetry)
-11. If the task requires a commit, create it only after the gate is green.
-12. Immediately before push, capture the exact SHA and working-tree state again. Any change invalidates the gate.
-13. Push only the exact validated commit and push release tag `v[semver]`. Never force-push unless the user explicitly authorizes it.
-14. After pushing, monitor the GitHub Actions runs associated with the pushed SHA/tag until completion (`gh run watch`). A remote failure is a release failure; do not declare success until remote runs succeed.
-15. If GitHub Actions fails, inspect the failed job/log (`gh run view --log-failed`), repair locally, and restart the complete gate from step 1.
+12. If the task requires a commit, create it only after the gate is green.
+13. Immediately before push, capture the exact SHA and working-tree state again. Any change invalidates the gate.
+14. Push only the exact validated commit and push release tag `v[semver]`. Never force-push unless the user explicitly authorizes it.
+15. After pushing, monitor the GitHub Actions runs associated with the pushed SHA/tag until completion (`gh run watch`). A remote failure is a release failure; do not declare success until remote runs succeed.
+16. If GitHub Actions fails, inspect the failed job/log (`gh run view --log-failed`), repair locally, and restart the complete gate from step 1.
 
 ## Repository-specific validation baseline
 
@@ -88,11 +93,11 @@ Flutter & Multi-Platform Validation Baseline:
 - Verify Android (`android/`), Linux (`linux/`), and Windows (`windows/`) platform configurations
 
 Supported Multi-Platform Release Builds (`release.yml`):
-- Android: `monster-lab-v[version]-android.apk` / `monster-lab-android.apk`, `monster-lab-v[version]-android.aab` / `monster-lab-android.aab`
-- Linux: `monster-lab-v[version]-linux.deb` / `monster-lab-linux.deb` (Debian installer with embedded GPG keyring), `monster-lab-v[version]-linux-portable.tar.gz` / `monster-lab-linux-portable.tar.gz`, and release asset `monster-lab-keyring.gpg`
-- Windows: `monster-lab-v[version]-windows.exe` / `monster-lab-windows.exe` (Inno Setup wizard via `monster_lab_setup.iss`), `monster-lab-v[version]-windows-portable.zip` / `monster-lab-windows-portable.zip`
+- Android: `monster-lab-v[version]-android.apk`, `monster-lab-v[version]-android.aab`
+- Linux: `monster-lab-v[version]-linux.deb` (Debian installer with embedded GPG keyring), `monster-lab-v[version]-linux-portable.tar.gz`, and release asset `monster-lab-keyring.gpg`
+- Windows: `monster-lab-v[version]-windows.exe` (Inno Setup wizard via `monster_lab_setup.iss`), `monster-lab-v[version]-windows-portable.zip`
 - Web: Automated container build & push to GHCR (`ghcr.io/${OWNER}/monster-lab-web`), and pre-filled release asset `docker-compose.yml` (no separate tarball needed)
-All packages/installers conform to `[app]-v[version]-[os].[ext]` (versioned packages) and `[app]-[os].[ext]` (unversioned aliases / permalinks).
+All published packages strictly use versioned naming (`monster-lab-v[version]-[os].[ext]` and `monster-lab-v[version]-[os]-portable.[ext]`). Unversioned duplicate packages are strictly prohibited to prevent download confusion.
 
 Curriculum & Child-Safety:
 - `python3 scripts/validate_curriculum.py`

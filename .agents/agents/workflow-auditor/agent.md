@@ -24,8 +24,8 @@ Read every workflow under `.github/workflows/` that can affect the current branc
 For each relevant workflow, report:
 - trigger conditions (e.g. `push: [main]`, `pull_request: [main]`, `tags: ['v*.*.*']`)
 - jobs and steps across target platforms:
-  - `build-ubuntu-targets`: Android APK (`monster-lab-v[version]-android.apk` & `monster-lab-android.apk`) & AAB (`monster-lab-v[version]-android.aab` & `monster-lab-android.aab`), Linux Debian installer (`monster-lab-v[version]-linux.deb` & `monster-lab-linux.deb`) with GPG keyring, portable tarball (`monster-lab-v[version]-linux-portable.tar.gz` & `monster-lab-linux-portable.tar.gz`), GHCR container push, release keyring (`monster-lab-keyring.gpg`), and pre-filled `docker-compose.yml`
-  - `build-windows-target`: Windows setup installer (`monster-lab-v[version]-windows.exe` & `monster-lab-windows.exe`) & portable zip (`monster-lab-v[version]-windows-portable.zip` & `monster-lab-windows-portable.zip`)
+  - `build-ubuntu-targets`: Android APK (`monster-lab-v[version]-android.apk`) & AAB (`monster-lab-v[version]-android.aab`), Linux Debian installer (`monster-lab-v[version]-linux.deb`) with GPG keyring, portable tarball (`monster-lab-v[version]-linux-portable.tar.gz`), GHCR container push, release keyring (`monster-lab-keyring.gpg`), pre-filled `docker-compose.yml`, and generated `release_notes.md`
+  - `build-windows-target`: Windows setup installer (`monster-lab-v[version]-windows.exe`) & portable zip (`monster-lab-v[version]-windows-portable.zip`)
   - Direct GitHub Release asset publication from build runners via `softprops/action-gh-release@v2` (bypassing Actions artifact storage quota limits)
 - runtime versions (Flutter `3.47.3`, Python `3.11`/`3.12`, Java `17`)
 - validation commands:
@@ -36,11 +36,11 @@ For each relevant workflow, report:
   - `python3 scripts/validate_curriculum.py`
 - build/package steps:
   - `python3 scripts/generate_release_assets.py` (Android mipmaps, Linux icons, Windows ICO, Web PWA)
-  - `flutter build linux --release` && `python3 scripts/package_linux_deb.py --output monster-lab-linux.deb`
+  - `flutter build linux --release` && `python3 scripts/package_linux_deb.py --output "monster-lab-v[version]-linux.deb"`
   - `flutter build apk --release` & `flutter build appbundle --release`
   - `flutter build windows --release` && `ISCC.exe windows/installer/monster_lab_setup.iss`
   - `flutter build web --release` && Docker build & push to `ghcr.io`
-- artifact naming verification: strict conformance to `[app]-v[version]-[os].[ext]` (versioned packages) and `[app]-[os].[ext]` (unversioned aliases)
+- artifact naming verification: strict conformance to versioned packages `monster-lab-v[version]-[os].[ext]` and `monster-lab-v[version]-[os]-portable.[ext]` (no unversioned duplicate packages)
 - required permissions: `permissions: contents: write, packages: write` for GitHub Release publication and GHCR image push
 - anything that cannot be reproduced locally (e.g., Windows build requires Windows host or CI runner, Android signing keystores)
 

@@ -39,19 +39,19 @@ Monster Lab officially targets **Android, Linux, and Windows** (along with a str
     - `windows/runner/Runner.rc`
     - `Dockerfile`
     - `CHANGELOG.md`
-  - Every pushed commit is tagged with `v[semver]` (e.g. `v0.0.1`, `v0.0.2`).
+  - **Release Changelog Generation**: Immediately prior to push, invoke `release-changelog` (or `python3 scripts/generate_release_changelog.py --version v[semver]`) to ensure comprehensive release notes are documented in `CHANGELOG.md` and published to the GitHub release description.
+  - Every pushed commit is tagged with `v[semver]` (e.g. `v0.0.1`, `v0.0.2`, `v0.1.1`).
 
 ## Supported Multi-Platform Builds & Release Artifact Matrix
 
-The web version is strictly containerized as Docker and published to GitHub Container Registry (GHCR). All release artifacts conform to the naming format:
-- Versioned release packages: `[app]-v[version]-[os].[ext]` and `[app]-v[version]-[os]-portable.[ext]` (e.g. `monster-lab-v0.1.0-android.apk`, `monster-lab-v0.1.0-linux.deb`, `monster-lab-v0.1.0-windows.exe`, `monster-lab-v0.1.0-linux-portable.tar.gz`, `monster-lab-v0.1.0-windows-portable.zip`).
-- Permalinks / unversioned aliases: `[app]-[os].[ext]` (packages / installers / Docker archive) and `[app]-[os]-portable.[ext]` (standalone portable desktop bundles).
+The web version is strictly containerized as Docker and published to GitHub Container Registry (GHCR). All OS release packages strictly conform to the versioned naming format:
+`monster-lab-v[version]-[os].[ext]` and `monster-lab-v[version]-[os]-portable.[ext]`. Unversioned duplicate packages are strictly prohibited to avoid user confusion and download ambiguity.
 
-| Target Platform | Package / Installer (`[app]-v[version]-[os].[ext]` & `[app]-[os].[ext]`) | Portable Bundle (`[app]-v[version]-[os]-portable.[ext]` & `[app]-[os]-portable.[ext]`) | Additional Release Assets | Build / Packaging Mechanism |
+| Target Platform | Package / Installer (`monster-lab-v[version]-[os].[ext]`) | Portable Bundle (`monster-lab-v[version]-[os]-portable.[ext]`) | Additional Release Assets | Build / Packaging Mechanism |
 | :--- | :--- | :--- | :--- | :--- |
-| **Android** | `monster-lab-v[version]-android.apk` / `monster-lab-android.apk`<br>`monster-lab-v[version]-android.aab` / `monster-lab-android.aab` | — | — | `flutter build apk --release`<br>`flutter build appbundle --release` |
-| **Linux** | `monster-lab-v[version]-linux.deb` / `monster-lab-linux.deb` | `monster-lab-v[version]-linux-portable.tar.gz` / `monster-lab-linux-portable.tar.gz` | `monster-lab-keyring.gpg` | `flutter build linux --release`<br>`python3 scripts/package_linux_deb.py` (installs GPG keyring in `/etc/apt/keyrings/` & `/usr/share/keyrings/`) |
-| **Windows** | `monster-lab-v[version]-windows.exe` / `monster-lab-windows.exe` | `monster-lab-v[version]-windows-portable.zip` / `monster-lab-windows-portable.zip` | — | `flutter build windows --release`<br>`ISCC.exe windows/installer/monster_lab_setup.iss` |
+| **Android** | `monster-lab-v[version]-android.apk`<br>`monster-lab-v[version]-android.aab` | — | — | `flutter build apk --release`<br>`flutter build appbundle --release` |
+| **Linux** | `monster-lab-v[version]-linux.deb` | `monster-lab-v[version]-linux-portable.tar.gz` | `monster-lab-keyring.gpg` | `flutter build linux --release`<br>`python3 scripts/package_linux_deb.py` (installs GPG keyring in `/etc/apt/keyrings/` & `/usr/share/keyrings/`) |
+| **Windows** | `monster-lab-v[version]-windows.exe` | `monster-lab-v[version]-windows-portable.zip` | — | `flutter build windows --release`<br>`ISCC.exe windows/installer/monster_lab_setup.iss` |
 | **Web** | `ghcr.io/${OWNER}/monster-lab-web` *(GHCR Image)* | — *(Web is Docker-only)* | `docker-compose.yml` *(pre-filled with GHCR URL)* | `flutter build web --release`<br>Docker build & push to `ghcr.io/${OWNER}/monster-lab-web:${TAG}` & `:latest` |
 
 ## Repository CI baseline

@@ -7,7 +7,42 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 ---
 
 ## [0.1.1+11] - 2026-10-07
-- Automated push release build bump to v0.1.1.
+
+### Overview & Release Highlights
+Release **0.1.1** delivers major UI/UX responsiveness enhancements tailored specifically for young learners on smaller Android devices (320dp–360dp viewport widths). It completely eliminates side-scrolling (horizontal scrolling) across the application, organizes multi-part modular courses into friendly expandable **Lesson Folders**, and refines the distribution model to publish purely versioned OS release packages.
+
+---
+
+### 🎨 User Experience & Design System
+- **Zero Side-Scrolling (Vertical-Only Navigation)**:
+  - *What Changed*: Systematically refactored all 21 occurrences of horizontal scroll views across `lib/` to responsive vertical wrapping (`Wrap`), adaptive stacking (`LayoutBuilder`), and soft-wrapping text containers.
+  - *Why*: Horizontal scrolling on compact mobile viewports causes friction, accidental swipe navigation, and cognitive overload—especially for kids with no prior exposure to software interfaces or electronics.
+  - *User Impact*: Children can seamlessly navigate tutorials and simulators by scrolling naturally up and down, with zero horizontal overflow or hidden UI elements off-screen.
+- **Adaptive Interactive Simulators & Diagrams**:
+  - `VisualFlowDiagramWidget` and `InternalPullupCircuitDiagramWidget` now automatically transition from horizontal flow to intuitive vertical flow on viewports narrower than 500dp–560dp.
+  - Interactive activity widgets—including `CodeDeconstructionWidget`, `CompilationPipelineSimulatorWidget`, `FloatingPinSimulatorWidget`, `PwmPinIdentifierWidget`, `GroundTroubleshootingWidget`, `PortTroubleshootingBenchWidget`, `RealWorldSystemDiagramWidget`, and `UartFrameVisualizerWidget`—now wrap badge matrices, pin connectors, and control tabs vertically.
+  - The breadboard wiring color palette in `InteractiveBreadboardWidget` now wraps with comfortable 48×48dp tap targets.
+- **Soft-Wrapping Code Snippets**:
+  - `ResponsiveCodeBlock`, `CodeStudioWidget`, and `GuidedCodeLabWidget` now soft-wrap Arduino syntax and Markdown code fences with dedicated right padding, preventing the copy button from overlapping code.
+
+---
+
+### 📚 Modular Curriculum Navigation
+- **Expandable Lesson Folders on Learn Lab**:
+  - *What Changed*: Grouped the sub-lessons for **Course 1B (Coding Foundations)**, **Course 2A (Monster Lab Tour)**, and **Course 2B (Arduino IDE Walkthrough)** into expandable, kid-friendly "Lesson Folder" cards on `LearnScreen`.
+  - *Why*: Flattening 35 lessons into one monolithic list overwhelmed beginner learners. Folder groupings provide manageable, bite-sized checkpoints that celebrate incremental mastery.
+  - *User Impact*: Standalone introductory Lesson 1 is prominently featured first, followed by expandable course folders with visual progress counters, leading into advanced hardware missions (Lessons 3–12).
+
+---
+
+### 📦 Release Packaging & Distribution
+- **Streamlined Versioned Packages**:
+  - *What Changed*: Removed unversioned duplicate packages from release assets. All distribution packages now strictly carry the explicit semver tag in their filename:
+    - Android: `monster-lab-v0.1.1-android.apk`, `monster-lab-v0.1.1-android.aab`
+    - Linux: `monster-lab-v0.1.1-linux.deb`, `monster-lab-v0.1.1-linux-portable.tar.gz`
+    - Windows: `monster-lab-v0.1.1-windows.exe`, `monster-lab-v0.1.1-windows-portable.zip`
+  - *Why*: Eliminates user confusion and download ambiguity caused by identical duplicate binaries in GitHub Releases.
+
 
 ## [0.1.0+10] - 2026-10-07
 
