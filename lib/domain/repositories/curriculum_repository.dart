@@ -5,6 +5,7 @@ import '../models/challenge_model.dart';
 
 abstract class CurriculumRepository {
   Future<List<Lesson>> getLessons({DifficultyTier? tier});
+  Future<List<Lesson>> getLessonsOrdered();
   Future<Lesson> getLessonById(String id);
   Future<List<ComponentModel>> getComponents({String? category});
   Future<ComponentModel> getComponentById(String id);

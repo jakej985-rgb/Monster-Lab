@@ -29,6 +29,11 @@ class FullScreenImageViewer extends StatelessWidget {
                   child: Image.asset(
                     assetPath,
                     fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      color: Colors.black,
+                      alignment: Alignment.center,
+                      child: const Icon(Icons.broken_image, color: Colors.white54, size: 64),
+                    ),
                   ),
                 ),
               ),

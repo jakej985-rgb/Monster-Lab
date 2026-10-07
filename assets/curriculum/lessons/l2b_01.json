@@ -3,12 +3,16 @@
   "title": "What Is an IDE?",
   "summary": "Learn what an IDE is and the workflow for writing, compiling, and uploading code.",
   "tier": "rookie",
-  "estimatedMinutes": 4,
+  "estimatedMinutes": 5,
   "courseId": "lesson_2b",
   "sortOrder": 1,
   "isOptional": false,
-  "prerequisites": ["lesson_2a"],
-  "componentIds": ["comp_uno"],
+  "prerequisites": [
+    "l2a_08"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
   "steps": [
     {
       "stepId": "l2b_01_s01",

@@ -3,12 +3,16 @@
   "title": "setup() and loop() Deep Dive",
   "summary": "Understand the core structure of every Arduino sketch: setup() and loop().",
   "tier": "rookie",
-  "estimatedMinutes": 4,
+  "estimatedMinutes": 5,
   "courseId": "lesson_2b",
   "sortOrder": 4,
   "isOptional": false,
-  "prerequisites": ["l2b_03"],
-  "componentIds": ["comp_uno"],
+  "prerequisites": [
+    "l2b_03"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
   "steps": [
     {
       "stepId": "l2b_04_s01",

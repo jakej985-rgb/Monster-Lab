@@ -3,12 +3,16 @@
   "title": "Compilation & Flashing Pipeline",
   "summary": "Understand what happens when you click the Upload button.",
   "tier": "rookie",
-  "estimatedMinutes": 4,
+  "estimatedMinutes": 5,
   "courseId": "lesson_2b",
   "sortOrder": 2,
   "isOptional": false,
-  "prerequisites": ["l2b_01"],
-  "componentIds": ["comp_uno"],
+  "prerequisites": [
+    "l2b_01"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
   "steps": [
     {
       "stepId": "l2b_02_s01",

@@ -3,7 +3,7 @@
   "title": "The Build Lab",
   "summary": "Step-by-step guided hardware builds. Learn how to follow diagrams safely.",
   "tier": "rookie",
-  "estimatedMinutes": 3,
+  "estimatedMinutes": 5,
   "courseId": "lesson_2a",
   "sortOrder": 4,
   "isOptional": false,

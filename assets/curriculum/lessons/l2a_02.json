@@ -3,7 +3,7 @@
   "title": "The Learn Lab",
   "summary": "Explore where all your interactive lessons live and learn how to navigate them.",
   "tier": "rookie",
-  "estimatedMinutes": 3,
+  "estimatedMinutes": 5,
   "courseId": "lesson_2a",
   "sortOrder": 2,
   "isOptional": false,

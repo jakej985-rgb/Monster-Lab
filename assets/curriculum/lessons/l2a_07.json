@@ -3,7 +3,7 @@
   "title": "Safe Hardware Workflow",
   "summary": "The Golden Rules of hardware. Keep your components safe from short circuits and static shock.",
   "tier": "rookie",
-  "estimatedMinutes": 3,
+  "estimatedMinutes": 5,
   "courseId": "lesson_2a",
   "sortOrder": 7,
   "isOptional": false,

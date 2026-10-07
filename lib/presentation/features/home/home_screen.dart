@@ -491,7 +491,9 @@ class HomeScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 10),
               Text(
-                'Lesson $lessonNumber: ${nextLesson.title}',
+                nextLesson.courseId != null
+                    ? nextLesson.title
+                    : 'Lesson $lessonNumber: ${nextLesson.title}',
                 style:
                     const TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
               ),
@@ -505,7 +507,9 @@ class HomeScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 14),
               MonsterButton(
-                label: 'Start Lesson $lessonNumber',
+                label: nextLesson.courseId != null
+                    ? 'Start Lesson'
+                    : 'Start Lesson $lessonNumber',
                 icon: Icons.rocket_launch,
                 onPressed: () => context.push('/learn/${nextLesson.id}'),
               ),

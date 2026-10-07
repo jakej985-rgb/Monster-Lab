@@ -3,12 +3,16 @@
   "title": "ESD Safety",
   "summary": "Learn how to protect your electronics from Electrostatic Discharge.",
   "tier": "rookie",
-  "estimatedMinutes": 3,
+  "estimatedMinutes": 5,
   "courseId": "lesson_2b",
   "sortOrder": 7,
   "isOptional": false,
-  "prerequisites": ["l2b_06"],
-  "componentIds": ["comp_uno"],
+  "prerequisites": [
+    "l2b_06"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
   "steps": [
     {
       "stepId": "l2b_07_s01",

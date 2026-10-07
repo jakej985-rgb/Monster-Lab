@@ -6,6 +6,25 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [Unreleased] - 2026-10-07
+
+### Phase 23: Modular Curriculum Architecture, Courses, and Sub-Lessons
+- **Coding Foundations Course (1B)**: Added 8 standalone coding lessons (`cf_01` through `cf_08`) covering core programming paradigms (variables, operators, logic flow, functions, loops, Arduino sketch anatomy, code prediction, and first program authoring) with optional course bypass via placement test (`cf_08`).
+- **Lesson 2A Monster Lab Walkthrough**: Added 8-part guided tour (`l2a_01` through `l2a_08`) exploring app tools, Labs, safety workflows, and orientation assessment.
+- **Lesson 2B Arduino IDE Setup Walkthrough**: Hard-renamed legacy `lesson_02` into 8 modular sub-lessons (`l2b_01` through `l2b_08`) covering IDE anatomy, toolchain compilation, board/port discovery, `setup()`/`loop()` lifecycle, Serial Monitor debugging, library management, and ESD safety.
+- **Domain & Persistence Upgrades**:
+  - Added `CourseModel` with prerequisite dependency graph and placement skipping.
+  - Added `sortOrder`, `courseId`, and `isOptional` properties to `Lesson`.
+  - Added `StepType.placementCheck`.
+  - Implemented automatic backward-compatibility migration in `LearnerProgressModel.migrateFromOldFormat` mapping legacy `lesson_02` completions into `l2b_01`..`l2b_08`.
+  - Implemented `AppSettings` model, data source, and repository with persistence for sound, high contrast, and immersive modes.
+
+### Phase 24: Responsive Mobile Lesson UX & Safe Viewing
+- **Expandable Lesson Images**: Created `ExpandableLessonImage` and `FullScreenImageViewer` using Flutter `InteractiveViewer` with pinch-to-zoom, pan, double-tap reset, and high-contrast controls.
+- **Responsive Code Block**: Added `ResponsiveCodeBlock` supporting line numbers, dark theme styling, horizontal scrolling, and one-tap clipboard copying.
+- **Persistent Safe Navigation**: Added `LessonActionBar` adhering to system navigation insets and safe area cutouts.
+- **Immersive Mode Controller**: Built `ImmersiveLessonController` leveraging Android system chrome immersive sticky mode toggleable in settings.
+
 ## [0.0.8+8] - 2026-10-03
 - Automated push release build bump to v0.0.8.
 

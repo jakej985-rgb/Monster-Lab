@@ -3,12 +3,16 @@
   "title": "Connecting, Board & Port Selection",
   "summary": "Safely connect the USB and choose the right board and port in the IDE.",
   "tier": "rookie",
-  "estimatedMinutes": 4,
+  "estimatedMinutes": 5,
   "courseId": "lesson_2b",
   "sortOrder": 3,
   "isOptional": false,
-  "prerequisites": ["l2b_02"],
-  "componentIds": ["comp_uno"],
+  "prerequisites": [
+    "l2b_02"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
   "steps": [
     {
       "stepId": "l2b_03_s01",

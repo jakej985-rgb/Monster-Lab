@@ -16,6 +16,11 @@ class CurriculumRepositoryImpl implements CurriculumRepository {
   }
 
   @override
+  Future<List<Lesson>> getLessonsOrdered() {
+    return _engine.getLessonsOrdered();
+  }
+
+  @override
   Future<Lesson> getLessonById(String id) {
     return _engine.getLessonById(id);
   }

@@ -5,7 +5,7 @@
   "tier": "rookie",
   "estimatedMinutes": 18,
   "prerequisites": [
-    "lesson_02"
+    "lesson_03"
   ],
   "componentIds": [
     "comp_uno"

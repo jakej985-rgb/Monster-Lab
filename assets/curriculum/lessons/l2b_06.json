@@ -3,12 +3,16 @@
   "title": "Libraries Overview",
   "summary": "Learn what libraries are and how to include them to save time.",
   "tier": "rookie",
-  "estimatedMinutes": 4,
+  "estimatedMinutes": 5,
   "courseId": "lesson_2b",
   "sortOrder": 6,
   "isOptional": false,
-  "prerequisites": ["l2b_05"],
-  "componentIds": ["comp_uno"],
+  "prerequisites": [
+    "l2b_05"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
   "steps": [
     {
       "stepId": "l2b_06_s01",

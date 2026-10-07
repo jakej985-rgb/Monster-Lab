@@ -51,7 +51,7 @@ void main() {
       expect(find.text('Start Lesson 1'), findsOneWidget);
     });
 
-    testWidgets('When Lesson 1 is completed, advances to Lesson 2 as UP NEXT',
+    testWidgets('When Lesson 1 is completed, advances to next lesson as UP NEXT',
         (tester) async {
       SharedPreferences.setMockInitialValues({
         'monster_lab_active_profile_id': 'prof_1',
@@ -83,18 +83,15 @@ void main() {
 
       expect(find.text('UP NEXT'), findsOneWidget);
       expect(
-          find.textContaining('Lesson 2: Setting Up Your Monster Lab Station'),
+          find.textContaining('What Is Code?'),
           findsOneWidget);
-      expect(find.text('Start Lesson 2'), findsOneWidget);
+      expect(find.text('Start Lesson'), findsOneWidget);
     });
 
     testWidgets('When all lessons are completed, displays celebration card',
         (tester) async {
-      final all12Lessons = List.generate(
-        12,
-        (i) => 'lesson_${(i + 1).toString().padLeft(2, '0')}',
-      );
-      final completedLessonsJson = '["${all12Lessons.join('","')}"]';
+      final allLessons = (await engine.getLessons()).map((l) => l.id).toList();
+      final completedLessonsJson = '["${allLessons.join('","')}"]';
 
       SharedPreferences.setMockInitialValues({
         'monster_lab_active_profile_id': 'prof_1',

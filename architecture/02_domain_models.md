@@ -11,18 +11,29 @@ This document specifies the core domain models and value objects for **Monster L
 ### 2.1 Lesson & Lesson Step Model
 ```dart
 class Lesson {
-  final String id;                  // e.g. "lesson_06"
+  final String id;                  // e.g. "lesson_06", "cf_01", "l2a_01", "l2b_01"
   final String title;               // e.g. "Potentiometer Readings"
   final String summary;             // Short kid-friendly hook
   final DifficultyTier tier;        // rookie, builder, engineer, monsterMaster
   final int estimatedMinutes;       // e.g. 15
+  final String? courseId;           // nullable course group ID, e.g. "coding_foundations"
+  final int sortOrder;              // 0-indexed ordering within course/overall
+  final bool isOptional;            // whether this lesson can be bypassed via placement
   final List<String> prerequisites; // ['lesson_05']
   final List<String> componentIds;  // ['comp_20']
   final List<LessonStep> steps;     // Ordered sequence of pedagogical steps
   final int xpReward;               // e.g. 100
 }
 
-enum StepType { story, visualExplanation, physicalTask, interactiveWiring, codeExperiment, quizCheckpoint }
+enum StepType {
+  story,
+  visualExplanation,
+  physicalTask,
+  interactiveWiring,
+  codeExperiment,
+  quizCheckpoint,
+  placementCheck,
+}
 
 class LessonStep {
   final String stepId;
@@ -32,6 +43,30 @@ class LessonStep {
   final String? illustrationAsset;
   final String? interactiveWidgetType;
   final Map<String, dynamic>? interactiveConfig;
+}
+```
+
+### 2.1b Course Model
+```dart
+class CourseModel {
+  final String id;                  // e.g. "coding_foundations", "lesson_2a", "lesson_2b"
+  final String title;               // Human-readable title
+  final String summary;             // Pedagogical summary
+  final List<String> lessonIds;     // Ordered sub-lesson IDs
+  final bool isOptional;            // true for optional modules (e.g. Coding Foundations)
+  final String? placementLessonId;  // sub-lesson ID acting as test-out placement gate
+  final List<String> prerequisites; // prerequisite course/lesson IDs
+  final int xpReward;               // completion bonus XP
+  final int estimatedMinutes;       // total expected time
+}
+```
+
+### 2.1c App Settings Model
+```dart
+class AppSettings {
+  final bool immersiveLessonMode;   // hides Android status/nav bars during lesson reading
+  final bool soundEnabled;          // audio playback toggle
+  final bool highContrast;          // high-contrast accessibility mode
 }
 ```
 

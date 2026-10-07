@@ -29,7 +29,8 @@ class CurriculumValidationException implements Exception {
 }
 
 class CurriculumValidator {
-  static final RegExp _lessonIdPattern = RegExp(r'^lesson_[0-9]{2,3}$');
+  static final RegExp _lessonIdPattern =
+      RegExp(r'^(lesson_[0-9]{2,3}|cf_[0-9]{2}|l2a_[0-9]{2}|l2b_[0-9]{2})$');
   static final RegExp _componentIdPattern = RegExp(r'^comp_[a-z0-9_]+$');
   static final RegExp _projectIdPattern = RegExp(r'^proj_[0-9]{2}$');
   static final RegExp _challengeIdPattern = RegExp(r'^chal_[a-z0-9_]+$');

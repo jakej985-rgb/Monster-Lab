@@ -58,7 +58,12 @@ def validate_field(obj, key, expected_type, required=True, min_len=None, pattern
 
 
 def validate_lesson(data, path):
-    validate_field(data, "id", str, pattern=r"^lesson_[0-9]{2,3}$")
+    validate_field(
+        data,
+        "id",
+        str,
+        pattern=r"^(lesson_[0-9]{2,3}|cf_[0-9]{2}|l2a_[0-9]{2}|l2b_[0-9]{2})$",
+    )
     validate_field(data, "title", str, min_len=3)
     validate_field(data, "summary", str)
     validate_field(data, "tier", str, enum_vals=["rookie", "builder", "engineer", "monsterMaster"])

@@ -3,7 +3,7 @@
   "title": "What Is Monster Lab?",
   "summary": "Monster Lab is an app that teaches you to build real Arduino robots.",
   "tier": "rookie",
-  "estimatedMinutes": 3,
+  "estimatedMinutes": 5,
   "courseId": "lesson_2a",
   "sortOrder": 1,
   "isOptional": false,

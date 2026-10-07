@@ -61,19 +61,18 @@ final curriculumRepositoryProvider = Provider<CurriculumRepository>((ref) {
 final nextLessonProvider = FutureProvider<Lesson?>((ref) async {
   final curriculumRepo = ref.watch(curriculumRepositoryProvider);
   final progress = ref.watch(activeProgressProvider);
-  final lessons = await curriculumRepo.getLessons();
-
-  final sortedLessons = List<Lesson>.from(lessons)
-    ..sort((a, b) {
-      final aNum = int.tryParse(a.id.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
-      final bNum = int.tryParse(b.id.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
-      return aNum.compareTo(bNum);
-    });
+  final sortedLessons = await curriculumRepo.getLessonsOrdered();
 
   for (final lesson in sortedLessons) {
     final isCompleted =
         progress?.completedLessonIds.contains(lesson.id) ?? false;
     if (isCompleted) continue;
+
+    if (lesson.isOptional &&
+        lesson.courseId != null &&
+        (progress?.placementPassedCourseIds.contains(lesson.courseId!) ?? false)) {
+      continue;
+    }
 
     final missingPrereqs = lesson.prerequisites.where(
       (req) => !(progress?.completedLessonIds.contains(req) ?? false),

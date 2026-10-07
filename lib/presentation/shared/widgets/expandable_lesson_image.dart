@@ -17,81 +17,91 @@ class ExpandableLessonImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Widget imageWidget = LayoutBuilder(
+    return LayoutBuilder(
       builder: (context, constraints) {
-        return Image.asset(
-          assetPath,
-          fit: BoxFit.fitWidth,
-          width: constraints.maxWidth,
-        );
-      },
-    );
-
-    Widget content = Stack(
-      children: [
-        imageWidget,
-        if (allowExpand)
-          Positioned(
-            bottom: 8,
-            right: 8,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.black54,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.fullscreen, color: Colors.white, size: 16),
-                  SizedBox(width: 4),
-                  Text(
-                    'Tap to expand',
-                    style: TextStyle(color: Colors.white, fontSize: 12),
-                  ),
-                ],
+        Widget content = Stack(
+          children: [
+            ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 140),
+              child: Image.asset(
+                assetPath,
+                fit: BoxFit.fitWidth,
+                width: constraints.maxWidth,
+                errorBuilder: (context, error, stackTrace) => Container(
+                  height: 160,
+                  width: constraints.maxWidth,
+                  color: const Color(0xFF1E1E1E),
+                  alignment: Alignment.center,
+                  child: const Icon(Icons.image, color: Colors.white54, size: 40),
+                ),
               ),
             ),
-          ),
-      ],
-    );
-
-    content = Semantics(
-      label: semanticsLabel,
-      child: GestureDetector(
-        onTap: allowExpand
-            ? () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (_) => FullScreenImageViewer(
-                      assetPath: assetPath,
-                      semanticsLabel: semanticsLabel,
-                      caption: caption,
-                    ),
+            if (allowExpand)
+              Positioned(
+                bottom: 8,
+                right: 8,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.black54,
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                );
-              }
-            : null,
-        child: content,
-      ),
-    );
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.fullscreen, color: Colors.white, size: 16),
+                      SizedBox(width: 4),
+                      Text(
+                        'Tap to expand',
+                        style: TextStyle(color: Colors.white, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        );
 
-    if (caption != null && caption!.isNotEmpty) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          content,
-          const SizedBox(height: 8),
-          Text(
-            caption!,
-            style: const TextStyle(fontSize: 12, color: Colors.grey),
-            textAlign: TextAlign.center,
+        content = Semantics(
+          label: semanticsLabel,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: allowExpand
+                ? () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (_) => FullScreenImageViewer(
+                          assetPath: assetPath,
+                          semanticsLabel: semanticsLabel,
+                          caption: caption,
+                        ),
+                      ),
+                    );
+                  }
+                : null,
+            child: content,
           ),
-        ],
-      );
-    }
+        );
 
-    return content;
+        if (caption != null && caption!.isNotEmpty) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              content,
+              const SizedBox(height: 8),
+              Text(
+                caption!,
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          );
+        }
+
+        return content;
+      },
+    );
   }
 }
+
