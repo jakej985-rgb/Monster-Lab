@@ -20,7 +20,8 @@ void main() {
 
       expect(course.id, equals('coding_foundations'));
       expect(course.title, equals('Coding Foundations'));
-      expect(course.summary, equals('Learn programming from scratch before Arduino code.'));
+      expect(course.summary,
+          equals('Learn programming from scratch before Arduino code.'));
       expect(course.lessonIds, equals(['cf_01', 'cf_02', 'cf_03']));
       expect(course.isOptional, isTrue);
       expect(course.placementLessonId, equals('cf_08'));

@@ -70,7 +70,8 @@ final nextLessonProvider = FutureProvider<Lesson?>((ref) async {
 
     if (lesson.isOptional &&
         lesson.courseId != null &&
-        (progress?.placementPassedCourseIds.contains(lesson.courseId!) ?? false)) {
+        (progress?.placementPassedCourseIds.contains(lesson.courseId!) ??
+            false)) {
       continue;
     }
 
@@ -250,12 +251,16 @@ final orderedLessonsProvider = FutureProvider<List<Lesson>>((ref) async {
   return engine.getLessonsOrdered();
 });
 
-final courseProgressProvider = FutureProvider.family<({int completed, int total}), String>((ref, courseId) async {
+final courseProgressProvider =
+    FutureProvider.family<({int completed, int total}), String>(
+        (ref, courseId) async {
   final engine = ref.watch(curriculumDataEngineProvider);
   final progress = ref.watch(activeProgressProvider);
   final lessons = await engine.getCourseLessons(courseId);
   final total = lessons.length;
-  final completed = lessons.where((l) => progress?.completedLessonIds.contains(l.id) ?? false).length;
+  final completed = lessons
+      .where((l) => progress?.completedLessonIds.contains(l.id) ?? false)
+      .length;
   return (completed: completed, total: total);
 });
 

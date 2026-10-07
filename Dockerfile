@@ -8,7 +8,7 @@ FROM nginx:alpine
 LABEL maintainer="Monster Lab Team <support@monsterlab.org>"
 LABEL org.opencontainers.image.title="Monster Lab Web"
 LABEL org.opencontainers.image.description="Educational Arduino & Electronics Studio Web PWA"
-LABEL org.opencontainers.image.version="0.0.8"
+LABEL org.opencontainers.image.version="0.0.9"
 
 # Install curl for container health check
 RUN apk add --no-cache curl

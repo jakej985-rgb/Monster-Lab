@@ -206,7 +206,8 @@ void main() {
       expect(find.textContaining('850 Total XP'), findsOneWidget);
 
       // 4 Metric Counters
-      expect(find.text('14/7'), findsOneWidget); // Lessons (6 legacy + 8 migrated l2b_*)
+      expect(find.text('14/7'),
+          findsOneWidget); // Lessons (6 legacy + 8 migrated l2b_*)
       expect(find.text('2/14'), findsOneWidget); // Projects
       expect(find.text('4/54'), findsOneWidget); // Parts
       expect(find.text('3/16'), findsOneWidget); // Challenges

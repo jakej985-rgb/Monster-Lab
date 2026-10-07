@@ -22,7 +22,8 @@ void main() {
       expect(find.byIcon(Icons.copy), findsOneWidget);
     });
 
-    testWidgets('Tapping copy button displays feedback snackbar', (tester) async {
+    testWidgets('Tapping copy button displays feedback snackbar',
+        (tester) async {
       const sampleCode = 'digitalWrite(13, HIGH);';
 
       await tester.pumpWidget(
@@ -41,8 +42,11 @@ void main() {
       expect(find.text('Copied!'), findsOneWidget);
     });
 
-    testWidgets('Allows horizontal scroll on narrow containers without layout overflow', (tester) async {
-      const longLine = 'Serial.println("This is an extremely long debug output statement intended to verify horizontal scrolling inside ResponsiveCodeBlock");';
+    testWidgets(
+        'Allows horizontal scroll on narrow containers without layout overflow',
+        (tester) async {
+      const longLine =
+          'Serial.println("This is an extremely long debug output statement intended to verify horizontal scrolling inside ResponsiveCodeBlock");';
 
       await tester.pumpWidget(
         const MaterialApp(

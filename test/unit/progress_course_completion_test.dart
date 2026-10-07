@@ -27,7 +27,8 @@ void main() {
     test('completeCourse awards XP idempotently on first completion', () async {
       const learnerId = 'learner_course_test';
 
-      final firstResult = await progressRepo.completeCourse(learnerId, 'coding_foundations', 100);
+      final firstResult = await progressRepo.completeCourse(
+          learnerId, 'coding_foundations', 100);
       expect(firstResult, isTrue);
 
       var progress = await progressRepo.getProgress(learnerId);
@@ -35,7 +36,8 @@ void main() {
       expect(progress.totalXp, equals(100));
 
       // Replay completion does not double XP
-      final secondResult = await progressRepo.completeCourse(learnerId, 'coding_foundations', 100);
+      final secondResult = await progressRepo.completeCourse(
+          learnerId, 'coding_foundations', 100);
       expect(secondResult, isFalse);
 
       progress = await progressRepo.getProgress(learnerId);

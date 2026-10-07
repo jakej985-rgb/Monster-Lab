@@ -24,14 +24,16 @@ class SettingsScreen extends ConsumerWidget {
               children: [
                 SwitchListTile(
                   title: const Text('Sound Effects & Audio Chimes'),
-                  subtitle: const Text('Plays celebratory chimes on milestones and clicks.'),
+                  subtitle: const Text(
+                      'Plays celebratory chimes on milestones and clicks.'),
                   value: settings.soundEnabled,
                   onChanged: (val) => notifier.setSoundEnabled(val),
                 ),
                 const Divider(),
                 SwitchListTile(
                   title: const Text('High Contrast Mode'),
-                  subtitle: const Text('Increases visual borders and pin label contrast.'),
+                  subtitle: const Text(
+                      'Increases visual borders and pin label contrast.'),
                   value: settings.highContrast,
                   onChanged: (val) => notifier.setHighContrast(val),
                 ),

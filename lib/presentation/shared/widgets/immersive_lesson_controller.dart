@@ -19,7 +19,6 @@ class ImmersiveLessonController extends ConsumerStatefulWidget {
 class _ImmersiveLessonControllerState
     extends ConsumerState<ImmersiveLessonController>
     with WidgetsBindingObserver {
-
   @override
   void initState() {
     super.initState();

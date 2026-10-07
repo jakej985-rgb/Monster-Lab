@@ -32,7 +32,8 @@ class ExpandableLessonImage extends StatelessWidget {
                   width: constraints.maxWidth,
                   color: const Color(0xFF1E1E1E),
                   alignment: Alignment.center,
-                  child: const Icon(Icons.image, color: Colors.white54, size: 40),
+                  child:
+                      const Icon(Icons.image, color: Colors.white54, size: 40),
                 ),
               ),
             ),
@@ -41,7 +42,8 @@ class ExpandableLessonImage extends StatelessWidget {
                 bottom: 8,
                 right: 8,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.black54,
                     borderRadius: BorderRadius.circular(12),
@@ -104,4 +106,3 @@ class ExpandableLessonImage extends StatelessWidget {
     );
   }
 }
-

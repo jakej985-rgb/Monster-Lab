@@ -88,8 +88,8 @@ class ProgressRepositoryImpl implements ProgressRepository {
   Future<void> markPlacementPassed(String learnerId, String courseId) {
     return _synchronized(learnerId, () async {
       final current = await _getProgressDirect(learnerId);
-      final updatedPlacements = Set<String>.from(current.placementPassedCourseIds)
-        ..add(courseId);
+      final updatedPlacements =
+          Set<String>.from(current.placementPassedCourseIds)..add(courseId);
       final updated = current.copyWith(
         placementPassedCourseIds: updatedPlacements,
         lastSessionDate: DateTime.now(),

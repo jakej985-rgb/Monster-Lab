@@ -29,8 +29,18 @@ class AssetCurriculumDataSource {
       const CourseModel(
         id: 'coding_foundations',
         title: 'Coding Foundations',
-        summary: 'Learn the core programming concepts required for Monster Lab.',
-        lessonIds: ['cf_01', 'cf_02', 'cf_03', 'cf_04', 'cf_05', 'cf_06', 'cf_07', 'cf_08'],
+        summary:
+            'Learn the core programming concepts required for Monster Lab.',
+        lessonIds: [
+          'cf_01',
+          'cf_02',
+          'cf_03',
+          'cf_04',
+          'cf_05',
+          'cf_06',
+          'cf_07',
+          'cf_08'
+        ],
         isOptional: true,
         placementLessonId: 'cf_01',
         prerequisites: [],
@@ -41,7 +51,16 @@ class AssetCurriculumDataSource {
         id: 'lesson_2a',
         title: 'Course 2A: Basic Sensors',
         summary: 'Explore basic analog and digital sensors.',
-        lessonIds: ['l2a_01', 'l2a_02', 'l2a_03', 'l2a_04', 'l2a_05', 'l2a_06', 'l2a_07', 'l2a_08'],
+        lessonIds: [
+          'l2a_01',
+          'l2a_02',
+          'l2a_03',
+          'l2a_04',
+          'l2a_05',
+          'l2a_06',
+          'l2a_07',
+          'l2a_08'
+        ],
         prerequisites: ['lesson_01'],
         xpReward: 600,
         estimatedMinutes: 90,
@@ -50,7 +69,16 @@ class AssetCurriculumDataSource {
         id: 'lesson_2b',
         title: 'Course 2B: Actuators',
         summary: 'Control physical movement with servos and motors.',
-        lessonIds: ['l2b_01', 'l2b_02', 'l2b_03', 'l2b_04', 'l2b_05', 'l2b_06', 'l2b_07', 'l2b_08'],
+        lessonIds: [
+          'l2b_01',
+          'l2b_02',
+          'l2b_03',
+          'l2b_04',
+          'l2b_05',
+          'l2b_06',
+          'l2b_07',
+          'l2b_08'
+        ],
         prerequisites: ['lesson_2a'],
         xpReward: 600,
         estimatedMinutes: 90,

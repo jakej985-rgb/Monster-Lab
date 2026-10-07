@@ -168,7 +168,8 @@ class LearnerProgressModel {
       learnerId: learnerId,
       totalXp: totalXp ?? this.totalXp,
       completedCourseIds: completedCourseIds ?? this.completedCourseIds,
-      placementPassedCourseIds: placementPassedCourseIds ?? this.placementPassedCourseIds,
+      placementPassedCourseIds:
+          placementPassedCourseIds ?? this.placementPassedCourseIds,
       completedLessonIds: completedLessonIds ?? this.completedLessonIds,
       discoveredComponentIds:
           discoveredComponentIds ?? this.discoveredComponentIds,
@@ -186,8 +187,14 @@ class LearnerProgressModel {
     if (old.completedLessonIds.contains('lesson_02')) {
       final updatedLessonIds = Set<String>.from(old.completedLessonIds);
       updatedLessonIds.addAll([
-        'l2b_01', 'l2b_02', 'l2b_03', 'l2b_04',
-        'l2b_05', 'l2b_06', 'l2b_07', 'l2b_08',
+        'l2b_01',
+        'l2b_02',
+        'l2b_03',
+        'l2b_04',
+        'l2b_05',
+        'l2b_06',
+        'l2b_07',
+        'l2b_08',
       ]);
       return old.copyWith(completedLessonIds: updatedLessonIds);
     }

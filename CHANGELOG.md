@@ -6,6 +6,9 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.0.9+9] - 2026-10-07
+- Automated push release build bump to v0.0.9.
+
 ## [Unreleased] - 2026-10-07
 
 ### Phase 23: Modular Curriculum Architecture, Courses, and Sub-Lessons

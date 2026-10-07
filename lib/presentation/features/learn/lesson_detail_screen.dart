@@ -108,28 +108,27 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
 
     return ImmersiveLessonController(
       child: Scaffold(
-      appBar: AppBar(
-        title: const Text('Learn Lab Session'),
-      ),
-      body: FutureBuilder<Lesson>(
-        future: curriculumRepo.getLessonById(widget.lessonId),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child: Text('Error loading lesson: ${snapshot.error}'),
-            );
-          }
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final lesson = snapshot.data!;
-          final steps = lesson.steps;
-          final currentStep = steps[_currentStepIndex];
+        appBar: AppBar(
+          title: const Text('Learn Lab Session'),
+        ),
+        body: FutureBuilder<Lesson>(
+          future: curriculumRepo.getLessonById(widget.lessonId),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Center(
+                child: Text('Error loading lesson: ${snapshot.error}'),
+              );
+            }
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final lesson = snapshot.data!;
+            final steps = lesson.steps;
+            final currentStep = steps[_currentStepIndex];
 
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: LayoutBuilder(builder: (context, constraints) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -198,172 +197,178 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                             const SizedBox(height: 16),
                           ],
 
-                      // Interactive Activities & Simulators (routed via ActivityRegistry with legacy fallback)
-                      if (ActivityRegistry.hasActivity(
-                          currentStep.interactiveWidgetType)) ...[
-                        ActivityRegistry.buildActivity(
-                          context: context,
-                          activityType: currentStep.interactiveWidgetType,
-                          config: currentStep.interactiveConfig,
-                        )!,
-                        const SizedBox(height: 16),
-                      ] else ...[
-                        // Legacy fallback when interactiveWidgetType is not set
-                        if (currentStep.interactiveWidgetType == null &&
-                            lesson.id == 'lesson_01' &&
-                            currentStep.type == StepType.visualExplanation &&
-                            steps.length <= 6) ...[
-                          const BoardInspectorWidget(),
-                          const SizedBox(height: 16),
-                        ],
-                        if (currentStep.interactiveWidgetType == null &&
-                            lesson.id == 'lesson_05' &&
-                            currentStep.type == StepType.codeExperiment &&
-                            steps.length <= 6) ...[
-                          const BlinkSimulatorWidget(),
-                          const SizedBox(height: 16),
-                        ],
-                        if (currentStep.interactiveWidgetType == null &&
-                            lesson.id == 'lesson_06' &&
-                            currentStep.type == StepType.codeExperiment &&
-                            steps.length <= 6) ...[
-                          const PotentiometerSimulatorWidget(),
-                          const SizedBox(height: 16),
-                        ],
-                        if (currentStep.interactiveWidgetType == null &&
-                            lesson.id == 'lesson_07' &&
-                            currentStep.type == StepType.codeExperiment &&
-                            steps.length <= 6) ...[
-                          const RgbMixerWidget(),
-                          const SizedBox(height: 16),
-                        ],
-                      ],
+                          // Interactive Activities & Simulators (routed via ActivityRegistry with legacy fallback)
+                          if (ActivityRegistry.hasActivity(
+                              currentStep.interactiveWidgetType)) ...[
+                            ActivityRegistry.buildActivity(
+                              context: context,
+                              activityType: currentStep.interactiveWidgetType,
+                              config: currentStep.interactiveConfig,
+                            )!,
+                            const SizedBox(height: 16),
+                          ] else ...[
+                            // Legacy fallback when interactiveWidgetType is not set
+                            if (currentStep.interactiveWidgetType == null &&
+                                lesson.id == 'lesson_01' &&
+                                currentStep.type ==
+                                    StepType.visualExplanation &&
+                                steps.length <= 6) ...[
+                              const BoardInspectorWidget(),
+                              const SizedBox(height: 16),
+                            ],
+                            if (currentStep.interactiveWidgetType == null &&
+                                lesson.id == 'lesson_05' &&
+                                currentStep.type == StepType.codeExperiment &&
+                                steps.length <= 6) ...[
+                              const BlinkSimulatorWidget(),
+                              const SizedBox(height: 16),
+                            ],
+                            if (currentStep.interactiveWidgetType == null &&
+                                lesson.id == 'lesson_06' &&
+                                currentStep.type == StepType.codeExperiment &&
+                                steps.length <= 6) ...[
+                              const PotentiometerSimulatorWidget(),
+                              const SizedBox(height: 16),
+                            ],
+                            if (currentStep.interactiveWidgetType == null &&
+                                lesson.id == 'lesson_07' &&
+                                currentStep.type == StepType.codeExperiment &&
+                                steps.length <= 6) ...[
+                              const RgbMixerWidget(),
+                              const SizedBox(height: 16),
+                            ],
+                          ],
 
-                      // Physical Task Checklist (only when no interactive widget handles this step)
-                      if (currentStep.type == StepType.physicalTask &&
-                          currentStep.interactiveWidgetType == null) ...[
-                        _buildPhysicalTaskChecklist(currentStep),
-                        const SizedBox(height: 16),
-                      ],
+                          // Physical Task Checklist (only when no interactive widget handles this step)
+                          if (currentStep.type == StepType.physicalTask &&
+                              currentStep.interactiveWidgetType == null) ...[
+                            _buildPhysicalTaskChecklist(currentStep),
+                            const SizedBox(height: 16),
+                          ],
 
-                      // Quiz Checkpoint
-                      if (currentStep.type == StepType.quizCheckpoint &&
-                          currentStep.interactiveConfig != null) ...[
-                        QuizCheckpointWidget(
-                          key: ValueKey(
-                              '${widget.lessonId}_quiz_${currentStep.stepId}'),
-                          question: currentStep.interactiveConfig!['question']
-                                  as String? ??
-                              'Checkpoint Question',
-                          options: List<String>.from(currentStep
-                                  .interactiveConfig!['options'] as List? ??
-                              ['True', 'False']),
-                          correctIndex: currentStep
-                                  .interactiveConfig!['correctIndex'] as int? ??
-                              0,
-                          questions: (currentStep
-                                  .interactiveConfig!['questions'] as List?)
-                              ?.map((q) => Map<String, dynamic>.from(q as Map))
-                              .toList(),
-                          explanation: currentStep
-                              .interactiveConfig!['explanation'] as String?,
-                          onAnswerSubmitted: (isCorrect) async {
-                            final checkpointKey =
-                                '${widget.lessonId}_step_$_currentStepIndex';
-                            final progress = activeProgress ??
-                                (activeProfile != null
-                                    ? await ref
-                                        .read(progressRepositoryProvider)
-                                        .getProgress(activeProfile.id)
-                                    : null);
-                            final isAlreadyCompleted = progress
-                                    ?.completedLessonIds
-                                    .contains(widget.lessonId) ??
-                                false;
-                            if (isCorrect &&
-                                activeProfile != null &&
-                                !isAlreadyCompleted &&
-                                !_awardedCheckpointKeys
-                                    .contains(checkpointKey)) {
-                              _awardedCheckpointKeys.add(checkpointKey);
-                              await ref
-                                  .read(activeProgressProvider.notifier)
-                                  .addXp(10);
-                            }
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                      ],
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
-                // Navigation Button
-                LessonActionBar(
-                  enabled: !_isCompleting,
-                  label: _currentStepIndex < steps.length - 1
-                      ? 'Next Step'
-                      : (_isCompleting
-                          ? 'Saving Progress...'
-                          : 'Complete Lesson (+${lesson.xpReward} XP)'),
-                  icon: _currentStepIndex < steps.length - 1
-                      ? Icons.arrow_forward
-                      : Icons.celebration,
-                  onPressed: _isCompleting
-                      ? null
-                      : () async {
-                          if (_currentStepIndex < steps.length - 1) {
-                            setState(() => _currentStepIndex++);
-                          } else {
-                            if (_isCompleting) return;
-                            setState(() => _isCompleting = true);
-                            try {
-                              if (activeProfile == null) {
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                          'Please select an active learner profile to record progress.'),
-                                      backgroundColor: AppColors.danger,
-                                    ),
-                                  );
+                          // Quiz Checkpoint
+                          if (currentStep.type == StepType.quizCheckpoint &&
+                              currentStep.interactiveConfig != null) ...[
+                            QuizCheckpointWidget(
+                              key: ValueKey(
+                                  '${widget.lessonId}_quiz_${currentStep.stepId}'),
+                              question:
+                                  currentStep.interactiveConfig!['question']
+                                          as String? ??
+                                      'Checkpoint Question',
+                              options: List<String>.from(currentStep
+                                      .interactiveConfig!['options'] as List? ??
+                                  ['True', 'False']),
+                              correctIndex:
+                                  currentStep.interactiveConfig!['correctIndex']
+                                          as int? ??
+                                      0,
+                              questions: (currentStep
+                                      .interactiveConfig!['questions'] as List?)
+                                  ?.map((q) =>
+                                      Map<String, dynamic>.from(q as Map))
+                                  .toList(),
+                              explanation: currentStep
+                                  .interactiveConfig!['explanation'] as String?,
+                              onAnswerSubmitted: (isCorrect) async {
+                                final checkpointKey =
+                                    '${widget.lessonId}_step_$_currentStepIndex';
+                                final progress = activeProgress ??
+                                    (activeProfile != null
+                                        ? await ref
+                                            .read(progressRepositoryProvider)
+                                            .getProgress(activeProfile.id)
+                                        : null);
+                                final isAlreadyCompleted = progress
+                                        ?.completedLessonIds
+                                        .contains(widget.lessonId) ??
+                                    false;
+                                if (isCorrect &&
+                                    activeProfile != null &&
+                                    !isAlreadyCompleted &&
+                                    !_awardedCheckpointKeys
+                                        .contains(checkpointKey)) {
+                                  _awardedCheckpointKeys.add(checkpointKey);
+                                  await ref
+                                      .read(activeProgressProvider.notifier)
+                                      .addXp(10);
                                 }
-                                return;
+                              },
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Navigation Button
+                    LessonActionBar(
+                      enabled: !_isCompleting,
+                      label: _currentStepIndex < steps.length - 1
+                          ? 'Next Step'
+                          : (_isCompleting
+                              ? 'Saving Progress...'
+                              : 'Complete Lesson (+${lesson.xpReward} XP)'),
+                      icon: _currentStepIndex < steps.length - 1
+                          ? Icons.arrow_forward
+                          : Icons.celebration,
+                      onPressed: _isCompleting
+                          ? null
+                          : () async {
+                              if (_currentStepIndex < steps.length - 1) {
+                                setState(() => _currentStepIndex++);
+                              } else {
+                                if (_isCompleting) return;
+                                setState(() => _isCompleting = true);
+                                try {
+                                  if (activeProfile == null) {
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'Please select an active learner profile to record progress.'),
+                                          backgroundColor: AppColors.danger,
+                                        ),
+                                      );
+                                    }
+                                    return;
+                                  }
+                                  final isFirstCompletion = await ref
+                                      .read(activeProgressProvider.notifier)
+                                      .completeLesson(
+                                          lesson.id, lesson.xpReward);
+                                  if (context.mounted) {
+                                    _showCompletionDialog(context, lesson,
+                                        isFirstCompletion: isFirstCompletion);
+                                  }
+                                } catch (e) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                            'Failed to save lesson progress: $e'),
+                                        backgroundColor: AppColors.danger,
+                                      ),
+                                    );
+                                  }
+                                } finally {
+                                  if (mounted) {
+                                    setState(() => _isCompleting = false);
+                                  }
+                                }
                               }
-                              final isFirstCompletion = await ref
-                                  .read(activeProgressProvider.notifier)
-                                  .completeLesson(lesson.id, lesson.xpReward);
-                              if (context.mounted) {
-                                _showCompletionDialog(context, lesson,
-                                    isFirstCompletion: isFirstCompletion);
-                              }
-                            } catch (e) {
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                        'Failed to save lesson progress: $e'),
-                                    backgroundColor: AppColors.danger,
-                                  ),
-                                );
-                              }
-                            } finally {
-                              if (mounted) {
-                                setState(() => _isCompleting = false);
-                              }
-                            }
-                          }
-                        },
-                ),
-              ],
+                            },
+                    ),
+                  ],
+                );
+              }),
             );
-          }),
-        );
-        },
+          },
+        ),
       ),
-    ),
     );
   }
 

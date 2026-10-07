@@ -43,7 +43,9 @@ void main() {
       await engine.initialize();
     });
 
-    test('When placement is passed, optional Coding Foundations lessons are bypassed', () async {
+    test(
+        'When placement is passed, optional Coding Foundations lessons are bypassed',
+        () async {
       const learnerId = 'learner_skip_cf';
 
       // 1. Complete Lesson 1

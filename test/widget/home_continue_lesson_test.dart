@@ -51,7 +51,8 @@ void main() {
       expect(find.text('Start Lesson 1'), findsOneWidget);
     });
 
-    testWidgets('When Lesson 1 is completed, advances to next lesson as UP NEXT',
+    testWidgets(
+        'When Lesson 1 is completed, advances to next lesson as UP NEXT',
         (tester) async {
       SharedPreferences.setMockInitialValues({
         'monster_lab_active_profile_id': 'prof_1',
@@ -82,9 +83,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('UP NEXT'), findsOneWidget);
-      expect(
-          find.textContaining('What Is Code?'),
-          findsOneWidget);
+      expect(find.textContaining('What Is Code?'), findsOneWidget);
       expect(find.text('Start Lesson'), findsOneWidget);
     });
 

@@ -38,7 +38,8 @@ void main() {
       expect(courses.length, equals(3));
 
       final courseIds = courses.map((c) => c.id).toSet();
-      expect(courseIds, containsAll(['coding_foundations', 'lesson_2a', 'lesson_2b']));
+      expect(courseIds,
+          containsAll(['coding_foundations', 'lesson_2a', 'lesson_2b']));
     });
 
     test('getCourseById returns specific course', () async {

@@ -6,7 +6,8 @@ import 'package:monster_lab/data/repositories/settings_repository_impl.dart';
 
 void main() {
   group('Settings Persistence Tests', () {
-    test('Default settings are immersive=false, sound=true, highContrast=false', () async {
+    test('Default settings are immersive=false, sound=true, highContrast=false',
+        () async {
       SharedPreferences.setMockInitialValues({});
       final storage = await StorageService.init();
       final ds = SettingsDataSource(storage);
