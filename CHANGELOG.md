@@ -6,6 +6,21 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.1.4+14] - 2026-10-07
+
+### Overview & Release Highlights
+Release v0.1.4 introduces updates across 2 commits.
+
+### 🛠️ Developer Toolchains & CI/CD
+- **ci(release): separate Android, Linux, Windows, and Web builds into parallel jobs** (`fb4adff`):
+  - *What Changed*: Separated release packaging in .github/workflows/release.yml into 5 parallel jobs (create-release, build-android, build-linux, build-windows, build-web).
+  - *Why*: To speed up the CI/CD pipeline and improve build reliability.
+
+### 📚 Documentation & Specifications
+- **docs(changelog): document 0.1.3+13 release notes for CI dependency fix** (`c5e4658`):
+  - *What Changed*: Documented the release notes for v0.1.3.
+  - *Why*: To keep the changelog up to date.
+
 ## [0.1.3+13] - 2026-10-07
 
 ### Overview & Release Highlights

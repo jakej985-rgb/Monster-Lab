@@ -2,7 +2,7 @@
 ; Monster Lab - Windows Desktop Installer Configuration
 
 #define MyAppName "Monster Lab"
-#define MyAppVersion "0.1.3"
+#define MyAppVersion "0.1.4"
 #define MyAppPublisher "Monster Lab Team"
 #define MyAppURL "https://github.com/monsterlab/monster_lab"
 #define MyAppExeName "monster_lab.exe"
