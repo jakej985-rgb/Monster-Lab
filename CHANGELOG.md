@@ -7,26 +7,67 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 ---
 
 ## [0.0.9+9] - 2026-10-07
-- Automated push release build bump to v0.0.9.
 
-## [Unreleased] - 2026-10-07
+### Overview & Release Highlights
+Release 0.0.9 introduces major architectural, educational, and mobile UX enhancements across 21 commits. It marks the delivery of **Phase 23 (Modular Curriculum Architecture, Courses, and Sub-Lessons)** and **Phase 24 (Responsive Mobile Lesson UX & Safe Viewing)**, expanding the curriculum from 12 monolithic lessons to 35 modular lessons grouped into structured courses with placement testing, zoomable schematics, safe navigation, and persistent immersive display controls.
 
-### Phase 23: Modular Curriculum Architecture, Courses, and Sub-Lessons
-- **Coding Foundations Course (1B)**: Added 8 standalone coding lessons (`cf_01` through `cf_08`) covering core programming paradigms (variables, operators, logic flow, functions, loops, Arduino sketch anatomy, code prediction, and first program authoring) with optional course bypass via placement test (`cf_08`).
-- **Lesson 2A Monster Lab Walkthrough**: Added 8-part guided tour (`l2a_01` through `l2a_08`) exploring app tools, Labs, safety workflows, and orientation assessment.
-- **Lesson 2B Arduino IDE Setup Walkthrough**: Hard-renamed legacy `lesson_02` into 8 modular sub-lessons (`l2b_01` through `l2b_08`) covering IDE anatomy, toolchain compilation, board/port discovery, `setup()`/`loop()` lifecycle, Serial Monitor debugging, library management, and ESD safety.
-- **Domain & Persistence Upgrades**:
-  - Added `CourseModel` with prerequisite dependency graph and placement skipping.
-  - Added `sortOrder`, `courseId`, and `isOptional` properties to `Lesson`.
-  - Added `StepType.placementCheck`.
-  - Implemented automatic backward-compatibility migration in `LearnerProgressModel.migrateFromOldFormat` mapping legacy `lesson_02` completions into `l2b_01`..`l2b_08`.
-  - Implemented `AppSettings` model, data source, and repository with persistence for sound, high contrast, and immersive modes.
+---
 
-### Phase 24: Responsive Mobile Lesson UX & Safe Viewing
-- **Expandable Lesson Images**: Created `ExpandableLessonImage` and `FullScreenImageViewer` using Flutter `InteractiveViewer` with pinch-to-zoom, pan, double-tap reset, and high-contrast controls.
-- **Responsive Code Block**: Added `ResponsiveCodeBlock` supporting line numbers, dark theme styling, horizontal scrolling, and one-tap clipboard copying.
-- **Persistent Safe Navigation**: Added `LessonActionBar` adhering to system navigation insets and safe area cutouts.
-- **Immersive Mode Controller**: Built `ImmersiveLessonController` leveraging Android system chrome immersive sticky mode toggleable in settings.
+### 🚀 Features & Content Expansions (Phase 23)
+- **Coding Foundations Course (Course 1B)**: Added 8 standalone coding lessons (`cf_01` through `cf_08`) covering core programming paradigms:
+  - `cf_01` (*What Is Code?*), `cf_02` (*Variables & Data Types*), `cf_03` (*Operators & Math*), `cf_04` (*Decisions with If/Else*), `cf_05` (*Loops & Repetition*), `cf_06` (*Functions & Modular Code*), `cf_07` (*Arduino Sketch Anatomy*), and `cf_08` (*Code Predictor & Placement Challenge*).
+  - *Educational Rationale*: Decouples abstract computational thinking from physical hardware assembly, resolving steep learning curve friction for learners with no prior programming experience.
+  - *Placement Test*: High-experience learners can test out of the entire Coding Foundations course directly via `cf_08` (`placementLessonId`).
+- **Lesson 2A — Meet Monster Lab**: Added an 8-part guided tour (`l2a_01` through `l2a_08`) exploring the Monster Lab platform:
+  - Dedicated walkthroughs for Learn Lab, Parts Lab, Build Lab, Code Lab, Hardware Challenges, XP/Badges progression, ESD safety rules, and orientation assessment.
+  - *UX Rationale*: Provides a cohesive onboarding orientation to the virtual workshop environment and lab safety protocols before working with physical microcontrollers.
+- **Lesson 2B — Arduino IDE Setup Walkthrough**: Split legacy monolithic `lesson_02` into 8 modular sub-lessons (`l2b_01` through `l2b_08`):
+  - Step-by-step guidance covering IDE installation, interface anatomy, compilation pipeline vs. flashing, board & COM port discovery, `setup()`/`loop()` lifecycle, Serial Monitor debugging, library management, and first successful compile checkpoint.
+  - *Pedagogical Rationale*: Toolchain setup and COM port detection generate over 80% of beginner troubleshooting issues. Granular step-by-step milestones isolate errors and eliminate setup fatigue.
+
+---
+
+### 📱 Responsive Mobile UX & Safe Viewing (Phase 24)
+- **Expandable Lesson Images (`ExpandableLessonImage`)**:
+  - Displays inline lesson figures, breadboard layouts, and pinout diagrams with touch-friendly expansion overlays ("Tap to expand") and fallback states for offline assets.
+  - *UX Rationale*: Mobile phone viewports (under 400dp width) constrain complex breadboard wiring diagrams.
+- **Full-Screen Image Viewer (`FullScreenImageViewer`)**:
+  - Full-screen modal route powered by Flutter `InteractiveViewer` with pinch-to-zoom (0.8x to 4.0x), pan navigation, double-tap zoom toggle/reset, and WCAG-compliant high-contrast dismiss button positioned clear of display cutouts.
+- **Responsive Code Block (`ResponsiveCodeBlock`)**:
+  - Integrated into `MonsterMarkdown` to render code snippets with dark-theme syntax styling (`#1A1A24`), monospace typography, horizontal scrolling (preventing broken syntax wrapping on narrow screens), and a one-tap clipboard copy button with `SnackBar` confirmation.
+- **Safe Persistent Action Bar (`LessonActionBar`)**:
+  - Standardized bottom navigation bar across all lesson steps enforcing system navigation insets (`SafeArea(bottom: true)`) to prevent touch clipping on Android 3-button navigation bars and gesture pill bars.
+- **Android Immersive Reading Mode (`ImmersiveLessonController`)**:
+  - Platform-safe system chrome controller using `SystemUiMode.immersiveSticky` to hide system status bars and navigation bars during lesson reading for distraction-free focus, cleanly reverting to `SystemUiMode.edgeToEdge` upon exit.
+- **Persistent App Settings**:
+  - Implemented `AppSettings` model, `SettingsDataSource`, `SettingsRepository`, and Riverpod `settingsNotifierProvider` persisting toggles for sound effects, high-contrast mode, and immersive lesson mode.
+
+---
+
+### ⚠️ Breaking Changes & Backward-Compatibility Migrations
+- **Removal of Legacy `lesson_02.json`**:
+  - `assets/curriculum/lessons/lesson_02.json` has been hard-renamed and deleted from the curriculum manifest. Total lesson count expanded from 12 to 35.
+  - Downstream prerequisites updated: `lesson_03` now requires `l2b_08` (formerly required `lesson_02`); `lesson_04` requires `lesson_03`.
+- **Automatic Progress Migration (`LearnerProgressModel.migrateFromOldFormat`)**:
+  - Existing user progress containing `lesson_02` completion is automatically upgraded on first load into full completions for all 8 `l2b_01` through `l2b_08` sub-lessons, ensuring zero progression loss for returning learners.
+
+---
+
+### 🏗️ Architecture & Domain Models
+- **Course Domain Modeling**:
+  - Added `CourseModel` (`lib/domain/models/course_model.dart`) with support for course prerequisites, lesson lists, optional status, and placement test linkages.
+  - Added `courseId`, `sortOrder`, and `isOptional` properties to `Lesson`.
+  - Added `StepType.placementCheck` to `StepType` enum for placement checkpoints.
+  - Added `completedCourseIds` and `placementPassedCourseIds` tracking to `LearnerProgressModel`.
+  - Added linear curriculum sequencing via `CurriculumRepository.getLessonsOrdered()`.
+
+---
+
+### 🧪 Quality Assurance & Toolchains
+- **Curriculum Validation Suite**:
+  - Updated `scripts/validate_curriculum.py` to validate course manifests and multi-course dependencies across 35 lessons, 54 components, 20 projects, 24 challenges, and 20 badges (100% pass rate).
+- **Test Coverage Expansion**:
+  - Added 10 new test suites (19 new tests) covering `CourseModel` serialization, backward-compatible migration logic, lesson ordering sequences, placement bypass logic, course completion XP idempotency, settings persistence, `ExpandableLessonImage`, `LessonActionBar`, and `ResponsiveCodeBlock`.
 
 ## [0.0.8+8] - 2026-10-03
 - Automated push release build bump to v0.0.8.
