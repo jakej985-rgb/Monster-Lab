@@ -76,12 +76,14 @@ class _BuildScreenState extends ConsumerState<BuildScreen> {
 
           return Column(
             children: [
-              // Tier Filter Chips
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
+              // Tier Filter Chips (Responsive Wrap - No side scrolling)
+              Container(
+                width: double.infinity,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                child: Row(
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
                     FilterChip(
                       label: const Text('All Tiers'),
@@ -91,7 +93,6 @@ class _BuildScreenState extends ConsumerState<BuildScreen> {
                           AppColors.primaryViolet.withValues(alpha: 0.2),
                       checkmarkColor: AppColors.primaryViolet,
                     ),
-                    const SizedBox(width: 8),
                     FilterChip(
                       label: const Text('Rookie'),
                       selected: _selectedTier == DifficultyTier.rookie,
@@ -101,7 +102,6 @@ class _BuildScreenState extends ConsumerState<BuildScreen> {
                           AppColors.tierRookie.withValues(alpha: 0.2),
                       checkmarkColor: AppColors.tierRookie,
                     ),
-                    const SizedBox(width: 8),
                     FilterChip(
                       label: const Text('Builder'),
                       selected: _selectedTier == DifficultyTier.builder,
@@ -111,7 +111,6 @@ class _BuildScreenState extends ConsumerState<BuildScreen> {
                           AppColors.tierBuilder.withValues(alpha: 0.2),
                       checkmarkColor: AppColors.tierBuilder,
                     ),
-                    const SizedBox(width: 8),
                     FilterChip(
                       label: const Text('Engineer'),
                       selected: _selectedTier == DifficultyTier.engineer,
@@ -121,7 +120,6 @@ class _BuildScreenState extends ConsumerState<BuildScreen> {
                           AppColors.tierEngineer.withValues(alpha: 0.2),
                       checkmarkColor: AppColors.tierEngineer,
                     ),
-                    const SizedBox(width: 8),
                     FilterChip(
                       label: const Text('Monster Master'),
                       selected: _selectedTier == DifficultyTier.monsterMaster,

@@ -192,54 +192,50 @@ class _CodeDeconstructionWidgetState extends State<CodeDeconstructionWidget> {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: const Color(0xFF334155)),
             ),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: List.generate(_tokens.length, (index) {
-                  final t = _tokens[index];
-                  final isSelected = index == _selectedTokenIndex;
-                  final isInspected = _inspectedTokens.contains(index);
+            child: Wrap(
+              spacing: 6,
+              runSpacing: 8,
+              children: List.generate(_tokens.length, (index) {
+                final t = _tokens[index];
+                final isSelected = index == _selectedTokenIndex;
+                final isInspected = _inspectedTokens.contains(index);
 
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 6),
-                    child: InkWell(
-                      onTap: () {
-                        setState(() {
-                          _selectedTokenIndex = index;
-                          _inspectedTokens.add(index);
-                        });
-                      },
+                return InkWell(
+                  onTap: () {
+                    setState(() {
+                      _selectedTokenIndex = index;
+                      _inspectedTokens.add(index);
+                    });
+                  },
+                  borderRadius: BorderRadius.circular(8),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 150),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? t.color.withValues(alpha: 0.25)
+                          : (isInspected
+                              ? const Color(0xFF1E293B)
+                              : const Color(0xFF161E2E)),
                       borderRadius: BorderRadius.circular(8),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 150),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? t.color.withValues(alpha: 0.25)
-                              : (isInspected
-                                  ? const Color(0xFF1E293B)
-                                  : const Color(0xFF161E2E)),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: isSelected ? t.color : Colors.white24,
-                            width: isSelected ? 2 : 1,
-                          ),
-                        ),
-                        child: Text(
-                          t.text,
-                          style: TextStyle(
-                            fontFamily: 'monospace',
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: t.color,
-                          ),
-                        ),
+                      border: Border.all(
+                        color: isSelected ? t.color : Colors.white24,
+                        width: isSelected ? 2 : 1,
                       ),
                     ),
-                  );
-                }),
-              ),
+                    child: Text(
+                      t.text,
+                      style: TextStyle(
+                        fontFamily: 'monospace',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: t.color,
+                      ),
+                    ),
+                  ),
+                );
+              }),
             ),
           ),
           const SizedBox(height: 12),

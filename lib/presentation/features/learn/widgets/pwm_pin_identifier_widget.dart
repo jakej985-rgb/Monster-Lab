@@ -265,14 +265,13 @@ class _PwmPinIdentifierWidgetState extends State<PwmPinIdentifierWidget> {
                 ),
                 const SizedBox(height: 12),
 
-                // Digital Pin Sockets Row
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      for (int i = 13; i >= 0; i--) _buildPinSocket(i),
-                    ],
-                  ),
+                // Digital Pin Sockets (Responsive Wrap - No side scrolling)
+                Wrap(
+                  spacing: 4,
+                  runSpacing: 6,
+                  children: [
+                    for (int i = 13; i >= 0; i--) _buildPinSocket(i),
+                  ],
                 ),
                 const Divider(
                     height: 24, color: AppColors.surfaceContainerDark),

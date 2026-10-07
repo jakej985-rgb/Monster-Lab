@@ -203,89 +203,89 @@ class _CompilationPipelineSimulatorWidgetState
           ),
           const SizedBox(height: 16),
 
-          // Horizontal Progress Nodes
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: List.generate(_stages.length, (index) {
-                final s = _stages[index];
-                final isPassed = index <= _currentStageIndex;
-                final isCurrent = index == _currentStageIndex;
+          // Progress Nodes (Responsive Wrap - No side scrolling)
+          Wrap(
+            spacing: 6,
+            runSpacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: List.generate(_stages.length, (index) {
+              final s = _stages[index];
+              final isPassed = index <= _currentStageIndex;
+              final isCurrent = index == _currentStageIndex;
 
-                return Row(
-                  children: [
-                    InkWell(
-                      onTap: _isAutoCompiling
-                          ? null
-                          : () {
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  InkWell(
+                    onTap: _isAutoCompiling
+                        ? null
+                        : () {
+                            setState(() {
+                              _currentStageIndex = index;
+                            });
+                            if (index == _stages.length - 1) {
                               setState(() {
-                                _currentStageIndex = index;
+                                _hasCompleted = true;
                               });
-                              if (index == _stages.length - 1) {
-                                setState(() {
-                                  _hasCompleted = true;
-                                });
-                                widget.onComplete?.call();
-                              }
-                            },
-                      borderRadius: BorderRadius.circular(10),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 8),
-                        decoration: BoxDecoration(
+                              widget.onComplete?.call();
+                            }
+                          },
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isCurrent
+                            ? s.color.withValues(alpha: 0.25)
+                            : (isPassed
+                                ? const Color(0xFF1E293B)
+                                : const Color(0xFF0F172A)),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
                           color: isCurrent
-                              ? s.color.withValues(alpha: 0.25)
+                              ? s.color
                               : (isPassed
-                                  ? const Color(0xFF1E293B)
-                                  : const Color(0xFF0F172A)),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: isCurrent
-                                ? s.color
-                                : (isPassed
-                                    ? Colors.white38
-                                    : const Color(0xFF334155)),
-                            width: isCurrent ? 2 : 1,
+                                  ? Colors.white38
+                                  : const Color(0xFF334155)),
+                          width: isCurrent ? 2 : 1,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            s.icon,
+                            size: 16,
+                            color: isCurrent ? s.color : Colors.white60,
                           ),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              s.icon,
-                              size: 16,
-                              color: isCurrent ? s.color : Colors.white60,
+                          const SizedBox(width: 6),
+                          Text(
+                            'Step ${index + 1}',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: isCurrent
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                              color: isCurrent ? Colors.white : Colors.white70,
                             ),
-                            const SizedBox(width: 6),
-                            Text(
-                              'Step ${index + 1}',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: isCurrent
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
-                                color:
-                                    isCurrent ? Colors.white : Colors.white70,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                    if (index < _stages.length - 1)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: Icon(
-                          Icons.arrow_forward,
-                          size: 14,
-                          color: index < _currentStageIndex
-                              ? AppColors.accentCyan
-                              : Colors.white24,
-                        ),
+                  ),
+                  if (index < _stages.length - 1)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: Icon(
+                        Icons.arrow_forward,
+                        size: 14,
+                        color: index < _currentStageIndex
+                            ? AppColors.accentCyan
+                            : Colors.white24,
                       ),
-                  ],
-                );
-              }),
-            ),
+                    ),
+                ],
+              );
+            }),
           ),
           const SizedBox(height: 16),
 

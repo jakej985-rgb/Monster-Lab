@@ -531,27 +531,19 @@ class _UartFrameVisualizerWidgetState extends State<UartFrameVisualizerWidget> {
                 ),
                 const SizedBox(height: 10),
 
-                // Bit blocks row
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      for (int i = 0; i < bits.length; i++) ...[
-                        _buildBitWaveBlock(
-                          index: i,
-                          info: bits[i],
-                          isSelected: i == _activeBitIndex,
-                          onTap: () => _setActiveBit(i),
-                        ),
-                        if (i < bits.length - 1)
-                          Container(
-                            width: 1,
-                            height: 60,
-                            color: Colors.white12,
-                          ),
-                      ],
-                    ],
-                  ),
+                // Bit blocks (Responsive Wrap - No side scrolling)
+                Wrap(
+                  spacing: 4,
+                  runSpacing: 6,
+                  children: [
+                    for (int i = 0; i < bits.length; i++)
+                      _buildBitWaveBlock(
+                        index: i,
+                        info: bits[i],
+                        isSelected: i == _activeBitIndex,
+                        onTap: () => _setActiveBit(i),
+                      ),
+                  ],
                 ),
                 const SizedBox(height: 8),
 

@@ -131,53 +131,52 @@ class _InteractiveBreadboardWidgetState
         const SizedBox(height: 12),
 
         // Controls bar: Wire color picker & Clear/Undo buttons
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              const Text(
-                'Wire Color: ',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(width: 4),
-              ..._palette.map((c) {
-                final isChosen = _selectedWireColor == c;
-                final colorName = _getWireColorName(c);
-                return Semantics(
-                  button: true,
-                  selected: isChosen,
-                  label: '$colorName wire',
-                  child: InkWell(
-                    onTap: () => setState(() => _selectedWireColor = c),
-                    borderRadius: BorderRadius.circular(24),
+        Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 4,
+          runSpacing: 4,
+          children: [
+            const Text(
+              'Wire Color: ',
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+            ),
+            ..._palette.map((c) {
+              final isChosen = _selectedWireColor == c;
+              final colorName = _getWireColorName(c);
+              return Semantics(
+                button: true,
+                selected: isChosen,
+                label: '$colorName wire',
+                child: InkWell(
+                  onTap: () => setState(() => _selectedWireColor = c),
+                  borderRadius: BorderRadius.circular(24),
+                  child: Container(
+                    width: 48,
+                    height: 48,
+                    alignment: Alignment.center,
                     child: Container(
-                      width: 48,
-                      height: 48,
-                      alignment: Alignment.center,
-                      child: Container(
-                        width: 24,
-                        height: 24,
-                        decoration: BoxDecoration(
-                          color: c,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: isChosen ? Colors.black : Colors.white,
-                            width: isChosen ? 2.5 : 1.5,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.15),
-                              blurRadius: 2,
-                            ),
-                          ],
+                      width: 24,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        color: c,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isChosen ? Colors.black : Colors.white,
+                          width: isChosen ? 2.5 : 1.5,
                         ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.15),
+                            blurRadius: 2,
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                );
-              }),
-            ],
-          ),
+                ),
+              );
+            }),
+          ],
         ),
         Wrap(
           alignment: WrapAlignment.end,

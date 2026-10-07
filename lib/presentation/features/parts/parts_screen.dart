@@ -206,39 +206,38 @@ class _PartsScreenState extends ConsumerState<PartsScreen> {
                 ),
               ),
 
-              // Category Filter Tabs
-              SizedBox(
-                height: 48,
-                child: ListView.separated(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: _categories.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 8),
-                  itemBuilder: (context, i) {
-                    final cat = _categories[i];
-                    final isSelected = _selectedCategory == cat['id'];
-                    return ChoiceChip(
-                      label: Text(
-                        cat['label']!,
-                        style: TextStyle(
-                          color: isSelected
-                              ? Colors.white
-                              : AppColors.textPrimaryLight,
-                          fontWeight:
-                              isSelected ? FontWeight.bold : FontWeight.normal,
-                          fontSize: 12,
+              // Category Filter Tabs (Responsive Wrap - No side scrolling)
+              Container(
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    for (final cat in _categories)
+                      ChoiceChip(
+                        label: Text(
+                          cat['label']!,
+                          style: TextStyle(
+                            color: _selectedCategory == cat['id']
+                                ? Colors.white
+                                : AppColors.textPrimaryLight,
+                            fontWeight: _selectedCategory == cat['id']
+                                ? FontWeight.bold
+                                : FontWeight.normal,
+                            fontSize: 12,
+                          ),
                         ),
+                        selected: _selectedCategory == cat['id'],
+                        selectedColor: AppColors.primaryViolet,
+                        backgroundColor: AppColors.surfaceContainerLight,
+                        showCheckmark: false,
+                        onSelected: (_) {
+                          setState(() => _selectedCategory = cat['id']!);
+                        },
                       ),
-                      selected: isSelected,
-                      selectedColor: AppColors.primaryViolet,
-                      backgroundColor: AppColors.surfaceContainerLight,
-                      showCheckmark: false,
-                      onSelected: (_) {
-                        setState(() => _selectedCategory = cat['id']!);
-                      },
-                    );
-                  },
+                  ],
                 ),
               ),
 

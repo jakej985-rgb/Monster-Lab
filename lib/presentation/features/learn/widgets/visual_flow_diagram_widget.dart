@@ -242,18 +242,19 @@ class _VisualFlowDiagramWidgetState extends State<VisualFlowDiagramWidget>
           ),
           const SizedBox(height: 16),
 
-          // Flow Nodes Strip
+          // Flow Nodes Strip (Adaptive: Vertical on mobile, Horizontal on wide screens)
           LayoutBuilder(
             builder: (context, constraints) {
-              return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
+              final isNarrow = constraints.maxWidth < 500;
+
+              if (isNarrow) {
+                return Column(
                   children: List.generate(_nodes.length, (index) {
                     final node = _nodes[index];
                     final isSelected = index == _selectedNodeIndex;
                     final isPulsing = index == _activePulseIndex;
 
-                    return Row(
+                    return Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         InkWell(
@@ -265,9 +266,9 @@ class _VisualFlowDiagramWidgetState extends State<VisualFlowDiagramWidget>
                           borderRadius: BorderRadius.circular(12),
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 250),
-                            width: 120,
+                            width: double.infinity,
                             padding: const EdgeInsets.symmetric(
-                                vertical: 12, horizontal: 8),
+                                vertical: 12, horizontal: 16),
                             decoration: BoxDecoration(
                               color: isPulsing
                                   ? node.accentColor.withValues(alpha: 0.35)
@@ -292,8 +293,7 @@ class _VisualFlowDiagramWidgetState extends State<VisualFlowDiagramWidget>
                                     ]
                                   : null,
                             ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
+                            child: Row(
                               children: [
                                 Icon(
                                   node.icon,
@@ -302,18 +302,19 @@ class _VisualFlowDiagramWidgetState extends State<VisualFlowDiagramWidget>
                                       : Colors.white70,
                                   size: 28,
                                 ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  node.label,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: isSelected || isPulsing
-                                        ? FontWeight.bold
-                                        : FontWeight.normal,
-                                    color: isSelected || isPulsing
-                                        ? Colors.white
-                                        : Colors.white70,
+                                const SizedBox(width: 14),
+                                Expanded(
+                                  child: Text(
+                                    node.label,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: isSelected || isPulsing
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
+                                      color: isSelected || isPulsing
+                                          ? Colors.white
+                                          : Colors.white70,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -322,19 +323,111 @@ class _VisualFlowDiagramWidgetState extends State<VisualFlowDiagramWidget>
                         ),
                         if (index < _nodes.length - 1)
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            padding: const EdgeInsets.symmetric(vertical: 6),
                             child: Icon(
-                              Icons.arrow_forward,
+                              Icons.arrow_downward,
                               color: _activePulseIndex == index
                                   ? AppColors.energyAmber
                                   : Colors.white24,
-                              size: 18,
+                              size: 20,
                             ),
                           ),
                       ],
                     );
                   }),
-                ),
+                );
+              }
+
+              return Wrap(
+                spacing: 6,
+                runSpacing: 8,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: List.generate(_nodes.length, (index) {
+                  final node = _nodes[index];
+                  final isSelected = index == _selectedNodeIndex;
+                  final isPulsing = index == _activePulseIndex;
+
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            _selectedNodeIndex = index;
+                          });
+                        },
+                        borderRadius: BorderRadius.circular(12),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 250),
+                          width: 120,
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 8),
+                          decoration: BoxDecoration(
+                            color: isPulsing
+                                ? node.accentColor.withValues(alpha: 0.35)
+                                : isSelected
+                                    ? node.accentColor.withValues(alpha: 0.2)
+                                    : const Color(0xFF1E293B),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: isPulsing || isSelected
+                                  ? node.accentColor
+                                  : const Color(0xFF334155),
+                              width: isPulsing ? 2.5 : (isSelected ? 2 : 1),
+                            ),
+                            boxShadow: isPulsing
+                                ? [
+                                    BoxShadow(
+                                      color: node.accentColor
+                                          .withValues(alpha: 0.6),
+                                      blurRadius: 12,
+                                      spreadRadius: 2,
+                                    ),
+                                  ]
+                                : null,
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                node.icon,
+                                color: isSelected || isPulsing
+                                    ? node.accentColor
+                                    : Colors.white70,
+                                size: 28,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                node.label,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: isSelected || isPulsing
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                  color: isSelected || isPulsing
+                                      ? Colors.white
+                                      : Colors.white70,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      if (index < _nodes.length - 1)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Icon(
+                            Icons.arrow_forward,
+                            color: _activePulseIndex == index
+                                ? AppColors.energyAmber
+                                : Colors.white24,
+                            size: 18,
+                          ),
+                        ),
+                    ],
+                  );
+                }),
               );
             },
           ),

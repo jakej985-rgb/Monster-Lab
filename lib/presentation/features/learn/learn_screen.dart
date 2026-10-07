@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../domain/models/lesson_model.dart';
+import '../../../domain/models/course_model.dart';
+import '../../../domain/models/learner_progress_model.dart';
 import '../../shared/providers.dart';
 import '../../shared/widgets/monster_card.dart';
 
@@ -16,10 +18,14 @@ class LearnScreen extends ConsumerStatefulWidget {
 class _LearnScreenState extends ConsumerState<LearnScreen> {
   DifficultyTier? _selectedTier;
 
+  final Set<String> _expandedCourseIds = {};
+  bool _initializedExpanded = false;
+
   @override
   Widget build(BuildContext context) {
     final curriculumRepo = ref.watch(curriculumRepositoryProvider);
     final activeProgress = ref.watch(activeProgressProvider);
+    final coursesAsync = ref.watch(coursesProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -28,37 +34,33 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
       ),
       body: Column(
         children: [
-          // Tier Filter Chips
+          // Tier Filter Chips (Responsive Wrap - No side scrolling)
           Container(
+            width: double.infinity,
             padding:
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             color: Colors.white,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  _buildTierChip(label: 'All Tiers', tier: null),
-                  const SizedBox(width: 8),
-                  _buildTierChip(
-                      label: 'Rookie (Beginner)', tier: DifficultyTier.rookie),
-                  const SizedBox(width: 8),
-                  _buildTierChip(
-                      label: 'Builder (Intermediate)',
-                      tier: DifficultyTier.builder),
-                  const SizedBox(width: 8),
-                  _buildTierChip(
-                      label: 'Engineer (Advanced)',
-                      tier: DifficultyTier.engineer),
-                  const SizedBox(width: 8),
-                  _buildTierChip(
-                      label: 'Master', tier: DifficultyTier.monsterMaster),
-                ],
-              ),
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                _buildTierChip(label: 'All Tiers', tier: null),
+                _buildTierChip(
+                    label: 'Rookie (Beginner)', tier: DifficultyTier.rookie),
+                _buildTierChip(
+                    label: 'Builder (Intermediate)',
+                    tier: DifficultyTier.builder),
+                _buildTierChip(
+                    label: 'Engineer (Advanced)',
+                    tier: DifficultyTier.engineer),
+                _buildTierChip(
+                    label: 'Master', tier: DifficultyTier.monsterMaster),
+              ],
             ),
           ),
           const Divider(height: 1),
 
-          // Lesson List
+          // Lesson List with Course Folders
           Expanded(
             child: FutureBuilder<List<Lesson>>(
               future: curriculumRepo.getLessons(tier: _selectedTier),
@@ -77,135 +79,407 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
                   );
                 }
 
-                return ListView.separated(
+                // Group lessons into courses and standalone missions
+                final courseLessonsMap = <String, List<Lesson>>{};
+                final standaloneLessons = <Lesson>[];
+
+                for (final lesson in lessons) {
+                  if (lesson.courseId != null) {
+                    courseLessonsMap
+                        .putIfAbsent(lesson.courseId!, () => [])
+                        .add(lesson);
+                  } else {
+                    standaloneLessons.add(lesson);
+                  }
+                }
+
+                for (final list in courseLessonsMap.values) {
+                  list.sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
+                }
+
+                // Separate Lesson 1 as first intro mission
+                Lesson? lesson1;
+                final otherStandalone = <Lesson>[];
+                for (final l in standaloneLessons) {
+                  if (l.id == 'lesson_01') {
+                    lesson1 = l;
+                  } else {
+                    otherStandalone.add(l);
+                  }
+                }
+                otherStandalone.sort((a, b) => a.id.compareTo(b.id));
+
+                final courses = coursesAsync.value ?? const [];
+
+                // Initialize default expansion: expand active or incomplete courses
+                if (!_initializedExpanded && courses.isNotEmpty) {
+                  for (final course in courses) {
+                    final cLessons = courseLessonsMap[course.id] ?? [];
+                    final isComplete = cLessons.isNotEmpty &&
+                        cLessons.every((l) =>
+                            activeProgress?.completedLessonIds.contains(l.id) ??
+                            false);
+                    if (!isComplete) {
+                      _expandedCourseIds.add(course.id);
+                    }
+                  }
+                  // If all complete or none found, expand first course
+                  if (_expandedCourseIds.isEmpty && courses.isNotEmpty) {
+                    _expandedCourseIds.add(courses.first.id);
+                  }
+                  _initializedExpanded = true;
+                }
+
+                // Build organized items list
+                return ListView(
                   padding: const EdgeInsets.all(16.0),
-                  itemCount: lessons.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
-                    final lesson = lessons[index];
-                    final isCompleted = activeProgress?.completedLessonIds
-                            .contains(lesson.id) ??
-                        false;
+                  children: [
+                    // Standalone Mission 1 (First Spark)
+                    if (lesson1 != null) ...[
+                      _buildLessonCard(lesson1, activeProgress),
+                      const SizedBox(height: 12),
+                    ],
 
-                    // Prerequisite check
-                    final missingPrereqs = lesson.prerequisites
-                        .where(
-                          (req) => !(activeProgress?.completedLessonIds
-                                  .contains(req) ??
-                              false),
-                        )
-                        .toList();
-                    final isLocked = missingPrereqs.isNotEmpty;
+                    // Course Folders for 1B, 2A, 2B
+                    for (final course in courses) ...[
+                      if (courseLessonsMap.containsKey(course.id)) ...[
+                        _buildCourseFolderCard(
+                          course: course,
+                          lessons: courseLessonsMap[course.id]!,
+                          activeProgress: activeProgress,
+                        ),
+                        const SizedBox(height: 12),
+                      ],
+                    ],
 
-                    return MonsterCard(
-                      color: isLocked ? Colors.grey.shade100 : null,
-                      onTap: isLocked
-                          ? () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                      'Complete prerequisite (${missingPrereqs.join(", ")}) first!'),
-                                ),
-                              );
-                            }
-                          : () => context.push('/learn/${lesson.id}'),
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 22,
-                            backgroundColor: isCompleted
-                                ? AppColors.success
-                                : (isLocked
-                                    ? Colors.grey.shade400
-                                    : AppColors.primaryViolet),
-                            child: Icon(
-                              isCompleted
-                                  ? Icons.check
-                                  : (isLocked ? Icons.lock : Icons.play_arrow),
-                              color: Colors.white,
-                              size: 22,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 6, vertical: 2),
-                                      decoration: BoxDecoration(
-                                        color: _getTierColor(lesson.tier)
-                                            .withValues(alpha: 0.15),
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
-                                      child: Text(
-                                        lesson.tier.name.toUpperCase(),
-                                        style: TextStyle(
-                                          color: _getTierColor(lesson.tier),
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      '⏱ ${lesson.estimatedMinutes} min',
-                                      style: const TextStyle(
-                                          color: AppColors.textSecondaryLight,
-                                          fontSize: 11),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  lesson.title,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15,
-                                    color: isLocked
-                                        ? AppColors.textSecondaryLight
-                                        : AppColors.textPrimaryLight,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  lesson.summary,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      color: AppColors.textSecondaryLight,
-                                      fontSize: 12),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color:
-                                  AppColors.energyAmber.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              '+${lesson.xpReward} XP',
-                              style: const TextStyle(
-                                color: Color(0xFFD48806),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+                    // Core Missions 3 to 12
+                    for (final l in otherStandalone) ...[
+                      _buildLessonCard(l, activeProgress),
+                      const SizedBox(height: 12),
+                    ],
+                  ],
                 );
               },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCourseFolderCard({
+    required CourseModel course,
+    required List<Lesson> lessons,
+    required LearnerProgressModel? activeProgress,
+  }) {
+    final courseId = course.id;
+    final isExpanded = _expandedCourseIds.contains(courseId);
+    final completedCount = lessons
+        .where(
+            (l) => activeProgress?.completedLessonIds.contains(l.id) ?? false)
+        .length;
+    final totalCount = lessons.length;
+    final isAllComplete = completedCount == totalCount && totalCount > 0;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isAllComplete
+              ? AppColors.success.withValues(alpha: 0.5)
+              : AppColors.primaryViolet.withValues(alpha: 0.3),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Folder Header (Tap to expand/collapse)
+          InkWell(
+            key: Key('folder_header_$courseId'),
+            onTap: () {
+              setState(() {
+                if (isExpanded) {
+                  _expandedCourseIds.remove(courseId);
+                } else {
+                  _expandedCourseIds.add(courseId);
+                }
+              });
+            },
+            borderRadius: BorderRadius.vertical(
+              top: const Radius.circular(16),
+              bottom: isExpanded ? Radius.zero : const Radius.circular(16),
+            ),
+            child: Container(
+              padding: const EdgeInsets.all(16.0),
+              decoration: BoxDecoration(
+                color: isExpanded
+                    ? AppColors.primaryViolet.withValues(alpha: 0.05)
+                    : Colors.white,
+                borderRadius: BorderRadius.vertical(
+                  top: const Radius.circular(16),
+                  bottom: isExpanded ? Radius.zero : const Radius.circular(16),
+                ),
+              ),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 22,
+                    backgroundColor: isAllComplete
+                        ? AppColors.success
+                        : AppColors.primaryViolet,
+                    child: Icon(
+                      isAllComplete
+                          ? Icons.folder_special
+                          : (isExpanded ? Icons.folder_open : Icons.folder),
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryViolet
+                                    .withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: const Text(
+                                'LESSON FOLDER',
+                                style: TextStyle(
+                                  color: AppColors.primaryViolet,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              '$completedCount / $totalCount Completed',
+                              style: const TextStyle(
+                                color: AppColors.textSecondaryLight,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          course.title,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            color: AppColors.textPrimaryLight,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          course.summary,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: AppColors.textSecondaryLight,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: LinearProgressIndicator(
+                            value: totalCount > 0
+                                ? completedCount / totalCount
+                                : 0.0,
+                            minHeight: 6,
+                            backgroundColor: Colors.grey.shade200,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              isAllComplete
+                                  ? AppColors.success
+                                  : AppColors.energyAmber,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppColors.energyAmber.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          '+${course.xpReward} XP',
+                          style: const TextStyle(
+                            color: Color(0xFFD48806),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Icon(
+                        isExpanded ? Icons.expand_less : Icons.expand_more,
+                        color: AppColors.textSecondaryLight,
+                        size: 24,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Expanded Sub-lessons List
+          if (isExpanded) ...[
+            const Divider(height: 1),
+            Container(
+              color: Colors.grey.shade50,
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                children: [
+                  for (final lesson in lessons) ...[
+                    _buildLessonCard(lesson, activeProgress, isNested: true),
+                    if (lesson != lessons.last) const SizedBox(height: 8),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLessonCard(Lesson lesson, LearnerProgressModel? activeProgress,
+      {bool isNested = false}) {
+    final isCompleted =
+        activeProgress?.completedLessonIds.contains(lesson.id) ?? false;
+
+    // Prerequisite check
+    final missingPrereqs = lesson.prerequisites
+        .where(
+          (req) => !(activeProgress?.completedLessonIds.contains(req) ?? false),
+        )
+        .toList();
+    final isLocked = missingPrereqs.isNotEmpty;
+
+    return MonsterCard(
+      color: isLocked ? Colors.grey.shade100 : (isNested ? Colors.white : null),
+      onTap: isLocked
+          ? () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                      'Complete prerequisite (${missingPrereqs.join(", ")}) first!'),
+                ),
+              );
+            }
+          : () => context.push('/learn/${lesson.id}'),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: isNested ? 18 : 22,
+            backgroundColor: isCompleted
+                ? AppColors.success
+                : (isLocked ? Colors.grey.shade400 : AppColors.primaryViolet),
+            child: Icon(
+              isCompleted
+                  ? Icons.check
+                  : (isLocked ? Icons.lock : Icons.play_arrow),
+              color: Colors.white,
+              size: isNested ? 18 : 22,
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color:
+                            _getTierColor(lesson.tier).withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        lesson.tier.name.toUpperCase(),
+                        style: TextStyle(
+                          color: _getTierColor(lesson.tier),
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '⏱ ${lesson.estimatedMinutes} min',
+                      style: const TextStyle(
+                          color: AppColors.textSecondaryLight, fontSize: 11),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  lesson.title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: isNested ? 14 : 15,
+                    color: isLocked
+                        ? AppColors.textSecondaryLight
+                        : AppColors.textPrimaryLight,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  lesson.summary,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                      color: AppColors.textSecondaryLight, fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: AppColors.energyAmber.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              '+${lesson.xpReward} XP',
+              style: const TextStyle(
+                color: Color(0xFFD48806),
+                fontWeight: FontWeight.bold,
+                fontSize: 11,
+              ),
             ),
           ),
         ],

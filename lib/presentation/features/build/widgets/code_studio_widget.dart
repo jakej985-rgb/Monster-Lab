@@ -95,16 +95,13 @@ class CodeStudioWidget extends StatelessWidget {
                 ),
               ],
             ),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: SelectableText(
-                phase.codeSnippet!,
-                style: const TextStyle(
-                  fontFamily: 'monospace',
-                  fontSize: 13,
-                  height: 1.5,
-                  color: AppColors.syntaxString,
-                ),
+            child: SelectableText(
+              phase.codeSnippet!,
+              style: const TextStyle(
+                fontFamily: 'monospace',
+                fontSize: 13,
+                height: 1.5,
+                color: AppColors.syntaxString,
               ),
             ),
           ),

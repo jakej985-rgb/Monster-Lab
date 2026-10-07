@@ -159,46 +159,40 @@ class _GroundTroubleshootingWidgetState
           ),
           const SizedBox(height: 16),
 
-          // Scenario Selection Tabs
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: List.generate(_scenarios.length, (index) {
-                final sc = _scenarios[index];
-                final isSelected = index == _selectedIndex;
+          // Scenario Selection Tabs (Responsive Wrap - No side scrolling)
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: List.generate(_scenarios.length, (index) {
+              final sc = _scenarios[index];
+              final isSelected = index == _selectedIndex;
 
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: ChoiceChip(
-                    label: Text(sc.name),
-                    selected: isSelected,
-                    onSelected: (val) {
-                      if (val) {
-                        setState(() {
-                          _selectedIndex = index;
-                          _exploredIndices.add(index);
-                        });
-                        if (_exploredIndices.length == _scenarios.length) {
-                          widget.onComplete?.call();
-                        }
-                      }
-                    },
-                    selectedColor: sc.statusColor.withValues(alpha: 0.25),
-                    backgroundColor: const Color(0xFF1E293B),
-                    side: BorderSide(
-                      color:
-                          isSelected ? sc.statusColor : const Color(0xFF334155),
-                    ),
-                    labelStyle: TextStyle(
-                      color: isSelected ? Colors.white : Colors.white70,
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
-                      fontSize: 12,
-                    ),
-                  ),
-                );
-              }),
-            ),
+              return ChoiceChip(
+                label: Text(sc.name),
+                selected: isSelected,
+                onSelected: (val) {
+                  if (val) {
+                    setState(() {
+                      _selectedIndex = index;
+                      _exploredIndices.add(index);
+                    });
+                    if (_exploredIndices.length == _scenarios.length) {
+                      widget.onComplete?.call();
+                    }
+                  }
+                },
+                selectedColor: sc.statusColor.withValues(alpha: 0.25),
+                backgroundColor: const Color(0xFF1E293B),
+                side: BorderSide(
+                  color: isSelected ? sc.statusColor : const Color(0xFF334155),
+                ),
+                labelStyle: TextStyle(
+                  color: isSelected ? Colors.white : Colors.white70,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  fontSize: 12,
+                ),
+              );
+            }),
           ),
           const SizedBox(height: 16),
 

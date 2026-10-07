@@ -23,11 +23,16 @@ class ResponsiveCodeBlock extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.all(16),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 16,
+                top: 16,
+                bottom: 16,
+                right: 48,
+              ),
               child: Text(
                 code,
+                softWrap: true,
                 style: const TextStyle(
                   fontFamily: 'monospace',
                   fontSize: 13,

@@ -276,41 +276,37 @@ class _FloatingPinSimulatorWidgetState
                   ),
                 ),
                 const SizedBox(height: 6),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: _bitStream.map((bit) {
-                      final isHigh = bit == 1;
-                      return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 2),
-                        width: 15,
-                        height: 28,
-                        decoration: BoxDecoration(
+                Wrap(
+                  spacing: 4,
+                  runSpacing: 4,
+                  children: _bitStream.map((bit) {
+                    final isHigh = bit == 1;
+                    return Container(
+                      width: 15,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        color: isHigh
+                            ? AppColors.accentCyan.withValues(alpha: 0.3)
+                            : AppColors.surfaceContainerDark,
+                        border: Border.all(
                           color: isHigh
-                              ? AppColors.accentCyan.withValues(alpha: 0.3)
-                              : AppColors.surfaceContainerDark,
-                          border: Border.all(
-                            color: isHigh
-                                ? AppColors.accentCyan
-                                : Colors.white.withValues(alpha: 0.2),
-                          ),
-                          borderRadius: BorderRadius.circular(4),
+                              ? AppColors.accentCyan
+                              : Colors.white.withValues(alpha: 0.2),
                         ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          '$bit',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color:
-                                isHigh ? AppColors.accentCyan : Colors.white60,
-                            fontFamily: 'monospace',
-                          ),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        '$bit',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: isHigh ? AppColors.accentCyan : Colors.white60,
+                          fontFamily: 'monospace',
                         ),
-                      );
-                    }).toList(),
-                  ),
+                      ),
+                    );
+                  }).toList(),
                 ),
                 const SizedBox(height: 12),
 

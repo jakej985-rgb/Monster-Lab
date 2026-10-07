@@ -141,12 +141,14 @@ class _ChallengesScreenState extends ConsumerState<ChallengesScreen> {
                 ),
               ),
 
-              // Difficulty Filter Chips
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
+              // Difficulty Filter Chips (Responsive Wrap - No side scrolling)
+              Container(
+                width: double.infinity,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Row(
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
                     FilterChip(
                       label: const Text('All Tiers'),
@@ -159,7 +161,6 @@ class _ChallengesScreenState extends ConsumerState<ChallengesScreen> {
                         }
                       },
                     ),
-                    const SizedBox(width: 8),
                     FilterChip(
                       label: const Text('Rookie'),
                       selected: _selectedTier == DifficultyTier.rookie,
@@ -170,7 +171,6 @@ class _ChallengesScreenState extends ConsumerState<ChallengesScreen> {
                         });
                       },
                     ),
-                    const SizedBox(width: 8),
                     FilterChip(
                       label: const Text('Builder'),
                       selected: _selectedTier == DifficultyTier.builder,
@@ -181,7 +181,6 @@ class _ChallengesScreenState extends ConsumerState<ChallengesScreen> {
                         });
                       },
                     ),
-                    const SizedBox(width: 8),
                     FilterChip(
                       label: const Text('Engineer'),
                       selected: _selectedTier == DifficultyTier.engineer,
@@ -192,7 +191,6 @@ class _ChallengesScreenState extends ConsumerState<ChallengesScreen> {
                         });
                       },
                     ),
-                    const SizedBox(width: 8),
                     FilterChip(
                       label: const Text('Monster Master'),
                       selected: _selectedTier == DifficultyTier.monsterMaster,

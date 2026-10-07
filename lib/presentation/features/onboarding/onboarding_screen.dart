@@ -155,67 +155,66 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 ),
               ),
               const SizedBox(height: 12),
-              SizedBox(
-                height: 110,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: MonsterAvatar.all.length,
-                  separatorBuilder: (_, __) => const SizedBox(width: 12),
-                  itemBuilder: (context, index) {
-                    final avatar = MonsterAvatar.all[index];
-                    final isSelected = avatar.id == _selectedAvatarId;
-
-                    return GestureDetector(
-                      key: Key('onboarding_avatar_${avatar.id}'),
-                      onTap: () =>
-                          setState(() => _selectedAvatarId = avatar.id),
-                      child: Container(
-                        width: 76,
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? avatar.backgroundColor
-                              : Colors.grey.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
+              // Robot Companion Avatars (Responsive Wrap - No side scrolling)
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: [
+                  for (final avatar in MonsterAvatar.all) ...[
+                    Builder(builder: (context) {
+                      final isSelected = avatar.id == _selectedAvatarId;
+                      return GestureDetector(
+                        key: Key('onboarding_avatar_${avatar.id}'),
+                        onTap: () =>
+                            setState(() => _selectedAvatarId = avatar.id),
+                        child: Container(
+                          width: 76,
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          decoration: BoxDecoration(
                             color: isSelected
-                                ? avatar.accentColor
-                                : Colors.transparent,
-                            width: 2.5,
+                                ? avatar.backgroundColor
+                                : Colors.grey.withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: isSelected
+                                  ? avatar.accentColor
+                                  : Colors.transparent,
+                              width: 2.5,
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircleAvatar(
+                                radius: 20,
+                                backgroundColor: avatar.accentColor,
+                                child: Icon(
+                                  avatar.icon,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                avatar.name,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: isSelected
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                  color: isSelected
+                                      ? avatar.accentColor
+                                      : AppColors.textSecondaryLight,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ),
                         ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CircleAvatar(
-                              radius: 20,
-                              backgroundColor: avatar.accentColor,
-                              child: Icon(
-                                avatar.icon,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              avatar.name,
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: isSelected
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
-                                color: isSelected
-                                    ? avatar.accentColor
-                                    : AppColors.textSecondaryLight,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                      );
+                    }),
+                  ],
+                ],
               ),
               const SizedBox(height: 24),
 

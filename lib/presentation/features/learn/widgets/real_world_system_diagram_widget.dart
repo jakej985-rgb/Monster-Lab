@@ -175,50 +175,44 @@ class _RealWorldSystemDiagramWidgetState
           ),
           const SizedBox(height: 16),
 
-          // System Selection Tabs
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: List.generate(_systems.length, (index) {
-                final sys = _systems[index];
-                final isSelected = index == _selectedSystemIndex;
+          // System Selection Tabs (Responsive Wrap - No side scrolling)
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: List.generate(_systems.length, (index) {
+              final sys = _systems[index];
+              final isSelected = index == _selectedSystemIndex;
 
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: ChoiceChip(
-                    avatar: Icon(
-                      sys.icon,
-                      size: 16,
-                      color: isSelected ? Colors.white : Colors.white70,
-                    ),
-                    label: Text(sys.name),
-                    selected: isSelected,
-                    onSelected: (val) {
-                      if (val) {
-                        setState(() {
-                          _selectedSystemIndex = index;
-                          _isEventTriggered = false;
-                        });
-                      }
-                    },
-                    selectedColor:
-                        AppColors.primaryViolet.withValues(alpha: 0.4),
-                    backgroundColor: const Color(0xFF1E293B),
-                    side: BorderSide(
-                      color: isSelected
-                          ? AppColors.primaryViolet
-                          : const Color(0xFF334155),
-                    ),
-                    labelStyle: TextStyle(
-                      color: isSelected ? Colors.white : Colors.white70,
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
-                      fontSize: 12,
-                    ),
-                  ),
-                );
-              }),
-            ),
+              return ChoiceChip(
+                avatar: Icon(
+                  sys.icon,
+                  size: 16,
+                  color: isSelected ? Colors.white : Colors.white70,
+                ),
+                label: Text(sys.name),
+                selected: isSelected,
+                onSelected: (val) {
+                  if (val) {
+                    setState(() {
+                      _selectedSystemIndex = index;
+                      _isEventTriggered = false;
+                    });
+                  }
+                },
+                selectedColor: AppColors.primaryViolet.withValues(alpha: 0.4),
+                backgroundColor: const Color(0xFF1E293B),
+                side: BorderSide(
+                  color: isSelected
+                      ? AppColors.primaryViolet
+                      : const Color(0xFF334155),
+                ),
+                labelStyle: TextStyle(
+                  color: isSelected ? Colors.white : Colors.white70,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  fontSize: 12,
+                ),
+              );
+            }),
           ),
           const SizedBox(height: 16),
 

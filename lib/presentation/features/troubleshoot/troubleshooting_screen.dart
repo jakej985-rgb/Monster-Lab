@@ -777,70 +777,71 @@ class _TroubleshootingScreenState extends ConsumerState<TroubleshootingScreen>
     return Column(
       children: [
         // Category Filter Chips
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
+        Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          child: Row(
-            children: [
-              FilterChip(
-                label: const Text('All Domains'),
-                selected: _selectedPlaybookCategory == null,
-                onSelected: (selected) {
-                  if (selected) {
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                FilterChip(
+                  label: const Text('All Domains'),
+                  selected: _selectedPlaybookCategory == null,
+                  onSelected: (selected) {
+                    if (selected) {
+                      setState(() {
+                        _selectedPlaybookCategory = null;
+                      });
+                    }
+                  },
+                ),
+                FilterChip(
+                  label: const Text('Power & Shorts'),
+                  selected:
+                      _selectedPlaybookCategory == DiagnosticCategory.power,
+                  onSelected: (selected) {
                     setState(() {
-                      _selectedPlaybookCategory = null;
+                      _selectedPlaybookCategory =
+                          selected ? DiagnosticCategory.power : null;
                     });
-                  }
-                },
-              ),
-              const SizedBox(width: 8),
-              FilterChip(
-                label: const Text('Power & Shorts'),
-                selected: _selectedPlaybookCategory == DiagnosticCategory.power,
-                onSelected: (selected) {
-                  setState(() {
-                    _selectedPlaybookCategory =
-                        selected ? DiagnosticCategory.power : null;
-                  });
-                },
-              ),
-              const SizedBox(width: 8),
-              FilterChip(
-                label: const Text('Wiring & Polarity'),
-                selected:
-                    _selectedPlaybookCategory == DiagnosticCategory.wiring,
-                onSelected: (selected) {
-                  setState(() {
-                    _selectedPlaybookCategory =
-                        selected ? DiagnosticCategory.wiring : null;
-                  });
-                },
-              ),
-              const SizedBox(width: 8),
-              FilterChip(
-                label: const Text('Compile Errors'),
-                selected:
-                    _selectedPlaybookCategory == DiagnosticCategory.compile,
-                onSelected: (selected) {
-                  setState(() {
-                    _selectedPlaybookCategory =
-                        selected ? DiagnosticCategory.compile : null;
-                  });
-                },
-              ),
-              const SizedBox(width: 8),
-              FilterChip(
-                label: const Text('Upload Issues'),
-                selected:
-                    _selectedPlaybookCategory == DiagnosticCategory.upload,
-                onSelected: (selected) {
-                  setState(() {
-                    _selectedPlaybookCategory =
-                        selected ? DiagnosticCategory.upload : null;
-                  });
-                },
-              ),
-            ],
+                  },
+                ),
+                FilterChip(
+                  label: const Text('Wiring & Polarity'),
+                  selected:
+                      _selectedPlaybookCategory == DiagnosticCategory.wiring,
+                  onSelected: (selected) {
+                    setState(() {
+                      _selectedPlaybookCategory =
+                          selected ? DiagnosticCategory.wiring : null;
+                    });
+                  },
+                ),
+                FilterChip(
+                  label: const Text('Compile Errors'),
+                  selected:
+                      _selectedPlaybookCategory == DiagnosticCategory.compile,
+                  onSelected: (selected) {
+                    setState(() {
+                      _selectedPlaybookCategory =
+                          selected ? DiagnosticCategory.compile : null;
+                    });
+                  },
+                ),
+                FilterChip(
+                  label: const Text('Upload Issues'),
+                  selected:
+                      _selectedPlaybookCategory == DiagnosticCategory.upload,
+                  onSelected: (selected) {
+                    setState(() {
+                      _selectedPlaybookCategory =
+                          selected ? DiagnosticCategory.upload : null;
+                    });
+                  },
+                ),
+              ],
+            ),
           ),
         ),
 

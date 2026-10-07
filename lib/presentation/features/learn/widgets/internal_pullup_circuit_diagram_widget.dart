@@ -237,214 +237,223 @@ class _InternalPullupCircuitDiagramWidgetState
                 ),
                 const SizedBox(height: 14),
 
-                // Schematic Layout
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(minWidth: 540),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        // Silicon side
-                        SizedBox(
-                          width: 250,
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: AppColors.surfaceContainerDark,
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: _isPullupEnabled
-                                    ? AppColors.accentCyan
-                                        .withValues(alpha: 0.5)
-                                    : Colors.white12,
-                              ),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Row(
-                                  children: [
-                                    Icon(Icons.bolt,
-                                        color: AppColors.wirePower5V, size: 16),
-                                    SizedBox(width: 4),
-                                    Flexible(
-                                      child: Text(
-                                        '+5V VCC Internal Rail',
-                                        style: TextStyle(
-                                          color: AppColors.wirePower5V,
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 6),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: _isPullupEnabled
-                                        ? AppColors.accentCyan
-                                            .withValues(alpha: 0.2)
-                                        : Colors.black26,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        _isPullupEnabled
-                                            ? Icons.link
-                                            : Icons.link_off,
-                                        color: _isPullupEnabled
-                                            ? AppColors.accentCyan
-                                            : Colors.white38,
-                                        size: 14,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Flexible(
-                                        child: Text(
-                                          _isPullupEnabled
-                                              ? 'Internal 20kΩ Resistor [ENGAGED]'
-                                              : 'Internal Resistor [DISCONNECTED]',
-                                          style: TextStyle(
-                                            color: _isPullupEnabled
-                                                ? AppColors.accentCyan
-                                                : Colors.white38,
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                const Text(
-                                  'Schmitt Trigger Buffer ➔ CPU',
+                // Schematic Layout (Responsive: Vertical column on mobile, Horizontal row on wide screens)
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isNarrow = constraints.maxWidth < 560;
+
+                    final siliconWidget = Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceContainerDark,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: _isPullupEnabled
+                              ? AppColors.accentCyan.withValues(alpha: 0.5)
+                              : Colors.white12,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Row(
+                            children: [
+                              Icon(Icons.bolt,
+                                  color: AppColors.wirePower5V, size: 16),
+                              SizedBox(width: 4),
+                              Flexible(
+                                child: Text(
+                                  '+5V VCC Internal Rail',
                                   style: TextStyle(
-                                    color: AppColors.textSecondaryDark,
-                                    fontSize: 10,
+                                    color: AppColors.wirePower5V,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: _isPullupEnabled
+                                  ? AppColors.accentCyan.withValues(alpha: 0.2)
+                                  : Colors.black26,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  _isPullupEnabled
+                                      ? Icons.link
+                                      : Icons.link_off,
+                                  color: _isPullupEnabled
+                                      ? AppColors.accentCyan
+                                      : Colors.white38,
+                                  size: 14,
+                                ),
+                                const SizedBox(width: 4),
+                                Flexible(
+                                  child: Text(
+                                    _isPullupEnabled
+                                        ? 'Internal 20kΩ Resistor [ENGAGED]'
+                                        : 'Internal Resistor [DISCONNECTED]',
+                                    style: TextStyle(
+                                      color: _isPullupEnabled
+                                          ? AppColors.accentCyan
+                                          : Colors.white38,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        ),
+                          const SizedBox(height: 6),
+                          const Text(
+                            'Schmitt Trigger Buffer ➔ CPU',
+                            style: TextStyle(
+                              color: AppColors.textSecondaryDark,
+                              fontSize: 10,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
 
-                        // Pin D2 Connector
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: Column(
+                    final connectorWidget = Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isNarrow ? 0 : 8,
+                        vertical: isNarrow ? 8 : 0,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 4),
+                            decoration: BoxDecoration(
+                              color:
+                                  AppColors.energyAmber.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(6),
+                              border: Border.all(color: AppColors.energyAmber),
+                            ),
+                            child: const Text(
+                              'Pin D2',
+                              style: TextStyle(
+                                color: AppColors.energyAmber,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Icon(
+                            isNarrow ? Icons.swap_vert : Icons.swap_horiz,
+                            color: Colors.white38,
+                            size: 20,
+                          ),
+                        ],
+                      ),
+                    );
+
+                    final switchWidget = Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceContainerDark,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: _isButtonPressed
+                              ? AppColors.energyAmber.withValues(alpha: 0.5)
+                              : Colors.white12,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
                             children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 6, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: AppColors.energyAmber
-                                      .withValues(alpha: 0.2),
-                                  borderRadius: BorderRadius.circular(6),
-                                  border:
-                                      Border.all(color: AppColors.energyAmber),
-                                ),
-                                child: const Text(
-                                  'Pin D2',
+                              Icon(
+                                _isButtonPressed
+                                    ? Icons.radio_button_checked
+                                    : Icons.radio_button_unchecked,
+                                color: _isButtonPressed
+                                    ? AppColors.energyAmber
+                                    : Colors.white60,
+                                size: 16,
+                              ),
+                              const SizedBox(width: 4),
+                              Flexible(
+                                child: Text(
+                                  _isButtonPressed
+                                      ? 'Contacts Closed'
+                                      : 'Contacts Open',
                                   style: TextStyle(
-                                    color: AppColors.energyAmber,
+                                    color: _isButtonPressed
+                                        ? AppColors.energyAmber
+                                        : Colors.white70,
+                                    fontSize: 11,
                                     fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          const Row(
+                            children: [
+                              Icon(Icons.arrow_downward,
+                                  color: AppColors.wireGround, size: 14),
+                              SizedBox(width: 4),
+                              Flexible(
+                                child: Text(
+                                  'GND Bus Rail (0.0 V)',
+                                  style: TextStyle(
+                                    color: Colors.white70,
                                     fontSize: 11,
                                   ),
                                 ),
                               ),
-                              const Icon(Icons.swap_horiz,
-                                  color: Colors.white38, size: 20),
                             ],
                           ),
-                        ),
-
-                        // External switch side
-                        SizedBox(
-                          width: 240,
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: AppColors.surfaceContainerDark,
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: _isButtonPressed
-                                    ? AppColors.energyAmber
-                                        .withValues(alpha: 0.5)
-                                    : Colors.white12,
+                          if (_isButtonPressed && _isPullupEnabled)
+                            const Padding(
+                              padding: EdgeInsets.only(top: 4),
+                              child: Text(
+                                'Current: 5V / 20kΩ = 0.25mA harmless drain',
+                                style: TextStyle(
+                                  color: AppColors.success,
+                                  fontSize: 9,
+                                  fontFamily: 'monospace',
+                                ),
                               ),
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(
-                                      _isButtonPressed
-                                          ? Icons.radio_button_checked
-                                          : Icons.radio_button_unchecked,
-                                      color: _isButtonPressed
-                                          ? AppColors.energyAmber
-                                          : Colors.white60,
-                                      size: 16,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Flexible(
-                                      child: Text(
-                                        _isButtonPressed
-                                            ? 'Contacts Closed'
-                                            : 'Contacts Open',
-                                        style: TextStyle(
-                                          color: _isButtonPressed
-                                              ? AppColors.energyAmber
-                                              : Colors.white70,
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 6),
-                                const Row(
-                                  children: [
-                                    Icon(Icons.arrow_downward,
-                                        color: AppColors.wireGround, size: 14),
-                                    SizedBox(width: 4),
-                                    Flexible(
-                                      child: Text(
-                                        'GND Bus Rail (0.0 V)',
-                                        style: TextStyle(
-                                          color: Colors.white70,
-                                          fontSize: 11,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                if (_isButtonPressed && _isPullupEnabled)
-                                  const Padding(
-                                    padding: EdgeInsets.only(top: 4),
-                                    child: Text(
-                                      'Current: 5V / 20kΩ = 0.25mA harmless drain',
-                                      style: TextStyle(
-                                        color: AppColors.success,
-                                        fontSize: 9,
-                                        fontFamily: 'monospace',
-                                      ),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        ],
+                      ),
+                    );
+
+                    if (isNarrow) {
+                      return Column(
+                        children: [
+                          siliconWidget,
+                          connectorWidget,
+                          switchWidget,
+                        ],
+                      );
+                    }
+
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(child: siliconWidget),
+                        connectorWidget,
+                        Expanded(child: switchWidget),
                       ],
-                    ),
-                  ),
+                    );
+                  },
                 ),
               ],
             ),

@@ -43,10 +43,10 @@ void main() {
     });
 
     testWidgets(
-        'Allows horizontal scroll on narrow containers without layout overflow',
+        'Wraps long code lines on narrow containers without layout overflow',
         (tester) async {
       const longLine =
-          'Serial.println("This is an extremely long debug output statement intended to verify horizontal scrolling inside ResponsiveCodeBlock");';
+          'Serial.println("This is an extremely long debug output statement intended to verify wrapping inside ResponsiveCodeBlock");';
 
       await tester.pumpWidget(
         const MaterialApp(
@@ -62,7 +62,7 @@ void main() {
       );
 
       expect(tester.takeException(), isNull);
-      expect(find.byType(SingleChildScrollView), findsOneWidget);
+      expect(find.text(longLine), findsOneWidget);
     });
   });
 }

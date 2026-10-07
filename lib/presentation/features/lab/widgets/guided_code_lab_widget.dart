@@ -250,18 +250,15 @@ class _GuidedCodeLabWidgetState extends State<GuidedCodeLabWidget> {
                 ],
               ),
               const Divider(color: Colors.white24, height: 20),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: SelectableText.rich(
-                  TextSpan(
-                    style: const TextStyle(
-                      fontFamily: 'monospace',
-                      fontSize: 13,
-                      height: 1.4,
-                      color: Colors.white70,
-                    ),
-                    children: ArduinoSyntaxHighlighter.highlight(renderedCode),
+              SelectableText.rich(
+                TextSpan(
+                  style: const TextStyle(
+                    fontFamily: 'monospace',
+                    fontSize: 13,
+                    height: 1.4,
+                    color: Colors.white70,
                   ),
+                  children: ArduinoSyntaxHighlighter.highlight(renderedCode),
                 ),
               ),
             ],

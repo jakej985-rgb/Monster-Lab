@@ -178,45 +178,39 @@ class _PortTroubleshootingBenchWidgetState
           ),
           const SizedBox(height: 16),
 
-          // Check Tabs Navigation
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: List.generate(_checks.length, (index) {
-                final check = _checks[index];
-                final isSelected = index == _activeCheckIndex;
-                final isFixed = _fixedCheckIds.contains(check.id);
+          // Check Tabs Navigation (Responsive Wrap - No side scrolling)
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: List.generate(_checks.length, (index) {
+              final check = _checks[index];
+              final isSelected = index == _activeCheckIndex;
+              final isFixed = _fixedCheckIds.contains(check.id);
 
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: FilterChip(
-                    avatar: Icon(
-                      isFixed ? Icons.check_circle : check.icon,
-                      size: 16,
-                      color: isFixed
-                          ? AppColors.success
-                          : (isSelected
-                              ? AppColors.energyAmber
-                              : Colors.white54),
-                    ),
-                    label: Text(
-                      'Check ${index + 1}',
-                      style: TextStyle(
-                        color: isSelected ? Colors.white : Colors.white70,
-                        fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.normal,
-                      ),
-                    ),
-                    selected: isSelected,
-                    onSelected: (val) {
-                      setState(() {
-                        _activeCheckIndex = index;
-                      });
-                    },
+              return FilterChip(
+                avatar: Icon(
+                  isFixed ? Icons.check_circle : check.icon,
+                  size: 16,
+                  color: isFixed
+                      ? AppColors.success
+                      : (isSelected ? AppColors.energyAmber : Colors.white54),
+                ),
+                label: Text(
+                  'Check ${index + 1}',
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : Colors.white70,
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
-                );
-              }),
-            ),
+                ),
+                selected: isSelected,
+                onSelected: (val) {
+                  setState(() {
+                    _activeCheckIndex = index;
+                  });
+                },
+              );
+            }),
           ),
           const SizedBox(height: 16),
 
