@@ -6,6 +6,41 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.1.0+10] - 2026-10-07
+
+### Overview & Release Highlights
+Release **0.1.0** represents a significant milestone transition for Monster Lab, elevating the project from initial prototype builds to a structured minor release line (`0.1.0`). This release introduces **Semantic Versioned Release Packages** across all distribution channels (Android, Linux, Windows), automated `--minor` and `--major` semver progression tooling, toolchain discovery hardening, and complete historical release changelog documentation.
+
+---
+
+### 📦 Semantic Versioned Release Packages
+- **Dual-Asset Distribution Model**:
+  - All release workflows now compile and publish **both** versioned binary packages and unversioned permalinks directly to GitHub Releases.
+  - **Android**: Produces `monster-lab-v0.1.0-android.apk` and `monster-lab-v0.1.0-android.aab` alongside static permalinks `monster-lab-android.apk` and `monster-lab-android.aab`.
+  - **Linux**: Produces `monster-lab-v0.1.0-linux.deb` and `monster-lab-v0.1.0-linux-portable.tar.gz` alongside `monster-lab-linux.deb` and `monster-lab-linux-portable.tar.gz`.
+  - **Windows**: Produces `monster-lab-v0.1.0-windows.exe` (Inno Setup wizard installer) and `monster-lab-v0.1.0-windows-portable.zip` alongside static permalinks `monster-lab-windows.exe` and `monster-lab-windows-portable.zip`.
+  - *Developer & User Impact*: External distribution mirrors, school lab administrators, and package registries can now pin and archive exact versions by filename without collision or manual renaming.
+
+---
+
+### 🛠️ Toolchain Discovery & Developer Automation
+- **Enhanced Toolchain Reporter (`scripts/toolchain_report.py`)**:
+  - Implemented multi-stage discovery resolving host symlinks, directory bin resolution, and environment sandboxes. Accurately pinpoints Flutter (`3.47.3`) and Dart SDK (`3.10.x`) installations across host environments.
+- **Automated Semantic Bumping Tool (`scripts/bump_version.py`)**:
+  - Added `--minor` (`0.0.9` -> `0.1.0`), `--major` (`0.1.0` -> `1.0.0`), and explicit `--set-version` support to the version bumper.
+  - Synchronizes version definitions atomically across `pubspec.yaml`, `lib/core/constants/app_version.dart`, Inno Setup script (`monster_lab_setup.iss`), Windows resource file (`Runner.rc`), container `Dockerfile`, and `CHANGELOG.md`.
+- **Global Release Changelog Agent & Generator (`scripts/generate_release_changelog.py`)**:
+  - Created global agent and automated diff-mining script to extract structured commit context, categorize changes, and generate detailed "What, Why, and Impact" documentation for every release.
+- **Historical Changelog Catchup**:
+  - Documented and structured complete retrospective release notes for all earlier versions (`v0.0.1` through `v0.0.8`), ensuring comprehensive project auditability.
+
+---
+
+### 📚 Documentation & Gatekeeper Alignment
+- Updated `INSTALLATION.md` and `BUILD_AND_INSTALL.md` with versioned package tables and quick reference matrices.
+- Synchronized release packaging rules in `.agents/rules/push-gatekeeper.md`, `push-gatekeeper/agent.md`, `workflow-auditor/agent.md`, and `flutter-validator/agent.md`.
+
+
 ## [0.0.9+9] - 2026-10-07
 
 ### Overview & Release Highlights

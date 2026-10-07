@@ -26,9 +26,9 @@ Run from repository root:
 4. `flutter test --coverage`
 5. Target Platform Compilation & Packaging:
    - Web (Docker-only): `flutter build web --release` && `docker build -t monster-lab-web:latest .` -> GHCR container image (`ghcr.io`), and pre-filled release `docker-compose.yml` (no tarball needed)
-   - Linux Desktop: `flutter build linux --release` -> `monster-lab-linux-portable.tar.gz` & `python3 scripts/package_linux_deb.py --output monster-lab-linux.deb` (with GPG keyring `monster-lab-keyring.gpg` and APT sources)
-   - Windows Desktop: `flutter build windows --release` -> `monster-lab-windows-portable.zip` & Inno Setup -> `monster-lab-windows.exe`
-   - Android: `flutter build apk --release` -> `monster-lab-android.apk` & `flutter build appbundle --release` -> `monster-lab-android.aab`
+   - Linux Desktop: `flutter build linux --release` -> `monster-lab-v[version]-linux-portable.tar.gz` & `python3 scripts/package_linux_deb.py --output monster-lab-v[version]-linux.deb` (with `monster-lab-linux.deb` / `monster-lab-linux-portable.tar.gz` aliases, GPG keyring `monster-lab-keyring.gpg` and APT sources)
+   - Windows Desktop: `flutter build windows --release` -> `monster-lab-v[version]-windows-portable.zip` & Inno Setup -> `monster-lab-v[version]-windows.exe` (with unversioned aliases)
+   - Android: `flutter build apk --release` -> `monster-lab-v[version]-android.apk` & `flutter build appbundle --release` -> `monster-lab-v[version]-android.aab` (with unversioned aliases)
 
 Read `pubspec.yaml`, `analysis_options.yaml`, `Dockerfile`, `windows/installer/monster_lab_setup.iss`, and platform runner files (`android/`, `linux/`, `windows/`) before deciding which platform checks are affected by changes.
 

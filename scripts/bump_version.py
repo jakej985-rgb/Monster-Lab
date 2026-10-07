@@ -37,6 +37,23 @@ def bump_patch(semver: str, build: int):
     new_build = build + 1
     return new_semver, new_build
 
+def bump_minor(semver: str, build: int):
+    parts = [int(p) for p in semver.split(".")]
+    parts[1] += 1
+    parts[2] = 0
+    new_semver = f"{parts[0]}.{parts[1]}.{parts[2]}"
+    new_build = build + 1
+    return new_semver, new_build
+
+def bump_major(semver: str, build: int):
+    parts = [int(p) for p in semver.split(".")]
+    parts[0] += 1
+    parts[1] = 0
+    parts[2] = 0
+    new_semver = f"{parts[0]}.{parts[1]}.{parts[2]}"
+    new_build = build + 1
+    return new_semver, new_build
+
 def update_pubspec(new_semver: str, new_build: int):
     with open(PUBSPEC_PATH, "r", encoding="utf-8") as f:
         content = f.read()
@@ -112,6 +129,8 @@ def update_changelog(new_semver: str, new_build: int):
 
 def main():
     parser = argparse.ArgumentParser(description="Bump Monster Lab version.")
+    parser.add_argument("--minor", action="store_true", help="Bump minor version (e.g. 0.0.9 -> 0.1.0)")
+    parser.add_argument("--major", action="store_true", help="Bump major version (e.g. 0.1.0 -> 1.0.0)")
     parser.add_argument("--set-version", help="Explicit version to set (e.g. 0.0.1+1)")
     parser.add_argument("--current", action="store_true", help="Print current version and exit")
     args = parser.parse_args()
@@ -129,7 +148,11 @@ def main():
             new_build = int(build_str)
         else:
             new_semver = raw
-            new_build = 1
+            new_build = current_build + 1
+    elif args.major:
+        new_semver, new_build = bump_major(current_semver, current_build)
+    elif args.minor:
+        new_semver, new_build = bump_minor(current_semver, current_build)
     else:
         new_semver, new_build = bump_patch(current_semver, current_build)
 

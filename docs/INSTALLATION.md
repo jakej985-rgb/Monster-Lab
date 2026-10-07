@@ -150,14 +150,16 @@ Monster Lab provides a graphical setup installer (`.exe`) and a standalone porta
 ---
 
 ## Release Asset Quick Reference
+ 
+Each official GitHub Release provides both **semantic versioned packages** (e.g. `monster-lab-v0.1.0-android.apk`) and **convenience permalink aliases** (e.g. `monster-lab-android.apk`):
 
-| Platform | Official Asset | Format |
-| :--- | :--- | :--- |
-| **Android** | `monster-lab-android.apk` | Sideload APK |
-| **Android** | `monster-lab-android.aab` | Google Play Store Bundle |
-| **Linux** | `monster-lab-linux.deb` | Debian Package with GPG Keyring |
-| **Linux** | `monster-lab-linux-portable.tar.gz` | Standalone Portable Archive |
-| **Linux** | `monster-lab-keyring.gpg` | OpenPGP 4096-bit Public Keyring |
-| **Windows** | `monster-lab-windows.exe` | Graphical Setup Wizard Installer |
-| **Windows** | `monster-lab-windows-portable.zip` | Standalone Portable ZIP |
-| **Web** | `docker-compose.yml` | Pre-configured GHCR Compose File |
+| Platform | Versioned Release Asset | Static Permalink Alias | Format |
+| :--- | :--- | :--- | :--- |
+| **Android** | `monster-lab-v<version>-android.apk` | `monster-lab-android.apk` | Sideload APK |
+| **Android** | `monster-lab-v<version>-android.aab` | `monster-lab-android.aab` | Google Play Store Bundle |
+| **Linux** | `monster-lab-v<version>-linux.deb` | `monster-lab-linux.deb` | Debian Package with GPG Keyring |
+| **Linux** | `monster-lab-v<version>-linux-portable.tar.gz` | `monster-lab-linux-portable.tar.gz` | Standalone Portable Archive |
+| **Linux** | — | `monster-lab-keyring.gpg` | OpenPGP 4096-bit Public Keyring |
+| **Windows** | `monster-lab-v<version>-windows.exe` | `monster-lab-windows.exe` | Graphical Setup Wizard Installer |
+| **Windows** | `monster-lab-v<version>-windows-portable.zip` | `monster-lab-windows-portable.zip` | Standalone Portable ZIP |
+| **Web** | — | `docker-compose.yml` | Pre-configured GHCR Compose File |

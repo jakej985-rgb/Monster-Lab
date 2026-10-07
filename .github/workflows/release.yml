@@ -59,17 +59,34 @@ jobs:
       - name: Validate curriculum integrity
         run: python3 scripts/validate_curriculum.py
 
+      - name: Determine Release Package Version
+        id: pkg_ver
+        run: |
+          if [[ "${{ github.ref_name }}" =~ ^v[0-9] ]]; then
+            VER="${{ github.ref_name }}"
+          else
+            SEMVER=$(python3 -c "import yaml; print(yaml.safe_load(open('pubspec.yaml'))['version'].split('+')[0])")
+            VER="v${SEMVER}"
+          fi
+          echo "PACKAGE_VERSION=${VER}" >> $GITHUB_ENV
+          echo "package_version=${VER}" >> $GITHUB_OUTPUT
+          echo "Using release package version prefix: ${VER}"
+
       # -------------------------------------------------------------
       # Linux Builds: [app]-[os].[ext], [app]-[os]-portable.[ext] & Keyring
       # -------------------------------------------------------------
       - name: Build Linux Desktop Release
         run: flutter build linux --release
 
-      - name: Package Linux Debian Installer (monster-lab-linux.deb)
-        run: python3 scripts/package_linux_deb.py --bundle-dir build/linux/x64/release/bundle --output monster-lab-linux.deb
+      - name: Package Linux Debian Installer (monster-lab-linux.deb & monster-lab-${PACKAGE_VERSION}-linux.deb)
+        run: |
+          python3 scripts/package_linux_deb.py --bundle-dir build/linux/x64/release/bundle --output monster-lab-linux.deb
+          cp monster-lab-linux.deb "monster-lab-${PACKAGE_VERSION}-linux.deb"
 
-      - name: Package Linux Portable Bundle (monster-lab-linux-portable.tar.gz)
-        run: tar -czf monster-lab-linux-portable.tar.gz -C build/linux/x64/release/bundle .
+      - name: Package Linux Portable Bundle (monster-lab-linux-portable.tar.gz & monster-lab-${PACKAGE_VERSION}-linux-portable.tar.gz)
+        run: |
+          tar -czf monster-lab-linux-portable.tar.gz -C build/linux/x64/release/bundle .
+          cp monster-lab-linux-portable.tar.gz "monster-lab-${PACKAGE_VERSION}-linux-portable.tar.gz"
 
       - name: Prepare Linux GPG Keyring Asset
         run: cp linux/keyring/monster-lab-archive-keyring.gpg monster-lab-keyring.gpg
@@ -96,14 +113,18 @@ jobs:
       - name: Build Android Release APK
         run: flutter build apk --release
 
-      - name: Copy Android APK (monster-lab-android.apk)
-        run: cp build/app/outputs/flutter-apk/app-release.apk monster-lab-android.apk
+      - name: Copy Android APK (monster-lab-android.apk & monster-lab-${PACKAGE_VERSION}-android.apk)
+        run: |
+          cp build/app/outputs/flutter-apk/app-release.apk monster-lab-android.apk
+          cp build/app/outputs/flutter-apk/app-release.apk "monster-lab-${PACKAGE_VERSION}-android.apk"
 
       - name: Build Android Release AppBundle
         run: flutter build appbundle --release
 
-      - name: Copy Android AppBundle (monster-lab-android.aab)
-        run: cp build/app/outputs/bundle/release/app-release.aab monster-lab-android.aab
+      - name: Copy Android AppBundle (monster-lab-android.aab & monster-lab-${PACKAGE_VERSION}-android.aab)
+        run: |
+          cp build/app/outputs/bundle/release/app-release.aab monster-lab-android.aab
+          cp build/app/outputs/bundle/release/app-release.aab "monster-lab-${PACKAGE_VERSION}-android.aab"
 
       - name: Clean Up Android Keystore Secrets
         if: always()
@@ -167,8 +188,12 @@ jobs:
           echo "Verifying generated release assets:"
           test -f monster-lab-android.apk
           test -f monster-lab-android.aab
+          test -f "monster-lab-${PACKAGE_VERSION}-android.apk"
+          test -f "monster-lab-${PACKAGE_VERSION}-android.aab"
           test -f monster-lab-linux.deb
           test -f monster-lab-linux-portable.tar.gz
+          test -f "monster-lab-${PACKAGE_VERSION}-linux.deb"
+          test -f "monster-lab-${PACKAGE_VERSION}-linux-portable.tar.gz"
           test -f monster-lab-keyring.gpg
           test -f docker-compose.yml
           echo "All Ubuntu release assets conform to naming schema!"
@@ -180,8 +205,12 @@ jobs:
           files: |
             monster-lab-android.apk
             monster-lab-android.aab
+            monster-lab-*-android.apk
+            monster-lab-*-android.aab
             monster-lab-linux.deb
             monster-lab-linux-portable.tar.gz
+            monster-lab-*-linux.deb
+            monster-lab-*-linux-portable.tar.gz
             monster-lab-keyring.gpg
             docker-compose.yml
           generate_release_notes: true
@@ -222,17 +251,36 @@ jobs:
       # -------------------------------------------------------------
       # Windows Builds: [app]-[os].[ext] & [app]-[os]-portable.[ext]
       # -------------------------------------------------------------
+      - name: Determine Release Package Version
+        shell: pwsh
+        run: |
+          if ("${{ github.ref_name }}" -match "^v\d") {
+            $ver = "${{ github.ref_name }}"
+          } else {
+            $pubspec = Get-Content pubspec.yaml -Raw
+            if ($pubspec -match "version:\s*(\d+\.\d+\.\d+)") {
+              $ver = "v" + $Matches[1]
+            } else {
+              $ver = "v1.0.0"
+            }
+          }
+          "PACKAGE_VERSION=$ver" | Out-File -FilePath $env:GITHUB_ENV -Append
+          Write-Host "Using release package version prefix: $ver"
+
       - name: Build Windows Release Binary
         run: flutter build windows --release
 
-      - name: Build Windows Setup Installer EXE (monster-lab-windows.exe)
+      - name: Build Windows Setup Installer EXE (monster-lab-windows.exe & monster-lab-${PACKAGE_VERSION}-windows.exe)
         shell: pwsh
         run: |
           & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" windows\installer\monster_lab_setup.iss
+          Copy-Item "monster-lab-windows.exe" -Destination "monster-lab-$env:PACKAGE_VERSION-windows.exe"
 
-      - name: Package Windows Portable Bundle (monster-lab-windows-portable.zip)
+      - name: Package Windows Portable Bundle (monster-lab-windows-portable.zip & monster-lab-${PACKAGE_VERSION}-windows-portable.zip)
         shell: pwsh
-        run: Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath monster-lab-windows-portable.zip
+        run: |
+          Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath monster-lab-windows-portable.zip
+          Copy-Item "monster-lab-windows-portable.zip" -Destination "monster-lab-$env:PACKAGE_VERSION-windows-portable.zip"
 
       # -------------------------------------------------------------
       # Verify & Publish Windows Assets Directly to GitHub Release
@@ -242,7 +290,9 @@ jobs:
         shell: pwsh
         run: |
           if (-not (Test-Path monster-lab-windows.exe)) { throw "monster-lab-windows.exe missing" }
+          if (-not (Test-Path "monster-lab-$env:PACKAGE_VERSION-windows.exe")) { throw "monster-lab-$env:PACKAGE_VERSION-windows.exe missing" }
           if (-not (Test-Path monster-lab-windows-portable.zip)) { throw "monster-lab-windows-portable.zip missing" }
+          if (-not (Test-Path "monster-lab-$env:PACKAGE_VERSION-windows-portable.zip")) { throw "monster-lab-$env:PACKAGE_VERSION-windows-portable.zip missing" }
           Write-Host "All Windows release assets conform to naming schema!"
 
       - name: Publish Windows Release Assets to GitHub Release
@@ -251,6 +301,8 @@ jobs:
         with:
           files: |
             monster-lab-windows.exe
+            monster-lab-*-windows.exe
             monster-lab-windows-portable.zip
+            monster-lab-*-windows-portable.zip
           draft: false
           prerelease: false

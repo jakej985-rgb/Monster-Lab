@@ -88,11 +88,11 @@ Flutter & Multi-Platform Validation Baseline:
 - Verify Android (`android/`), Linux (`linux/`), and Windows (`windows/`) platform configurations
 
 Supported Multi-Platform Release Builds (`release.yml`):
-- Android: `monster-lab-android.apk`, `monster-lab-android.aab`
-- Linux: `monster-lab-linux.deb` (Debian installer with embedded GPG keyring), `monster-lab-linux-portable.tar.gz`, and release asset `monster-lab-keyring.gpg`
-- Windows: `monster-lab-windows.exe` (Inno Setup wizard via `monster_lab_setup.iss`), `monster-lab-windows-portable.zip`
+- Android: `monster-lab-v[version]-android.apk` / `monster-lab-android.apk`, `monster-lab-v[version]-android.aab` / `monster-lab-android.aab`
+- Linux: `monster-lab-v[version]-linux.deb` / `monster-lab-linux.deb` (Debian installer with embedded GPG keyring), `monster-lab-v[version]-linux-portable.tar.gz` / `monster-lab-linux-portable.tar.gz`, and release asset `monster-lab-keyring.gpg`
+- Windows: `monster-lab-v[version]-windows.exe` / `monster-lab-windows.exe` (Inno Setup wizard via `monster_lab_setup.iss`), `monster-lab-v[version]-windows-portable.zip` / `monster-lab-windows-portable.zip`
 - Web: Automated container build & push to GHCR (`ghcr.io/${OWNER}/monster-lab-web`), and pre-filled release asset `docker-compose.yml` (no separate tarball needed)
-All packages/installers conform to `[app]-[os].[ext]` and `[app]-[os]-portable.[ext]` standard naming.
+All packages/installers conform to `[app]-v[version]-[os].[ext]` (versioned packages) and `[app]-[os].[ext]` (unversioned aliases / permalinks).
 
 Curriculum & Child-Safety:
 - `python3 scripts/validate_curriculum.py`

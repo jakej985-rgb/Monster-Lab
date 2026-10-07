@@ -219,8 +219,14 @@ Before committing and pushing, bump the version across all components (`pubspec.
 # Check current version
 python3 scripts/bump_version.py --current
 
-# Bump version by 0.0.1
+# Bump patch version by 0.0.1 (e.g., 0.0.9 -> 0.0.10)
 python3 scripts/bump_version.py
+
+# Bump minor version (e.g., 0.0.9 -> 0.1.0)
+python3 scripts/bump_version.py --minor
+
+# Or set explicit version
+python3 scripts/bump_version.py --set-version 0.1.0+10
 ```
 
 ### Pre-Push Quality Verification
