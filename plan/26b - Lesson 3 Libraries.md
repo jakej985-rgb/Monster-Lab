@@ -41,3 +41,23 @@ Coding Foundations owns general programming. Lesson 3 owns reusable Arduino code
 
 ## Validation
 No premature C++ overload, no unexplained I2C dependency, working example, age-appropriate vocabulary, and readiness for later device lessons.
+
+
+## Pre-Test / Readiness Check
+
+Every Lesson 3 submodule gets **2 prerequisite questions**.
+
+Questions should diagnose readiness for:
+- recognizing reusable tools
+- understanding that software can provide reusable functionality
+- basic sketch/code familiarity from Coding Foundations
+- recognizing examples/documentation
+- basic computer workflow from 2B
+
+Do not test advanced C++ before it is taught.
+
+### Readiness
+- 2/2 = 🟢 Green — Ready
+- 0–1/2 = 🟡 Yellow — Warm Up
+
+Yellow learners receive a brief targeted review. No red state and no blocking.
