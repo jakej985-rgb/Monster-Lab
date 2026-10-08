@@ -35,3 +35,23 @@ Learner can explain PWM simply, predict brightness changes, use analogWrite, ide
 
 ## Validation
 No advanced sensor dependency and no unnecessary Coding Foundations repetition.
+
+
+## Pre-Test / Readiness Check
+
+Every Lesson 4 submodule gets **2 prerequisite questions**.
+
+Questions should diagnose:
+- basic digital output knowledge
+- LED behavior
+- polarity/component recognition
+- simple ON/OFF reasoning
+- basic code-to-output understanding
+
+Do not require prior PWM knowledge.
+
+### Readiness
+- 2/2 = 🟢 Green — Ready
+- 0–1/2 = 🟡 Yellow — Warm Up
+
+Yellow learners receive a quick visual/hands-on refresher. No red state and no blocking.
