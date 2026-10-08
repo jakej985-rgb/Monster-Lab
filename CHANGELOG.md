@@ -7,7 +7,26 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 ---
 
 ## [0.1.8+18] - 2026-10-08
-- Automated push release build bump to v0.1.8.
+
+### Overview & Release Highlights
+Release **0.1.8** optimizes developer workflows, agent execution efficiency, and repository release governance. It configures the Push Gatekeeper to use relaxed polling intervals (`--interval 120` to `180` seconds) during remote GitHub Actions builds, eliminating unnecessary API and token consumption. In addition, it reconciles full historical release documentation across GitHub Releases for versions `v0.1.5`, `v0.1.6`, and `v0.1.7`.
+
+---
+
+### 🛠️ Developer Toolchains & CI/CD
+- **Gatekeeper Remote Watch Polling Optimization**:
+  - *What Changed*: Updated `.agents/agents/push-gatekeeper/agent.md` and `.agents/rules/push-gatekeeper.md` to require `--interval 120` or `--interval 180` on `gh run watch`, and mandated a minimum initial delay before remote status checks.
+  - *Why*: Multi-platform CI and release workflows across Android, Linux, Windows, and Web take 8–15 minutes. Rapid default polling loops burned agent tokens, quota, and system compute.
+  - *User / Developer Impact*: Prevents token exhaustion and agent timeouts while keeping remote release verification 100% rigorous.
+
+---
+
+### 📚 Documentation & Specifications
+- **Historical Release Notes Synchronization**:
+  - *What Changed*: Backfilled and synchronized complete Keep a Changelog descriptions to GitHub Releases for `v0.1.5` (Asset Pipeline & Build Matrix), `v0.1.6` (Flutter Markdown Migration), and `v0.1.7` (Modular Course Decomposition & 107 Sub-Lessons).
+  - *Why*: Ensures GitHub Releases web UI and changelog tracking reflect all major architectural shifts and pedagogical milestones.
+
+---
 
 ## [0.1.7+17] - 2026-10-08
 
