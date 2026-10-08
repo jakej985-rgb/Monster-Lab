@@ -1,231 +1,635 @@
 {
   "id": "lesson_05",
-  "title": "Blink: Your First Physical Circuit",
-  "summary": "Command digital outputs to HIGH and LOW, control on-board LED, and understand persistence of vision.",
+  "title": "Switches, Buttons & Potentiometers: Physical Inputs",
+  "summary": "Combine digital switches, pushbuttons with pull-up resistors, and rotary potentiometers to command hardware.",
   "tier": "rookie",
   "estimatedMinutes": 20,
   "prerequisites": [
     "lesson_04"
   ],
   "componentIds": [
-    "comp_uno"
+    "comp_uno",
+    "comp_20"
   ],
   "steps": [
     {
       "stepId": "l05_s01",
-      "title": "Awaken the Beast: Creating Physical Photons",
+      "title": "What Is a Switch?",
       "type": "story",
-      "markdownContent": "Software becomes robotics when binary logic gates physically manipulate the physical universe. Turning an LED on and off is the foundational 'Hello World' of physical computing, proving that your software commands can source and sink electric current through semiconductor transistors.\n\nIn this mission, you will command electrical charges through silicon gates to create visible light on your Arduino board!\n\n```\nPORTB5 Register \u2794 Internal P-MOSFET Closes \u2794 Pin 13 at 5V \u2794 Current Flows \u2794 SMD LED Glows \u2794 GND Return\n```"
+      "markdownContent": "### Bridging the Physical and Digital Worlds\nEvery interactive robot begins with a way to sense physical human contact. The simplest and most universal sensor in all of electronics is the **switch**!\n\nThink of an electrical switch like a drawbridge across a river:\n- **Closed Circuit (Bridge Down)**: The metal contacts touch. Electricity has an unbroken conductive road to travel from the power source, through the device, and back to ground. Current flows and the circuit comes alive!\n- **Open Circuit (Bridge Up)**: The metal contacts separate. There is an air gap between the conductors. Electricity cannot leap across the gap, so current immediately drops to zero. The circuit turns completely OFF.\n\n```\nClosed (ON):   [5V Power] ====== [Closed Contacts] ======> [Robot Load] ======> [GND]\nOpen (OFF):    [5V Power] ====== [   Air Gap     ]   X   [Robot Load] ....... [GND]\n```\n\n### Latching vs. Momentary Switches\n1. **Latching Switches**: Like a bedroom wall toggle or your robot's master power switch. When you flip it ON, it clicks and mechanically stays ON until you manually flip it back.\n2. **Momentary Switches**: Like a doorbell, keyboard key, or game controller button. An internal spring keeps the switch open until your finger physically pushes it down. The split second you let go, the spring snaps the contacts apart again!\n\nIn Monster Lab, switches let your creations sense when a door opens, when a foot hits the floor, or when an emergency stop button is pressed.",
+      "quickCheck": [
+        {
+          "questionId": "l05_s01_q1",
+          "question": "What must exist for electric current to flow through a circuit?",
+          "options": [
+            "A continuous, closed conductive path from power to ground",
+            "An open circuit with a gap between wires",
+            "Only a battery with no wires connected"
+          ],
+          "correctIndex": 0,
+          "explanation": "Electricity requires an unbroken conductive loop (closed circuit) from power through a load to ground.",
+          "warmupExplanation": "Electric current requires a continuous conductive path to flow; air gaps stop the current."
+        },
+        {
+          "questionId": "l05_s01_q2",
+          "question": "What happens when a switch opens, creating a gap between conductors?",
+          "options": [
+            "Current immediately stops flowing through the gap",
+            "Current speeds up and sparks continuously",
+            "The circuit voltage doubles automatically"
+          ],
+          "correctIndex": 0,
+          "explanation": "Opening a switch breaks the conductive loop, dropping current flow to zero.",
+          "warmupExplanation": "An open circuit breaks the loop, preventing electrons from traveling through the circuit."
+        }
+      ]
     },
     {
       "stepId": "l05_s02",
-      "title": "Prior Knowledge Check: Digital Signals & Ground",
-      "type": "story",
-      "interactiveWidgetType": "priorKnowledgeCheck",
-      "interactiveConfig": {
-        "questions": [
-          {
-            "question": "What is an electrical digital signal in Arduino?",
-            "options": [
-              "A signal that exists in one of two discrete states: HIGH (+5V) or LOW (0V)",
-              "A continuous wave that changes smoothly through infinite values",
-              "A radio wave transmitted without physical wires"
-            ],
-            "correctIndex": 0,
-            "explanation": "Digital signals exist in two binary states: HIGH (+5V) or LOW (0V Ground)."
-          },
-          {
-            "question": "What is GND (Ground) used for in an electrical circuit?",
-            "options": [
-              "A 0V common reference and essential return path for electric current",
-              "A high-voltage power booster that accelerates motors",
-              "A data storage buffer inside microcontroller RAM"
-            ],
-            "correctIndex": 0,
-            "explanation": "Ground (GND) is the 0V reference potential and essential return path required for electric current to complete a loop."
-          },
-          {
-            "question": "What happens if an external circuit lacks a return path to GND?",
-            "options": [
-              "No electric current can flow, and the circuit remains inactive",
-              "The circuit will draw double current",
-              "The microcontroller will crash immediately"
-            ],
-            "correctIndex": 0,
-            "explanation": "Electricity only flows through a closed conductive loop that returns to Ground."
-          }
-        ]
-      },
-      "markdownContent": "Before commanding hardware outputs, let's verify your baseline understanding of voltage potentials and Ground reference paths.\n\nComplete the 3 questions below to prepare for the lab!"
+      "title": "Pushbuttons",
+      "type": "physicalTask",
+      "markdownContent": "### Anatomical Tour of the Tactile Pushbutton\nGrab a 4-pin momentary tactile pushbutton from your kit. These tiny buttons are built into robots, game controllers, and appliances worldwide.\n\n### The 4-Pin Mystery: Why Four Legs for Two Contacts?\nWhen you look at the bottom of the button, you notice **4 metal legs**, but a simple switch only needs 2 wires to connect. Why are there 4?\n\nInside the plastic housing:\n- The two legs on the **same long side** are permanently joined together by an internal metal bar!\n- Leg A and Leg B are connected to each other inside.\n- Leg C and Leg D are connected to each other inside.\n- The push action connects the AB pair to the CD pair!\n\n```\nTop View of 4-Pin Tactile Button:\n\n   Pin 1 [=== Internal Bar ===] Pin 2\n                |  |\n             [ Switch ]\n                |  |\n   Pin 3 [=== Internal Bar ===] Pin 4\n```\n\n### Breadboard Insertion Technique\nTo prevent shorting the switch out before you even push it, always insert the button so its body **straddles the center divider trench (ravine)** of your solderless breadboard:\n1. Place Pins 1 and 2 on Row 15, Column D and E (left side of ravine).\n2. Place Pins 3 and 4 on Row 15, Column F and G (right side of ravine).\n3. Press firmly until all four legs seat cleanly into the breadboard spring clips.\n4. Press down with your index finger: feel the crisp tactile snap as the miniature metal dome clicks inside!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s02_q1",
+          "question": "Why do solderless breadboards feature a center divider trench (ravine)?",
+          "options": [
+            "To electrically isolate opposing rows so dual-pin parts do not short together",
+            "To store extra jumper wires during assembly",
+            "To act as a heat sink for the power supply"
+          ],
+          "correctIndex": 0,
+          "explanation": "The center trench separates columns a-e from f-j, allowing DIP chips and buttons to straddle across without shorting.",
+          "warmupExplanation": "Breadboard rows are connected across columns a-e and f-j, but separated by the center ravine."
+        },
+        {
+          "questionId": "l05_s02_q2",
+          "question": "What happens when you release your finger from a momentary pushbutton?",
+          "options": [
+            "An internal flexible spring snaps the contacts apart, opening the circuit",
+            "The switch remains locked closed permanently",
+            "The polarity of the connected battery reverses"
+          ],
+          "correctIndex": 0,
+          "explanation": "Momentary switches only maintain contact while external force is applied; releasing them opens the circuit.",
+          "warmupExplanation": "Momentary pushbuttons return to their open state as soon as pressure is released."
+        }
+      ]
     },
     {
       "stepId": "l05_s03",
-      "title": "5mm LED Anatomy & Polarity Inspection",
-      "type": "story",
-      "interactiveWidgetType": "ledPolarityInspector",
-      "markdownContent": "LED stands for **Light Emitting Diode**. Because it is a diode, electricity can only flow through it in one forward direction!\n\n### Anatomical Clues:\n- **Cathode (\u2212)**: Connects to Ground (GND). Features a larger triangular **anvil** flag inside the clear epoxy bulb, a **shorter lead**, and a **flat edge** along the plastic rim collar.\n- **Anode (+)**: Connects to positive voltage (+5V). Features a smaller **post** contact inside the epoxy and a **longer lead**.\n\nUse the interactive cutaway inspector below to inspect internal electrodes and observe how reversing polarity blocks photon emission!"
+      "title": "Digital Inputs",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "decisionSimulator",
+      "markdownContent": "### Senses vs. Muscles: Listening to Voltage\nUp until now, you have used Arduino pins as **OUTPUTS** to push electrical energy into LEDs, buzzers, and displays. But an interactive monster brain also needs to **listen**!\n\nWhen you set an Arduino pin to `INPUT` mode:\n1. The pin enters a **high-impedance state** (nearly 100 million ohms of resistance).\n2. It stops driving current and instead behaves like an ultra-sensitive electronic ear, measuring the voltage placed upon it without interfering with the circuit.\n3. It evaluates that voltage using binary digital logic thresholds.\n\n```\n+5.0V -------------- HIGH Region (Logic 1) ---------------\n+3.0V -----------------------------------------------------\n       Undefined / Floating Zone (Unpredictable! Avoid!)\n+1.5V -----------------------------------------------------\n 0.0V -------------- LOW Region  (Logic 0) ---------------\n```\n\n### Arduino Uno Digital Logic Rules:\n- **`HIGH`**: Any voltage between **+3.0V and +5.0V**. The microcontroller interprets this as binary `1` or `true`.\n- **`LOW`**: Any voltage between **0.0V and +1.5V**. The microcontroller interprets this as binary `0` or `false`.\n- **The Dead Zone**: Voltages floating between 1.5V and 3.0V are unpredictable and must be avoided by using decisive switching!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s03_q1",
+          "question": "What are the two discrete binary states of a digital pin on an Arduino Uno?",
+          "options": [
+            "HIGH (+5V) and LOW (0V / Ground)",
+            "Positive (+12V) and Negative (-12V)",
+            "Alternating (AC) and Direct (DC)"
+          ],
+          "correctIndex": 0,
+          "explanation": "Digital pins only recognize two binary voltage states: HIGH (+5V) and LOW (0V / Ground).",
+          "warmupExplanation": "Digital pins in 5V microcontrollers recognize binary logic: 5V is HIGH and 0V is LOW."
+        },
+        {
+          "questionId": "l05_s03_q2",
+          "question": "When an Arduino pin is configured as an INPUT, what is its primary function?",
+          "options": [
+            "To measure incoming electrical voltage without sourcing heavy current",
+            "To deliver high current to drive large mechanical motors",
+            "To step down battery power from 120 volts"
+          ],
+          "correctIndex": 0,
+          "explanation": "Inputs act as high-impedance sensors that read incoming voltage signals from external devices.",
+          "warmupExplanation": "Output pins drive voltages out; input pins sample incoming voltages from the world."
+        }
+      ]
     },
     {
       "stepId": "l05_s04",
-      "title": "How It Works: Breadboard Spring Clips & Current Paths",
-      "type": "visualExplanation",
-      "interactiveWidgetType": "breadboardInternalBusInspector",
-      "markdownContent": "Solderless breadboards allow engineers to build circuits without permanent solder. Beneath the plastic faceplate lie rows of stamped spring metal clips.\n\n### Breadboard Internal Routing:\n1. **Terminal Strips**: Horizontal groups of 5 tie-points (a-b-c-d-e and f-g-h-i-j) are electrically joined by an internal spring clip.\n2. **Center Ravine**: A central trench divides the left and right strips so dual-inline IC pins do not short together.\n3. **Power Bus Rails**: Vertical continuous columns (+ and \u2212) run the full length of the board to distribute 5V and GND everywhere.\n\nUse the interactive continuity probe below to test breadboard connections and discover where current flows!"
+      "title": "digitalRead",
+      "type": "codeExperiment",
+      "markdownContent": "### The Software Lens: Reading Digital Pins\nHow does your Arduino sketch inspect the physical voltage on a pin? With the built-in C++ function `digitalRead()`!\n\n```cpp\nint sensorReading = digitalRead(2); // Reads Pin 2 at this exact microsecond\n```\n\n### How digitalRead() Works:\n1. The ATmega328P processor samples the input buffer register for Digital Pin 2.\n2. If the pin is at +5V, it returns the constant **`HIGH`** (integer value 1).\n3. If the pin is at 0V (GND), it returns the constant **`LOW`** (integer value 0).\n4. We store this value in an `int` variable so our sketch can make intelligent decisions using `if` statements!\n\n```cpp\nconst int buttonPin = 2;\n\nvoid setup() {\n  pinMode(buttonPin, INPUT); // Configure Pin 2 to listen\n  Serial.begin(9600);        // Open Serial Monitor communication\n}\n\nvoid loop() {\n  int state = digitalRead(buttonPin); // Query the hardware pin\n  Serial.print(\"Pin 2 State: \");\n  Serial.println(state);              // Prints 1 for HIGH or 0 for LOW\n  delay(250);\n}\n```\n\nRun this sketch and open your Serial Monitor. But wait! What happens if no wire is connected to Pin 2 yet? Let's uncover the biggest trap in physical computing!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s04_q1",
+          "question": "Which Arduino C++ function is used to sample the binary voltage of a digital pin?",
+          "options": [
+            "digitalRead(pin)",
+            "digitalWrite(pin, HIGH)",
+            "analogRead(pin)"
+          ],
+          "correctIndex": 0,
+          "explanation": "`digitalRead(pin)` queries a pin and returns its current digital logic state (HIGH or LOW).",
+          "warmupExplanation": "`digitalWrite()` sends output; `digitalRead()` brings an incoming digital signal into code."
+        },
+        {
+          "questionId": "l05_s04_q2",
+          "question": "What possible values can digitalRead() return on an Arduino Uno?",
+          "options": [
+            "HIGH (1) or LOW (0)",
+            "Any floating decimal between 0.0 and 5.0",
+            "Values from 0 to 1023"
+          ],
+          "correctIndex": 0,
+          "explanation": "Because it is a digital function, `digitalRead()` only returns binary HIGH (1) or LOW (0).",
+          "warmupExplanation": "Digital inputs only measure binary two-state logic: HIGH or LOW."
+        }
+      ]
     },
     {
       "stepId": "l05_s05",
-      "title": "Hardware Mission: The On-Board Pin 13 'L' Silkscreen Tour",
-      "type": "physicalTask",
-      "markdownContent": "Examine your Arduino Uno R3 board (`comp_uno`):\n\n### Hardware Inspection:\n1. **Locate the 'L' LED**: Look between the digital pin headers (Pins 8\u201313) and the main microcontroller chip. Find the tiny amber surface-mount diode labeled with a silkscreened `L`.\n2. **Trace the Silkscreen**: Follow the fine copper trace on the PCB linking Digital Pin 13 to the `L` indicator.\n3. **Power Indicator**: Notice the green `ON` LED nearby. The green LED proves the 5V power bus is energized, while the amber `L` LED is directly driven by your sketch firmware!\n4. **On-Board Protection**: The Uno PCB already includes a built-in SMD series resistor for Pin 13, making it 100% safe to flash without external breadboard wiring."
+      "title": "Floating Inputs",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "floatingPinSimulator",
+      "markdownContent": "### The Ghost Button: Why Unconnected Pins Go Crazy\nIf you run `digitalRead(2)` with nothing connected to Pin 2, you might expect it to read `LOW` (0V). But look at the Serial Monitor: it bounces wildly between `0` and `1`!\n\nIf you wave your hand near the Arduino board or touch the plastic wire insulation, the numbers flicker like mad. Your robot thinks a phantom monster is smashing the button hundreds of times per second!\n\n```\nUnconnected Pin:  [Stray Electrostatic Fields] ~~~> [Pin 2 Antenna] ===> ??? (0 or 1 at random!)\n```\n\n### The Physics Behind the Float\n1. **High Impedance**: Remember, an input pin has nearly 100 MΩ of resistance. It takes virtually zero electric current to influence it.\n2. **Stray Electromagnetic Radiation**: The room around you is full of electromagnetic noise: 60Hz wall wiring, Wi-Fi routers, fluorescent lights, and electrostatic charges on your skin and clothing.\n3. **The Unintentional Antenna**: With nothing holding the pin firmly to a voltage source, the wire acts as a radio antenna, picking up micro-volt charges that randomly push the pin above 3V (HIGH) and below 1.5V (LOW).\n\nAn input pin left open with no definitive connection to power or ground is called a **floating pin**. In robotics, a floating pin is a catastrophic bug!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s05_q1",
+          "question": "What is an electrical 'floating pin' in microcontroller systems?",
+          "options": [
+            "An input pin left unconnected to power or ground, making its logic state random and erratic",
+            "A pin submerged in water during cooling",
+            "An output pin that powers a hovercraft motor"
+          ],
+          "correctIndex": 0,
+          "explanation": "A floating pin lacks a solid reference connection to 5V or GND, causing it to pick up ambient noise and toggle unpredictably.",
+          "warmupExplanation": "Without a physical connection to 5V or Ground, an input pin's voltage is undefined and floats."
+        },
+        {
+          "questionId": "l05_s05_q2",
+          "question": "Why does waving your hand near an unconnected input pin cause the Serial Monitor readings to flip?",
+          "options": [
+            "Your body carries electrostatic charges that couple into high-impedance inputs",
+            "Your hand blocks the microcontroller's internal radio receiver",
+            "Human body heat slows down the quartz crystal clock"
+          ],
+          "correctIndex": 0,
+          "explanation": "High-impedance inputs easily detect tiny electrostatic electric fields radiating from human bodies and clothing.",
+          "warmupExplanation": "High-impedance inputs are so sensitive that ambient electrical charges nearby induce false signals."
+        }
+      ]
     },
     {
       "stepId": "l05_s06",
-      "title": "Coding Basics: pinMode(OUTPUT) & HIGH/LOW Constants",
-      "type": "story",
-      "markdownContent": "Microcontroller pins are versatile: by default, they boot into high-impedance `INPUT` mode to prevent accidental short circuits.\n\n### Core Commands:\n- `pinMode(pin, OUTPUT);`: Commands internal push-pull MOSFET transistors to actively drive current.\n- `digitalWrite(pin, HIGH);`: Connects the pin to the positive +5.0V supply rail (sources current).\n- `digitalWrite(pin, LOW);`: Connects the pin to the 0V Ground reference (sinks current).\n- `delay(ms);`: Freezes microcontroller execution for the specified milliseconds so human eyes can perceive state changes."
+      "title": "Pull-Up Resistors",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "internalPullupCircuitDiagram",
+      "markdownContent": "### Anchoring the Voltage: The Pull-Up Solution\nHow do engineers prevent floating pins? We anchor the pin to a known voltage using a **pull-up resistor**!\n\nA pull-up resistor connects the input pin to **+5V**. When the switch is open, the resistor gently \"pulls\" the pin up to 5V, guaranteeing a stable, rock-solid `HIGH`.\n\n```\nButton OPEN (Idle):\n  +5V ---[ 10k Resistor ]---> Pin 2 (Reads HIGH, 5.0V)\n                                |\n                           [ Switch: OPEN ]\n                                |\n                               GND\n```\n\n### Why a Resistor Instead of a Plain Wire?\nWhy not connect Pin 2 directly to +5V with a solid wire? Consider what happens when someone presses the button to GND:\n- If you used a plain wire from 5V to the pin, pressing the button would connect **+5V directly to GND with ZERO resistance**!\n- This creates a **dead short circuit**, drawing massive current, heating the wires, and triggering USB shutdown protection!\n\n### Ohm's Law to the Rescue:\nWith a 10,000Ω (10kΩ) pull-up resistor in place:\n$$I = \\frac{V}{R} = \\frac{5.0\\text{V}}{10{,}000\\Omega} = 0.0005\\text{ A} = 0.5\\text{ mA}$$\nWhen the button is pressed, only half a milliamp of current flows safely to GND, pulling Pin 2 all the way to **0.0V (LOW)** with zero danger!\n\n### Active-Low Logic:\nNotice the logic pattern in this circuit:\n- **Button Released (Idle)**: Pin 2 reads **`HIGH`** (+5V).\n- **Button Pressed (Active)**: Pin 2 reads **`LOW`** (0V).\nBecause the active state is `LOW`, this is called **active-low logic**!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s06_q1",
+          "question": "What hazardous condition occurs if you connect +5V directly to Ground with a plain wire and no resistance?",
+          "options": [
+            "A dead short circuit that draws extreme current and can damage hardware",
+            "The microcontroller automatically increases its clock speed",
+            "The breadboard changes color to blue"
+          ],
+          "correctIndex": 0,
+          "explanation": "Joining power and ground with negligible resistance causes a dead short circuit, risking silicon damage.",
+          "warmupExplanation": "Current equals voltage divided by resistance (I = V/R). Zero resistance leads to dangerous overcurrent."
+        },
+        {
+          "questionId": "l05_s06_q2",
+          "question": "In an active-low circuit with a pull-up resistor, what voltage level does the pin read when the button is pressed to GND?",
+          "options": [
+            "LOW (0.0 Volts / Ground)",
+            "HIGH (+5.0 Volts)",
+            "1023 Volts"
+          ],
+          "correctIndex": 0,
+          "explanation": "Pressing the button connects the input directly to GND, pulling the pin voltage down to 0V (LOW).",
+          "warmupExplanation": "Active-low circuits connect the input to ground when pressed, registering as LOW (0V)."
+        }
+      ]
     },
     {
       "stepId": "l05_s07",
-      "title": "Code Walkthrough: The Canonical Blink Sketch",
+      "title": "INPUT_PULLUP",
       "type": "codeExperiment",
-      "markdownContent": "Here is the foundational Blink sketch executed by millions of roboticists:\n\n```cpp\nconst int ledPin = 13; // Built-in LED pin\n\nvoid setup() {\n  pinMode(ledPin, OUTPUT); // Configure Pin 13 as a low-impedance driver\n}\n\nvoid loop() {\n  digitalWrite(ledPin, HIGH); // Drive Pin 13 to 5V (turn LED ON)\n  delay(1000);                // Maintain state for 1000 ms (1 second)\n  digitalWrite(ledPin, LOW);  // Drive Pin 13 to 0V (turn LED OFF)\n  delay(1000);                // Maintain state for 1000 ms (1 second)\n}\n```\n\n### Key Rules:\n- `const int ledPin = 13;` prevents accidental reassignment.\n- If you forget `delay()` after `LOW`, the LED turns back ON in nanoseconds, making the OFF state invisible to humans!"
+      "interactiveWidgetType": "activeLowLogicChecker",
+      "markdownContent": "### The Secret Silicon Superpower: Built-In Pull-Ups\nWiring an external 10k resistor on your breadboard for every single button takes up space and requires extra jumper wires. Fortunately, the designers of the ATmega328P microcontroller gave us a brilliant shortcut:\n\nEvery digital I/O pin on the Arduino Uno has an **internal 20kΩ to 50kΩ pull-up resistor** manufactured directly inside the silicon chip!\n\nAll you have to do is activate it in code using:\n```cpp\npinMode(buttonPin, INPUT_PULLUP);\n```\n\n```\nMinimalist 2-Wire Hardware Wiring:\n  Arduino Pin 2 <================== [ Pushbutton Leg A ]\n                                     [ Pushbutton Leg B ] <==== Arduino GND\n  (No external resistor or 5V power wire needed on breadboard!)\n```\n\n### The Canonical Active-Low Sketch:\n```cpp\nconst int buttonPin = 2;\nconst int ledPin = 13; // Built-in Uno LED\n\nvoid setup() {\n  pinMode(buttonPin, INPUT_PULLUP); // Turn ON internal pull-up resistor!\n  pinMode(ledPin, OUTPUT);          // Status indicator LED\n}\n\nvoid loop() {\n  int buttonState = digitalRead(buttonPin);\n\n  // Remember: In active-low logic, LOW means the button is PRESSED!\n  if (buttonState == LOW) {\n    digitalWrite(ledPin, HIGH); // Turn LED ON when pressed\n  } else {\n    digitalWrite(ledPin, LOW);  // Turn LED OFF when released\n  }\n}\n```\n\nWire one leg of your button to Pin 2, the other leg to GND, upload this sketch, and press the button: instant, rock-solid control!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s07_q1",
+          "question": "What is the primary benefit of configuring a pin with pinMode(pin, INPUT_PULLUP)?",
+          "options": [
+            "It activates the Arduino's built-in pull-up resistor, eliminating the need for an external breadboard resistor",
+            "It turns the pin into a high-voltage motor output",
+            "It makes the Arduino run without USB power"
+          ],
+          "correctIndex": 0,
+          "explanation": "`INPUT_PULLUP` uses the chip's internal 20k-50k resistor to hold the pin at 5V, reducing parts and wiring complexity.",
+          "warmupExplanation": "The microcontroller has internal pull-up resistors in silicon that can be enabled with `INPUT_PULLUP`."
+        },
+        {
+          "questionId": "l05_s07_q2",
+          "question": "When using INPUT_PULLUP, what does digitalRead(pin) return when nobody is touching the button?",
+          "options": [
+            "HIGH (held at +5V by the internal pull-up)",
+            "LOW (0V)",
+            "Random fluctuating numbers"
+          ],
+          "correctIndex": 0,
+          "explanation": "When unpressed, the internal pull-up holds the pin securely at 5V (HIGH) with zero floating noise.",
+          "warmupExplanation": "The internal pull-up resistor pulls the pin voltage up to HIGH (+5V) when the switch is open."
+        }
+      ]
     },
     {
       "stepId": "l05_s08",
-      "title": "Code Prediction: Silicon Limits & Series Resistors",
-      "type": "codeExperiment",
-      "interactiveWidgetType": "resistorOhmLawSimulator",
-      "markdownContent": "What happens when wiring external LEDs to Arduino pins? Microcontroller silicon has physical electrical limits!\n\n### Ohm's Law in Action:\n$$I = \\frac{V_{supply} - V_{forward}}{R} = \\frac{5.0\\text{V} - 2.0\\text{V}}{R}$$\n\nAn ATmega328P output pin has an absolute maximum continuous rating of **20 mA** (40 mA absolute destruction limit). Wiring an external LED without a current-limiting resistor (< 100\u03a9) causes catastrophic overcurrent, destroying the pin driver FET!\n\nExplore resistor values in the Ohm's Law simulator below to see safe operating currents vs blowout hazards!"
+      "title": "Button Debouncing",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "switchBounceVisualizer",
+      "markdownContent": "### The Microsecond Bounce: Why One Click Becomes Five\nImagine you write a sketch that increments a counter every time you press a button:\n```cpp\nint score = 0;\nvoid loop() {\n  if (digitalRead(buttonPin) == LOW) {\n    score++;\n    Serial.println(score);\n  }\n}\n```\nYou tap the button once quickly. You expect `score` to become `1`. Instead, the Serial Monitor prints:\n`1, 2, 3, 4, 7, 8!` Why did one gentle tap count as 8 presses?\n\n### The Physics of Contact Chatter\nTo human fingers, pressing a tactile button feels like a single instantaneous click. But microcontrollers run at **16,000,000 clock cycles per second**!\n\nInside the switch, two microscopic metal plates collide. Like dropping a bouncy rubber ball onto a hardwood floor, the metal contacts **bounce and vibrate against each other** for 1 to 10 milliseconds before settling into solid contact!\n\n```\nIdeal Human View:   HIGH -----------------\\__________________ LOW (Clean Step)\n\nSilicon Reality:    HIGH -------\\ | | | \\/\\/\\/\\______________ LOW (Contact Bounce!)\n                                  ^ ^ ^\n                          Rapid microsecond spikes!\n```\n\n### How to Debounce in Software:\n1. **Software Debounce Delay**: When you detect the initial `LOW` edge, wait a tiny duration (such as `delay(20)`) to let the mechanical vibrations settle before reading again.\n2. **State Change Tracking**: Store the `lastButtonState` and only increment the score when the button transitions from `HIGH` to `LOW` (the falling edge).\n3. **Hardware Debouncing**: Placing a small 100nF capacitor across the switch contacts absorbs the high-frequency voltage chatter physically!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s08_q1",
+          "question": "Why does a mechanical pushbutton often register multiple button presses from a single finger tap?",
+          "options": [
+            "Mechanical metal contacts bounce against each other for several milliseconds upon colliding",
+            "The Arduino Uno serial baud rate is too slow",
+            "The microcontroller flash memory is running out of space"
+          ],
+          "correctIndex": 0,
+          "explanation": "Microscopic contact bounce produces rapid voltage spikes that high-speed microcontrollers interpret as multiple presses.",
+          "warmupExplanation": "Switch contacts vibrate mechanically when slamming shut; the fast microcontroller sees every vibration."
+        },
+        {
+          "questionId": "l05_s08_q2",
+          "question": "About how long does typical mechanical contact bounce last in tactile buttons?",
+          "options": [
+            "Between 1 and 20 milliseconds",
+            "Several full minutes",
+            "One hour"
+          ],
+          "correctIndex": 0,
+          "explanation": "Contact bounce typically lasts between 1 and 20 milliseconds before the contacts settle firmly.",
+          "warmupExplanation": "Switch bounce is very brief (a few milliseconds), but easily detectable at 16 MHz CPU speeds."
+        }
+      ]
     },
     {
       "stepId": "l05_s09",
-      "title": "Guided Experiment: Blink Cadence & Persistence of Vision",
-      "type": "codeExperiment",
-      "interactiveWidgetType": "blinkTimingLab",
-      "markdownContent": "What happens when the blink frequency becomes extremely fast?\n\nHuman eyes have an optical reset latency of approximately 30 milliseconds (**Persistence of Vision**). When an LED toggles faster than 30 Hz (delays under 30ms), retinal cone cells cannot reset before the next photon packet arrives. The individual flashes fuse into a solid, continuous glow at reduced brightness!\n\nAdjust `delay(HIGH)` and `delay(LOW)` in the Timing Lab below to explore asymmetric cadences and trigger POV optical fusion!"
+      "title": "Meet the Potentiometer",
+      "type": "physicalTask",
+      "interactiveWidgetType": "wiperPinoutChecker",
+      "markdownContent": "### Stepping Beyond Binary: Continuous Sensory Control\nButtons and switches are binary: either ON or OFF, black or white, 1 or 0. But the physical universe is not binary!\n- A robot's arm doesn't just snap between fully extended and fully retracted—it moves through a smooth arc of angles.\n- A sound volume dial doesn't jump from silent to deafening—it glides continuously.\n\nMeet **`comp_20`**: The **10kΩ Rotary Potentiometer** (engineers affectionately call it a \"pot\").\n\n### Anatomy of the Potentiometer\nPick up `comp_20` from your kit and examine its features:\n1. **Rotating Shaft**: A metal or plastic shaft that turns smoothly across about 270 degrees of rotation.\n2. **Three Stamped Terminal Pins**:\n   - **Pin 1 (Outer Leg)**: Connects to one end of an internal horseshoe-shaped carbon resistive strip.\n   - **Pin 2 (Center Leg)**: Connects to a movable metal contact called the **wiper** that sweeps along the carbon track as you turn the knob!\n   - **Pin 3 (Outer Leg)**: Connects to the opposite end of the carbon resistive strip.\n\n```\nPotentiometer Internal Cutaway:\n\n      Pin 1 (5V) ---------\\  (10k Horseshoe Carbon Track)\n                           \\    \n                            [ Wiper Arm ] <==== Pin 2 (Center Output)\n                           /    \n      Pin 3 (GND) --------/ \n```\n\n⚠️ **Safety Rule**: Never connect the center wiper pin directly between 5V and GND! The outer pins receive 5V and GND, while the center wiper connects to an **Analog Input pin** (such as A0).",
+      "quickCheck": [
+        {
+          "questionId": "l05_s09_q1",
+          "question": "How many external terminal pins does a standard rotary potentiometer possess?",
+          "options": [
+            "3 pins (two outer track ends and one center wiper)",
+            "1 pin",
+            "8 pins"
+          ],
+          "correctIndex": 0,
+          "explanation": "A standard potentiometer has 3 pins: two outer fixed terminals and one movable center wiper terminal.",
+          "warmupExplanation": "Potentiometers use two reference power pins and one variable center wiper pin."
+        },
+        {
+          "questionId": "l05_s09_q2",
+          "question": "What internal component moves when you rotate a potentiometer shaft?",
+          "options": [
+            "A conductive wiper arm that glides along a resistive track",
+            "A miniature lithium battery",
+            "An optical laser diode"
+          ],
+          "correctIndex": 0,
+          "explanation": "Rotating the knob moves the wiper arm across the carbon track, tapping into different points of resistance.",
+          "warmupExplanation": "A potentiometer has an internal wiper contact that slides across a resistive strip."
+        }
+      ]
     },
     {
       "stepId": "l05_s10",
-      "title": "Real-World Robotics: Satellite Beacons & Heartbeat Signals",
+      "title": "Voltage Divider",
       "type": "visualExplanation",
-      "markdownContent": "Flashing LEDs are vital engineering diagnostic tools across aerospace and medical systems:\n\n- **CubeSats & Drones**: Navigation strobes flash asymmetric patterns (100ms ON / 900ms OFF) to minimize battery drain while maintaining high-visibility beacon tracking.\n- **Medical Ventilators & Pacemakers**: Microcontroller firmware toggles a dedicated hardware 'heartbeat' LED on every main loop iteration. If the CPU hangs in a deadlock, the heartbeat LED freezes, alerting attending doctors.\n- **Autonomous Factory AGVs**: Colored flashing strobes convey vehicle status: amber for transit, blue for barcode scanning, red for safety obstruction stop."
+      "interactiveWidgetType": "voltageDividerCutaway",
+      "markdownContent": "### How Resistance Becomes Voltage\nThe carbon track inside `comp_20` has a total resistance of **10,000 Ω (10 kΩ)** from Pin 1 to Pin 3. How does turning the knob produce a variable voltage signal?\n\nThrough the universal electrical principle of the **Voltage Divider**!\n\nAs the center wiper moves along the track, it splits that 10k total resistance into two separate series resistors:\n- $R_1$: The resistance between Pin 1 (+5V) and the wiper.\n- $R_2$: The resistance between the wiper and Pin 3 (GND).\n\n```\n       +5V\n        |\n      [ R1 ]  <--- Resistance from 5V to Wiper\n        |\n        +---------> Wiper Output Voltage (Vout)\n        |\n      [ R2 ]  <--- Resistance from Wiper to GND\n        |\n       GND\n```\n\n### The Voltage Divider Formula:\n$$V_{out} = V_{in} \\times \\frac{R_2}{R_1 + R_2} = 5.0\\text{V} \\times \\frac{R_2}{10{,}000\\Omega}$$\n\n### Three Key Rotary Positions:\n1. **Turned Fully Counter-Clockwise (Wiper at GND)**:\n   $R_2 = 0\\Omega \\implies V_{out} = 5.0\\text{V} \\times \\frac{0}{10{,}000} = \\mathbf{0.00\\text{V}}$\n2. **Centered Exactly in the Middle**:\n   $R_1 = 5\\text{k}\\Omega, R_2 = 5\\text{k}\\Omega \\implies V_{out} = 5.0\\text{V} \\times \\frac{5{,}000}{10{,}000} = \\mathbf{2.50\\text{V}}$\n3. **Turned Fully Clockwise (Wiper at 5V)**:\n   $R_2 = 10\\text{k}\\Omega \\implies V_{out} = 5.0\\text{V} \\times \\frac{10{,}000}{10{,}000} = \\mathbf{5.00\\text{V}}$\n\nBy simply turning the knob, you smoothly command any analog voltage between 0.0V and 5.0V!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s10_q1",
+          "question": "If a 10k potentiometer has its outer pins wired to 5V and GND, what voltage appears on the wiper when centered halfway?",
+          "options": [
+            "2.5 Volts (exactly half of the 5.0V supply)",
+            "0.0 Volts",
+            "10.0 Volts"
+          ],
+          "correctIndex": 0,
+          "explanation": "At the midpoint, resistance splits equally (5kΩ and 5kΩ), dividing the 5V supply exactly in half to 2.5V.",
+          "warmupExplanation": "A voltage divider with equal resistors splits the applied voltage equally in half."
+        },
+        {
+          "questionId": "l05_s10_q2",
+          "question": "What happens to the wiper voltage as you rotate the potentiometer shaft closer to the GND terminal?",
+          "options": [
+            "The voltage steadily decreases toward 0.0 Volts",
+            "The voltage surges to 50 Volts",
+            "The resistance between the outer terminals drops to zero"
+          ],
+          "correctIndex": 0,
+          "explanation": "Moving the wiper closer to the ground terminal decreases R2, dropping the output voltage toward 0.0V.",
+          "warmupExplanation": "Approaching the ground terminal pulls the wiper voltage down toward 0V reference."
+        }
+      ]
     },
     {
       "stepId": "l05_s11",
-      "title": "Troubleshooting Challenge: Inverted Delays & Floating Gates",
-      "type": "story",
-      "markdownContent": "Master common beginner hardware bugs:\n\n### Symptom 1: LED Stays Solid ON and Never Blinks\n- **Cause**: Missing second `delay()`, or both `digitalWrite` calls are set to `HIGH`.\n- **Fix**: Ensure `digitalWrite(ledPin, LOW)` is followed by a `delay()` of at least 100ms.\n\n### Symptom 2: LED Glows Extremely Dimly\n- **Cause**: Forgot `pinMode(ledPin, OUTPUT);` in `setup()`! In `INPUT` mode, `digitalWrite(HIGH)` merely enables the weak internal 30k\u03a9 pull-up resistor (~0.1 mA current).\n- **Fix**: Add `pinMode(ledPin, OUTPUT);` inside `setup()`."
+      "title": "Analog Inputs",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "adcSamplingVisualizer",
+      "markdownContent": "### The Translation Problem: How Computers Read Voltages\nYour Arduino's ATmega328P processor is purely digital. Its arithmetic logic unit only understands binary 1s and 0s. How can it measure a smooth, continuous voltage like 2.37 Volts from a potentiometer?\n\nIt uses a specialized on-chip hardware peripheral called the **Analog-to-Digital Converter (ADC)**!\n\nOn the Arduino Uno, the ADC is connected to the six pins labeled **A0, A1, A2, A3, A4, and A5** along the lower board edge.\n\n```\nContinuous Analog Voltage (0.0V to 5.0V)\n                  |\n         [ 10-bit Successive ]\n         [ Approximation ADC ]\n                  |\nDiscrete Integer Range: 0 to 1023 (1024 unique steps)\n```\n\n### 10-Bit ADC Resolution Breakdown:\n- **10 Bits of Resolution**: In binary, 10 bits can represent $2^{10} = 1024$ unique integers (from **0 to 1023**).\n- **0** corresponds to **0.00 Volts** (GND).\n- **1023** corresponds to **5.00 Volts** (Full 5V supply rail).\n- **Resolution Step Size**: Each step represents:\n  $$\\text{Step Voltage} = \\frac{5.000\\text{ V}}{1023} \\approx 0.004887\\text{ V} = 4.89\\text{ mV}$$\n\nWhenever the input voltage changes by just 4.89 millivolts, the integer count shifts up or down by 1! The ADC takes approximately **100 microseconds** to perform this conversion, allowing your robot to sample analog inputs up to 10,000 times per second!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s11_q1",
+          "question": "What integer value range does the Arduino Uno's 10-bit ADC produce?",
+          "options": [
+            "0 to 1023 (1024 discrete steps)",
+            "0 to 255",
+            "0 to 1",
+            "-512 to +512"
+          ],
+          "correctIndex": 0,
+          "explanation": "A 10-bit Analog-to-Digital Converter converts voltages into integers from 0 (0V) to 1023 (5V).",
+          "warmupExplanation": "10 binary bits represent 2^10 = 1024 possible numbers, numbered from 0 up to 1023."
+        },
+        {
+          "questionId": "l05_s11_q2",
+          "question": "Which dedicated header pins on the Arduino Uno connect to the internal ADC?",
+          "options": [
+            "Pins A0 through A5",
+            "Digital pins 0 and 1 only",
+            "The AREF and RESET pins only"
+          ],
+          "correctIndex": 0,
+          "explanation": "Pins labeled A0 through A5 on the Uno are dedicated analog inputs wired to the ADC multiplexer.",
+          "warmupExplanation": "The pins designated with 'A' (A0-A5) are the analog input channels on the Uno."
+        }
+      ]
     },
     {
       "stepId": "l05_s12",
-      "title": "Workshop Safety & Limits: Pin Current Limits (20mA Continuous)",
-      "type": "story",
-      "markdownContent": "Always treat microcontroller silicon with care:\n\n1. **Never Exceed 20 mA**: The ATmega328P can supply up to 20 mA per pin. Total current across all pins combined must not exceed 200 mA.\n2. **Always Use 220\u03a9\u20131k\u03a9 Series Resistors**: When wiring external LEDs on a breadboard, always place a 220\u03a9 or 330\u03a9 resistor in series with the anode or cathode.\n3. **Power Down Before Rewiring**: Disconnect the USB cable before plugging wires into the breadboard to prevent accidental short circuits across 5V and GND."
+      "title": "analogRead",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "potentiometerSimulator",
+      "markdownContent": "### Streaming Analog Telemetry in Code\nTo capture analog values in software, Arduino provides the built-in function `analogRead()`:\n\n```cpp\nint rawReading = analogRead(A0); // Samples Analog Pin A0\n```\n\n### Two Crucial Things to Know:\n1. **No `pinMode()` Required!** Unlike digital pins that default to high-impedance inputs, calling `analogRead(A0)` automatically instructs the hardware ADC multiplexer to switch to Pin A0. You do NOT need `pinMode(A0, INPUT)` in `setup()`.\n2. **Translating Raw Counts to Real Volts**: To calculate true physical voltage in software:\n   ```cpp\n   float voltage = rawReading * (5.0 / 1023.0);\n   ```\n\n### Complete Analog Telemetry Sketch:\n```cpp\nconst int potPin = A0;\n\nvoid setup() {\n  Serial.begin(9600); // 9600 baud serial telemetry\n}\n\nvoid loop() {\n  int rawValue = analogRead(potPin);         // 0 to 1023\n  float voltage = rawValue * (5.0 / 1023.0); // Convert to volts\n\n  Serial.print(\"Raw ADC: \");\n  Serial.print(rawValue);\n  Serial.print(\" | Voltage: \");\n  Serial.print(voltage, 2);\n  Serial.println(\" V\");\n\n  delay(100); // 10 readings per second\n}\n```\n\nUpload this code and rotate the potentiometer knob. Watch the raw integer count and calculated voltage glide smoothly between `0 (0.00V)` and `1023 (5.00V)`!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s12_q1",
+          "question": "Is it mandatory to declare pinMode(A0, INPUT) in setup() before calling analogRead(A0)?",
+          "options": [
+            "No, analogRead() automatically configures the internal ADC multiplexer for that pin",
+            "Yes, omitting pinMode causes a compilation error",
+            "Yes, pinMode must be set to OUTPUT"
+          ],
+          "correctIndex": 0,
+          "explanation": "Analog pins automatically configure their internal ADC circuitry upon calling `analogRead()`, so `pinMode` is optional.",
+          "warmupExplanation": "The Arduino core automatically configures analog pins when `analogRead()` is invoked."
+        },
+        {
+          "questionId": "l05_s12_q2",
+          "question": "If analogRead(A0) returns a reading of approximately 512, what voltage is present on pin A0?",
+          "options": [
+            "Approximately 2.50 Volts",
+            "0.00 Volts",
+            "5.00 Volts"
+          ],
+          "correctIndex": 0,
+          "explanation": "512 is halfway between 0 and 1023, representing exactly half of 5.0V (2.5V).",
+          "warmupExplanation": "512 / 1023 is approximately 50%, which corresponds to 2.5V out of 5.0V."
+        }
+      ]
     },
     {
       "stepId": "l05_s13",
-      "title": "Final Review & Competencies",
-      "type": "story",
-      "markdownContent": "Outstanding work! In Lesson 05, you created your first physical light output:\n\n- You defined digital output states: 5V (`HIGH`) and 0V (`LOW`).\n- You learned why `pinMode(OUTPUT)` is mandatory to engage push-pull transistor drivers.\n- You inspected 5mm LED polarity (anvil Cathode \u2212 vs post Anode +) and breadboard bus clips.\n- You calculated current via Ohm's Law and respected the 20 mA continuous pin limit.\n- You explored blinking cadences and retinal persistence of vision (POV) fusion.\n\nTake the 8-question assessment below to claim your XP and advance to Lesson 06: Reading analog signals!"
+      "title": "Button + LED",
+      "type": "physicalTask",
+      "markdownContent": "### The Fundamental Loop of Robotics: Input Directly Driving Output\nNow let's synthesize inputs and outputs together! We will build a circuit where a physical pushbutton directly commands an LED.\n\n### Breadboard Circuit Assembly:\n1. **Pushbutton**: Place the button straddling the breadboard center ravine.\n   - Wire Leg A to Arduino **Digital Pin 2**.\n   - Wire opposing Leg B to Arduino **GND**.\n2. **LED Indicator**:\n   - Connect a 220Ω resistor from Arduino **Digital Pin 8** to the breadboard.\n   - Connect the LED long leg (Anode, +) to the resistor.\n   - Connect the LED short leg (Cathode, −) to **GND**.\n\n```\nWiring Diagram:\n  Pin 2 ======= [ Button ] ======= GND   (Active-low with INPUT_PULLUP)\n  Pin 8 ===[ 220R Resistor ]===>|=== GND   (Standard LED output)\n```\n\n### The Sketch:\n```cpp\nconst int buttonPin = 2;\nconst int ledPin = 8;\n\nvoid setup() {\n  pinMode(buttonPin, INPUT_PULLUP);\n  pinMode(ledPin, OUTPUT);\n}\n\nvoid loop() {\n  int pressed = (digitalRead(buttonPin) == LOW);\n\n  if (pressed) {\n    digitalWrite(ledPin, HIGH); // Light ON while button is held\n  } else {\n    digitalWrite(ledPin, LOW);  // Light OFF when button released\n  }\n}\n```\n\n### Challenge: Toggle Mode (Push ON, Push OFF)\nCan you modify the code so the LED flips state and stays ON even after you release the button? That's software latching—you've built a software toggle switch!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s13_q1",
+          "question": "Why must an external LED have a resistor in series when driven by an Arduino digital pin?",
+          "options": [
+            "To limit electric current and protect both the LED semiconductor and Arduino pin from burning out",
+            "To change the color of the emitted light",
+            "To convert direct current into alternating current"
+          ],
+          "correctIndex": 0,
+          "explanation": "LEDs have negligible internal resistance; a series resistor prevents destructive overcurrent.",
+          "warmupExplanation": "Remember from Lesson 4: LEDs draw excessive current unless protected by a current-limiting resistor."
+        },
+        {
+          "questionId": "l05_s13_q2",
+          "question": "How do you invert your code so the LED stays ON normally and turns OFF only when the button is held?",
+          "options": [
+            "Change the condition to write HIGH when buttonState == HIGH, and LOW when buttonState == LOW",
+            "Reverse the power wires on the Arduino Uno",
+            "Change the baud rate in Serial.begin()"
+          ],
+          "correctIndex": 0,
+          "explanation": "Flipping the conditional logic in code inverts how the output responds to the physical input state.",
+          "warmupExplanation": "Software logic controls the relationship: flipping your `if-else` branch reverses the action."
+        }
+      ]
     },
     {
       "stepId": "l05_s14",
-      "title": "Comprehensive Knowledge Check",
+      "title": "Potentiometer -> LED Brightness",
+      "type": "physicalTask",
+      "interactiveWidgetType": "potentiometerSimulator",
+      "markdownContent": "### The Range Mismatch Problem\nNow let's connect an analog input directly to an analog output: a **rotary dimmer switch**!\n\nWhen we wire our potentiometer to Pin A0 and our LED to PWM Pin 9, we run directly into the most famous mathematical puzzle in rookie robotics:\n- **`analogRead()`** returns a **10-bit** number from **0 to 1023**.\n- **`analogWrite()`** (PWM duty cycle) only accepts an **8-bit** number from **0 to 255**!\n\nIf you pass `1023` directly into `analogWrite()`, the 8-bit timer register overflows, causing the LED to flash wildly and reset its brightness four times across the knob's rotation!\n\n```\nAnalog Input Range:   0 ======================================> 1023  (10-bit)\n                                        |\n                                [ Scaled by / 4 ]\n                                        v\nPWM Output Range:     0 ====================> 255                     (8-bit)\n```\n\n### Two Ways to Solve the Mismatch in Code:\n1. **Integer Division**: Since $1023 / 4 \\approx 255$, simply divide by 4:\n   ```cpp\n   int brightness = analogRead(A0) / 4;\n   ```\n2. **The map() Function**: Arduino includes a handy linear mapping utility:\n   ```cpp\n   int brightness = map(analogRead(A0), 0, 1023, 0, 255);\n   ```\n\n### The Complete Dimmer Sketch:\n```cpp\nconst int potPin = A0;\nconst int ledPin = 9; // Must be a PWM pin (~)\n\nvoid setup() {\n  pinMode(ledPin, OUTPUT);\n}\n\nvoid loop() {\n  int sensorVal = analogRead(potPin);\n  int brightness = map(sensorVal, 0, 1023, 0, 255);\n  analogWrite(ledPin, brightness); // Modulate PWM duty cycle\n  delay(15);\n}\n```\n\nTurn the dial and marvel at the silky smooth brightness transition from total dark to blinding brilliance!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s14_q1",
+          "question": "What numeric range does analogWrite() accept on an Arduino Uno PWM pin?",
+          "options": [
+            "0 to 255 (8-bit resolution)",
+            "0 to 1023",
+            "HIGH or LOW only",
+            "-100 to +100"
+          ],
+          "correctIndex": 0,
+          "explanation": "`analogWrite()` modulates PWM duty cycle using an 8-bit value from 0 (0% duty cycle) to 255 (100% duty cycle).",
+          "warmupExplanation": "PWM outputs in Arduino use 8-bit resolution, which spans from 0 to 255."
+        },
+        {
+          "questionId": "l05_s14_q2",
+          "question": "Why must you divide analogRead() by 4 or use map() before sending the value to analogWrite()?",
+          "options": [
+            "Because analogRead is 10-bit (0-1023) while analogWrite only takes 8-bit (0-255)",
+            "Because analogWrite requires negative numbers",
+            "Because the potentiometer will overheat otherwise"
+          ],
+          "correctIndex": 0,
+          "explanation": "Passing values greater than 255 into `analogWrite()` causes register overflow and erratic brightness jumps.",
+          "warmupExplanation": "10-bit input (0-1023) is 4 times larger than 8-bit output (0-255), requiring scaling."
+        }
+      ]
+    },
+    {
+      "stepId": "l05_s15",
+      "title": "Potentiometer -> RGB Color",
+      "type": "physicalTask",
+      "interactiveWidgetType": "rgbColorSynthesizer",
+      "markdownContent": "### The Rainbow Dial: Multi-Channel Control\nIn Lesson 4, you discovered that an RGB LED contains three microscopic diodes (Red, Green, Blue) packaged inside a single lens. By mixing different brightness levels on PWM pins ~9, ~10, and ~11, you can produce any color in the rainbow!\n\nNow, let's use a single rotary potentiometer knob to steer your monster robot through the entire color spectrum!\n\n### Zone-Based Color Selector\nDivide the potentiometer's 0 to 1023 range into four equal color zones:\n- **Zone 1 (0 to 255)**: Pure Ruby Red\n- **Zone 2 (256 to 511)**: Amber Yellow (Red + Green)\n- **Zone 3 (512 to 767)**: Emerald Green\n- **Zone 4 (768 to 1023)**: Electric Monster Blue\n\n```cpp\nconst int potPin = A0;\nconst int redPin = 9;\nconst int greenPin = 10;\nconst int bluePin = 11;\n\nvoid setup() {\n  pinMode(redPin, OUTPUT);\n  pinMode(greenPin, OUTPUT);\n  pinMode(bluePin, OUTPUT);\n}\n\nvoid setColor(int r, int g, int b) {\n  analogWrite(redPin, r);\n  analogWrite(greenPin, g);\n  analogWrite(bluePin, b);\n}\n\nvoid loop() {\n  int val = analogRead(potPin);\n\n  if (val < 256) {\n    setColor(255, 0, 0);     // Red\n  } else if (val < 512) {\n    setColor(255, 200, 0);   // Yellow\n  } else if (val < 768) {\n    setColor(0, 255, 0);     // Green\n  } else {\n    setColor(0, 0, 255);     // Blue\n  }\n  delay(20);\n}\n```\n\n### Advanced Monster Lab Challenge:\nAdd a pushbutton on Pin 2! When the button is unpressed, turning the knob changes the **Color**. When the button is pressed down, turning the knob adjusts the overall **Brightness**! You have built a multi-function menu controller!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s15_q1",
+          "question": "What type of Arduino pins must you connect to an RGB LED's color channels to mix custom colors?",
+          "options": [
+            "PWM pins designated with a tilde ~ (such as 9, 10, 11)",
+            "Analog input pins A0 through A5 only",
+            "Only the 5V power and Reset pins"
+          ],
+          "correctIndex": 0,
+          "explanation": "PWM pins provide variable duty cycles via `analogWrite()`, enabling color mixing on RGB LEDs.",
+          "warmupExplanation": "RGB color mixing requires PWM output pins to adjust the individual brightness of each color channel."
+        },
+        {
+          "questionId": "l05_s15_q2",
+          "question": "How can a continuous potentiometer reading (0 to 1023) select between four distinct robot modes?",
+          "options": [
+            "By dividing the 0-1023 range into four numeric threshold zones in code",
+            "By rotating the knob faster than 500 RPM",
+            "By toggling the computer's USB port"
+          ],
+          "correctIndex": 0,
+          "explanation": "Threshold intervals in code allow a continuous analog signal to select discrete operating states or colors.",
+          "warmupExplanation": "Code can divide numeric ranges into discrete buckets using `if-else` threshold comparisons."
+        }
+      ]
+    },
+    {
+      "stepId": "l05_s16",
+      "title": "Input Challenge",
       "type": "quizCheckpoint",
-      "markdownContent": "Test your mastery of digital output voltage states, LED polarity, Ohm's law, and persistence of vision.",
+      "markdownContent": "### The Input Master Challenge\nCongratulations, Monster Engineer! You have mastered both sides of the physical input spectrum:\n- **Digital Inputs**: Mechanical contact switches, active-low logic, internal pull-up resistors, and contact debouncing.\n- **Analog Inputs**: Rotary potentiometers, voltage dividers, the 10-bit ADC, and mapping analog sensor telemetry into actuator output commands.\n\nDemonstrate your complete mastery by completing this 8-question input engineering challenge!",
       "interactiveConfig": {
-        "question": "What voltage level does `digitalWrite(pin, HIGH)` produce on an Arduino Uno?",
-        "options": [
-          "5.0 Volts",
-          "0.0 Volts",
-          "12.0 Volts"
-        ],
-        "correctIndex": 0,
-        "explanation": "Correct: 5.0 Volts. Understanding this principle ensures proper circuit function and reliability.",
         "questions": [
           {
-            "question": "What voltage level does `digitalWrite(pin, HIGH)` produce on an Arduino Uno?",
+            "question": "What does digitalRead(pin) return when an active-low button wired with INPUT_PULLUP is physically pressed to GND?",
             "options": [
-              "5.0 Volts",
-              "0.0 Volts",
-              "12.0 Volts"
+              "LOW (0)",
+              "HIGH (1)",
+              "1023",
+              "-1"
             ],
             "correctIndex": 0,
-            "explanation": "Correct: 5.0 Volts. Understanding this principle ensures proper circuit function and reliability."
+            "explanation": "In an active-low circuit, pressing the button connects the pin directly to Ground, making digitalRead() return LOW."
           },
           {
-            "question": "How many milliseconds are in 1.5 seconds?",
+            "questionId": "q2",
+            "question": "Why is an internal pull-up resistor essential when reading a button connected between a pin and Ground?",
             "options": [
-              "1500 ms",
-              "150 ms",
-              "15 ms"
+              "It prevents the pin from floating and picking up stray electromagnetic noise when the button is open",
+              "It increases the battery voltage to 24 volts",
+              "It slows down the CPU to save flash memory",
+              "It makes the button flash different colors"
             ],
             "correctIndex": 0,
-            "explanation": "Correct: 1500 ms. Understanding this principle ensures proper circuit function and reliability."
+            "explanation": "Without a pull-up resistor, an open input pin floats and oscillates wildly between HIGH and LOW."
           },
           {
-            "question": "Why must you call `pinMode(pin, OUTPUT)` before writing to a pin?",
+            "question": "What physical phenomenon causes a mechanical button to register multiple false clicks during a single press?",
             "options": [
-              "To switch internal pin transistors from high-impedance listening to active voltage driving",
-              "To supply 12V to the USB port",
-              "To download the sketch to EEPROM"
+              "Mechanical contact bounce as internal metal contacts vibrate against each other",
+              "Solar radiation heating the breadboard",
+              "The Arduino USB cable is upside down",
+              "The pull-up resistor has too much resistance"
             ],
             "correctIndex": 0,
-            "explanation": "Correct: To switch internal pin transistors from high-impedance listening to active voltage driving. Understanding this principle ensures proper circuit function and reliability."
+            "explanation": "Microscopic mechanical contact chatter causes rapid voltage oscillations lasting several milliseconds upon closing."
           },
           {
-            "question": "Which digital pin on the Arduino Uno is wired directly to the on-board amber 'L' LED?",
+            "question": "What happens if you accidentally connect a potentiometer's center wiper to 5V and an outer leg to GND, then turn the knob fully?",
             "options": [
-              "Pin 13",
-              "Pin 0",
-              "Pin A0"
+              "A dead short circuit between 5V and GND occurs, triggering USB safety shutdown",
+              "The potentiometer produces a musical tone",
+              "The LED blinks twice as fast",
+              "Nothing unusual happens"
             ],
             "correctIndex": 0,
-            "explanation": "Correct: Pin 13. Understanding this principle ensures proper circuit function and reliability."
+            "explanation": "Connecting the wiper to 5V and turning it to the GND terminal creates a zero-resistance path between 5V and GND (dead short)."
           },
           {
-            "question": "What visual phenomenon causes an LED flashing at 100 Hz to appear continuously solid?",
+            "question": "What voltage does a 10k potentiometer supply to its wiper when connected between 5V and GND and centered exactly halfway?",
             "options": [
-              "Persistence of vision",
-              "Capacitive filtering",
-              "Inductive kickback"
+              "2.50 Volts",
+              "0.00 Volts",
+              "5.00 Volts",
+              "1.25 Volts"
             ],
             "correctIndex": 0,
-            "explanation": "Correct: Persistence of vision. Understanding this principle ensures proper circuit function and reliability."
+            "explanation": "At the exact center, the resistance splits equally into two 5k resistors, dividing the 5V supply to 2.5V."
           },
           {
-            "question": "What happens if you omit the `delay()` between turning the LED OFF and turning it back ON in `loop()`?",
+            "question": "What integer range does the Arduino Uno's internal 10-bit ADC produce when reading analogRead(A0)?",
             "options": [
-              "The LED turns back on so quickly the off-state is imperceptible",
-              "The microcontroller halts",
-              "The LED burns out"
+              "0 to 1023",
+              "0 to 255",
+              "0 to 1",
+              "1 to 100"
             ],
             "correctIndex": 0,
-            "explanation": "Correct: The LED turns back on so quickly the off-state is imperceptible. Understanding this principle ensures proper circuit function and reliability."
+            "explanation": "A 10-bit ADC provides 1024 discrete integer steps, ranging from 0 (0.0V) to 1023 (5.0V)."
           },
           {
-            "question": "What is the maximum safe continuous current that should be drawn from an Uno I/O pin?",
+            "question": "Why must you divide an analogRead() value by 4 (or use map()) before passing it to analogWrite() on a PWM pin?",
             "options": [
-              "Approximately 20 mA",
-              "5 Amps",
-              "500 mA"
+              "Because analogRead() outputs 10 bits (0-1023) but analogWrite() only accepts 8 bits (0-255)",
+              "Because analogWrite() only works with even numbers",
+              "Because 4 is the lucky number of physical computing",
+              "Because PWM pins operate at 400 MHz"
             ],
             "correctIndex": 0,
-            "explanation": "Correct: Approximately 20 mA. Understanding this principle ensures proper circuit function and reliability."
+            "explanation": "analogRead produces 0-1023 (10-bit), while analogWrite accepts 0-255 (8-bit). Scaling is required to prevent overflow."
           },
           {
-            "question": "What does `digitalWrite(pin, LOW)` connect the output pin to internally?",
+            "question": "How many external jumper wires are needed to connect a pushbutton to Arduino using INPUT_PULLUP?",
             "options": [
-              "Ground (0V reference)",
-              "5V power supply",
-              "Analog-to-digital converter"
+              "Exactly 2 wires (one to the digital pin, one to GND)",
+              "4 wires including 5V and external resistors",
+              "1 wire with no ground connection",
+              "6 wires"
             ],
             "correctIndex": 0,
-            "explanation": "Correct: Ground (0V reference). Understanding this principle ensures proper circuit function and reliability."
+            "explanation": "INPUT_PULLUP enables the internal resistor, so you only need two wires: one from the pin to the switch, and one from the switch to GND."
           }
         ]
-      }
+      },
+      "quickCheck": [
+        {
+          "questionId": "l05_s16_q1",
+          "question": "What fundamental property distinguishes digital inputs from analog inputs on an Arduino?",
+          "options": [
+            "Digital inputs measure binary HIGH/LOW states, while analog inputs measure continuous voltage from 0 to 1023",
+            "Digital inputs only work during the daytime",
+            "Analog inputs can only connect to loudspeakers"
+          ],
+          "correctIndex": 0,
+          "explanation": "Digital inputs measure two binary voltage levels (HIGH/LOW), while analog inputs convert continuous voltages to a 10-bit range (0-1023).",
+          "warmupExplanation": "Digital inputs evaluate binary logic states (HIGH/LOW); analog inputs measure continuous voltage gradients (0-1023)."
+        },
+        {
+          "questionId": "l05_s16_q2",
+          "question": "When wiring a pushbutton between an Arduino pin and GND, which code declaration ensures reliable, stable readings?",
+          "options": [
+            "pinMode(pin, INPUT_PULLUP)",
+            "pinMode(pin, OUTPUT)",
+            "digitalWrite(pin, 1023)"
+          ],
+          "correctIndex": 0,
+          "explanation": "`pinMode(pin, INPUT_PULLUP)` enables the internal pull-up resistor, holding the pin HIGH until pressed to GND.",
+          "warmupExplanation": "`INPUT_PULLUP` engages the internal resistor so the input pin stays stable at 5V when the switch is open."
+        }
+      ]
     }
   ],
-  "xpReward": 75
+  "xpReward": 50
 }

@@ -14,6 +14,8 @@ import 'widgets/potentiometer_simulator_widget.dart';
 import 'widgets/rgb_mixer_widget.dart';
 import 'widgets/board_inspector_widget.dart';
 import 'widgets/quiz_checkpoint_widget.dart';
+import 'widgets/quick_check_modal.dart';
+import '../../../domain/models/learner_progress_model.dart';
 import '../../shared/widgets/expandable_lesson_image.dart';
 
 class LessonDetailScreen extends ConsumerStatefulWidget {
@@ -170,6 +172,92 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 18),
                     ),
+                    if (currentStep.quickCheck != null &&
+                        currentStep.quickCheck!.isNotEmpty) ...[
+                      const SizedBox(height: 6),
+                      Builder(builder: (context) {
+                        final qcKey = '${lesson.id}_${currentStep.stepId}';
+                        final qcResult =
+                            activeProgress?.quickCheckResults[qcKey];
+                        Color badgeBg;
+                        Color badgeFg;
+                        String badgeText;
+                        IconData badgeIcon;
+
+                        if (qcResult == null) {
+                          badgeBg =
+                              AppColors.primaryViolet.withValues(alpha: 0.12);
+                          badgeFg = AppColors.primaryViolet;
+                          badgeText = '🧠 Quick Check Available (Optional)';
+                          badgeIcon = Icons.help_outline;
+                        } else {
+                          switch (qcResult.readiness) {
+                            case QuickCheckReadiness.ready:
+                              badgeBg = const Color(0xFFE8F5E9);
+                              badgeFg = const Color(0xFF2E7D32);
+                              badgeText = '🟢 Ready';
+                              badgeIcon = Icons.check_circle;
+                              break;
+                            case QuickCheckReadiness.warmUp:
+                              badgeBg = const Color(0xFFFFF8E1);
+                              badgeFg = const Color(0xFFF57F17);
+                              badgeText = '🟡 Warm Up Review';
+                              badgeIcon = Icons.lightbulb;
+                              break;
+                            case QuickCheckReadiness.notAssessed:
+                              badgeBg = AppColors.surfaceContainerLight;
+                              badgeFg = AppColors.textSecondaryLight;
+                              badgeText = '⚪ Quick Check (Not Assessed)';
+                              badgeIcon = Icons.info_outline;
+                              break;
+                          }
+                        }
+
+                        return Align(
+                          alignment: Alignment.centerLeft,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(8),
+                            onTap: () {
+                              QuickCheckModal.show(
+                                context: context,
+                                lessonId: lesson.id,
+                                submoduleId: currentStep.stepId,
+                                submoduleTitle: currentStep.title,
+                                questions: currentStep.quickCheck!,
+                                onCompleted: (res) {
+                                  ref
+                                      .read(activeProgressProvider.notifier)
+                                      .recordQuickCheckResult(res);
+                                },
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: badgeBg,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(badgeIcon, size: 16, color: badgeFg),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    badgeText,
+                                    style: TextStyle(
+                                      color: badgeFg,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ],
                     const SizedBox(height: 12),
 
                     // Main Interactive Content Area

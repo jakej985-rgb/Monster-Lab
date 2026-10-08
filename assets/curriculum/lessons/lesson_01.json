@@ -1,9 +1,9 @@
 {
   "id": "lesson_01",
-  "title": "What is Arduino & How Does It Work?",
+  "title": "Arduino Fundamentals",
   "summary": "Discover the brain of your robot! Learn what microcontrollers do, explore the pins, and understand how power flows.",
   "tier": "rookie",
-  "estimatedMinutes": 18,
+  "estimatedMinutes": 15,
   "prerequisites": [],
   "componentIds": [
     "comp_uno"
@@ -11,182 +11,485 @@
   "steps": [
     {
       "stepId": "l01_s01",
-      "title": "Meet the Monster Brain",
+      "title": "What Is Arduino?",
       "type": "story",
       "interactiveWidgetType": "visualFlowDiagram",
-      "markdownContent": "A robot needs a brain! The **Arduino Uno** is a small microcontroller development board that reads information from the physical world and commands electronic mechanisms.\n\nIt can read a pushbutton, measure distance with an ultrasonic sensor, turn an LED on or off, control a motor through a driver chip, and talk to other smart devices.\n\nThe Arduino does not magically know what to do. A **program** tells it what to look for and what decisions to make.\n\n```\nSensor (Input) \u2794 Arduino Uno \u2794 Program Decision \u2794 Actuator (Output)\n```\n\nTest the interactive signal flow below to watch how information moves through the brain!"
+      "markdownContent": "Welcome to the Monster Lab! 🤖\n\nEvery monster robot needs a brain to explore the world. That brain is the **Arduino Uno**!\n\nThe Arduino is a friendly little computer board that connects a robot's **senses** to its **actions**:\n- When you press a button or wave your hand, the Arduino notices.\n- It thinks about what happened using your instructions.\n- Then it commands lights to glow, buzzers to beep, or wheels to roll!\n\n```\nSense (Input) ➔ Think (Arduino) ➔ Act (Output)\n```\n\nTap the interactive flow diagram below to see how signals travel through the robot brain!",
+      "quickCheck": [
+        {
+          "questionId": "l01_s01_q1",
+          "question": "What part of a robot helps it decide what to do?",
+          "options": [
+            "A small computer brain",
+            "A shiny coat of paint",
+            "A cardboard storage box"
+          ],
+          "correctIndex": 0,
+          "explanation": "Just like humans use their brains to make choices, a robot uses a computer brain to decide what to do!",
+          "warmupExplanation": "Think about how you decide what game to play. You use your brain! Robots have little computer brains to make choices."
+        },
+        {
+          "questionId": "l01_s01_q2",
+          "question": "If a robot vacuum cleaner bumps into a wall, what does it do next?",
+          "options": [
+            "Senses the bump and turns around",
+            "Disappears into thin air",
+            "Turns into a bowl of soup"
+          ],
+          "correctIndex": 0,
+          "explanation": "Smart machines sense things around them and react. The vacuum feels the bump and steers away!",
+          "warmupExplanation": "Everyday smart machines sense their surroundings and make simple decisions, like turning away from walls."
+        }
+      ]
     },
     {
       "stepId": "l01_s02",
-      "title": "What Is a Microcontroller? Architecture & Vocabulary",
-      "type": "story",
-      "interactiveWidgetType": "visualFlowDiagram",
-      "markdownContent": "A **microcontroller** is a self-contained computer on a single chip, built specifically to interact with electrical hardware. Unlike a desktop computer with a monitor and keyboard, a microcontroller lives inside devices.\n\nIt contains:\n- **CPU (Processor)**: Executes your code instructions up to 16 million times per second (16 MHz).\n- **Flash Memory**: Stores your compiled sketch permanently like instructions carved in stone, even when power is unplugged.\n- **RAM (SRAM)**: Holds temporary variables and sensor numbers like the robot's short-term scratchpad. It clears when power is turned off.\n- **GPIO Pins**: General Purpose Input/Output connections that wire into circuits.\n\n### Core Vocabulary\n- **Microcontroller**: A compact computer engineered to control physical electronics.\n- **Program (Sketch)**: Step-by-step instructions that tell the controller what logic to execute.\n- **Input**: Sensory data flowing **into** the controller from the world.\n- **Output**: A physical voltage or command sent **out** to control hardware."
+      "title": "Meet the Arduino Uno",
+      "type": "physicalTask",
+      "interactiveWidgetType": "boardLabelDragDrop",
+      "markdownContent": "Pick up your **Arduino Uno** board and hold it gently by its edges, just like holding a tasty cracker! 🍪\n\nLook closely at the board. Notice these important landmarks:\n1. **USB Port**: The shiny silver metal box. This is where you plug in the cable to send code and power from your computer!\n2. **Power Jack**: The round black socket. You can plug in a battery pack here when your robot is on the move.\n3. **Reset Button**: The small push button in the corner. Pressing it restarts your program from the very beginning.\n4. **Built-in LED**: A tiny light labeled **'L'** right on the board next to Pin 13.\n5. **Pin Headers**: The long rows of black plastic sockets with little holes along the edges.\n\nTry the matching challenge below to drag each label badge to its matching landmark!",
+      "quickCheck": [
+        {
+          "questionId": "l01_s02_q1",
+          "question": "How should you hold an electronic circuit board like an Arduino?",
+          "options": [
+            "Gently by the outer edges",
+            "By grabbing the delicate metal pins",
+            "With wet hands right out of the sink"
+          ],
+          "correctIndex": 0,
+          "explanation": "Holding circuit boards gently by their outer edges keeps all the delicate electronic parts safe and clean!",
+          "warmupExplanation": "Electronics are friendly but delicate! Hold circuit boards by their plastic edges, just like a favorite trading card."
+        },
+        {
+          "questionId": "l01_s02_q2",
+          "question": "What cable connects your Arduino to your computer to share power and code?",
+          "options": [
+            "A USB cable",
+            "A jump rope",
+            "A garden hose"
+          ],
+          "correctIndex": 0,
+          "explanation": "A USB cable delivers electrical power and transfers your code from the computer into the Arduino!",
+          "warmupExplanation": "Computers use USB cables to talk to printers, game controllers, and Arduino boards."
+        }
+      ]
     },
     {
       "stepId": "l01_s03",
-      "title": "Inputs vs Outputs: Think Like a Robot",
+      "title": "What Is a Microcontroller?",
       "type": "story",
-      "interactiveWidgetType": "inputOutputClassification",
-      "markdownContent": "Robots interact with reality through two fundamental types of hardware:\n\n### 1. Inputs (The Senses)\nSensors collect data from the environment and send electrical signals into the Arduino:\n- **Pushbutton**: Senses physical finger touch\n- **Ultrasonic Sensor**: Measures distance by bouncing sound waves\n- **Potentiometer**: Reads the angle of a rotating knob\n- **Light Sensor (LDR)**: Measures environmental room brightness\n\n### 2. Outputs (The Muscles & Voices)\nActuators receive voltage commands from the Arduino to change the physical world:\n- **LED**: Shines colored light\n- **Piezo Buzzer**: Vibrates to create beeps and musical tones\n- **4-Digit Display**: Shows numbers and scores\n- **Servo Motor**: Moves arms and steers robot wheels\n\n### Classification Mission\nClassify each hardware component in the mission below as an **Input** or **Output**!"
+      "markdownContent": "Look right at the middle of your Arduino board. Do you see that black rectangular chip with shiny metal legs? That is the **Microcontroller**!\n\nLet's break down that big word:\n- **Micro** means super small!\n- **Controller** means it is in charge!\n\nA microcontroller is a complete computer shrunk down onto a single chip. Unlike a desktop computer or tablet with a giant screen, a microcontroller is built to live inside physical devices:\n- **Microwave ovens**: Counts seconds and beeps when your popcorn is hot.\n- **Washing machines**: Controls water valves and spins the drum.\n- **Robot arms**: Reads joint angles and moves motors.\n\nInside this tiny chip lives a **processor** (the thinker) and **memory** (a notebook that stores your code even when you unplug power).",
+      "quickCheck": [
+        {
+          "questionId": "l01_s03_q1",
+          "question": "Which of these everyday machines has a tiny computer inside it?",
+          "options": [
+            "A microwave oven with a digital timer",
+            "A plain wooden pencil",
+            "A metal spoon"
+          ],
+          "correctIndex": 0,
+          "explanation": "Microwaves use tiny microcontroller computers to count seconds, read button presses, and heat food!",
+          "warmupExplanation": "Many household gadgets that beep, show numbers, or have buttons have tiny computers inside them."
+        },
+        {
+          "questionId": "l01_s03_q2",
+          "question": "Why does a computer chip need memory?",
+          "options": [
+            "To store instructions so it knows what to do",
+            "To make delicious snacks",
+            "To grow bigger leaves"
+          ],
+          "correctIndex": 0,
+          "explanation": "Memory holds the instructions and numbers a computer needs to do its job!",
+          "warmupExplanation": "Just like you use memory to remember a phone number or story, computers use memory to remember code instructions."
+        }
+      ]
     },
     {
       "stepId": "l01_s04",
-      "title": "Digital vs Analog Signals & Prediction",
+      "title": "Inputs and Outputs",
       "type": "visualExplanation",
-      "interactiveWidgetType": "arduinoBoardInspector",
-      "markdownContent": "Electronics communicate using two distinct types of electrical signals:\n\n### 1. Digital Signals (Binary)\nDigital signals have only **two discrete states**:\n- **HIGH**: +5.0 Volts (ON / TRUE / Binary 1)\n- **LOW**: 0.0 Volts (OFF / FALSE / Binary 0)\nLike a simple light switch, a digital pin is either fully powered or off.\n\n### 2. Analog Signals (Continuous)\nAnalog signals can represent **any smooth value** across a continuous range between 0.0V and 5.0V.\nThe Arduino uses an internal **Analog-to-Digital Converter (ADC)** on pins A0\u2013A5 to convert voltage into an integer from **0 to 1023**.\n\nExplore both signal modes below and test your prediction on potentiometer behavior!"
+      "interactiveWidgetType": "inputOutputClassification",
+      "markdownContent": "Robots interact with the world through two main kinds of parts: **Inputs** and **Outputs**.\n\n### 1. Inputs (The Senses) 👀\nInputs bring information **IN** from the physical world to the Arduino:\n- **Pushbutton**: Senses when your finger presses down.\n- **Light Sensor**: Measures how bright or dark the room is.\n- **Distance Sensor**: Measures how far away an obstacle is.\n\n### 2. Outputs (The Muscles and Voice) 💡\nOutputs send actions **OUT** into the physical world from the Arduino:\n- **LED Light**: Shines bright colors.\n- **Buzzer**: Makes musical beeps and siren sounds.\n- **Motor**: Spins wheels and waves robotic arms.\n\n```\nWorld ➔ [Input / Sense] ➔ Arduino Brain ➔ [Output / Action] ➔ World\n```\n\nTest your detective skills in the sorting activity below!",
+      "quickCheck": [
+        {
+          "questionId": "l01_s04_q1",
+          "question": "When you push a doorbell button, is the button an input or an output?",
+          "options": [
+            "An input sending a signal in",
+            "An output making a ringing sound",
+            "A power cable"
+          ],
+          "correctIndex": 0,
+          "explanation": "Pushing the button sends information IN to the system, so the button is an input!",
+          "warmupExplanation": "Inputs send information IN to the brain (like a button press). Outputs send actions OUT (like a chime)."
+        },
+        {
+          "questionId": "l01_s04_q2",
+          "question": "When a flashlight bulb shines bright light in a dark room, is the bulb an input or an output?",
+          "options": [
+            "An output creating light",
+            "An input sensing the dark",
+            "A battery holder"
+          ],
+          "correctIndex": 0,
+          "explanation": "The bulb creates light and sends it OUT into the room, making it an output!",
+          "warmupExplanation": "Outputs do things in the physical world, like shining lights, making sounds, or moving motors."
+        }
+      ]
     },
     {
       "stepId": "l01_s05",
-      "title": "Meet the Arduino Uno: Physical Hardware Mission",
-      "type": "physicalTask",
-      "interactiveWidgetType": "boardLabelDragDrop",
-      "markdownContent": "Take your Arduino Uno development board in your hands. Look closely at the surface-mount components, pin headers, and silk-screen labels.\n\n### Key Board Landmarks to Identify:\n1. **USB Type-B Port**: Connects to your PC for code uploading and delivers 5V DC power.\n2. **DC Barrel Jack**: External power input (accepts 7V\u201312V from battery pack or wall adapter).\n3. **Digital Pins 0\u201313**: Top header pins for binary inputs and outputs (pins with `~` support PWM).\n4. **Analog Pins A0\u2013A5**: Bottom right header reading continuous sensory voltages.\n5. **Power Rails (5V & 3.3V)**: Regulated power sources for sensors and breadboard circuits.\n6. **GND (Ground)**: The 0V reference potential and return path for all electricity.\n7. **Reset Button**: Restarts your program from the very beginning of `setup()`.\n8. **Built-in LED**: Amber test LED connected internally to Digital Pin 13.\n\nDrag and match each label badge to its corresponding landmark below!"
+      "title": "Digital vs Analog",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "arduinoBoardInspector",
+      "markdownContent": "Electronic signals talk to the Arduino in two different ways:\n\n### 1. Digital Signals: Two Clear Choices 💡\nDigital is like a standard light switch. It is either completely **ON** or completely **OFF**:\n- **HIGH**: Full power (+5 Volts) ➔ ON!\n- **LOW**: Zero power (0 Volts) ➔ OFF!\nThere is no halfway state in digital logic.\n\n### 2. Analog Signals: A Smooth Slide 🎚️\nAnalog is like a volume dial or dimmer slider. It can be any smooth value along a range:\n- Whisper quiet, medium sound, or full blast!\n- Nighttime dark, twilight, or blazing sunshine!\n\nOn the Arduino, analog inputs measure voltages smoothly from **0 all the way to 1023**.\n\nUse the interactive inspector below to flip a digital switch and slide an analog voltage knob!",
+      "quickCheck": [
+        {
+          "questionId": "l01_s05_q1",
+          "question": "A standard light switch is either flipped ON or flipped OFF. Is this digital or analog?",
+          "options": [
+            "Digital (two clear states)",
+            "Analog (a smooth range)",
+            "Disconnected"
+          ],
+          "correctIndex": 0,
+          "explanation": "Digital signals have only two states (ON or OFF), just like a regular light switch!",
+          "warmupExplanation": "Digital means two simple choices: ON or OFF, HIGH or LOW. Think of a simple light switch."
+        },
+        {
+          "questionId": "l01_s05_q2",
+          "question": "A volume knob turns smoothly from whisper-quiet to super loud. Is that digital or analog?",
+          "options": [
+            "Analog (smooth range with many levels)",
+            "Digital (only ON or OFF)",
+            "Empty"
+          ],
+          "correctIndex": 0,
+          "explanation": "Because the volume changes smoothly through many levels in between, it is an analog signal!",
+          "warmupExplanation": "Analog signals can be any level in between, like sliding a volume bar up and down."
+        }
+      ]
     },
     {
       "stepId": "l01_s06",
-      "title": "Why Power and Ground Matter: Complete Circuits",
-      "type": "story",
-      "interactiveWidgetType": "groundTroubleshooting",
-      "markdownContent": "Electricity can only do work when it flows in an **unbroken, closed loop**.\n\nIn every electronic circuit:\n1. Energy leaves the positive power supply (+5V).\n2. It travels through wires and components (resistors, LEDs, sensors).\n3. It returns safely to **Ground (GND)**.\n\n```\n+5V Power Rail \u2794 Current-Limiting Resistor \u2794 LED Anode \u2794 GND Return Rail\n```\n\n> **The Ground Invariant**: GND is not a trash bin where electricity disappears! It is the zero-volt reference and the return highway for electron current. If the GND wire is loose or disconnected, the circuit opens, current drops to 0 mA, and nothing works.\n\nTest the 4 circuit conditions below to observe normal, open, loose, and shorted ground connections."
+      "title": "Meet the Pins",
+      "type": "physicalTask",
+      "markdownContent": "Look along the top and bottom edges of your Arduino Uno. You will see long black rows with little square sockets called **Pin Headers**!\n\nPins are like hands and ears for the Arduino. They let you plug in jumper wires to connect sensors, buttons, and lights.\n\n### 1. Top Header: Digital Pins (0 to 13)\nLook at the numbers printed along the top row: **0, 1, 2, ... all the way to 13**.\n- These pins can be digital inputs or digital outputs.\n- Notice Pin 13: It is wired to the built-in amber light on the board!\n\n### 2. Bottom Right Header: Analog In (A0 to A5)\nLook at the bottom right row labeled **ANALOG IN**:\n- The letter **'A'** stands for **Analog**!\n- Pins **A0, A1, A2, A3, A4, A5** read smooth sensor values from knobs and sensors.\n\n### 3. Bottom Left Header: Power Pins\nLook at the bottom left row labeled **POWER**:\n- Find **5V** and **3.3V** (power supplies).\n- Find **GND** (Ground).\n\nTouch each header gently with your finger to find Digital Pin 13, Analog Pin A0, and GND!",
+      "quickCheck": [
+        {
+          "questionId": "l01_s06_q1",
+          "question": "Why does an Arduino have little pin holes along its edges?",
+          "options": [
+            "To plug in jumper wires to connect circuits",
+            "To let cool air blow through",
+            "To hold colored crayons"
+          ],
+          "correctIndex": 0,
+          "explanation": "Pin headers let you plug jumper wires in so the Arduino can communicate with your circuits!",
+          "warmupExplanation": "Pins are tiny sockets where wires plug in, connecting the Arduino brain to lights and sensors."
+        },
+        {
+          "questionId": "l01_s06_q2",
+          "question": "What does the letter 'A' stand for on pins labeled A0 through A5?",
+          "options": [
+            "Analog",
+            "Airplane",
+            "Action"
+          ],
+          "correctIndex": 0,
+          "explanation": "The 'A' stands for Analog! Pins A0 to A5 read smooth, continuous signals from sensors.",
+          "warmupExplanation": "Labels give us helpful clues. 'A' stands for Analog, designed for reading smooth ranges."
+        }
+      ]
     },
     {
       "stepId": "l01_s07",
-      "title": "How the Robot Brain Makes Decisions",
-      "type": "story",
-      "interactiveWidgetType": "decisionSimulator",
-      "markdownContent": "The microcontroller brain doesn't guess what to do\u2014it processes a clear logic sequence:\n\n```\nCondition (Input) \u2794 Decision (Code Logic) \u2794 Action (Output)\n```\n\n### The 3-Step Decision Pipeline:\n1. **Input**: A finger pushes the button, closing the contacts and delivering 5V to Pin 2.\n2. **Decision**: The microcontroller runs code: `if (digitalRead(2) == HIGH)`. The condition evaluates to **TRUE**.\n3. **Action**: The program commands the output: `digitalWrite(13, HIGH);`, powering on the Pin 13 LED!\n\nPress and hold the virtual tactile button below to watch the decision pipeline evaluate live."
+      "title": "Power and Ground",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "groundTroubleshooting",
+      "markdownContent": "Electricity is like a train on a circular railway track: it must travel in a **complete, unbroken loop**! That loop is called a **circuit**.\n\n### The Two Halves of a Circuit:\n1. **Power (+5V)**: The starting station where electricity begins its journey with energy.\n2. **Ground (GND)**: The return station where electricity safely comes home.\n\n```\n+5V Station ➔ Jumper Wire ➔ LED Light (Glows!) ➔ Jumper Wire ➔ GND Return Station\n```\n\n> **The Golden Ground Rule**: GND is not a trash can where electricity disappears! It is the return path. If the GND wire is disconnected, the train track is broken, the circuit opens, and nothing works!\n\nExplore the 4 circuit conditions below to see what happens when the Ground connection is connected, loose, or broken!",
+      "quickCheck": [
+        {
+          "questionId": "l01_s07_q1",
+          "question": "What does electricity need in order to flow and light up a bulb?",
+          "options": [
+            "A complete, unbroken loop from power to ground",
+            "A broken wire with a big gap in it",
+            "A cold glass of lemonade"
+          ],
+          "correctIndex": 0,
+          "explanation": "Electricity can only flow when there is a complete, unbroken circle (circuit) from power back to ground!",
+          "warmupExplanation": "The word 'circuit' means circle! Electricity must travel in a full circle from power back to ground."
+        },
+        {
+          "questionId": "l01_s07_q2",
+          "question": "What does the label 'GND' stand for on the Arduino board?",
+          "options": [
+            "Ground — the return path for electric current",
+            "Giant Number Dial",
+            "Game Never Done"
+          ],
+          "correctIndex": 0,
+          "explanation": "GND stands for Ground! It is the essential return path for electricity in every circuit.",
+          "warmupExplanation": "GND is short for Ground. In electronics, Ground is the safe return route for electric current."
+        }
+      ]
     },
     {
       "stepId": "l01_s08",
-      "title": "Your First Instruction: Deconstructing digitalWrite",
-      "type": "codeExperiment",
-      "interactiveWidgetType": "codeDeconstruction",
-      "markdownContent": "Before writing whole sketches, let's deconstruct the most famous instruction in robotics:\n\n```cpp\ndigitalWrite(13, HIGH);\n```\n\n### What Each Token Means:\n- `digitalWrite`: The function name. Commands a digital pin to output voltage.\n- `(` and `)`: Parentheses containing the arguments.\n- `13`: The pin number. Digital Pin 13 is connected to the onboard amber LED.\n- `,`: Comma separating the target pin from the state.\n- `HIGH`: The output state. Connects Pin 13 to +5 Volts.\n- `;`: The semicolon. Every instruction in C++ terminates with a semicolon, like a period.\n\nTap each code token below to inspect its job, then predict and simulate its hardware execution!"
+      "title": "How Arduino Makes Decisions",
+      "type": "story",
+      "interactiveWidgetType": "decisionSimulator",
+      "markdownContent": "How does the Arduino brain make smart choices? It uses a 3-step decision pipeline:\n\n```\n1. SENSE (Input) ➔ 2. DECIDE (Code) ➔ 3. ACT (Output)\n```\n\n### The Robot Rule: IF / THEN\nRobots don't guess or daydream. They follow clear rules called **conditions**:\n- **IF** the pushbutton is pressed (Input is HIGH)...\n- **THEN** turn the flashlight ON (Output is HIGH)!\n- **OTHERWISE** (if the button is released)...\n- **THEN** turn the flashlight OFF (Output is LOW)!\n\nThe microcontroller checks these rules thousands of times every single second without ever getting tired!\n\nPress and hold the virtual button below to watch the decision pipeline evaluate live!",
+      "quickCheck": [
+        {
+          "questionId": "l01_s08_q1",
+          "question": "If you give a robot the rule: 'IF you see a red light, THEN stop,' what will it do when it sees red?",
+          "options": [
+            "Stop right away",
+            "Speed up as fast as possible",
+            "Spin in circles and laugh"
+          ],
+          "correctIndex": 0,
+          "explanation": "Robots strictly follow rules! When the condition happens (red light), it executes the action (stop).",
+          "warmupExplanation": "Robots follow simple 'IF this happens, THEN do that' rules. They do exactly what the rule says."
+        },
+        {
+          "questionId": "l01_s08_q2",
+          "question": "Can an Arduino guess what you want if you don't give it any code instructions?",
+          "options": [
+            "No, it can only follow instructions we give it",
+            "Yes, it reads human minds",
+            "Yes, it dreams on its own"
+          ],
+          "correctIndex": 0,
+          "explanation": "Computers do not guess or read minds. They need clear instructions from us to know what to do!",
+          "warmupExplanation": "Microcontrollers are loyal helpers, but they only do what our program code tells them to do."
+        }
+      ]
     },
     {
       "stepId": "l01_s09",
-      "title": "Trust but Verify: Scientific Engineering Method",
-      "type": "story",
-      "interactiveWidgetType": "engineeringPrediction",
-      "markdownContent": "Great robotics engineers never blindly upload code from the internet. They use the **Scientific Engineering Method**:\n\n```\nRead Code \u2794 Predict Outcome \u2794 Upload \u2794 Observe \u2794 Verify \u2794 Change & Test\n```\n\nBefore uploading any sketch to an Arduino board, always ask:\n1. Which pin number does this code command?\n2. Is my physical jumper wire plugged into that exact pin?\n3. What do the constants and delays mean?\n4. What physical motion or light do I predict will happen?\n\nPractice this habit below: Predict what happens when `HIGH` is replaced with `LOW`!"
+      "title": "Code to Hardware",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "codeDeconstruction",
+      "markdownContent": "Now let's connect words in code to physical hardware pins!\n\nHere is one of the most famous instructions in all of robotics:\n\n```cpp\ndigitalWrite(13, HIGH);\n```\n\nLet's break down what each word tells the Arduino:\n- `digitalWrite`: The action command! Tells the Arduino to send power to a digital pin.\n- `(` and `)`: Parentheses that hold the details.\n- `13`: The target pin! Digital Pin 13 is connected to the built-in amber LED on your board.\n- `,`: A comma that separates the pin number from the state.\n- `HIGH`: Turn power ON (+5 Volts)! (If we wrote `LOW`, it would turn power OFF).\n- `;`: The semicolon! Every statement ends with a semicolon, just like a period ends a sentence.\n\nTap each code token below to inspect its job and watch it control the hardware!",
+      "quickCheck": [
+        {
+          "questionId": "l01_s09_q1",
+          "question": "In the command digitalWrite(13, HIGH);, what does the number 13 mean?",
+          "options": [
+            "Which pin number to turn on",
+            "How many minutes to wait",
+            "The robot's age"
+          ],
+          "correctIndex": 0,
+          "explanation": "The number 13 tells the Arduino exactly which pin header to send electricity to!",
+          "warmupExplanation": "Commands tell the board which pin to use. The number specifies the exact pin connection."
+        },
+        {
+          "questionId": "l01_s09_q2",
+          "question": "What does the word HIGH mean in digitalWrite(13, HIGH);?",
+          "options": [
+            "Turn power ON (+5V)",
+            "Turn power OFF (0V)",
+            "Lift the board up high"
+          ],
+          "correctIndex": 0,
+          "explanation": "In digital code, HIGH means turn the power ON so current flows to your component!",
+          "warmupExplanation": "Think of HIGH like flipping a switch ON. LOW means flipping the switch OFF."
+        }
+      ]
     },
     {
       "stepId": "l01_s10",
-      "title": "Real-World Systems: Obstacle Avoidance & Robot Vacuums",
-      "type": "visualExplanation",
-      "interactiveWidgetType": "realWorldSystemDiagram",
-      "markdownContent": "The simple **Input \u2794 Decision \u2794 Output** pattern you just learned is the foundation of modern automation:\n\n- **Robot Vacuums**: Ultrasonic sensor measures distance to wall \u2794 if distance < 20cm \u2794 reverse right wheel to steer away.\n- **Automatic Supermarket Doors**: Motion sensor detects approaching customer \u2794 if motion detected \u2794 slide glass doors open for 5 seconds.\n- **Security Intruder Alarms**: Laser tripwire monitors doorway \u2794 if beam broken \u2794 blast siren and flash strobe lights.\n\nSelect each automated system below and simulate how it reacts to environmental triggers!"
+      "title": "Your First Engineering Experiment",
+      "type": "physicalTask",
+      "interactiveWidgetType": "engineeringPrediction",
+      "markdownContent": "Great engineers don't just guess what happens—they use the **Scientific Engineering Method**:\n\n```\n1. Read Code ➔ 2. Predict Outcome ➔ 3. Upload & Test ➔ 4. Observe ➔ 5. Verify\n```\n\n### The Prediction Challenge:\nLook at your Arduino Uno. There is a tiny amber LED labeled **'L'** connected directly to **Pin 13**.\n\nImagine our code changes from `HIGH` to `LOW`:\n```cpp\ndigitalWrite(13, LOW);\n```\n\nBefore testing, ask yourself:\n- What pin is being commanded? (Pin 13!)\n- What state is being sent? (`LOW` means 0 Volts / power OFF!)\n- What do you predict the LED will do?\n\nTest your prediction in the interactive experiment below!",
+      "quickCheck": [
+        {
+          "questionId": "l01_s10_q1",
+          "question": "What should an engineer do BEFORE running a test or experiment?",
+          "options": [
+            "Predict what they expect will happen",
+            "Close their eyes and hope for the best",
+            "Toss the board across the room"
+          ],
+          "correctIndex": 0,
+          "explanation": "Making a thoughtful prediction helps you see if your experiment worked the way you expected!",
+          "warmupExplanation": "Predicting means thinking ahead about what should happen before you run a test."
+        },
+        {
+          "questionId": "l01_s10_q2",
+          "question": "Where is the built-in test LED located on your Arduino Uno board?",
+          "options": [
+            "Connected to Pin 13, labeled with the letter 'L'",
+            "Hidden inside the USB plug",
+            "Underneath the wooden table"
+          ],
+          "correctIndex": 0,
+          "explanation": "The built-in LED is right on the board next to Pin 13 and labeled 'L'!",
+          "warmupExplanation": "The Arduino has a tiny light on the board labeled 'L' so you can test code without extra wires."
+        }
+      ]
     },
     {
       "stepId": "l01_s11",
-      "title": "Troubleshooting Challenge: The Silent LED",
+      "title": "Basic Troubleshooting",
       "type": "story",
       "interactiveWidgetType": "interactiveTroubleshooting",
-      "markdownContent": "A fellow robotics student calls you over in frustration: *\"I uploaded my sketch, but my LED refuses to light up!\"*\n\nInstead of randomly moving wires or rewriting code, follow the **4-Step Diagnostic Triage**:\n1. **Check Power**: Is the green ON LED lit on the Arduino?\n2. **Check Code**: What pin number is commanded `HIGH` in `digitalWrite`?\n3. **Check Physical Wiring**: Which header pin is the physical jumper wire actually plugged into?\n4. **Identify Mismatch**: Compare code pin vs physical pin!\n\nInspect the test bench below, find the pin mismatch bug, and fix the circuit!"
+      "markdownContent": "What happens when your circuit doesn't work? Don't worry—every engineer runs into bugs! You just need to become an **Engineering Detective**! 🕵️\n\n### The 3 Clues to Check:\n1. **Check Power**: Is the little green light labeled **'ON'** lit on the Arduino? If not, check if the USB cable is firmly plugged in.\n2. **Check the Pin Match**: Look at your code. Did the code command **Pin 13**, but the wire is plugged into **Pin 12**? If the pins don't match, the signal won't reach your part!\n3. **Check Ground (GND)**: Is the ground wire securely plugged in? Remember, electricity can't flow without a complete return path.\n\nTake on the troubleshooting mission below: find the mismatched pin and fix the circuit!",
+      "quickCheck": [
+        {
+          "questionId": "l01_s11_q1",
+          "question": "If an LED light does not turn on, what is the best first thing to check?",
+          "options": [
+            "Check that wires are plugged into the right pins and firmly connected",
+            "Throw all the parts into the trash",
+            "Paint the wires with colorful glitter"
+          ],
+          "correctIndex": 0,
+          "explanation": "Checking that wires are firmly connected to the correct pins fixes most electronics puzzles!",
+          "warmupExplanation": "When something doesn't work, stay calm and check connections first: are wires in the right spots?"
+        },
+        {
+          "questionId": "l01_s11_q2",
+          "question": "If your code commands Pin 13, but your wire is plugged into Pin 8, what will happen?",
+          "options": [
+            "The part on Pin 8 will not receive the command",
+            "The computer will turn into a pumpkin",
+            "Pin 8 will automatically slide over to Pin 13"
+          ],
+          "correctIndex": 0,
+          "explanation": "Code commands specific pins! If the wire is plugged into the wrong pin, the signal won't reach it.",
+          "warmupExplanation": "Code and wires must match! If code commands Pin 13, the wire must be connected to Pin 13."
+        }
+      ]
     },
     {
       "stepId": "l01_s12",
-      "title": "Final Review & Self-Reflection",
-      "type": "story",
-      "interactiveWidgetType": "miniQuiz",
-      "markdownContent": "Congratulations on completing your first robotics investigation! Let's review the fundamental principles:\n\n- The **Arduino Uno** is a microcontroller development board powered by the **ATmega328P chip**.\n- **Inputs** collect sensory data; **Outputs** perform physical work in the world.\n- **Digital signals** are strictly binary (0V or 5V); **Analog signals** represent smooth continuous ranges (0\u20131023 ADC).\n- Circuits require an unbroken loop: current flows from **+5V**, through components, and returns safely through **GND**.\n- Code instructions like `digitalWrite(pin, state);` command specific pins, so physical wiring must match code exactly.\n\nComplete the 4-question self-reflection check below before tackling the final Knowledge Check!"
-    },
-    {
-      "stepId": "l01_s13",
-      "title": "Comprehensive Knowledge Check",
+      "title": "Review and Challenge",
       "type": "quizCheckpoint",
-      "markdownContent": "Test your mastery of microcontrollers, signal types, power paths, and code prediction with this 8-question knowledge check.",
+      "markdownContent": "Hooray! 🎉 You have completed your tour of the Arduino Uno robot brain!\n\nLet's review the big ideas you mastered:\n- The **Arduino Uno** is a microcontroller development board that serves as the brain of your robot.\n- A **microcontroller** is a complete computer on a single chip.\n- **Inputs** gather senses from the world; **Outputs** perform physical actions.\n- **Digital** signals have two states (HIGH/LOW); **Analog** signals cover a smooth range.\n- Circuits require a complete loop from **Power (+5V)** through components and back to **Ground (GND)**.\n- Code commands like `digitalWrite(13, HIGH);` tell specific pins what to do.\n\nPut on your detective hat and complete the final Knowledge Check below to earn your XP!",
+      "quickCheck": [
+        {
+          "questionId": "l01_s12_q1",
+          "question": "What is the main role of the Arduino Uno in a robotics project?",
+          "options": [
+            "To act as the brain reading sensors and controlling parts",
+            "To serve as a heavy paperweight",
+            "To play loud music like a radio"
+          ],
+          "correctIndex": 0,
+          "explanation": "The Arduino is the brain of your robot, taking in sensor data and commanding outputs!",
+          "warmupExplanation": "Remember our main big idea: the Arduino Uno is the brain that brings robots to life."
+        },
+        {
+          "questionId": "l01_s12_q2",
+          "question": "Why do we take quizzes and challenges at the end of a lesson?",
+          "options": [
+            "To celebrate what we learned and prove our new skills",
+            "To erase our memory of what we did",
+            "To lose points and start over"
+          ],
+          "correctIndex": 0,
+          "explanation": "Challenges help review key concepts, celebrate your progress, and earn XP!",
+          "warmupExplanation": "Reviews help lock in your new skills and show how much you've learned as a young engineer."
+        }
+      ],
       "interactiveConfig": {
-        "question": "What is GND used for in a typical circuit?",
+        "question": "What is the Arduino Uno?",
         "options": [
-          "Unlimited power",
-          "A common reference and return path",
-          "Storing the program"
+          "A microcontroller board that acts as a robot brain",
+          "A mechanical toy car",
+          "A computer monitor"
         ],
-        "correctIndex": 1,
-        "explanation": "Ground (GND) is the 0V reference potential and essential return path for electric current.",
+        "correctIndex": 0,
+        "explanation": "The Arduino Uno is a microcontroller development board that acts as the brain for your robot projects.",
         "questions": [
           {
-            "question": "What is a microcontroller?",
+            "question": "What is the Arduino Uno?",
             "options": [
-              "A small computer designed to control electronics",
-              "A battery",
-              "A mechanical switch"
+              "A microcontroller board that acts as a robot brain",
+              "A mechanical toy car",
+              "A computer monitor"
             ],
             "correctIndex": 0,
-            "explanation": "A microcontroller is a specialized chip combining CPU, memory, and IO peripherals to control hardware."
+            "explanation": "The Arduino Uno is a microcontroller development board that acts as the brain for your robot projects."
           },
           {
-            "question": "A distance sensor sends information to Arduino. Is it an input or output?",
+            "question": "A distance sensor measures how close an object is. Is it an input or an output?",
             "options": [
-              "Input",
-              "Output",
+              "Input (senses the world)",
+              "Output (takes physical action)",
               "Power supply"
             ],
             "correctIndex": 0,
-            "explanation": "Distance sensors gather environmental telemetry and feed data into the Arduino, making them inputs."
+            "explanation": "Distance sensors measure the physical world and feed information into the Arduino, making them inputs."
           },
           {
-            "question": "An LED controlled by Arduino is an example of what?",
+            "question": "An LED light controlled by the Arduino is an example of what?",
             "options": [
               "Input",
               "Output",
               "Ground"
             ],
             "correctIndex": 1,
-            "explanation": "LEDs produce visual illumination based on controller pin voltages, making them outputs."
+            "explanation": "LED lights produce visual illumination when commanded by the Arduino, making them outputs."
           },
           {
-            "question": "What is GND used for in a typical circuit?",
+            "question": "What does GND stand for in an electronic circuit?",
             "options": [
-              "Unlimited power",
-              "A common reference and return path",
-              "Storing the program"
-            ],
-            "correctIndex": 1,
-            "explanation": "Ground (GND) is the 0V reference potential and essential return path for electric current."
-          },
-          {
-            "question": "What does HIGH represent in a simple digital output?",
-            "options": [
-              "The output's high/on state (+5V)",
-              "A program error",
-              "A sensor failure"
+              "Ground — the return path for electrical current",
+              "Green Night Light",
+              "Giant Number Dial"
             ],
             "correctIndex": 0,
-            "explanation": "In 5V digital logic, HIGH commands the output transistor to connect to the positive 5V supply rail."
+            "explanation": "Ground (GND) is the 0V reference point and the safe return path for electric current."
           },
           {
-            "question": "What does \"13\" mean in \"digitalWrite(13, HIGH);\"?",
+            "question": "What does HIGH mean when sent to a digital pin?",
             "options": [
-              "The pin being controlled",
-              "The amount of memory",
-              "The Arduino speed"
+              "The pin is turned ON (+5V)",
+              "The pin is broken",
+              "The pin is turned OFF"
             ],
             "correctIndex": 0,
-            "explanation": "The first parameter of digitalWrite specifies the target hardware pin on the ATmega328P header."
+            "explanation": "In 5V digital electronics, HIGH connects the pin to the positive +5V power rail, turning it ON."
           },
           {
-            "question": "A potentiometer produces a changing voltage as it turns. Is this digital or analog information?",
+            "question": "In digitalWrite(13, HIGH);, what does the number 13 mean?",
             "options": [
-              "Analog",
-              "Digital only",
+              "The pin number being controlled",
+              "The speed of the Arduino",
+              "The number of seconds to wait"
+            ],
+            "correctIndex": 0,
+            "explanation": "The first number in digitalWrite tells the Arduino which pin on the board header to command."
+          },
+          {
+            "question": "A volume knob turns smoothly from low to high. Is that digital or analog?",
+            "options": [
+              "Analog (a smooth range of values)",
+              "Digital (only two states)",
               "Neither"
             ],
             "correctIndex": 0,
-            "explanation": "Potentiometers output a continuously variable voltage division ratio between 0V and 5V."
+            "explanation": "Because a volume knob moves continuously through a smooth range of levels, it is an analog signal."
           },
           {
-            "question": "Why should you understand code before uploading it?",
+            "question": "If code commands Pin 13 to turn ON, but the LED wire is plugged into Pin 7, what is the problem?",
             "options": [
-              "So you can predict behavior and troubleshoot problems",
-              "Arduino refuses copied code",
-              "Every program must be memorized"
+              "A pin mismatch between code and wiring",
+              "The Arduino is out of memory",
+              "The USB cable is backwards"
             ],
             "correctIndex": 0,
-            "explanation": "Systematic programmers analyze pin assignments and logic to predict behavior before applying electrical power."
+            "explanation": "Your physical wiring must always match the pin numbers commanded in your code!"
           }
         ]
       }

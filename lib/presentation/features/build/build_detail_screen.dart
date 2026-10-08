@@ -441,7 +441,8 @@ class _BuildDetailScreenState extends ConsumerState<BuildDetailScreen> {
                 if (currentPhase.safetyCallout != null) ...[
                   const SizedBox(height: 10),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 10),
                     decoration: BoxDecoration(
                       color: AppColors.danger.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(10),

@@ -1,232 +1,462 @@
 {
   "id": "lesson_07",
-  "title": "RGB LED: Mixing Colors with PWM",
-  "summary": "Synthesize millions of colors using Pulse Width Modulation and additive optical color physics.",
-  "tier": "rookie",
-  "estimatedMinutes": 20,
+  "title": "Sensors & Reading the Real World",
+  "summary": "Turn the real world into data! Learn digital and analog sensors, calibrate thresholds, and command outputs.",
+  "tier": "builder",
+  "estimatedMinutes": 18,
   "prerequisites": [
-    "lesson_05"
+    "lesson_06"
   ],
   "componentIds": [
     "comp_uno",
-    "comp_breadboard"
+    "comp_01",
+    "comp_19"
   ],
   "steps": [
     {
       "stepId": "l07_s01",
-      "title": "Expressive Monsters: Crafting Living Light",
+      "title": "What Is a Sensor?",
       "type": "story",
-      "markdownContent": "Robots need emotion and visual expression! By combining three primary wavelengths of light\u2014Red, Green, and Blue\u2014at varying intensities, we can create any color in the visible rainbow, from energetic yellow to menacing purple or calm cyan.\n\nBecause the Arduino Uno does not have true analog output voltage DACs on its digital headers, we use high-speed silicon pulsing\u2014**Pulse Width Modulation (PWM)**\u2014to fool the human eye into perceiving smooth brightness gradients!\n\n```\nTimer Register OCR1A \u2794 High-Speed 490Hz Pulse Train \u2794 Duty Cycle Average \u2794 Eye Cone Cells \u2794 Perceived Color\n```"
+      "markdownContent": "Welcome to the sensory world of robotics! Just like humans and friendly lab monsters use eyes to see, ears to hear, and skin to feel warmth, your Arduino needs electronic senses to understand what is happening around it.\n\nWithout sensors, a microcontroller is completely blind and deaf—it can only run pre-programmed timers over and over. A **sensor** is an electronic component that detects a physical condition in the real world (such as light brightness, acoustic sound waves, warmth, proximity, or motion) and transforms it into an electrical signal that your Arduino can measure.\n\n### The Robot Perception Loop:\n```\nReal-World Event (Hand getting close) \u2794 Sensor (Echolocation ping) \u2794 Electrical Signal (Voltage / Pulse) \u2794 Arduino Brain (Decision Logic) \u2794 Output Action (Alarm LED glows!)\n```\n\nIn this mission, you will unlock the superpower of robotic perception using both digital and analog sensors, learn how to calibrate smart decision thresholds, and connect real-world data directly to monster actions!",
+      "quickCheck": [
+        {
+          "questionId": "l07_s01_q1",
+          "question": "What is the primary role of a sensor in an electronics system?",
+          "options": [
+            "It measures physical events in the real world and turns them into electrical signals",
+            "It provides battery power to the entire circuit",
+            "It spins motors to move a robot across the room"
+          ],
+          "correctIndex": 0,
+          "explanation": "Sensors detect physical conditions like light, sound, or distance and convert them into electrical data that the Arduino can read.",
+          "warmupExplanation": "Think of your own senses: your eyes detect light and your ears detect sound. Electronic sensors do the exact same thing for robots!"
+        },
+        {
+          "questionId": "l07_s01_q2",
+          "question": "Which of the following is an example of an electronic sensor detecting the environment?",
+          "options": [
+            "A photoresistor detecting that the room lights were turned off",
+            "An LED emitting red light to signal an alert",
+            "A speaker playing a warning alarm beep"
+          ],
+          "correctIndex": 0,
+          "explanation": "A photoresistor detects changes in ambient light levels, making it an input sensor. LEDs and speakers are output devices.",
+          "warmupExplanation": "Sensors are inputs that listen to the world, while lights, speakers, and motors are outputs that take action."
+        }
+      ]
     },
     {
       "stepId": "l07_s02",
-      "title": "Prior Knowledge Check: Diodes & Voltage Outputs",
-      "type": "story",
-      "interactiveWidgetType": "priorKnowledgeCheck",
-      "interactiveConfig": {
-        "questions": [
-          {
-            "question": "How does a Light Emitting Diode (LED) generate illumination?",
-            "options": [
-              "Forward electric current excites electrons across a semiconductor bandgap, releasing photons",
-              "A tungsten filament burns inside an inert vacuum bulb",
-              "Chemical reactions combust liquid electrolytes"
-            ],
-            "correctIndex": 0,
-            "explanation": "LEDs produce electroluminescence when electrons cross a forward-biased semiconductor junction."
-          },
-          {
-            "question": "Why must every color channel of an RGB LED have its own series resistor?",
-            "options": [
-              "Because each color die has a different forward voltage drop and requires dedicated current limiting",
-              "To increase the speed of light emission",
-              "To ground the USB connector"
-            ],
-            "correctIndex": 0,
-            "explanation": "Red (~2.0V), Green (~3.2V), and Blue (~3.2V) have different forward voltages and each need independent current limiters."
-          },
-          {
-            "question": "Can the Arduino Uno output true variable DC voltages (like 2.5V) on standard digital pins?",
-            "options": [
-              "No, Uno digital pins only switch between 0V and 5V; they use high-speed PWM pulsing to simulate intermediate levels",
-              "Yes, every pin has an on-chip digital-to-analog converter (DAC)",
-              "Yes, but only when running on battery power"
-            ],
-            "correctIndex": 0,
-            "explanation": "The Uno lacks analog DAC outputs on digital headers; it uses Pulse Width Modulation (PWM) to simulate intermediate voltages."
-          }
-        ]
-      },
-      "markdownContent": "Before mixing optical light beams and configuring PWM timer registers, let's test your baseline understanding of semiconductor diodes and voltage driving.\n\nAnswer the 3 self-check questions below to calibrate your knowledge!"
+      "title": "Digital Sensors",
+      "type": "visualExplanation",
+      "markdownContent": "Electronic sensors generally fall into two major families: **Digital** and **Analog**.\n\n### Binary Perception:\nA **digital sensor** communicates in discrete binary states. It only ever reports one of two possible values:\n- **HIGH (1)**: 5 Volts (Active / Triggered / Closed)\n- **LOW (0)**: 0 Volts (Idle / Untriggered / Open)\n\nThink of a standard light switch on your wall: it is either completely switched ON or completely switched OFF—there are no middle values!\n\n### Common Digital Sensors:\n- **Pushbuttons & Bumper Switches (`comp_04`)**: Pressed (`HIGH`) or Released (`LOW`).\n- **Tilt Ball Switches (`comp_28`)**: Upright (`HIGH`) or Tilted (`LOW`).\n- **PIR Motion Detectors (`comp_03`)**: Warm body moving (`HIGH`) or Quiet room (`LOW`).\n\nIn your Arduino firmware, you read digital sensors with `digitalRead(pin)`. When you only need a simple Yes-or-No answer—such as *'Did the monster bump into a wall?'*—a digital sensor is lightning-fast, highly reliable, and easy to program!",
+      "quickCheck": [
+        {
+          "questionId": "l07_s02_q1",
+          "question": "How many discrete electrical states does a standard digital sensor output?",
+          "options": [
+            "Exactly two states: HIGH (5V) or LOW (0V)",
+            "An infinite number of smooth voltage levels",
+            "1024 different numbers between 0 and 1023"
+          ],
+          "correctIndex": 0,
+          "explanation": "Digital signals only exist in two binary states: HIGH (5V / 1) or LOW (0V / 0).",
+          "warmupExplanation": "Digital means binary—like a light switch that is either completely on or completely off with no dimming in between."
+        },
+        {
+          "questionId": "l07_s02_q2",
+          "question": "Which Arduino function is used to check the binary state of a digital sensor pin?",
+          "options": [
+            "digitalRead()",
+            "analogRead()",
+            "digitalWrite()"
+          ],
+          "correctIndex": 0,
+          "explanation": "digitalRead(pin) reads a digital pin and returns either HIGH or LOW.",
+          "warmupExplanation": "Remember: 'Read' gets information into the Arduino, while 'Write' sends electricity out to an actuator."
+        }
+      ]
     },
     {
       "stepId": "l07_s03",
-      "title": "Core Concept & Vocabulary: Common Cathode vs Common Anode",
-      "type": "story",
-      "interactiveWidgetType": "commonCathodeVsAnodeDiagram",
-      "markdownContent": "An RGB LED packages three independent semiconductor dies (Red, Green, Blue) into a single 5mm plastic lens with 4 leads sharing a single common pin.\n\n### The Two Packaging Standards:\n- **Common Cathode (CC)**: The shared longest lead is connected to **Ground (0V)**. Logic is **Active-HIGH** (`analogWrite(pin, 255)` produces 100% brightness).\n- **Common Anode (CA)**: The shared longest lead is connected to **+5V (VCC)**. Logic is **Active-LOW** (sinks current; `analogWrite(pin, 0)` produces 100% brightness, requiring `255 - value` in code).\n\nToggle between Common Cathode and Common Anode in the schematic below to explore current paths and software logic inversion!"
+      "title": "Analog Sensors",
+      "type": "visualExplanation",
+      "markdownContent": "The physical universe does not always flip between pure black and white! Shadows deepen gradually, temperatures climb fraction by fraction of a degree, and robotic monster arms pivot smoothly through angles.\n\n### The Continuous Spectrum:\nAn **analog sensor** provides a continuous, smoothly varying measurement across an entire range of voltages between 0.0V and 5.0V.\n\nIn Lesson 06, you explored how a rotary potentiometer functions as a variable voltage divider. The Arduino Uno contains an internal **10-bit Analog-to-Digital Converter (ADC)** wired to pins `A0` through `A5`. When you call `analogRead(A0)`, the ADC converts continuous input voltage into an integer from `0` to `1023`:\n\n- **0.0 Volts** = `0`\n- **2.5 Volts** = `512`\n- **5.0 Volts** = `1023`\n- Each count represents $\\approx 4.89\\text{ mV}$ of change!\n\n### Digital vs. Analog Comparison:\n- **Digital Sensor**: *'Is it dark outside? Yes or No.'*\n- **Analog Sensor**: *'Exactly how bright is the room right now? It measures 648 out of 1023.'*\n\nAnalog sensing gives your robot nuanced awareness of its environment!",
+      "quickCheck": [
+        {
+          "questionId": "l07_s03_q1",
+          "question": "What range of integer values does `analogRead()` return on an Arduino Uno?",
+          "options": [
+            "0 to 1023 (10-bit resolution)",
+            "0 to 255 (8-bit resolution)",
+            "Only binary 0 or 1"
+          ],
+          "correctIndex": 0,
+          "explanation": "The Uno has a 10-bit ADC, which quantizes analog voltages between 0V and 5V into 1024 discrete steps (0 through 1023).",
+          "warmupExplanation": "From Lesson 6: 10 bits means 2 to the 10th power = 1024 possible values, counting from 0 up to 1023."
+        },
+        {
+          "questionId": "l07_s03_q2",
+          "question": "Why would an engineer choose an analog sensor instead of a digital sensor for a thermometer?",
+          "options": [
+            "Because temperature changes smoothly and requires measuring subtle gradients across a range",
+            "Because analog pins use less electrical current than digital pins",
+            "Because digital pins cannot be connected to any microcontroller"
+          ],
+          "correctIndex": 0,
+          "explanation": "Analog sensors capture continuous gradients of physical phenomena, such as smooth temperature fluctuations.",
+          "warmupExplanation": "Digital sensors can only answer 'Is it hot: YES/NO?'. An analog sensor can report the exact continuous temperature value."
+        }
+      ]
     },
     {
       "stepId": "l07_s04",
-      "title": "How It Works: High-Speed 490Hz PWM Pulse Trains",
-      "type": "visualExplanation",
-      "interactiveWidgetType": "pwmDutyCycleVisualizer",
-      "markdownContent": "Human retina cone cells cannot resolve individual light flashes cycling faster than ~60 Hz due to persistence of vision.\n\n### Pulse Width Modulation (PWM) Physics:\n1. ATmega328P hardware timers oscillate output pins at ~490 Hz (or 980 Hz), giving a cycle period of $T \\approx 2.04\\text{ ms}$.\n2. When you execute `analogWrite(pin, 127)`, the timer holds the pin at 5V for 50% of the period, and 0V for the other 50% (**50% Duty Cycle**).\n3. The human eye integrates this high-speed photon flux, perceiving a steady 50% brightness!\n4. Effective average voltage: $V_{average} = 5.0\\text{V} \\times \\frac{\\text{value}}{255}$.\n\nUse the interactive oscilloscope below to inspect pulse waveforms, high-time vs low-time durations, and perceived LED photon flux!"
+      "title": "Distance Sensors",
+      "type": "physicalTask",
+      "markdownContent": "Time to inspect your first superpower sensor: the **HC-SR04 Ultrasonic Distance Sensor (`comp_01`)**!\n\n### Nature's Echolocation:\nJust like a bat navigating a dark cave or a submarine pinging the ocean depths, the HC-SR04 uses sound waves to calculate distance:\n1. **The 'Eyes' of the Sensor**: Notice the two metallic cylinders on the front. One is labeled **T** (Transmitter/Speaker) and the other **R** (Receiver/Microphone).\n2. **The Ping**: The Arduino triggers the **TRIG** pin to emit a burst of ultrasonic sound at 40,000 Hz (far above human hearing).\n3. **The Echo**: The sound bounces off an obstacle in front of the sensor. The **ECHO** pin goes `HIGH` for the exact amount of time the sound took to make the round trip!\n\n### Distance Formula Math:\nSound travels through room-temperature air at approximately 340 meters per second ($0.034\\text{ cm/\\mu s}$):\n$$\\text{Distance (cm)} = \\frac{\\text{Echo Time (microseconds)} \\times 0.034}{2}$$\n*(We divide by 2 because the sound traveled out to the object and all the way back!)*\n\n### Breadboard Wiring Tour:\n- **VCC**: Connect to Uno **5V** power rail.\n- **GND**: Connect to Uno **GND** ground rail.\n- **TRIG**: Connect to Uno Digital Pin **9**.\n- **ECHO**: Connect to Uno Digital Pin **10**.",
+      "quickCheck": [
+        {
+          "questionId": "l07_s04_q1",
+          "question": "How does an ultrasonic distance sensor (HC-SR04) calculate the distance to an obstacle?",
+          "options": [
+            "By timing how long high-frequency sound pulses take to echo back from the object",
+            "By shining an invisible laser beam and measuring its brightness",
+            "By sensing the magnetic field produced by nearby objects"
+          ],
+          "correctIndex": 0,
+          "explanation": "The ultrasonic sensor emits high-frequency sound waves from its trigger cylinder and measures the travel time of the echo bouncing back.",
+          "warmupExplanation": "Think of a bat shouting in a dark cave: it listens for how long the echo takes to return to know how far away the cave wall is!"
+        },
+        {
+          "questionId": "l07_s04_q2",
+          "question": "Why do we divide the echo travel time by 2 when calculating distance in centimeters?",
+          "options": [
+            "Because the sound pulse travels out to the object and then all the way back, covering twice the distance",
+            "Because the Arduino processor runs twice as fast as sound",
+            "Because the sensor has two metal cylinders"
+          ],
+          "correctIndex": 0,
+          "explanation": "The sound wave makes a round trip: from the sensor to the obstacle, and back to the sensor. Dividing by 2 gives the one-way distance.",
+          "warmupExplanation": "If you walk to a tree and walk back home, you walked double the distance to the tree. Divide by 2 to get the distance from home to tree!"
+        }
+      ]
     },
     {
       "stepId": "l07_s05",
-      "title": "Hardware Mission: 4-Pin RGB LED Leadout & Breadboard Wiring",
+      "title": "Light Sensors",
       "type": "physicalTask",
-      "markdownContent": "Examine your 4-pin 5mm Common Cathode RGB LED and breadboard (`comp_breadboard`):\n\n### Lead Identification Tour:\nHold the LED with the flat edge on the plastic rim collar facing right:\n1. **Lead 1 (Outer Left)**: Red Anode (Forward drop $V_f \\approx 2.0\\text{V}$)\n2. **Lead 2 (Longest Pin)**: Common Cathode (Connects directly to Uno **GND**)\n3. **Lead 3**: Green Anode (Forward drop $V_f \\approx 3.2\\text{V}$)\n4. **Lead 4 (Outer Right)**: Blue Anode (Forward drop $V_f \\approx 3.2\\text{V}$)\n\n### Resistor Wiring:\nNever share a single resistor on the common pin! Connect a separate 220\u03a9 or 330\u03a9 resistor to Lead 1 (Red), Lead 3 (Green), and Lead 4 (Blue). Because red, green, and blue dies have different forward voltage drops, sharing one resistor causes brightness dipping whenever multiple colors illuminate."
+      "markdownContent": "Now let's give our monster the sense of sight using the **Light Dependent Resistor (LDR / Photoresistor, `comp_19`)**!\n\n### How Light Changes Resistance:\nAn LDR is made of a light-sensitive semiconductor (cadmium sulfide) with a squiggly conductive track on top:\n- **In Pitch Darkness**: Electrons stay locked in place. The LDR has very high resistance (often $50\\text{k}\\Omega$ to $100\\text{k}\\Omega$ or more), blocking current flow.\n- **In Bright Light**: Incoming photons knock electrons loose! Electrical resistance plunges (down to $500\\Omega$ or less), letting current flow freely.\n\n### The Voltage Divider Partner:\nBecause the Arduino ADC only measures voltage ($0\\text{V}-5\\text{V}$) rather than raw resistance, we must pair the LDR with a fixed **10kΩ resistor** to create a voltage divider:\n\n```\n5V Rail \u2794 LDR Leg 1 \u2794 [LDR Leg 2 + Junction to Pin A0] \u2794 10k Resistor \u2794 GND Rail\n```\n\n### Breadboard Wiring Tour:\n1. Insert the LDR into two separate breadboard rows.\n2. Connect one leg of the LDR to the **5V** rail with a jumper wire.\n3. Connect the other leg of the LDR to Uno Analog Pin **A0**.\n4. From that exact same junction row, insert one leg of a **10kΩ fixed resistor** (brown-black-orange bands), and connect its other leg to the **GND** rail.\n\nNow, when light shifts across the sensor, the voltage at pin A0 glides between 0V and 5V!",
+      "quickCheck": [
+        {
+          "questionId": "l07_s05_q1",
+          "question": "What happens to the electrical resistance of a photoresistor (LDR) when exposed to bright light?",
+          "options": [
+            "Its resistance drops significantly, allowing current to flow more easily",
+            "Its resistance rises infinitely, blocking all current flow",
+            "Its resistance stays strictly constant at 10,000 ohms"
+          ],
+          "correctIndex": 0,
+          "explanation": "Light photons liberate electrons in the semiconductor material, dramatically reducing the LDR's electrical resistance.",
+          "warmupExplanation": "More light = less resistance! In the dark, the LDR resists current; in bright light, current flows freely."
+        },
+        {
+          "questionId": "l07_s05_q2",
+          "question": "Why must an LDR be paired with a fixed resistor in a voltage divider circuit to be read by an Arduino?",
+          "options": [
+            "Because the Arduino ADC measures voltage, so the circuit converts changing resistance into changing voltage",
+            "To prevent the Arduino USB cable from melting",
+            "Because photoresistors cannot connect to breadboards without a helper resistor"
+          ],
+          "correctIndex": 0,
+          "explanation": "Arduino analog pins read voltages (0-5V), not raw resistance. A voltage divider converts the LDR's resistance shifts into measurable voltage levels.",
+          "warmupExplanation": "Recall Lesson 6: Arduino's ADC pin measures voltage! Pairing the LDR with a fixed resistor creates a voltage divider that splits the 5V supply."
+        }
+      ]
     },
     {
       "stepId": "l07_s06",
-      "title": "Coding Basics: Identifying Hardware PWM Pins & Timers",
-      "type": "story",
-      "interactiveWidgetType": "pwmPinIdentifier",
-      "markdownContent": "Can you call `analogWrite()` on any Uno pin? **No!** Only pins wired to internal hardware timer compare registers support PWM.\n\n### Finding the PWM Tilde (~):\nLook at the silkscreen on your Arduino Uno next to digital header pins: only pins marked with a tilde `~` (Pins 3, 5, 6, 9, 10, 11) support PWM:\n- **Pins 5 & 6**: Controlled by **Timer0** at **980 Hz** (shared with `millis()` and `delay()`).\n- **Pins 9 & 10**: Controlled by **Timer1** (16-bit) at **490 Hz**.\n- **Pins 3 & 11**: Controlled by **Timer2** (8-bit) at **490 Hz**.\n\n\u26a0\ufe0f **The Non-PWM Trap**: If you call `analogWrite(8, 128)` on non-PWM Pin 8, it only performs binary threshold switching (>=128 is HIGH, <128 is LOW)!\n\nTest and identify all Uno PWM pins in the interactive checker below!"
+      "title": "Reading Sensor Data",
+      "type": "codeExperiment",
+      "markdownContent": "Let's stream live sensor telemetry straight into your computer's screen using the Arduino IDE **Serial Monitor**!\n\n### The Sensor Reader Sketch:\nUpload the following sketch to read both the LDR on `A0` and the Ultrasonic distance sensor on pins `9` & `10`:\n\n```cpp\nconst int trigPin = 9;   // HC-SR04 Trigger pin\nconst int echoPin = 10;  // HC-SR04 Echo pin\nconst int ldrPin = A0;   // Photoresistor analog pin\n\nvoid setup() {\n  Serial.begin(9600);     // Open serial channel at 9600 baud\n  pinMode(trigPin, OUTPUT); \n  pinMode(echoPin, INPUT);  \n}\n\nvoid loop() {\n  // 1. Trigger ultrasonic acoustic chirp\n  digitalWrite(trigPin, LOW);\n  delayMicroseconds(2);\n  digitalWrite(trigPin, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(trigPin, LOW);\n\n  // 2. Measure pulse duration in microseconds\n  long duration = pulseIn(echoPin, HIGH);\n  int distanceCm = duration * 0.034 / 2;\n\n  // 3. Read analog light level\n  int lightLevel = analogRead(ldrPin);\n\n  // 4. Stream telemetry to Serial Monitor\n  Serial.print(\"Light Level: \");\n  Serial.print(lightLevel);\n  Serial.print(\" | Distance: \");\n  Serial.print(distanceCm);\n  Serial.println(\" cm\");\n\n  delay(200); // 5 Hz telemetry cadence for easy reading\n}\n```\n\n### Experiment With Telemetry:\nOpen the Serial Monitor (Ctrl+Shift+M / Cmd+Shift+M) and ensure the baud rate dropdown is set to **9600 baud**. Move your hand toward the ultrasonic sensor and watch the distance count drop smoothly. Cover the LDR with your thumb and watch the light level drop!",
+      "quickCheck": [
+        {
+          "questionId": "l07_s06_q1",
+          "question": "Which command in `setup()` opens the serial data channel so your computer can display sensor telemetry?",
+          "options": [
+            "Serial.begin(9600);",
+            "pinMode(SERIAL, INPUT);",
+            "analogRead(SERIAL_PORT);"
+          ],
+          "correctIndex": 0,
+          "explanation": "Serial.begin(9600) sets the communication speed (baud rate) and opens the serial channel between the Arduino and computer.",
+          "warmupExplanation": "From Lesson 4 & 6: Serial.begin(9600) is the handshake that lets your Arduino talk to the Serial Monitor at 9600 bits per second."
+        },
+        {
+          "questionId": "l07_s06_q2",
+          "question": "What happens if the baud rate selected in the Arduino IDE Serial Monitor does not match `Serial.begin()` in your code?",
+          "options": [
+            "The telemetry will appear as garbled symbols, gibberish, or blank lines",
+            "The Arduino microcontroller chip will be permanently damaged",
+            "The sensor will stop measuring physical values"
+          ],
+          "correctIndex": 0,
+          "explanation": "When baud rates mismatch, the computer and Arduino sample bits at different speeds, resulting in garbled characters or blank text.",
+          "warmupExplanation": "Both sides must agree on the exact same speed (like 9600 baud) to understand each other's data signals."
+        }
+      ]
     },
     {
       "stepId": "l07_s07",
-      "title": "Code Walkthrough: 8-Bit analogWrite() & Helper Functions",
-      "type": "codeExperiment",
-      "markdownContent": "Here is how to control an RGB LED with clean modular firmware:\n\n```cpp\nconst int redPin = 9;   // PWM Pin ~9\nconst int greenPin = 10;// PWM Pin ~10\nconst int bluePin = 11; // PWM Pin ~11\n\nvoid setup() {\n  pinMode(redPin, OUTPUT);\n  pinMode(greenPin, OUTPUT);\n  pinMode(bluePin, OUTPUT);\n}\n\nvoid setColor(int red, int green, int blue) {\n  analogWrite(redPin, constrain(red, 0, 255));\n  analogWrite(greenPin, constrain(green, 0, 255));\n  analogWrite(bluePin, constrain(blue, 0, 255));\n}\n\nvoid loop() {\n  setColor(255, 0, 0);   // Pure Red\n  delay(1000);\n  setColor(0, 255, 0);   // Pure Green\n  delay(1000);\n  setColor(0, 0, 255);   // Pure Blue\n  delay(1000);\n  setColor(255, 255, 0); // Yellow (Red + Green)\n  delay(1000);\n}\n```\n\nBy wrapping `analogWrite()` inside a custom `setColor()` function, your sketch becomes clean and readable!"
+      "title": "Sensor Thresholds",
+      "type": "visualExplanation",
+      "markdownContent": "Raw data numbers like `642` or `14 cm` mean nothing to a monster robot on their own. To give your creation intelligence, you must define **thresholds**!\n\n### What Is a Threshold?\nA **threshold** is a boundary value in code that divides one decision state from another. When sensor data crosses this invisible line, your robot changes its behavior:\n\n```cpp\nconst int PROXIMITY_THRESHOLD = 20; // 20 cm boundary\n\nif (distanceCm < PROXIMITY_THRESHOLD) {\n  // Action when an obstacle gets closer than 20 cm!\n}\n```\n\n### Multi-Level Decision Zones:\nYou can create multiple thresholds to categorize the world into nuanced zones:\n- **Zone 1: Danger Close (`< 10 cm`)**: Halt all motors and sound the loud alarm!\n- **Zone 2: Caution (`10 cm to 30 cm`)**: Slow down and blink a warning light.\n- **Zone 3: Clear (`> 30 cm`)**: Cruise forward freely.\n\n### The Calibration Principle:\nEvery environment is unique! On a bright sunny morning, your LDR might read `750` in ambient light and `250` in shadow. On an overcast evening in a dim room, it might read `400` in ambient light and `120` in shadow.\n\n\u26a0\ufe0f **Golden Rule of Calibration**: Never guess threshold numbers! Always open the Serial Monitor, observe your sensor's minimum and maximum readings in your actual physical room, and choose a threshold midway between them!",
+      "quickCheck": [
+        {
+          "questionId": "l07_s07_q1",
+          "question": "What is a 'threshold' in sensor programming?",
+          "options": [
+            "A cutoff value used in comparison statements to trigger actions or mode changes",
+            "The maximum voltage a wire can carry before breaking",
+            "The total memory size available on the ATmega328P chip"
+          ],
+          "correctIndex": 0,
+          "explanation": "A threshold is a boundary number used in conditional statements (like if/else) to decide when an action should trigger.",
+          "warmupExplanation": "Think of a height requirement on a roller coaster: 'You must be this tall to ride!' That minimum height is a threshold."
+        },
+        {
+          "questionId": "l07_s07_q2",
+          "question": "Why is sensor calibration necessary before hardcoding threshold values in code?",
+          "options": [
+            "Because environmental baselines (like room lighting and acoustic reflections) differ across locations",
+            "Because Arduino analog pins lose their settings whenever power is disconnected",
+            "Because sensors only work if calibrated by the factory every week"
+          ],
+          "correctIndex": 0,
+          "explanation": "Sensors respond to real ambient environments. A room on a sunny day produces very different baseline readings than the same room at dusk.",
+          "warmupExplanation": "Always check raw numbers in the Serial Monitor first so you know what 'normal' looks like in your specific room!"
+        }
+      ]
     },
     {
       "stepId": "l07_s08",
-      "title": "Code Prediction: Inverted Logic & Duty Cycle Math",
-      "type": "codeExperiment",
-      "markdownContent": "Predict color mixing results before testing on the breadboard:\n\n### Prediction 1: What color does setColor(255, 0, 255) synthesize?\n*Answer:* Full Red combined with full Blue produces vivid **Magenta / Purple**!\n\n### Prediction 2: What happens if you accidentally plug a Common Anode RGB LED into this sketch?\n*Answer:* Because Common Anode uses active-LOW logic, calling `setColor(255, 0, 0)` will produce Cyan instead of Red (Red turns OFF while Green and Blue turn fully ON)!"
+      "title": "Sensor -> Output",
+      "type": "physicalTask",
+      "markdownContent": "Now let's complete the loop by connecting a sensor input directly to a physical output actuator!\n\n### Hardware Mission: Proximity Alarm LED\nKeep your HC-SR04 ultrasonic sensor wired on pins `9` (TRIG) and `10` (ECHO). Add an indicator LED:\n- Connect the **Anode** (longer leg) of a Red LED to Uno Digital Pin **13** (which has an onboard series resistor).\n- Connect the **Cathode** (shorter flat leg) of the LED to the **GND** rail.\n\n### Firmware Architecture:\nHere is how sensor readings drive output decisions:\n\n```cpp\nconst int trigPin = 9;\nconst int echoPin = 10;\nconst int alertLedPin = 13;\nconst int NEAR_THRESHOLD_CM = 15; // Trigger alarm if closer than 15 cm\n\nvoid setup() {\n  pinMode(trigPin, OUTPUT);\n  pinMode(echoPin, INPUT);\n  pinMode(alertLedPin, OUTPUT);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  // Ping ultrasonic sensor\n  digitalWrite(trigPin, LOW);\n  delayMicroseconds(2);\n  digitalWrite(trigPin, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(trigPin, LOW);\n\n  long duration = pulseIn(echoPin, HIGH);\n  int distanceCm = duration * 0.034 / 2;\n\n  // Threshold decision logic\n  if (distanceCm > 0 && distanceCm < NEAR_THRESHOLD_CM) {\n    digitalWrite(alertLedPin, HIGH); // Alarm ON: Monster eye glows!\n    Serial.println(\"WARNING: Intruder in perimeter!\");\n  } else {\n    digitalWrite(alertLedPin, LOW);  // Alarm OFF: Area clear\n    Serial.println(\"Status: Patrol normal.\");\n  }\n\n  delay(100);\n}\n```\n\nUpload the sketch, wave your hand in front of the sensor, and observe how your monster instantly reacts to proximity!",
+      "quickCheck": [
+        {
+          "questionId": "l07_s08_q1",
+          "question": "In a complete robotic control loop, what is the correct chronological sequence of operations?",
+          "options": [
+            "Sense the environment -> Process data with logic -> Command output actuators",
+            "Command output actuators -> Sense the environment -> Turn off the power",
+            "Process logic -> Command output actuators -> Wire the breadboard"
+          ],
+          "correctIndex": 0,
+          "explanation": "Robotic systems follow the Sense -> Think -> Act loop: gather sensor data, process decisions in code, and command physical outputs.",
+          "warmupExplanation": "Sense, Think, Act! First your robot gathers info, then its code decides, and finally it takes action in the world."
+        },
+        {
+          "questionId": "l07_s08_q2",
+          "question": "Which command turns an alert LED connected to digital pin 13 ON when a sensor threshold is triggered?",
+          "options": [
+            "digitalWrite(13, HIGH);",
+            "digitalRead(13, HIGH);",
+            "analogWrite(13, 0);"
+          ],
+          "correctIndex": 0,
+          "explanation": "digitalWrite(13, HIGH) sends 5V to digital pin 13, illuminating the connected LED.",
+          "warmupExplanation": "From Lesson 5: digitalWrite(pin, HIGH) applies full 5V power to make an LED illuminate."
+        }
+      ]
     },
     {
       "stepId": "l07_s09",
-      "title": "Guided Experiment: Additive Optical Color Mixing Lab",
-      "type": "codeExperiment",
-      "interactiveWidgetType": "rgbColorSynthesizer",
-      "markdownContent": "Time to blend optical wavelengths! In additive color physics:\n\n- **Red + Green = Yellow**\n- **Green + Blue = Cyan**\n- **Red + Blue = Magenta**\n- **Red + Green + Blue = White**\n\nUse the 3-channel optical synthesizer below to mix Red, Green, and Blue light beams into a central frosted lens, inspect the resulting hex color codes, and generate exact Arduino firmware commands!"
+      "title": "Multiple Sensors",
+      "type": "physicalTask",
+      "markdownContent": "Living creatures do not rely on just one sense. A monster guards its territory using both sight and hearing simultaneously!\n\n### Multi-Sensor Fusion:\nWhen you combine multiple sensors, your robot can make sophisticated, multi-factor decisions using C++ boolean logic:\n\n#### 1. Logical AND (`&&`) — Both Conditions Required:\nSuppose we want a **Night-Watch Sentry**: the alarm should only wake up if it is pitch dark in the room **AND** someone sneaks within 20 cm of the guard post!\n\n```cpp\nif (lightLevel < 250 && distanceCm < 20) {\n  digitalWrite(alarmLed, HIGH); // Intruder lurking in the shadows!\n} else {\n  digitalWrite(alarmLed, LOW);\n}\n```\n\n#### 2. Logical OR (`||`) — Either Condition Triggers:\nSuppose we want an **Emergency Security Alarm**: trigger if an object is dangerously close **OR** if an intruder turns on a flashlight:\n\n```cpp\nif (distanceCm < 10 || lightLevel > 800) {\n  digitalWrite(alarmLed, HIGH); // Emergency breach!\n}\n```\n\n### Prioritized Conditions:\nWhat if sensor readings conflict? By ordering `if`, `else if`, and `else` blocks strategically, you establish clear priority hierarchy so safety rules always take precedence over everyday tasks!",
+      "quickCheck": [
+        {
+          "questionId": "l07_s09_q1",
+          "question": "Which C++ logical operator requires BOTH sensor conditions to be true before executing an `if` block?",
+          "options": [
+            "The logical AND operator (&&)",
+            "The logical OR operator (||)",
+            "The assignment operator (=)"
+          ],
+          "correctIndex": 0,
+          "explanation": "The && operator evaluates to true only when both conditions on either side are true simultaneously.",
+          "warmupExplanation": "From Coding Foundations: && means both must be true, while || means either one can be true."
+        },
+        {
+          "questionId": "l07_s09_q2",
+          "question": "If you want a robot alarm to sound if a collision switch hits an obstacle OR a distance sensor reads under 5 cm, which operator should connect the conditions?",
+          "options": [
+            "The logical OR operator (||)",
+            "The logical AND operator (&&)",
+            "The equality operator (==)"
+          ],
+          "correctIndex": 0,
+          "explanation": "The || (OR) operator triggers the action if either one of the conditions is met.",
+          "warmupExplanation": "Use || when either warning signal is enough to trigger the protective response!"
+        }
+      ]
     },
     {
       "stepId": "l07_s10",
-      "title": "Real-World Robotics: Quadcopter Navigation Beacons & RGB Mood Lighting",
-      "type": "visualExplanation",
-      "markdownContent": "RGB optical mixing and PWM are used extensively in modern robotics:\n\n- **Quadcopter Flight Navigation**: Drones mount high-intensity RGB LEDs under motor arms: solid green for GPS lock, flashing yellow for return-to-home, and pulsing red for low battery.\n- **Autonomous Delivery Rovers**: Ground rovers project animated light halos on pavements to signal pedestrians whether they are yielding or turning.\n- **Smart Speaker Rings**: Ambient home assistants use 16-channel RGB PWM shift registers to create fluid rotation and pulsing voice feedback animations."
+      "title": "Sensor Troubleshooting",
+      "type": "story",
+      "markdownContent": "Even experienced lab engineers encounter misbehaving sensors. Here is your master troubleshooting guide to conquer the most common sensing traps:\n\n### 1. Swapped TRIG and ECHO Wires:\n- **Symptom**: HC-SR04 always reads `0 cm` or times out completely.\n- **Cause**: Pin 9 is waiting for an echo while Pin 10 is sending triggers.\n- **Fix**: Double-check your jumper wires: Pin 9 connects to TRIG, Pin 10 connects to ECHO.\n\n### 2. The Floating Input Trap:\n- **Symptom**: The LDR light reading jumps erratically between 0 and 1023 when you barely move your hand near the breadboard.\n- **Cause**: Missing the 10kΩ fixed pull-down resistor! Without a reference path to ground, pin A0 acts like an antenna picking up ambient electromagnetic noise.\n- **Fix**: Ensure the 10kΩ resistor firmly connects the LDR junction row to the GND rail.\n\n### 3. Out-of-Range Distances:\n- **Symptom**: Ultrasonic reading suddenly spikes to huge numbers or drops to zero.\n- **Cause**: The HC-SR04 has an effective range between 2 cm and 400 cm. Objects closer than 2 cm reflect sound before the receiver is ready; objects farther than 4 meters produce echoes too weak to detect.\n- **Trap**: Soft, fluffy surfaces (like a wool sweater or plush monster fur) absorb ultrasonic pings instead of bouncing them!\n\n### 4. The Golden Rule of Sensor Debugging:\nWhen code seems broken, **never guess**! Always add `Serial.println()` statements to inspect the raw measurements. Telemetry never lies!",
+      "quickCheck": [
+        {
+          "questionId": "l07_s10_q1",
+          "question": "What is the primary symptom of an analog input pin that is 'floating' without a proper pull-down or circuit connection?",
+          "options": [
+            "Readings fluctuate wildly and unpredictably due to picking up stray ambient electromagnetic noise",
+            "The Arduino board immediately powers off with a short-circuit alert",
+            "The Serial Monitor stops responding and crashes"
+          ],
+          "correctIndex": 0,
+          "explanation": "A floating pin acts like an antenna, picking up stray electromagnetic radiation from the air and producing erratic, jumpy readings.",
+          "warmupExplanation": "Remember Lesson 6: an unanchored pin floats! It needs a resistor to hold it to a known reference voltage."
+        },
+        {
+          "questionId": "l07_s10_q2",
+          "question": "What is the very first diagnostic step you should take when a sensor circuit is not triggering an LED properly?",
+          "options": [
+            "Print the raw sensor readings to the Serial Monitor to observe what values the microcontroller is actually receiving",
+            "Replace the Arduino Uno with a brand-new microcontroller",
+            "Delete the entire sketch and start over from scratch"
+          ],
+          "correctIndex": 0,
+          "explanation": "Viewing live telemetry in the Serial Monitor instantly reveals whether the sensor is reading correctly, miswired, or missing its threshold.",
+          "warmupExplanation": "Always inspect your data first! The Serial Monitor is your diagnostic window into the Arduino's mind."
+        }
+      ]
     },
     {
       "stepId": "l07_s11",
-      "title": "Troubleshooting Challenge: Reversed Common Anode & Non-PWM Pin Traps",
-      "type": "story",
-      "markdownContent": "Solve the two most common RGB LED hardware bugs:\n\n### Trap 1: Colors Are Inverted (e.g. Red command shows Cyan)\n- **Diagnosis**: You have a Common Anode LED instead of Common Cathode! The shared pin is wired to GND or expecting active-HIGH driving.\n- **Fix**: Wire the common pin to +5V, and invert firmware values: `analogWrite(pin, 255 - value);`.\n\n### Trap 2: One Color Only Snaps ON or OFF Without Dimming\n- **Diagnosis**: That color channel is connected to a non-PWM pin (such as Pin 7, 8, 12, or 13)!\n- **Fix**: Move the jumper wire to a PWM pin marked with a tilde `~` (3, 5, 6, 9, 10, or 11)."
-    },
-    {
-      "stepId": "l07_s12",
-      "title": "Workshop Safety & Independent Resistor Protection",
-      "type": "story",
-      "markdownContent": "Keep your components protected with these electrical rules:\n\n1. **Never Omit Current Limiting Resistors**: Each of the 3 internal LED dies requires its own 220\u03a9\u2013330\u03a9 resistor to prevent thermal runaway.\n2. **Separate Resistors Prevent Brightness Droop**: Because Red has a 2.0V forward voltage while Green/Blue have ~3.2V, putting a single shared resistor on the cathode will cause Red to steal all the current, extinguishing the other colors!\n3. **Respect Total Package Heat**: Running all three channels at 100% brightness (White) draws ~45 mA total, well within Uno limits when equipped with proper resistors."
-    },
-    {
-      "stepId": "l07_s13",
-      "title": "Final Review & Competencies",
-      "type": "story",
-      "markdownContent": "Magnificent job! In Lesson 07, you unlocked full optical color synthesis:\n\n- You mastered additive optical color mixing (combining Red, Green, and Blue light).\n- You distinguished Common Cathode (Active-HIGH, shared GND) from Common Anode (Active-LOW, shared 5V).\n- You understood high-speed 490Hz/980Hz PWM duty cycles and average voltage simulation.\n- You located Uno hardware PWM pins marked with `~` (3, 5, 6, 9, 10, 11) and their timers.\n- You wrote modular helper functions (`setColor()`) with 8-bit `analogWrite()` (0\u2013255).\n\nComplete the 8-question assessment below to earn your XP and wrap up Tier 1 physical outputs!"
-    },
-    {
-      "stepId": "l07_s14",
-      "title": "Comprehensive Knowledge Check",
+      "title": "Sensor Challenge",
       "type": "quizCheckpoint",
-      "markdownContent": "Test your mastery of RGB color synthesis, PWM duty cycles, Common Cathode pinouts, and hardware timers.",
+      "markdownContent": "Outstanding work, junior roboticist! You have bridged the gap between pure electrical circuits and intelligent perception of the real world:\n\n- You differentiated discrete **Digital sensors** from continuous **Analog sensors**.\n- You harnessed acoustic echolocation with the **HC-SR04 Ultrasonic Distance Sensor**.\n- You wired a photoresistor **voltage divider** to give your monster the gift of light perception.\n- You streamed live data streams over **Serial telemetry**.\n- You calibrated **decision thresholds** to transform raw measurements into responsive behaviors.\n- You combined multiple sensor inputs using **boolean logic** (`&&` and `||`).\n- You mastered the art of diagnosing **swapped pins**, **floating inputs**, and **acoustic absorption**.\n\nDemonstrate your complete sensor mastery in the Comprehensive Knowledge Check below to earn your XP and level up!",
+      "quickCheck": [
+        {
+          "questionId": "l07_s11_q1",
+          "question": "Which type of sensor would you choose to measure the exact distance in centimeters between a monster robot and a wall?",
+          "options": [
+            "An ultrasonic distance sensor (HC-SR04)",
+            "A digital momentary push button",
+            "A single-color red LED"
+          ],
+          "correctIndex": 0,
+          "explanation": "The ultrasonic distance sensor measures precise transit times of sound echoes to calculate distance in centimeters.",
+          "warmupExplanation": "Buttons only tell you if you bumped a wall, but ultrasonic echolocation tells you how many centimeters away the wall is before you hit it!"
+        },
+        {
+          "questionId": "l07_s11_q2",
+          "question": "How does an Arduino convert real-world analog voltage into a digital number that software can process?",
+          "options": [
+            "Using its on-chip Analog-to-Digital Converter (ADC)",
+            "Using a mechanical relay switch",
+            "Using a step-up power transformer"
+          ],
+          "correctIndex": 0,
+          "explanation": "The Arduino ATmega328P uses a 10-bit Analog-to-Digital Converter (ADC) to translate continuous analog voltages into integer values from 0 to 1023.",
+          "warmupExplanation": "The ADC is the bridge between the analog physical world and digital computer code!"
+        }
+      ],
       "interactiveConfig": {
-        "question": "What does PWM stand for?",
+        "question": "What is the primary difference between a digital sensor and an analog sensor?",
         "options": [
-          "Pulse Width Modulation",
-          "Power Wave Measurement",
-          "Phase Wire Multiplication"
+          "Digital sensors produce binary states (HIGH/LOW), while analog sensors provide continuous changing measurements",
+          "Digital sensors work without power, while analog sensors require high-voltage wall outlets",
+          "Digital sensors can only detect sound, while analog sensors only detect light"
         ],
         "correctIndex": 0,
-        "explanation": "Correct: Pulse Width Modulation. Understanding this principle ensures proper circuit function and reliability.",
+        "explanation": "Correct: Digital sensors produce binary states (HIGH/LOW), while analog sensors provide continuous changing measurements across a spectrum.",
         "questions": [
           {
-            "question": "What does PWM stand for?",
+            "question": "What is the primary difference between a digital sensor and an analog sensor?",
             "options": [
-              "Pulse Width Modulation",
-              "Power Wave Measurement",
-              "Phase Wire Multiplication"
+              "Digital sensors produce binary states (HIGH/LOW), while analog sensors provide continuous changing measurements",
+              "Digital sensors work without power, while analog sensors require high-voltage wall outlets",
+              "Digital sensors can only detect sound, while analog sensors only detect light"
             ],
             "correctIndex": 0,
-            "explanation": "Correct: Pulse Width Modulation. Understanding this principle ensures proper circuit function and reliability."
+            "explanation": "Correct: Digital sensors produce binary states (HIGH/LOW), while analog sensors provide continuous changing measurements across a spectrum."
           },
           {
-            "question": "What is the valid argument range for `analogWrite()` on an Arduino Uno?",
+            "question": "What integer range does `analogRead()` return when sampling an analog pin on the Arduino Uno?",
             "options": [
-              "0 to 255 (8-bit)",
-              "0 to 1023 (10-bit)",
-              "0 to 100 (%)"
+              "0 to 1023 (10-bit resolution)",
+              "0 to 255 (8-bit resolution)",
+              "0 to 100 (percentage)"
             ],
             "correctIndex": 0,
-            "explanation": "Correct: 0 to 255 (8-bit). Understanding this principle ensures proper circuit function and reliability."
+            "explanation": "Correct: 0 to 1023 (10-bit resolution). The Uno ADC quantizes 0V to 5V into 1024 discrete integer levels."
           },
           {
-            "question": "Which digital pins on the Arduino Uno support hardware PWM?",
+            "question": "How does an HC-SR04 ultrasonic sensor determine the distance to an obstacle?",
             "options": [
-              "Pins marked with a tilde (~): 3, 5, 6, 9, 10, 11",
-              "All digital pins 0 through 13",
-              "Only analog pins A0 through A5"
+              "By timing how long high-frequency sound chirps take to echo back from the object",
+              "By measuring the ambient magnetic field distortion",
+              "By detecting heat radiated by the obstacle"
             ],
             "correctIndex": 0,
-            "explanation": "Correct: Pins marked with a tilde (~): 3, 5, 6, 9, 10, 11. Understanding this principle ensures proper circuit function and reliability."
+            "explanation": "Correct: By timing how long high-frequency sound chirps take to echo back from the object (echolocation)."
           },
           {
-            "question": "What primary colors of light combine to produce Yellow?",
+            "question": "Why does the ultrasonic distance calculation formula divide the measured echo duration by 2?",
             "options": [
-              "Red and Green",
-              "Blue and Yellow",
-              "Red and Blue"
+              "Because the sound wave makes a round trip out to the obstacle and back to the receiver",
+              "Because the Arduino operates with two timers",
+              "Because sound moves twice as fast backwards"
             ],
             "correctIndex": 0,
-            "explanation": "Correct: Red and Green. Understanding this principle ensures proper circuit function and reliability."
+            "explanation": "Correct: Because the sound wave makes a round trip out to the obstacle and back to the receiver, doubling the travel distance."
           },
           {
-            "question": "What duty cycle percentage does an `analogWrite()` value of 127 produce?",
+            "question": "What happens to the electrical resistance of an LDR (photoresistor) when bright light shines on its surface?",
             "options": [
-              "Approximately 50%",
-              "10%",
-              "100%"
+              "Its resistance decreases, allowing more electric current to flow",
+              "Its resistance increases to infinity, stopping all current",
+              "Its resistance never changes under any lighting condition"
             ],
             "correctIndex": 0,
-            "explanation": "Correct: Approximately 50%. Understanding this principle ensures proper circuit function and reliability."
+            "explanation": "Correct: Its resistance decreases, allowing more electric current to flow through the sensor."
           },
           {
-            "question": "On a 4-pin common cathode RGB LED, what does the longest lead connect to?",
+            "question": "What is a 'threshold' in sensor programming?",
             "options": [
-              "Ground (GND)",
-              "5V Power",
-              "Digital Pin 13"
+              "A defined boundary value used in decision statements to trigger specific actions",
+              "The physical length of a breadboard jumper wire",
+              "The maximum temperature of a soldering iron"
             ],
             "correctIndex": 0,
-            "explanation": "Correct: Ground (GND). Understanding this principle ensures proper circuit function and reliability."
+            "explanation": "Correct: A defined boundary value used in decision statements to trigger specific actions."
           },
           {
-            "question": "Why does an LED appear dimmer when fed a 25% duty cycle PWM signal?",
+            "question": "Which C++ logical operator requires BOTH conditions to evaluate to true for an action to execute?",
             "options": [
-              "The LED is off for 75% of the time, and the human eye averages the photon emission",
-              "The voltage is reduced from 5V to 1.25V DC",
-              "The resistor value increases dynamically"
+              "&& (Logical AND)",
+              "|| (Logical OR)",
+              "!= (Not Equal)"
             ],
             "correctIndex": 0,
-            "explanation": "Correct: The LED is off for 75% of the time, and the human eye averages the photon emission. Understanding this principle ensures proper circuit function and reliability."
+            "explanation": "Correct: && (Logical AND). Both sensor conditions must be met simultaneously."
           },
           {
-            "question": "What primary colors combine to produce Cyan?",
+            "question": "What tool in the Arduino IDE should you open first to inspect real-time sensor measurements?",
             "options": [
-              "Green and Blue",
-              "Red and Blue",
-              "Red and Green"
+              "Serial Monitor (at matching baud rate)",
+              "Library Manager",
+              "Board Firmware Burner"
             ],
             "correctIndex": 0,
-            "explanation": "Correct: Green and Blue. Understanding this principle ensures proper circuit function and reliability."
+            "explanation": "Correct: Serial Monitor (at matching baud rate). Live telemetry lets you observe exact sensor values for debugging and calibration."
           }
         ]
       }
     }
   ],
-  "xpReward": 90
+  "xpReward": 50
 }

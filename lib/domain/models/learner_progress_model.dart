@@ -2,6 +2,62 @@ import 'dart:math' as math;
 
 enum ActivityType { lesson, project, challenge, component }
 
+enum QuickCheckReadiness {
+  ready,
+  warmUp,
+  notAssessed,
+}
+
+class QuickCheckResult {
+  final String lessonId;
+  final String submoduleId;
+  final List<String> questionIds;
+  final List<int> selectedAnswers;
+  final bool isBypassed;
+  final QuickCheckReadiness readiness;
+  final DateTime timestamp;
+  final bool warmupShown;
+
+  const QuickCheckResult({
+    required this.lessonId,
+    required this.submoduleId,
+    required this.questionIds,
+    required this.selectedAnswers,
+    required this.isBypassed,
+    required this.readiness,
+    required this.timestamp,
+    this.warmupShown = false,
+  });
+
+  factory QuickCheckResult.fromJson(Map<String, dynamic> json) {
+    return QuickCheckResult(
+      lessonId: json['lessonId'] as String,
+      submoduleId: json['submoduleId'] as String,
+      questionIds: List<String>.from(json['questionIds'] as List? ?? []),
+      selectedAnswers: List<int>.from(json['selectedAnswers'] as List? ?? []),
+      isBypassed: json['isBypassed'] as bool? ?? false,
+      readiness: QuickCheckReadiness.values.byName(
+        json['readiness'] as String? ?? 'notAssessed',
+      ),
+      timestamp: json['timestamp'] != null
+          ? DateTime.parse(json['timestamp'] as String)
+          : DateTime.now(),
+      warmupShown: json['warmupShown'] as bool? ?? false,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'lessonId': lessonId,
+        'submoduleId': submoduleId,
+        'questionIds': questionIds,
+        'selectedAnswers': selectedAnswers,
+        'isBypassed': isBypassed,
+        'readiness': readiness.name,
+        'timestamp': timestamp.toIso8601String(),
+        'warmupShown': warmupShown,
+      };
+}
+
 class LastActivityInfo {
   final ActivityType type;
   final String activityId;
@@ -48,6 +104,7 @@ class LearnerProgressModel {
   final Set<String> solvedChallengeIds;
   final Set<String> earnedBadgeIds;
   final Map<String, int> quizBestScores;
+  final Map<String, QuickCheckResult> quickCheckResults;
   final LastActivityInfo? lastActivity;
   final DateTime lastSessionDate;
 
@@ -63,6 +120,7 @@ class LearnerProgressModel {
     this.solvedChallengeIds = const {},
     this.earnedBadgeIds = const {},
     this.quizBestScores = const {},
+    this.quickCheckResults = const {},
     this.lastActivity,
     required this.lastSessionDate,
   });
@@ -123,6 +181,10 @@ class LearnerProgressModel {
                 ?.map((k, v) => MapEntry(k as String, v as int)) ??
             {},
       ),
+      quickCheckResults: (json['quickCheckResults'] as Map?)?.map((k, v) =>
+              MapEntry(k as String,
+                  QuickCheckResult.fromJson(v as Map<String, dynamic>))) ??
+          {},
       lastActivity: json['lastActivity'] != null
           ? LastActivityInfo.fromJson(
               json['lastActivity'] as Map<String, dynamic>)
@@ -146,6 +208,8 @@ class LearnerProgressModel {
         'solvedChallengeIds': solvedChallengeIds.toList(),
         'earnedBadgeIds': earnedBadgeIds.toList(),
         'quizBestScores': quizBestScores,
+        'quickCheckResults':
+            quickCheckResults.map((k, v) => MapEntry(k, v.toJson())),
         if (lastActivity != null) 'lastActivity': lastActivity!.toJson(),
         'lastSessionDate': lastSessionDate.toIso8601String(),
       };
@@ -161,6 +225,7 @@ class LearnerProgressModel {
     Set<String>? solvedChallengeIds,
     Set<String>? earnedBadgeIds,
     Map<String, int>? quizBestScores,
+    Map<String, QuickCheckResult>? quickCheckResults,
     LastActivityInfo? lastActivity,
     DateTime? lastSessionDate,
   }) {
@@ -178,6 +243,7 @@ class LearnerProgressModel {
       solvedChallengeIds: solvedChallengeIds ?? this.solvedChallengeIds,
       earnedBadgeIds: earnedBadgeIds ?? this.earnedBadgeIds,
       quizBestScores: quizBestScores ?? this.quizBestScores,
+      quickCheckResults: quickCheckResults ?? this.quickCheckResults,
       lastActivity: lastActivity ?? this.lastActivity,
       lastSessionDate: lastSessionDate ?? this.lastSessionDate,
     );

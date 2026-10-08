@@ -77,9 +77,22 @@ def validate_lesson(data, path):
         validate_field(step, "stepId", str)
         validate_field(step, "title", str)
         validate_field(step, "type", str, enum_vals=[
-            "story", "visualExplanation", "physicalTask", "interactiveWiring", "codeExperiment", "quizCheckpoint"
+            "story", "visualExplanation", "physicalTask", "interactiveWiring", "codeExperiment", "quizCheckpoint", "placementCheck"
         ])
         validate_field(step, "markdownContent", str)
+
+        if "quickCheck" in step and step["quickCheck"] is not None:
+            validate_field(step, "quickCheck", list, min_len=2)
+            if len(step["quickCheck"]) != 2:
+                raise ValidationError(f"Step '{step['stepId']}' quickCheck must contain exactly 2 questions (got {len(step['quickCheck'])})")
+            for q in step["quickCheck"]:
+                validate_field(q, "questionId", str)
+                validate_field(q, "question", str, min_len=5)
+                validate_field(q, "options", list, min_len=2)
+                validate_field(q, "correctIndex", int, min_val=0, max_val=len(q["options"]) - 1)
+                validate_field(q, "explanation", str, min_len=5)
+                if "warmupExplanation" in q and q["warmupExplanation"] is not None:
+                    validate_field(q, "warmupExplanation", str)
 
 
 def validate_component(data, path):

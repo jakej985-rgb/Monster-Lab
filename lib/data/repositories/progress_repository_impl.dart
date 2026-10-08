@@ -253,6 +253,23 @@ class ProgressRepositoryImpl implements ProgressRepository {
   }
 
   @override
+  Future<void> recordQuickCheckResult(
+      String learnerId, QuickCheckResult result) {
+    return _synchronized(learnerId, () async {
+      final current = await _getProgressDirect(learnerId);
+      final key = '${result.lessonId}_${result.submoduleId}';
+      final updatedResults =
+          Map<String, QuickCheckResult>.from(current.quickCheckResults)
+            ..[key] = result;
+      final updated = current.copyWith(
+        quickCheckResults: updatedResults,
+        lastSessionDate: DateTime.now(),
+      );
+      await _dataSource.saveProgress(updated);
+    });
+  }
+
+  @override
   Future<void> recordActivity(String learnerId, LastActivityInfo activity) {
     return _synchronized(learnerId, () async {
       final current = await _getProgressDirect(learnerId);

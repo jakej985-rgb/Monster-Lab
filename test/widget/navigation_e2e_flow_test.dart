@@ -4,10 +4,18 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:monster_lab/app.dart';
 import 'package:monster_lab/core/services/storage_service.dart';
+import 'package:monster_lab/data/datasources/curriculum_data_engine.dart';
 import 'package:monster_lab/presentation/shared/providers.dart';
 
 void main() {
   group('End-to-End User Navigation & Routing Flow Tests', () {
+    late CurriculumDataEngine engine;
+
+    setUp(() async {
+      engine = CurriculumDataEngine();
+      await engine.initialize();
+    });
+
     testWidgets('Full user navigation flow across all 5 tabs and sub-routes',
         (tester) async {
       SharedPreferences.setMockInitialValues({
@@ -21,6 +29,7 @@ void main() {
         ProviderScope(
           overrides: [
             storageServiceProvider.overrideWithValue(storageService),
+            curriculumDataEngineProvider.overrideWithValue(engine),
           ],
           child: const MonsterLabApp(),
         ),

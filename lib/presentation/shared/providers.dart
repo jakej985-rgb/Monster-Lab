@@ -207,6 +207,13 @@ class ActiveProgressNotifier extends StateNotifier<LearnerProgressModel?> {
     await loadProgress();
     return isFirst;
   }
+
+  Future<void> recordQuickCheckResult(QuickCheckResult result) async {
+    final learnerId = _learnerId;
+    if (learnerId == null) return;
+    await _progressRepo.recordQuickCheckResult(learnerId, result);
+    await loadProgress();
+  }
 }
 
 final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {

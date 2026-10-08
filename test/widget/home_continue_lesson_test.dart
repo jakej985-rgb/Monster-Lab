@@ -47,7 +47,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('START HERE'), findsOneWidget);
-      expect(find.textContaining('Lesson 1: What is Arduino'), findsOneWidget);
+      expect(find.textContaining('Lesson 1: Arduino Fundamentals'),
+          findsOneWidget);
       expect(find.text('Start Lesson 1'), findsOneWidget);
     });
 

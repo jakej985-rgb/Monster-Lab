@@ -4,9 +4,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:monster_lab/app.dart';
 import 'package:monster_lab/core/services/storage_service.dart';
+import 'package:monster_lab/data/datasources/curriculum_data_engine.dart';
 import 'package:monster_lab/presentation/shared/providers.dart';
 
 void main() {
+  late CurriculumDataEngine engine;
+
+  setUp(() async {
+    engine = CurriculumDataEngine();
+    await engine.initialize();
+  });
+
   testWidgets(
       'Monster Lab application boots and renders all 5 bottom navigation tabs',
       (tester) async {
@@ -21,6 +29,7 @@ void main() {
       ProviderScope(
         overrides: [
           storageServiceProvider.overrideWithValue(storageService),
+          curriculumDataEngineProvider.overrideWithValue(engine),
         ],
         child: const MonsterLabApp(),
       ),

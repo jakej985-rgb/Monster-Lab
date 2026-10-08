@@ -67,6 +67,35 @@ class CurriculumValidator {
       if (s.markdownContent.trim().isEmpty) {
         errors.add("Step '${s.stepId}' is missing markdownContent");
       }
+      if (s.quickCheck != null) {
+        if (s.quickCheck!.length != 2) {
+          errors.add(
+              "Step '${s.stepId}' quickCheck must contain exactly 2 questions (got ${s.quickCheck!.length})");
+        }
+        for (var qIdx = 0; qIdx < s.quickCheck!.length; qIdx++) {
+          final q = s.quickCheck![qIdx];
+          if (q.questionId.trim().isEmpty) {
+            errors.add(
+                "Step '${s.stepId}' quickCheck question $qIdx is missing questionId");
+          }
+          if (q.question.trim().length < 5) {
+            errors.add(
+                "Step '${s.stepId}' quickCheck question '${q.questionId}' must have at least 5 characters");
+          }
+          if (q.options.length < 2) {
+            errors.add(
+                "Step '${s.stepId}' quickCheck question '${q.questionId}' must have at least 2 options");
+          }
+          if (q.correctIndex < 0 || q.correctIndex >= q.options.length) {
+            errors.add(
+                "Step '${s.stepId}' quickCheck question '${q.questionId}' correctIndex out of range");
+          }
+          if (q.explanation.trim().length < 5) {
+            errors.add(
+                "Step '${s.stepId}' quickCheck question '${q.questionId}' explanation must have at least 5 characters");
+          }
+        }
+      }
     }
     if (lesson.xpReward < 10) {
       errors.add("xpReward must be at least 10 (got ${lesson.xpReward})");

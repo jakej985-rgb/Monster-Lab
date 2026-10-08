@@ -1,7 +1,7 @@
 {
   "id": "lesson_03",
-  "title": "Installing Libraries: Supercharging Code",
-  "summary": "Understand open-source modular libraries and how to install them with the Library Manager.",
+  "title": "Libraries: Power Up Your Code",
+  "summary": "Understand why libraries exist before technical C++ details, and learn to find, install, and modify example code.",
   "tier": "builder",
   "estimatedMinutes": 18,
   "prerequisites": [
@@ -14,127 +14,269 @@
   "steps": [
     {
       "stepId": "l03_s01",
-      "title": "Supercharge Your Monster's Brain",
+      "title": "What Is a Library?",
       "type": "story",
-      "markdownContent": "Robots rely on specialized external modules: character displays, motor drivers, gyro sensors, and real-time clocks. Controlling a 16x2 LCD display via raw 8-bit parallel pulses requires toggling 16 separate pins and managing microsecond pulse timings.\n\nIf robotics engineers had to write low-level bit-banging code for every single display, building a project would take months!\n\n**Libraries** package proven, robust C++ driver code written by experienced engineers so you can command complex hardware with high-level functions like `lcd.print(\"Monster Online!\");`.\n\n```\nYour Sketch \u2794 #include <LiquidCrystal_I2C.h> \u2794 Library Driver \u2794 I2C Bus (A4/A5) \u2794 16x2 LCD Display\n```\n\nIn this lesson, you will install external libraries, deconstruct preprocessor syntax, and calibrate an I2C character LCD display!"
+      "interactiveWidgetType": "libraryConceptDiagram",
+      "markdownContent": "Welcome to Monster Lab! Imagine you want your monster robot to speak numbers on an LCD display screen or steer a robotic arm with a motor. 🤖\n\nInside the screen or motor, thousands of tiny electrical pulses have to happen in the exact right microsecond pattern. If you had to write every single pulse, every timing rule, and every wire signal from scratch, building a simple blinking robot would take months!\n\nLuckily, you don't have to reinvent the wheel! In the coding world, expert engineers have already figured out those tricky signals and bundled them into neat packages called **Libraries**.\n\nA **library** is a pre-built toolbox of reusable code written by other friendly engineers. Instead of writing 500 lines of complex wire commands, you just use simple actions like `lcd.print(\"Monster Lab!\");` or `servo.write(90);`.\n\nThink of a library like a recipe book for your monster: you don't need to reinvent bread every time you make a sandwich—you just follow the recipe!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l03_s01_q1",
+          "question": "What is a software library in programming?",
+          "options": [
+            "A collection of pre-written, reusable code tools that makes building projects easier",
+            "A physical bookshelf where you store robot batteries",
+            "A piece of metal used to solder electronic parts together"
+          ],
+          "correctIndex": 0,
+          "explanation": "A library is a collection of pre-written code that provides helpful functions so you don't have to write everything from scratch.",
+          "warmupExplanation": "Think of a library as a handy toolkit: someone else made the tools so you can build your robot faster!"
+        },
+        {
+          "questionId": "qc_l03_s01_q2",
+          "question": "Why do programmers use libraries instead of writing every tiny instruction themselves?",
+          "options": [
+            "To save time and avoid re-solving difficult hardware problems",
+            "Because microcontrollers refuse to run any custom code",
+            "To make their computer run out of memory"
+          ],
+          "correctIndex": 0,
+          "explanation": "Libraries save huge amounts of time and prevent tricky bugs by reusing proven solutions written by experienced engineers.",
+          "warmupExplanation": "Reusing reliable tools lets you focus on building fun robot features instead of debugging low-level timing pulses."
+        }
+      ]
     },
     {
       "stepId": "l03_s02",
-      "title": "Prior Knowledge Check: Microcontroller Libraries",
-      "type": "story",
-      "interactiveWidgetType": "priorKnowledgeCheck",
-      "interactiveConfig": {
-        "questions": [
-          {
-            "question": "What is the primary role of a software library in Arduino?",
-            "options": [
-              "Providing pre-written functions and drivers that manage complex hardware protocols",
-              "Increasing the physical clock frequency of the ATmega328P processor",
-              "Converting alternating current (AC) into direct current (DC)"
-            ],
-            "correctIndex": 0,
-            "explanation": "Libraries encapsulate hundreds of lines of timing and register code into clean function calls."
-          },
-          {
-            "question": "What is a C++ header file (.h)?",
-            "options": [
-              "A file containing class definitions, method prototypes, and constants exposed by a library",
-              "A physical header pin soldered onto the Arduino Uno development board",
-              "A power cable connector for lithium-polymer batteries"
-            ],
-            "correctIndex": 0,
-            "explanation": "Header files define the interface and available methods exposed by an external library."
-          },
-          {
-            "question": "How many communication signal wires does the I2C protocol require?",
-            "options": [
-              "Only 2 shared wires (SDA for data, SCL for clock)",
-              "16 separate parallel wires",
-              "8 analog wires"
-            ],
-            "correctIndex": 0,
-            "explanation": "I2C operates over just two shared bus wires (SDA and SCL), dramatically simplifying wiring."
-          }
-        ]
-      },
-      "markdownContent": "Before working with modular drivers and display backpacks, let's verify your understanding of code abstraction and bus communication.\n\nAnswer the 3 self-check questions below to test your baseline knowledge!"
+      "title": "Libraries in the Real World",
+      "type": "visualExplanation",
+      "markdownContent": "Where do you see libraries in real robotics and everyday gadgets? Almost everywhere!\n\nEvery cool gadget around you uses specialized libraries to talk to different components:\n\n1. **Character Displays (LCDs)**: An LCD library lets a smart microwave or 3D printer print text without worrying about how liquid crystals twist and turn.\n2. **Servo Motors**: A servo library lets an animatronic dinosaur or robot arm turn to an exact angle like 45° or 90° with a single command.\n3. **Sensors (Temperature & Distance)**: Sensor libraries turn electrical voltages into readable numbers like `22°C` or `15 cm`.\n4. **Motor Drivers**: Motor libraries control robot wheels going forward, backward, or spinning on a dime.\n5. **Sound & Buzzers**: Tone libraries create music notes and sound effects for games.\n6. **Communication Modules**: Radio and Bluetooth libraries let robots send secret messages to each other wirelessly!\n\nJust like a carpenter brings different specialized tools—a hammer, a saw, and a ruler—your robot program brings in different libraries for each cool part it controls.",
+      "quickCheck": [
+        {
+          "questionId": "qc_l03_s02_q1",
+          "question": "Which type of library would you choose if your monster needs to steer a robot arm to an angle?",
+          "options": [
+            "A servo motor library",
+            "A sound playback library",
+            "A weather forecast library"
+          ],
+          "correctIndex": 0,
+          "explanation": "Servo motors specialize in moving arms and wheels to precise angles, so a servo library provides the right angle commands.",
+          "warmupExplanation": "Look at the hardware you want to control: arms and steering mechanisms use servo motors!"
+        },
+        {
+          "questionId": "qc_l03_s02_q2",
+          "question": "Can a single robot sketch use more than one library at the same time?",
+          "options": [
+            "Yes, you can use multiple libraries together for different parts",
+            "No, an Arduino can only load one single library per sketch",
+            "No, using two libraries causes the board to catch fire"
+          ],
+          "correctIndex": 0,
+          "explanation": "Robots routinely combine multiple libraries—for example, one library for a screen and another library for a distance sensor!",
+          "warmupExplanation": "Just like a carpenter uses both a hammer and a tape measure, a sketch can include multiple libraries."
+        }
+      ]
     },
     {
       "stepId": "l03_s03",
-      "title": "The Power of Libraries: Raw Registers vs Clean Abstraction",
+      "title": "Your First Library",
       "type": "story",
-      "interactiveWidgetType": "libraryConceptDiagram",
-      "markdownContent": "Why do professional embedded engineers rely on libraries? Look at the difference:\n\n### Without Library (Bit-Banging Raw Hardware)\nDriving an I2C LCD directly requires over 500 lines of complex register manipulation (`TWCR`, `TWDR`), manual I2C start/stop condition pulses, splitting each character into two 4-bit nibbles, and microsecond delay loops.\n\n### With Library (Modular Abstraction)\nWith the `LiquidCrystal_I2C` library, all 500 lines of timing pulses are packaged away. You only need two clean function calls:\n```cpp\nlcd.init();\nlcd.print(\"Monster Online!\");\n```\n\nToggle between both architectures in the diagram below to see how libraries supercharge development!"
+      "interactiveWidgetType": "includeSyntaxDeconstruction",
+      "markdownContent": "Now let's see how your sketch invites a library to join the party!\n\nAt the very top of your Arduino code, before `setup()` and before `loop()`, you write a special line called an **`#include` directive**:\n\n```cpp\n#include <LiquidCrystal_I2C.h>\n```\n\nLet's break down this secret handshake:\n- **`#` (Pound / Hash)**: Tells the preprocessor that this is a special instruction before normal compilation starts.\n- **`include`**: The magic word that says, *\"Please bring in all the tools from this package!\"*\n- **`< >` (Angle Brackets)**: Tells the computer to search your installed library collection for this name.\n- **`.h` (Header File)**: A file ending in `.h` is the table of contents of the library, listing all the available commands and features.\n\n> ⚠️ **Watch Out**: Preprocessor lines like `#include` do **NOT** use a semicolon (`;`) at the end! Adding one is a classic beginner typo.",
+      "quickCheck": [
+        {
+          "questionId": "qc_l03_s03_q1",
+          "question": "Where in your Arduino sketch should you place an #include statement?",
+          "options": [
+            "At the very top of the file, before setup()",
+            "Inside the loop() function between curly braces",
+            "At the very bottom after the sketch ends"
+          ],
+          "correctIndex": 0,
+          "explanation": "#include directives belong at the very top of the sketch so the compiler knows about the library tools before any functions use them.",
+          "warmupExplanation": "Always invite your tools first! Include libraries at the very top of your sketch."
+        },
+        {
+          "questionId": "qc_l03_s03_q2",
+          "question": "Does an #include directive end with a semicolon (;)?",
+          "options": [
+            "No, preprocessor directives like #include do not use a semicolon",
+            "Yes, every single line in C++ must always end with a semicolon",
+            "Yes, but only on Mondays"
+          ],
+          "correctIndex": 0,
+          "explanation": "#include is a preprocessor command, so adding a semicolon produces a compiler syntax error.",
+          "warmupExplanation": "Remember the special rule for #include: no semicolon at the end of the line!"
+        }
+      ]
     },
     {
       "stepId": "l03_s04",
-      "title": "How It Works: Finding & Installing Libraries",
-      "type": "visualExplanation",
+      "title": "Find and Install",
+      "type": "physicalTask",
       "interactiveWidgetType": "libraryManagerSimulator",
-      "markdownContent": "The Arduino IDE includes a built-in **Library Manager** connected to an open-source global registry of thousands of community-verified drivers.\n\n### How to Install a Library in Arduino IDE:\n1. Open **Tools > Manage Libraries...** (or click the Library Manager icon on the left sidebar).\n2. Type the name of the library (for example, `LiquidCrystal_I2C`) into the search box.\n3. Locate the verified library authored by Frank de Brabander.\n4. Click **Install**. The IDE downloads the header files (`.h`), C++ implementations (`.cpp`), and example sketches directly into your `~/Arduino/libraries/` folder.\n\nTest the interactive Library Manager below to search, download, and install `LiquidCrystal_I2C`!"
+      "markdownContent": "Where do you get libraries? Inside the Arduino IDE, there is a built-in search tool called the **Library Manager**!\n\nThink of the Library Manager like an **App Store for code**. Thousands of community engineers publish open-source drivers there for free.\n\n### How to Install in Arduino IDE:\n1. Open the Arduino IDE on your computer.\n2. Click **Tools > Manage Libraries...** (or click the stacked books icon on the left navigation bar).\n3. In the search box, type the name of the library (for example, `LiquidCrystal I2C`).\n4. Find the version by Frank de Brabander and click **INSTALL**.\n5. The IDE downloads the library files into your computer's `libraries` folder automatically!\n\nTry the interactive Library Manager below: search for `LiquidCrystal_I2C` and press Install to watch how packages download and register!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l03_s04_q1",
+          "question": "Where inside the Arduino IDE can you search for and install community libraries?",
+          "options": [
+            "Tools > Manage Libraries (or the Library Manager sidebar tab)",
+            "File > Save As",
+            "Help > About Arduino"
+          ],
+          "correctIndex": 0,
+          "explanation": "Tools > Manage Libraries opens the Arduino Library Manager, which searches the global library index.",
+          "warmupExplanation": "The Library Manager is your built-in tool for discovering and installing code packages."
+        },
+        {
+          "questionId": "qc_l03_s04_q2",
+          "question": "What happens if your sketch has #include <CoolSensor.h>, but you forgot to install CoolSensor?",
+          "options": [
+            "The compiler shows a 'No such file or directory' error and halts",
+            "The Arduino automatically invents the sensor code",
+            "The computer plays a musical song"
+          ],
+          "correctIndex": 0,
+          "explanation": "If a library isn't installed, the compiler cannot find the header file and halts with 'No such file or directory'.",
+          "warmupExplanation": "If the compiler can't find your tool in the workshop, it stops and tells you the file is missing!"
+        }
+      ]
     },
     {
       "stepId": "l03_s05",
-      "title": "Hardware Mission: The 16x2 LCD Display & Contrast Potentiometer",
-      "type": "physicalTask",
-      "interactiveWidgetType": "lcdContrastSimulator",
-      "markdownContent": "Examine your **16x2 Character LCD Display with I2C Backpack** (`comp_07`):\n\n### Key Hardware Landmarks:\n1. **The I2C Backpack**: Turn the module over. Notice the black printed circuit board soldered to the back. This contains the PCF8574 I/O expander chip.\n2. **The 4-Pin Header**: Without this backpack, you would need 16 jumper wires! With I2C, you only need 4:\n   - `GND`: Ground 0V return path\n   - `VCC`: +5V power supply\n   - `SDA`: Serial Data (connects to Uno Pin A4)\n   - `SCL`: Serial Clock (connects to Uno Pin A5)\n3. **The Blue Contrast Trimmer**: Locate the small blue square potentiometer with the brass screw on the back. It controls liquid crystal bias voltage (V0).\n\nThe #1 troubleshooting issue is misadjusted contrast! Tune the virtual trimmer potentiometer screw below to find the sweet spot between blank screen and solid white blocks."
+      "title": "Use an Example",
+      "type": "codeExperiment",
+      "markdownContent": "Here is the best secret every pro engineer knows: **every good library comes with working example code!**\n\nWhen you install a library, you don't have to guess how to use it. You can open a ready-to-run sketch directly:\n- In the Arduino IDE: go to **File > Examples > LiquidCrystal I2C > HelloWorld**.\n\nLook at this classic starter sketch:\n\n```cpp\n#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n\n// Create the screen helper: address 0x27, 16 columns, 2 rows\nLiquidCrystal_I2C lcd(0x27, 16, 2);\n\nvoid setup() {\n  lcd.init();          // Wake up the screen\n  lcd.backlight();     // Turn on the background light\n  lcd.setCursor(0, 0); // Start at column 0, row 0\n  lcd.print(\"Monster Lab!\");\n}\n\nvoid loop() {\n  // Nothing needed in the loop for a static message!\n}\n```\n\nStarting with an official example is the safest way to verify that your wiring and library installation both work perfectly before you write custom code!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l03_s05_q1",
+          "question": "Where can you find pre-made starter sketches that show how to use an installed library?",
+          "options": [
+            "Under File > Examples in the Arduino IDE menu",
+            "Under Edit > Cut in the top menu",
+            "Inside the computer's recycle bin"
+          ],
+          "correctIndex": 0,
+          "explanation": "The File > Examples menu lists built-in example sketches provided by installed libraries.",
+          "warmupExplanation": "Libraries include working examples under File > Examples so you can test them immediately!"
+        },
+        {
+          "questionId": "qc_l03_s05_q2",
+          "question": "Why is testing an official example sketch a smart first step when trying new hardware?",
+          "options": [
+            "It proves your wiring and library work before you write your own code",
+            "It deletes old sketches so you have more disk space",
+            "It makes the Arduino board waterproof"
+          ],
+          "correctIndex": 0,
+          "explanation": "If an official example works, you know your hardware, wires, and library are good. If your custom code later fails, you know exactly where the bug is!",
+          "warmupExplanation": "Starting with known working code eliminates guesswork about whether the problem is in your wiring or your code."
+        }
+      ]
     },
     {
       "stepId": "l03_s06",
-      "title": "Coding Basics: Deconstructing the #include Directive",
-      "type": "story",
-      "interactiveWidgetType": "includeSyntaxDeconstruction",
-      "markdownContent": "To use an installed library, your sketch must instruct the C++ compiler to load its interface definitions:\n\n```cpp\n#include <LiquidCrystal_I2C.h>\n```\n\n### Syntax Breakdown:\n- `#`: Preprocessor flag indicating a compiler directive evaluated before compilation begins.\n- `include`: Command instructing the compiler to literally insert the contents of the header file.\n- `< >`: Angle brackets tell the compiler to search the system/installed libraries directory.\n- `.h`: The header file extension containing class definitions and function signatures.\n\nTap each syntax token below to inspect its rules and avoid common syntax traps!"
+      "title": "Change the Example",
+      "type": "codeExperiment",
+      "markdownContent": "The fun of engineering begins when you change someone else's example! 🛠️\n\nLet's modify our starter sketch to display a two-line greeting for your robot:\n\n```cpp\nvoid setup() {\n  lcd.init();\n  lcd.backlight();\n\n  // Line 1 (Top row)\n  lcd.setCursor(0, 0);\n  lcd.print(\"Monster: Sparky\");\n\n  // Line 2 (Bottom row)\n  lcd.setCursor(0, 1);\n  lcd.print(\"Status: ONLINE\");\n}\n```\n\n### Making Predictions\nNotice the cursor coordinates: `lcd.setCursor(col, row)`. In computer programming, rows and columns start counting from **0**, not 1!\n- `(0, 0)` is the very first character of the **top row**.\n- `(0, 1)` is the very first character of the **bottom row**.\n\nWhat happens if you change `\"ONLINE\"` to `\"SLEEPING\"`? The screen updates with your new word when you re-upload! By changing one line at a time, you learn how the library controls the physical world.",
+      "quickCheck": [
+        {
+          "questionId": "qc_l03_s06_q1",
+          "question": "In lcd.setCursor(0, 1), which row of a 16x2 display does the cursor move to?",
+          "options": [
+            "The second row (bottom row)",
+            "The first row (top row)",
+            "Off the screen completely"
+          ],
+          "correctIndex": 0,
+          "explanation": "Because coordinates are zero-indexed, row 0 is the top row and row 1 is the bottom row.",
+          "warmupExplanation": "Remember that computers start counting at 0! Row 0 is the top, row 1 is the bottom."
+        },
+        {
+          "questionId": "qc_l03_s06_q2",
+          "question": "When you want to display your robot's name instead of 'Monster Lab!', what should you modify in the sketch?",
+          "options": [
+            "The text inside the quotation marks in lcd.print(\"...\")",
+            "The #include line at the top",
+            "The name of the Arduino board in the Tools menu"
+          ],
+          "correctIndex": 0,
+          "explanation": "The characters inside the quotation marks in lcd.print(...) determine the exact message printed on the screen.",
+          "warmupExplanation": "Change the text inside the quotes to print whatever message your monster wants to say!"
+        }
+      ]
     },
     {
       "stepId": "l03_s07",
-      "title": "Code Walkthrough: Annotated LiquidCrystal_I2C Sketch",
-      "type": "codeExperiment",
-      "markdownContent": "Examine a complete sketch driving the 16x2 character display:\n\n```cpp\n#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n\n// Create the LCD object: Address 0x27, 16 columns, 2 rows\nLiquidCrystal_I2C lcd(0x27, 16, 2);\n\nvoid setup() {\n  lcd.init();          // Initialize LCD hardware over I2C\n  lcd.backlight();     // Turn on the blue LED backlight\n  lcd.setCursor(0, 0); // Column 0, Row 0\n  lcd.print(\"Monster Lab!\");\n  lcd.setCursor(0, 1); // Column 0, Row 1\n  lcd.print(\"System Active\");\n}\n\nvoid loop() {\n  // Static display \u2014 loop remains idle\n}\n```\n\n### Key Function Calls:\n- `LiquidCrystal_I2C lcd(...)`: The **constructor**. Instantiates an object named `lcd` at hex address `0x27`.\n- `lcd.init()`: Configures internal HD44780 controller registers over the I2C bus.\n- `lcd.backlight()`: Powers on the display illumination LED.\n- `lcd.setCursor(col, row)`: Places the writing cursor at the specified zero-indexed grid coordinate."
+      "title": "Meet the Library API",
+      "type": "visualExplanation",
+      "markdownContent": "You might hear programmers talk about a library's **API**.\n\nAPI stands for **Application Programming Interface**. That sounds super fancy, but it just means:\n> **The list of commands a library gives you to talk to it!**\n\nThink of an API like the menu at an ice cream shop 🍦. The menu tells you all the flavors you can order. If you ask for something that isn't on the menu, the shopkeeper looks confused!\n\nHere is a quick look at the `LiquidCrystal_I2C` library menu (its API):\n- `lcd.init()`: Wakes up and configures the screen.\n- `lcd.backlight()`: Turns on the blue LED light behind the screen.\n- `lcd.noBacklight()`: Turns off the light to save power.\n- `lcd.clear()`: Erases everything on the screen.\n- `lcd.setCursor(col, row)`: Jumps the writing pen to a grid position.\n- `lcd.print(message)`: Writes text or numbers on the display.\n\nWhenever you use a new library, checking its documentation or README gives you its complete menu of commands!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l03_s07_q1",
+          "question": "What does a library's 'API' mean in friendly terms?",
+          "options": [
+            "The menu of commands and functions the library allows you to call",
+            "The physical plastic casing around the Arduino",
+            "The battery voltage needed to power the board"
+          ],
+          "correctIndex": 0,
+          "explanation": "An API is the set of functions, methods, and commands exposed by a library for you to control the device.",
+          "warmupExplanation": "Think of an API like a restaurant menu: it lists all the options and commands you can use!"
+        },
+        {
+          "questionId": "qc_l03_s07_q2",
+          "question": "If you want to erase all text currently shown on an LCD screen, which API command would you look for?",
+          "options": [
+            "lcd.clear()",
+            "lcd.destroy()",
+            "lcd.burn()"
+          ],
+          "correctIndex": 0,
+          "explanation": "lcd.clear() is the standard API function that wipes the character memory and leaves the screen blank.",
+          "warmupExplanation": "Most display libraries provide a clear() command to wipe the display clean."
+        }
+      ]
     },
     {
       "stepId": "l03_s08",
-      "title": "Code Prediction: Missing Backlight & Out-of-Bounds Cursors",
-      "type": "codeExperiment",
-      "markdownContent": "Practice scientific engineering deductions before flashing code:\n\n### Prediction 1: What happens if lcd.backlight() is omitted?\n*Answer:* The characters are still generated by the liquid crystal molecules, but without the LED backlight, the dark blue screen is nearly impossible to read without shining a flashlight directly onto it!\n\n### Prediction 2: What happens if you call lcd.setCursor(16, 0)?\n*Answer:* Columns are zero-indexed from 0 to 15. Column 16 is off the visible screen! The characters will wrap into hidden DDRAM display memory registers and remain invisible."
+      "title": "When Should I Use a Library?",
+      "type": "story",
+      "interactiveWidgetType": "missingLibraryTroubleshooting",
+      "markdownContent": "Now that you know how awesome libraries are, an important engineering question arises:\n\n**Should you use a library for EVERYTHING?** 🤔\n\nLet's compare two scenarios:\n\n### 1. When You DO Want a Library:\n- Complex communication (talking to an LCD screen, an OLED display, or a Wi-Fi chip).\n- Precise timing devices (servo motors, ultrasonic distance sensors, sound decoders).\n- Complicated math (reading a 6-axis gyroscope, calculating angles, or encrypting data).\n\n### 2. When You DON'T Need a Library:\n- Simple things built right into Arduino! Turning a single LED on or off only needs `digitalWrite(pin, HIGH);`.\n- Reading a basic pushbutton switch only needs `digitalRead(pin);`.\n- Reading a potentiometer dial only needs `analogRead(pin);`.\n\nUsing a giant library for a simple pushbutton is like calling a helicopter just to cross the street! A great engineer chooses the right tool for the job: simple built-in commands for basic pins, and powerful libraries for smart modules.",
+      "quickCheck": [
+        {
+          "questionId": "qc_l03_s08_q1",
+          "question": "Do you need to install an external library just to turn a single basic LED on and off?",
+          "options": [
+            "No, simple built-in commands like digitalWrite() are already part of Arduino",
+            "Yes, you cannot turn on any LED without downloading a library",
+            "Yes, an LED requires at least three different libraries"
+          ],
+          "correctIndex": 0,
+          "explanation": "Basic input/output like digitalWrite() and digitalRead() are built right into the Arduino language—no extra libraries needed!",
+          "warmupExplanation": "Simple LED control is already built into Arduino: digitalWrite() does the job with zero extra downloads!"
+        },
+        {
+          "questionId": "qc_l03_s08_q2",
+          "question": "When is installing an external library strongly recommended?",
+          "options": [
+            "When working with complex modules like screens, motors, or special sensors",
+            "Only when you want to make your code run slower",
+            "Never, engineers avoid libraries at all costs"
+          ],
+          "correctIndex": 0,
+          "explanation": "External libraries handle the intricate timing and protocol math required by complex hardware devices like screens and servos.",
+          "warmupExplanation": "Use libraries whenever a component requires dozens of complex timing steps to operate safely."
+        }
+      ]
     },
     {
       "stepId": "l03_s09",
-      "title": "Guided Experiment: Dynamic Uptime Counter",
-      "type": "codeExperiment",
-      "markdownContent": "Let's make the display dynamic! Instead of static text, we can update Row 1 continuously with live system uptime:\n\n```cpp\nvoid loop() {\n  lcd.setCursor(0, 1);\n  lcd.print(\"Uptime: \");\n  lcd.print(millis() / 1000);\n  lcd.print(\"s   \"); // Extra spaces erase trailing old digits\n  delay(500);\n}\n```\n\n### Why the trailing spaces matter:\nWhen a 2-digit number (e.g. `99`) rolls over to a 3-digit number (`100`), or drops back down, older characters remain in LCD RAM unless explicitly overwritten with space characters `\"   \"`!"
-    },
-    {
-      "stepId": "l03_s10",
-      "title": "Real-World Robotics: Hardware Abstraction Layers",
-      "type": "visualExplanation",
-      "markdownContent": "The modular library architecture you learned is used in every advanced engineering discipline:\n\n- **Autonomous Electric Vehicles**: Autonomous drive computers don't send raw PWM pulses to motor windings directly. They call driver libraries: `motorController.setTorqueNm(240);`.\n- **Medical Ventilators**: Airflow sensors and solenoid valves are controlled through certified Hardware Abstraction Layers (HAL) to prevent timing glitches.\n- **3D Printers**: Firmware like Marlin uses stepper motor and thermal thermistor libraries to coordinate micro-stepping smoothly."
-    },
-    {
-      "stepId": "l03_s11",
-      "title": "Troubleshooting Challenge: Missing Header & Blank Displays",
-      "type": "story",
-      "interactiveWidgetType": "missingLibraryTroubleshooting",
-      "markdownContent": "You verify a sketch and the compiler halts with a bright red fatal error:\n\n```\nfatal error: LiquidCrystal_I2C.h: No such file or directory\n#include <LiquidCrystal_I2C.h>\n         ^~~~~~~~~~~~~~~~~~~~~\ncompilation terminated.\n```\n\nThis means the preprocessor searched your system libraries folder and could not find the file `LiquidCrystal_I2C.h`.\n\nResolve this compilation failure in the interactive triage station below by installing the missing library!"
-    },
-    {
-      "stepId": "l03_s12",
-      "title": "Workshop Safety & Hardware Care: LCD Voltage Ratings",
-      "type": "story",
-      "markdownContent": "Protect your LCD modules and microcontroller with these workshop rules:\n\n1. **Check Operating Voltage**: Most character LCD backpacks run on 5V. Supplying 5V power to a 3.3V-only display can permanently fry its internal driver chip.\n2. **Disconnect Power Before Rewiring**: Never move or rewire `VCC`, `GND`, `SDA`, or `SCL` jumper wires while the USB cable is plugged in.\n3. **Use Plastic or Insulated Screwdrivers**: When adjusting the blue contrast trimmer on the back of the backpack, use a small insulated trimmer tool to avoid accidentally shorting adjacent exposed solder pads."
-    },
-    {
-      "stepId": "l03_s13",
-      "title": "Final Review & Competencies",
-      "type": "story",
-      "markdownContent": "Outstanding work! Let's review the key competencies you mastered in Lesson 03:\n\n- You understand how libraries encapsulate low-level register bit-banging into clean C++ functions.\n- You know how to search and install community libraries using the Arduino IDE Library Manager.\n- You can deconstruct the `#include <LibraryName.h>` preprocessor syntax.\n- You know how to calibrate LCD liquid crystal contrast using the blue backpack trimmer potentiometer.\n- You can diagnose and fix `'No such file or directory'` compiler errors.\n\nComplete the 8-question assessment below to earn your XP and proceed to Lesson 04!"
-    },
-    {
-      "stepId": "l03_s14",
-      "title": "Comprehensive Knowledge Check",
+      "title": "Library Challenge",
       "type": "quizCheckpoint",
-      "markdownContent": "Test your mastery of Arduino libraries, header syntax, I2C addressing, and LCD contrast tuning.",
+      "markdownContent": "You have unlocked the superpower of libraries! Test your skills on finding, installing, including, and modifying library code to earn your Builder XP.",
       "interactiveConfig": {
         "question": "What is the primary purpose of an Arduino library?",
         "options": [
@@ -143,7 +285,7 @@
           "They convert AC electricity into DC electricity"
         ],
         "correctIndex": 0,
-        "explanation": "Correct: They speed up code by writing complex hardware protocols for you. Understanding this principle ensures proper circuit function and reliability.",
+        "explanation": "They speed up code by writing complex hardware protocols for you. Understanding this principle ensures proper circuit function and reliability.",
         "questions": [
           {
             "question": "What is the primary purpose of an Arduino library?",
@@ -153,27 +295,17 @@
               "They convert AC electricity into DC electricity"
             ],
             "correctIndex": 0,
-            "explanation": "Correct: They speed up code by writing complex hardware protocols for you. Understanding this principle ensures proper circuit function and reliability."
+            "explanation": "They speed up code by writing complex hardware protocols for you. Understanding this principle ensures proper circuit function and reliability."
           },
           {
             "question": "Which preprocessor command is used to add a library to a sketch?",
             "options": [
-              "`#include <LibraryName.h>`",
-              "`import LibraryName;`",
-              "`using namespace LibraryName;`"
+              "#include <LibraryName.h>",
+              "import LibraryName;",
+              "using namespace LibraryName;"
             ],
             "correctIndex": 0,
-            "explanation": "Correct: `#include <LibraryName.h>`. Understanding this principle ensures proper circuit function and reliability."
-          },
-          {
-            "question": "In `LiquidCrystal_I2C lcd(0x27, 16, 2);`, what does `0x27` represent?",
-            "options": [
-              "The 7-bit hexadecimal I2C device address",
-              "The pin number connected to the LCD",
-              "The operating temperature limit in Celsius"
-            ],
-            "correctIndex": 0,
-            "explanation": "Correct: The 7-bit hexadecimal I2C device address. Understanding this principle ensures proper circuit function and reliability."
+            "explanation": "#include <LibraryName.h> is the standard preprocessor directive that imports a library into an Arduino sketch."
           },
           {
             "question": "Where inside the Arduino IDE can you search for and install community libraries?",
@@ -183,51 +315,87 @@
               "Help > Drivers"
             ],
             "correctIndex": 0,
-            "explanation": "Correct: Tools > Manage Libraries (or the Library Manager tab). Understanding this principle ensures proper circuit function and reliability."
+            "explanation": "Tools > Manage Libraries opens the Library Manager, allowing you to search and install verified libraries."
           },
           {
-            "question": "What do the numbers `16, 2` indicate in the LCD constructor?",
+            "question": "What does a library's 'API' represent?",
             "options": [
-              "16 columns and 2 rows of characters",
-              "16 volts and 2 amperes",
-              "16 MHz processor and 2 KB SRAM"
+              "The list of functions and commands exposed for you to control the device",
+              "The physical size of the circuit board in millimeters",
+              "The price of the component in the store"
             ],
             "correctIndex": 0,
-            "explanation": "Correct: 16 columns and 2 rows of characters. Understanding this principle ensures proper circuit function and reliability."
+            "explanation": "An API (Application Programming Interface) is the collection of functions and commands the library provides."
           },
           {
-            "question": "If your code compiles cleanly but the LCD shows solid white boxes, what should you adjust first?",
+            "question": "Where can you find pre-tested example sketches showing how to use an installed library?",
             "options": [
-              "The blue contrast potentiometer on the back of the module",
-              "Reinstall the Arduino IDE",
-              "Replace the Uno microcontroller chip"
+              "File > Examples in the Arduino IDE",
+              "Tools > Auto Format",
+              "Sketch > Export compiled Binary"
             ],
             "correctIndex": 0,
-            "explanation": "Correct: The blue contrast potentiometer on the back of the module. Understanding this principle ensures proper circuit function and reliability."
+            "explanation": "Installed libraries bundle working sample programs under the File > Examples menu in the IDE."
           },
           {
-            "question": "Why does using an I2C backpack library save wiring compared to standard parallel LCDs?",
+            "question": "If your compiler shows 'fatal error: Servo.h: No such file or directory', what should you do?",
             "options": [
-              "It reduces required data pins from 10+ down to 2 shared bus lines",
-              "It eliminates the need for power and ground wires",
-              "It transmits data over Wi-Fi"
+              "Install the missing Servo library using the Library Manager",
+              "Buy a new computer",
+              "Add five semicolons to the #include line"
             ],
             "correctIndex": 0,
-            "explanation": "Correct: It reduces required data pins from 10+ down to 2 shared bus lines. Understanding this principle ensures proper circuit function and reliability."
+            "explanation": "'No such file or directory' means the library header isn't installed in your libraries folder yet."
+          },
+          {
+            "question": "Why shouldn't you use an external library to read a simple pushbutton?",
+            "options": [
+              "Arduino already has built-in digitalRead() commands for simple buttons",
+              "Pushbuttons do not work with electricity",
+              "External libraries are illegal to use with buttons"
+            ],
+            "correctIndex": 0,
+            "explanation": "Simple tasks like reading a digital button are already supported natively by Arduino's core functions."
           },
           {
             "question": "What file extension designates C++ header files in libraries?",
             "options": [
-              "`.h`",
-              "`.ino`",
-              "`.hex`"
+              ".h",
+              ".ino",
+              ".hex"
             ],
             "correctIndex": 0,
-            "explanation": "Correct: `.h`. Understanding this principle ensures proper circuit function and reliability."
+            "explanation": "Header files use the .h extension and contain the declarations exposed by a C++ library."
           }
         ]
-      }
+      },
+      "quickCheck": [
+        {
+          "questionId": "qc_l03_s09_q1",
+          "question": "What happens when you install a library from the Library Manager?",
+          "options": [
+            "Its code and example sketches are downloaded to your computer for your sketches to use",
+            "It permanently erases all previous sketches",
+            "It changes the language of your computer"
+          ],
+          "correctIndex": 0,
+          "explanation": "The Library Manager downloads the library's header, source files, and examples into your local libraries folder.",
+          "warmupExplanation": "Installing adds the library to your computer's toolkit so any sketch can include it."
+        },
+        {
+          "questionId": "qc_l03_s09_q2",
+          "question": "Can you inspect and modify the example code provided by an installed library?",
+          "options": [
+            "Yes, you can edit example code, customize values, and save it as your own sketch",
+            "No, example code is locked and will break your computer if edited",
+            "No, you can only look at it through a magnifying glass"
+          ],
+          "correctIndex": 0,
+          "explanation": "Examples are meant to be explored, adapted, and saved into your own custom robot sketches!",
+          "warmupExplanation": "Modifying example code is one of the best ways to learn and build custom robot features."
+        }
+      ]
     }
   ],
-  "xpReward": 60
+  "xpReward": 50
 }

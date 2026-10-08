@@ -10,6 +10,44 @@ enum StepType {
   placementCheck
 }
 
+class QuickCheckQuestion {
+  final String questionId;
+  final String question;
+  final List<String> options;
+  final int correctIndex;
+  final String explanation;
+  final String? warmupExplanation;
+
+  const QuickCheckQuestion({
+    required this.questionId,
+    required this.question,
+    required this.options,
+    required this.correctIndex,
+    required this.explanation,
+    this.warmupExplanation,
+  });
+
+  factory QuickCheckQuestion.fromJson(Map<String, dynamic> json) {
+    return QuickCheckQuestion(
+      questionId: json['questionId'] as String,
+      question: json['question'] as String,
+      options: List<String>.from(json['options'] as List),
+      correctIndex: json['correctIndex'] as int,
+      explanation: json['explanation'] as String,
+      warmupExplanation: json['warmupExplanation'] as String?,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'questionId': questionId,
+        'question': question,
+        'options': options,
+        'correctIndex': correctIndex,
+        'explanation': explanation,
+        if (warmupExplanation != null) 'warmupExplanation': warmupExplanation,
+      };
+}
+
 class LessonStep {
   final String stepId;
   final String title;
@@ -18,6 +56,7 @@ class LessonStep {
   final String? illustrationAsset;
   final String? interactiveWidgetType;
   final Map<String, dynamic>? interactiveConfig;
+  final List<QuickCheckQuestion>? quickCheck;
 
   const LessonStep({
     required this.stepId,
@@ -27,6 +66,7 @@ class LessonStep {
     this.illustrationAsset,
     this.interactiveWidgetType,
     this.interactiveConfig,
+    this.quickCheck,
   });
 
   factory LessonStep.fromJson(Map<String, dynamic> json) {
@@ -38,6 +78,12 @@ class LessonStep {
       illustrationAsset: json['illustrationAsset'] as String?,
       interactiveWidgetType: json['interactiveWidgetType'] as String?,
       interactiveConfig: json['interactiveConfig'] as Map<String, dynamic>?,
+      quickCheck: json['quickCheck'] != null
+          ? (json['quickCheck'] as List)
+              .map(
+                  (q) => QuickCheckQuestion.fromJson(q as Map<String, dynamic>))
+              .toList()
+          : null,
     );
   }
 
@@ -49,6 +95,8 @@ class LessonStep {
         'illustrationAsset': illustrationAsset,
         'interactiveWidgetType': interactiveWidgetType,
         'interactiveConfig': interactiveConfig,
+        if (quickCheck != null)
+          'quickCheck': quickCheck!.map((q) => q.toJson()).toList(),
       };
 }
 
