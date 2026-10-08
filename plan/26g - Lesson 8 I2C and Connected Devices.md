@@ -44,3 +44,25 @@ Lesson 3 = libraries. Lesson 8 = communication using a library and physical devi
 
 ## Validation
 I2C must appear only after the learner has enough hardware, sensor, and library experience.
+
+
+## Pre-Test / Readiness Check
+
+Every Lesson 8 submodule gets **2 prerequisite questions**.
+
+Questions should diagnose:
+- pins and wiring
+- power/GND
+- sensors
+- libraries
+- basic input/output concepts
+- Serial Monitor
+- the idea that devices can exchange information
+
+Later I2C submodules may test readiness for SDA/SCL, addresses, and device roles only after those ideas have been introduced.
+
+### Readiness
+- 2/2 = 🟢 Green — Ready
+- 0–1/2 = 🟡 Yellow — Warm Up
+
+Yellow learners receive a short targeted review. No red state and no blocking.
