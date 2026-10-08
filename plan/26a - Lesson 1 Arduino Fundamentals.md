@@ -42,3 +42,24 @@ No deep loops/functions, libraries, communication protocols, PWM theory, or sens
 
 ## Validation
 Check age 6+ readability, no Coding Foundations duplication, short chunks, visual requirements, stable ID compatibility, and minimal prerequisites.
+
+
+## Pre-Test / Readiness Check
+
+Lesson 1 must begin with a diagnostic pre-test.
+
+Every Lesson 1 submodule gets **2 prerequisite questions**.
+
+Questions should establish whether the learner recognizes:
+- everyday machines
+- simple input/output ideas
+- basic electronics vocabulary
+- the idea that a computer follows instructions
+
+The questions must not assume prior Arduino knowledge.
+
+### Readiness
+- 2/2 correct = 🟢 Green — Ready
+- 0–1/2 correct = 🟡 Yellow — Warm Up
+
+Yellow learners receive a short visual warm-up and continue. There is no red state and the pre-test never blocks Lesson 1.
