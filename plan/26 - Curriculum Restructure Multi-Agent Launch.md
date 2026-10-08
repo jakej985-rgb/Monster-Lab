@@ -118,137 +118,101 @@ A later revisit must add a meaningful new dimension: combination, reasoning, tro
 Lessons 1, 3, 4, 5, 6, 7, and 8 have approved modular structures; 2A, 2B, and Coding Foundations remain separate; Lesson 7 is complete; prerequisites are coherent; advanced revisits are documented; data validates; progress is safe; Guardian approves; tests pass; README/roadmap documentation is current.
 
 
-## Pre-Test and Submodule Readiness System
+## Optional Pre-Test / Quick Check
 
-Every lesson must begin with a **Pre-Test / Readiness Check** before the learner starts instruction.
+Every lesson should **offer** a short diagnostic called **Quick Check** before instruction begins.
 
-The purpose is diagnosis, not punishment.
+The Quick Check is optional. Learners must be able to choose either:
+
+- **Take Quick Check** — answer the readiness questions first.
+- **I already know this — Start Lesson** — skip the check and begin instruction immediately.
+
+Do not label the second option "Skip Test." The tone should communicate learner choice, not avoidance.
+
+Suggested learner-facing copy:
+
+> **🧠 Quick Check — About 1 minute**  
+> Let's see what you already know. Your answers help Monster Lab decide what to explain.
+
+Buttons:
+- **Take Quick Check**
+- **I already know this — Start Lesson**
 
 ### Two Questions Per Submodule
 
-Every submodule must have exactly **2 readiness questions** in its pre-test bank.
+Every submodule must have exactly **2 readiness questions** in its Quick Check bank.
 
-Questions should test the knowledge needed to understand that specific submodule, not trivia.
+Questions diagnose prerequisite knowledge rather than trivia.
 
-Examples:
-- recognition
-- vocabulary
-- concept understanding
-- prerequisite hardware knowledge
-- simple prediction
-- basic code reading when appropriate
+### Readiness Results
 
-The system may randomize from a larger question bank later, but the plan must guarantee at least 2 valid questions per submodule.
+For learners who take the Quick Check:
 
-### Readiness Indicators
+- **2/2 correct → 🟢 Green — Ready**
+- **0–1/2 correct → 🟡 Yellow — Warm Up**
 
-There are only two learner-facing readiness states:
+There is **no red state**.
 
-- 🟢 **Green — Ready**
-  - Strong evidence the learner already understands the prerequisite knowledge.
-  - Continue normally.
-- 🟡 **Yellow — Warm Up**
-  - Some prerequisite knowledge is missing or uncertain.
-  - Give a short review, visual explanation, or warm-up activity before the submodule.
-  - The learner is **not blocked**.
+If the learner chooses **I already know this — Start Lesson**, readiness is **Not Assessed**. This is not a failure, warning, or readiness color. It simply means the learner chose to begin without taking the diagnostic.
 
-**There is intentionally no red state.**
+Not Assessed learners must still receive the full lesson and can demonstrate readiness through later activities.
 
-A learner must never be labeled “not ready,” “failed,” or blocked by the pre-test.
+### Yellow Behavior
 
-### Scoring
+Yellow is not failure and does not block progress.
 
-Each submodule's two questions produce a readiness result:
-
-- **2/2 correct → Green**
-- **0–1/2 correct → Yellow**
-
-The lesson readiness screen should show all submodules, for example:
-
-| Submodule | Readiness |
-|---|---|
-| What Is Arduino? | 🟢 Green |
-| Inputs & Outputs | 🟡 Warm Up |
-| Digital vs Analog | 🟢 Green |
-| Power & Ground | 🟡 Warm Up |
-
-The lesson can then provide a short targeted warm-up for yellow modules.
-
-### Lesson-Level Readiness
-
-Calculate an overall readiness summary from the submodule results:
-
-- **Mostly Green → Ready**
-- **Mixed Green/Yellow → Ready with Warm-Ups**
-- **Mostly Yellow → Start with Guided Review**
-
-Never display a red/failure state.
-
-The learner still gets to start the lesson regardless of the result.
-
-### Question Design Rules
-
-Questions must:
-- be age appropriate
-- use visuals where helpful
-- avoid trick questions
-- avoid requiring knowledge the learner has not reasonably encountered
-- distinguish prerequisite knowledge from lesson content
-- provide useful diagnostic information
-- support accessibility
-- work on mobile
-
-Questions should not reveal the exact answer to the upcoming submodule.
-
-### Warm-Up Behavior
-
-When a submodule is yellow:
-1. show the learner the yellow readiness indicator;
-2. provide a short explanation or visual;
+For a yellow submodule:
+1. show the yellow readiness indicator;
+2. provide a short visual explanation or review;
 3. offer one tiny practice interaction;
-4. let the learner continue;
-5. do not force them to retake the pre-test.
+4. continue into the submodule;
+5. do not force a retake.
 
-### Data Requirements
+### Lesson-Level Summary
 
-Readiness results should be stored separately from lesson completion.
+Only summarize readiness for learners who actually take the Quick Check.
 
-Suggested data:
+- Mostly Green → **Ready**
+- Mixed Green/Yellow → **Ready with Warm-Ups**
+- Mostly Yellow → **Start with Guided Review**
+- Quick Check not taken → **Not Assessed**
+
+The learner can start the lesson in every case.
+
+### Data Rules
+
+Store Quick Check results separately from lesson completion:
+
 - lesson ID
 - submodule ID
 - question IDs
 - selected answers
 - correctness
-- readiness state
+- readiness result
 - timestamp
 - whether warm-up was shown
+- whether the learner took or bypassed the Quick Check
 
-Do not award normal lesson completion XP merely for answering the pre-test.
+For a bypass, record **Not Assessed** rather than inventing Green or Yellow results.
 
-### Progress Rules
-
-Pre-test performance must not:
+Quick Check performance must never:
 - fail the lesson
 - block navigation
 - remove XP
-- mark a learner as incapable
+- mark a learner incapable
 - overwrite mastery/progress data
 
-Pre-test results are diagnostic signals that can help the app recommend review.
+Do not award normal lesson-completion XP merely for taking the Quick Check.
 
-### Guardian Requirement
+### Guardian / QA Requirements
 
-Curriculum Guardian must review every pre-test question set for:
-- prerequisite validity
-- age appropriateness
-- fairness
-- diagnostic value
-- technical accuracy
-- absence of trick questions
-- correct Green/Yellow classification
+Guardian reviews every question set for prerequisite validity, age appropriateness, fairness, diagnostic value, technical accuracy, and absence of trick questions.
 
-Integration/QA must verify:
-- every submodule has 2 questions
-- every question has a valid answer
-- every result resolves to Green or Yellow
-- no Red state exists in the readiness UI/data model
+Integration/QA verifies:
+- every submodule has exactly 2 Quick Check questions;
+- every question has a valid answer;
+- checked results resolve only to Green or Yellow;
+- bypassed checks resolve to Not Assessed;
+- no Red readiness state exists in the UI or data model;
+- bypassing does not block lesson access;
+- later lesson evidence can still demonstrate readiness.
