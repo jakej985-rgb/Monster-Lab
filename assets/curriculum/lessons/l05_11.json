@@ -1,0 +1,54 @@
+{
+  "id": "l05_11",
+  "title": "Analog Inputs",
+  "summary": "Your Arduino's ATmega328P processor is purely digital.",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_05",
+  "sortOrder": 11,
+  "isOptional": false,
+  "prerequisites": [
+    "l05_10"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_20"
+  ],
+  "steps": [
+    {
+      "stepId": "l05_s11",
+      "title": "Analog Inputs",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "adcSamplingVisualizer",
+      "markdownContent": "### The Translation Problem: How Computers Read Voltages\nYour Arduino's ATmega328P processor is purely digital. Its arithmetic logic unit only understands binary 1s and 0s. How can it measure a smooth, continuous voltage like 2.37 Volts from a potentiometer?\n\nIt uses a specialized on-chip hardware peripheral called the **Analog-to-Digital Converter (ADC)**!\n\nOn the Arduino Uno, the ADC is connected to the six pins labeled **A0, A1, A2, A3, A4, and A5** along the lower board edge.\n\n```\nContinuous Analog Voltage (0.0V to 5.0V)\n                  |\n         [ 10-bit Successive ]\n         [ Approximation ADC ]\n                  |\nDiscrete Integer Range: 0 to 1023 (1024 unique steps)\n```\n\n### 10-Bit ADC Resolution Breakdown:\n- **10 Bits of Resolution**: In binary, 10 bits can represent $2^{10} = 1024$ unique integers (from **0 to 1023**).\n- **0** corresponds to **0.00 Volts** (GND).\n- **1023** corresponds to **5.00 Volts** (Full 5V supply rail).\n- **Resolution Step Size**: Each step represents:\n  $$\\text{Step Voltage} = \\frac{5.000\\text{ V}}{1023} \\approx 0.004887\\text{ V} = 4.89\\text{ mV}$$\n\nWhenever the input voltage changes by just 4.89 millivolts, the integer count shifts up or down by 1! The ADC takes approximately **100 microseconds** to perform this conversion, allowing your robot to sample analog inputs up to 10,000 times per second!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s11_q1",
+          "question": "What integer value range does the Arduino Uno's 10-bit ADC produce?",
+          "options": [
+            "0 to 1023 (1024 discrete steps)",
+            "0 to 255",
+            "0 to 1",
+            "-512 to +512"
+          ],
+          "correctIndex": 0,
+          "explanation": "A 10-bit Analog-to-Digital Converter converts voltages into integers from 0 (0V) to 1023 (5V).",
+          "warmupExplanation": "10 binary bits represent 2^10 = 1024 possible numbers, numbered from 0 up to 1023."
+        },
+        {
+          "questionId": "l05_s11_q2",
+          "question": "Which dedicated header pins on the Arduino Uno connect to the internal ADC?",
+          "options": [
+            "Pins A0 through A5",
+            "Digital pins 0 and 1 only",
+            "The AREF and RESET pins only"
+          ],
+          "correctIndex": 0,
+          "explanation": "Pins labeled A0 through A5 on the Uno are dedicated analog inputs wired to the ADC multiplexer.",
+          "warmupExplanation": "The pins designated with 'A' (A0-A5) are the analog input channels on the Uno."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

@@ -1,0 +1,24 @@
+{
+  "id": "lesson_04",
+  "title": "Lesson 4 \u2014 PWM & RGB LEDs: Colors and Brightness",
+  "summary": "Journey from ON/OFF to variable output using PWM, control brightness, and mix colorful light with RGB LEDs.",
+  "lessonIds": [
+    "l04_01",
+    "l04_02",
+    "l04_03",
+    "l04_04",
+    "l04_05",
+    "l04_06",
+    "l04_07",
+    "l04_08",
+    "l04_09",
+    "l04_10"
+  ],
+  "isOptional": false,
+  "placementLessonId": null,
+  "prerequisites": [
+    "lesson_03"
+  ],
+  "xpReward": 100,
+  "estimatedMinutes": 50
+}

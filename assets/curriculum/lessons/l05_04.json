@@ -1,0 +1,52 @@
+{
+  "id": "l05_04",
+  "title": "digitalRead",
+  "summary": "How does your Arduino sketch inspect the physical voltage on a pin?",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_05",
+  "sortOrder": 4,
+  "isOptional": false,
+  "prerequisites": [
+    "l05_03"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_20"
+  ],
+  "steps": [
+    {
+      "stepId": "l05_s04",
+      "title": "digitalRead",
+      "type": "codeExperiment",
+      "markdownContent": "### The Software Lens: Reading Digital Pins\nHow does your Arduino sketch inspect the physical voltage on a pin? With the built-in C++ function `digitalRead()`!\n\n```cpp\nint sensorReading = digitalRead(2); // Reads Pin 2 at this exact microsecond\n```\n\n### How digitalRead() Works:\n1. The ATmega328P processor samples the input buffer register for Digital Pin 2.\n2. If the pin is at +5V, it returns the constant **`HIGH`** (integer value 1).\n3. If the pin is at 0V (GND), it returns the constant **`LOW`** (integer value 0).\n4. We store this value in an `int` variable so our sketch can make intelligent decisions using `if` statements!\n\n```cpp\nconst int buttonPin = 2;\n\nvoid setup() {\n  pinMode(buttonPin, INPUT); // Configure Pin 2 to listen\n  Serial.begin(9600);        // Open Serial Monitor communication\n}\n\nvoid loop() {\n  int state = digitalRead(buttonPin); // Query the hardware pin\n  Serial.print(\"Pin 2 State: \");\n  Serial.println(state);              // Prints 1 for HIGH or 0 for LOW\n  delay(250);\n}\n```\n\nRun this sketch and open your Serial Monitor. But wait! What happens if no wire is connected to Pin 2 yet? Let's uncover the biggest trap in physical computing!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s04_q1",
+          "question": "Which Arduino C++ function is used to sample the binary voltage of a digital pin?",
+          "options": [
+            "digitalRead(pin)",
+            "digitalWrite(pin, HIGH)",
+            "analogRead(pin)"
+          ],
+          "correctIndex": 0,
+          "explanation": "`digitalRead(pin)` queries a pin and returns its current digital logic state (HIGH or LOW).",
+          "warmupExplanation": "`digitalWrite()` sends output; `digitalRead()` brings an incoming digital signal into code."
+        },
+        {
+          "questionId": "l05_s04_q2",
+          "question": "What possible values can digitalRead() return on an Arduino Uno?",
+          "options": [
+            "HIGH (1) or LOW (0)",
+            "Any floating decimal between 0.0 and 5.0",
+            "Values from 0 to 1023"
+          ],
+          "correctIndex": 0,
+          "explanation": "Because it is a digital function, `digitalRead()` only returns binary HIGH (1) or LOW (0).",
+          "warmupExplanation": "Digital inputs only measure binary two-state logic: HIGH or LOW."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

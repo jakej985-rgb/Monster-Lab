@@ -1,0 +1,53 @@
+{
+  "id": "l07_02",
+  "title": "Digital Sensors",
+  "summary": "Electronic sensors generally fall into two major families: Digital and Analog.",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_07",
+  "sortOrder": 2,
+  "isOptional": false,
+  "prerequisites": [
+    "l07_01"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_01",
+    "comp_19"
+  ],
+  "steps": [
+    {
+      "stepId": "l07_s02",
+      "title": "Digital Sensors",
+      "type": "visualExplanation",
+      "markdownContent": "Electronic sensors generally fall into two major families: **Digital** and **Analog**.\n\n### Binary Perception:\nA **digital sensor** communicates in discrete binary states. It only ever reports one of two possible values:\n- **HIGH (1)**: 5 Volts (Active / Triggered / Closed)\n- **LOW (0)**: 0 Volts (Idle / Untriggered / Open)\n\nThink of a standard light switch on your wall: it is either completely switched ON or completely switched OFF\u2014there are no middle values!\n\n### Common Digital Sensors:\n- **Pushbuttons & Bumper Switches (`comp_04`)**: Pressed (`HIGH`) or Released (`LOW`).\n- **Tilt Ball Switches (`comp_28`)**: Upright (`HIGH`) or Tilted (`LOW`).\n- **PIR Motion Detectors (`comp_03`)**: Warm body moving (`HIGH`) or Quiet room (`LOW`).\n\nIn your Arduino firmware, you read digital sensors with `digitalRead(pin)`. When you only need a simple Yes-or-No answer\u2014such as *'Did the monster bump into a wall?'*\u2014a digital sensor is lightning-fast, highly reliable, and easy to program!",
+      "quickCheck": [
+        {
+          "questionId": "l07_s02_q1",
+          "question": "How many discrete electrical states does a standard digital sensor output?",
+          "options": [
+            "Exactly two states: HIGH (5V) or LOW (0V)",
+            "An infinite number of smooth voltage levels",
+            "1024 different numbers between 0 and 1023"
+          ],
+          "correctIndex": 0,
+          "explanation": "Digital signals only exist in two binary states: HIGH (5V / 1) or LOW (0V / 0).",
+          "warmupExplanation": "Digital means binary\u2014like a light switch that is either completely on or completely off with no dimming in between."
+        },
+        {
+          "questionId": "l07_s02_q2",
+          "question": "Which Arduino function is used to check the binary state of a digital sensor pin?",
+          "options": [
+            "digitalRead()",
+            "analogRead()",
+            "digitalWrite()"
+          ],
+          "correctIndex": 0,
+          "explanation": "digitalRead(pin) reads a digital pin and returns either HIGH or LOW.",
+          "warmupExplanation": "Remember: 'Read' gets information into the Arduino, while 'Write' sends electricity out to an actuator."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

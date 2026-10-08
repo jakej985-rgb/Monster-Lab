@@ -1,0 +1,51 @@
+{
+  "id": "l04_09",
+  "title": "RGB Mini Project",
+  "summary": "Time to build your monster's Mood & Status Beacon!",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_04",
+  "sortOrder": 9,
+  "isOptional": false,
+  "prerequisites": [
+    "l04_08"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l04_s09",
+      "title": "RGB Mini Project",
+      "type": "physicalTask",
+      "markdownContent": "Time to build your monster's **Mood & Status Beacon**!\n\n### Breadboard Wiring Mission:\n1. Insert your Common Cathode RGB LED across separate rows on the breadboard.\n2. Connect the **longest pin (Pin 2)** directly to Arduino **GND**.\n3. Connect **Pin 1 (Red)** through a **220\u03a9 resistor** to Uno **PWM Pin ~9**.\n4. Connect **Pin 3 (Green)** through a **220\u03a9 resistor** to Uno **PWM Pin ~10**.\n5. Connect **Pin 4 (Blue)** through a **220\u03a9 resistor** to Uno **PWM Pin ~11**.\n\n### The Status Light Sketch:\n```cpp\nconst int RED_PIN = 9;    // PWM Pin ~9\nconst int GREEN_PIN = 10; // PWM Pin ~10\nconst int BLUE_PIN = 11;  // PWM Pin ~11\n\nvoid setup() {\n  pinMode(RED_PIN, OUTPUT);\n  pinMode(GREEN_PIN, OUTPUT);\n  pinMode(BLUE_PIN, OUTPUT);\n}\n\nvoid setColor(int red, int green, int blue) {\n  analogWrite(RED_PIN, red);\n  analogWrite(GREEN_PIN, green);\n  analogWrite(BLUE_PIN, blue);\n}\n\nvoid loop() {\n  // \ud83d\udfe2 Green = Ready / Systems Clear\n  setColor(0, 255, 0);\n  delay(1500);\n\n  // \ud83d\udfe1 Yellow = Warning / Charging\n  setColor(255, 180, 0);\n  delay(1500);\n\n  // \ud83d\udd34 Red = Alert / Stop!\n  setColor(255, 0, 0);\n  delay(1500);\n\n  // \ud83d\udfe3 Purple = Party Mode Beacon!\n  setColor(200, 0, 255);\n  delay(1500);\n}\n```\n\nUpload this sketch to watch your monster express its status in living color!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l04_s09_q1",
+          "question": "Which set of Arduino Uno pins is used for PWM color control in this project?",
+          "options": [
+            "Pins ~9, ~10, and ~11",
+            "Pins 0, 1, and 2",
+            "Pins 7, 8, and 12"
+          ],
+          "correctIndex": 0,
+          "explanation": "Pins ~9, ~10, and ~11 all feature hardware PWM (tilde ~), allowing variable brightness on every color channel.",
+          "warmupExplanation": "Look for the tilde (~) on the Uno silkscreen: pins 9, 10, and 11 all support PWM."
+        },
+        {
+          "questionId": "qc_l04_s09_q2",
+          "question": "In the setColor(red, green, blue) function, what arguments produce a bright Yellow status light?",
+          "options": [
+            "setColor(255, 255, 0); (Red + Green ON, Blue OFF)",
+            "setColor(0, 0, 255);",
+            "setColor(0, 255, 255);"
+          ],
+          "correctIndex": 0,
+          "explanation": "Yellow light is synthesized by mixing Red and Green while keeping Blue turned off.",
+          "warmupExplanation": "To create yellow light, turn ON Red (255) and Green (255), and set Blue to 0."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

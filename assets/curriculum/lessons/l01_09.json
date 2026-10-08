@@ -1,0 +1,52 @@
+{
+  "id": "l01_09",
+  "title": "Code to Hardware",
+  "summary": "Now let's connect words in code to physical hardware pins!",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_01",
+  "sortOrder": 9,
+  "isOptional": false,
+  "prerequisites": [
+    "l01_08"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l01_s09",
+      "title": "Code to Hardware",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "codeDeconstruction",
+      "markdownContent": "Now let's connect words in code to physical hardware pins!\n\nHere is one of the most famous instructions in all of robotics:\n\n```cpp\ndigitalWrite(13, HIGH);\n```\n\nLet's break down what each word tells the Arduino:\n- `digitalWrite`: The action command! Tells the Arduino to send power to a digital pin.\n- `(` and `)`: Parentheses that hold the details.\n- `13`: The target pin! Digital Pin 13 is connected to the built-in amber LED on your board.\n- `,`: A comma that separates the pin number from the state.\n- `HIGH`: Turn power ON (+5 Volts)! (If we wrote `LOW`, it would turn power OFF).\n- `;`: The semicolon! Every statement ends with a semicolon, just like a period ends a sentence.\n\nTap each code token below to inspect its job and watch it control the hardware!",
+      "quickCheck": [
+        {
+          "questionId": "l01_s09_q1",
+          "question": "In the command digitalWrite(13, HIGH);, what does the number 13 mean?",
+          "options": [
+            "Which pin number to turn on",
+            "How many minutes to wait",
+            "The robot's age"
+          ],
+          "correctIndex": 0,
+          "explanation": "The number 13 tells the Arduino exactly which pin header to send electricity to!",
+          "warmupExplanation": "Commands tell the board which pin to use. The number specifies the exact pin connection."
+        },
+        {
+          "questionId": "l01_s09_q2",
+          "question": "What does the word HIGH mean in digitalWrite(13, HIGH);?",
+          "options": [
+            "Turn power ON (+5V)",
+            "Turn power OFF (0V)",
+            "Lift the board up high"
+          ],
+          "correctIndex": 0,
+          "explanation": "In digital code, HIGH means turn the power ON so current flows to your component!",
+          "warmupExplanation": "Think of HIGH like flipping a switch ON. LOW means flipping the switch OFF."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

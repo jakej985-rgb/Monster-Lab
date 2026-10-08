@@ -344,8 +344,12 @@ class _BuildDetailScreenState extends ConsumerState<BuildDetailScreen> {
           // Check prerequisites
           final completedLessons =
               activeProgress?.completedLessonIds.toSet() ?? <String>{};
+          final completedCourses =
+              activeProgress?.completedCourseIds.toSet() ?? <String>{};
           final missingPrereqs = project.prerequisiteLessons
-              .where((id) => !completedLessons.contains(id))
+              .where((id) =>
+                  !completedLessons.contains(id) &&
+                  !completedCourses.contains(id))
               .toList();
 
           if (missingPrereqs.isNotEmpty) {

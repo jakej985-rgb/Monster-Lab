@@ -34,18 +34,20 @@ void main() {
     });
 
     test(
-        'getLessonsOrdered returns correct sequence: lesson_01 -> CF -> 2A -> 2B -> lesson_03..12',
+        'getLessonsOrdered returns correct sequence: L01 -> CF -> 2A -> 2B -> L03..L08 -> lesson_09..12',
         () async {
       final ordered = await engine.getLessonsOrdered();
-      expect(ordered.length, equals(35));
+      expect(ordered.length, equals(107));
 
       final orderedIds = ordered.map((l) => l.id).toList();
 
-      // First is lesson_01
-      expect(orderedIds.first, equals('lesson_01'));
+      // First are the 12 Lesson 1 sub-lessons
+      final l01Slice = orderedIds.sublist(0, 12);
+      expect(l01Slice.first, equals('l01_01'));
+      expect(l01Slice.last, equals('l01_12'));
 
       // Next are the 8 Coding Foundations lessons
-      final cfSlice = orderedIds.sublist(1, 9);
+      final cfSlice = orderedIds.sublist(12, 20);
       expect(
           cfSlice,
           equals([
@@ -60,51 +62,29 @@ void main() {
           ]));
 
       // Next are the 8 Lesson 2A sub-lessons
-      final l2aSlice = orderedIds.sublist(9, 17);
-      expect(
-          l2aSlice,
-          equals([
-            'l2a_01',
-            'l2a_02',
-            'l2a_03',
-            'l2a_04',
-            'l2a_05',
-            'l2a_06',
-            'l2a_07',
-            'l2a_08'
-          ]));
+      final l2aSlice = orderedIds.sublist(20, 28);
+      expect(l2aSlice.first, equals('l2a_01'));
+      expect(l2aSlice.last, equals('l2a_08'));
 
       // Next are the 8 Lesson 2B sub-lessons
-      final l2bSlice = orderedIds.sublist(17, 25);
-      expect(
-          l2bSlice,
-          equals([
-            'l2b_01',
-            'l2b_02',
-            'l2b_03',
-            'l2b_04',
-            'l2b_05',
-            'l2b_06',
-            'l2b_07',
-            'l2b_08'
-          ]));
+      final l2bSlice = orderedIds.sublist(28, 36);
+      expect(l2bSlice.first, equals('l2b_01'));
+      expect(l2bSlice.last, equals('l2b_08'));
 
-      // Next are lesson_03 through lesson_12
-      final remainingSlice = orderedIds.sublist(25);
-      expect(
-          remainingSlice,
-          equals([
-            'lesson_03',
-            'lesson_04',
-            'lesson_05',
-            'lesson_06',
-            'lesson_07',
-            'lesson_08',
-            'lesson_09',
-            'lesson_10',
-            'lesson_11',
-            'lesson_12'
-          ]));
+      // Next are Lesson 3 sub-lessons (9)
+      final l03Slice = orderedIds.sublist(36, 45);
+      expect(l03Slice.first, equals('l03_01'));
+      expect(l03Slice.last, equals('l03_09'));
+
+      // Next are Lesson 8 sub-lessons (10)
+      final l08Slice = orderedIds.sublist(93, 103);
+      expect(l08Slice.first, equals('l08_01'));
+      expect(l08Slice.last, equals('l08_10'));
+
+      // Last are standalone lesson_09 through lesson_12
+      final standaloneSlice = orderedIds.sublist(103);
+      expect(standaloneSlice,
+          equals(['lesson_09', 'lesson_10', 'lesson_11', 'lesson_12']));
     });
   });
 }

@@ -33,16 +33,32 @@ void main() {
       await engine.initialize();
     });
 
-    test('Loads all 3 courses from disk assets', () async {
+    test('Loads all 10 courses from disk assets', () async {
       final courses = await engine.getCourses();
-      expect(courses.length, equals(3));
+      expect(courses.length, equals(10));
 
       final courseIds = courses.map((c) => c.id).toSet();
-      expect(courseIds,
-          containsAll(['coding_foundations', 'lesson_2a', 'lesson_2b']));
+      expect(
+          courseIds,
+          containsAll([
+            'lesson_01',
+            'coding_foundations',
+            'lesson_2a',
+            'lesson_2b',
+            'lesson_03',
+            'lesson_04',
+            'lesson_05',
+            'lesson_06',
+            'lesson_07',
+            'lesson_08',
+          ]));
     });
 
     test('getCourseById returns specific course', () async {
+      final l01 = await engine.getCourseById('lesson_01');
+      expect(l01.id, equals('lesson_01'));
+      expect(l01.lessonIds.length, equals(12));
+
       final cf = await engine.getCourseById('coding_foundations');
       expect(cf.id, equals('coding_foundations'));
       expect(cf.isOptional, isTrue);
@@ -55,6 +71,10 @@ void main() {
       final l2b = await engine.getCourseById('lesson_2b');
       expect(l2b.id, equals('lesson_2b'));
       expect(l2b.lessonIds.length, equals(8));
+
+      final l03 = await engine.getCourseById('lesson_03');
+      expect(l03.id, equals('lesson_03'));
+      expect(l03.lessonIds.length, equals(9));
     });
 
     test('getCourseLessons returns ordered sub-lessons for a course', () async {

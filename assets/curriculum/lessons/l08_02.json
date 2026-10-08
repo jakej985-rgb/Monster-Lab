@@ -1,0 +1,53 @@
+{
+  "id": "l08_02",
+  "title": "Meet I2C",
+  "summary": "I2C stands for Inter-Integrated Circuit (pronounced \"Eye-Squared-See\" or \"I-Two-C\").",
+  "tier": "engineer",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_08",
+  "sortOrder": 2,
+  "isOptional": false,
+  "prerequisites": [
+    "l08_01"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_07"
+  ],
+  "steps": [
+    {
+      "stepId": "l08_s02",
+      "title": "Meet I2C",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "i2cPullupChecker",
+      "markdownContent": "### What is I2C?\n**I2C** stands for **Inter-Integrated Circuit** (pronounced *\"Eye-Squared-See\"* or *\"I-Two-C\"*). Invented by Philips Semiconductor, it is a synchronous, multi-target, bidirectional serial communication bus.\n\nThe genius of I2C: it coordinates communication between up to **127 unique peripheral devices** over **just two shared wires**!\n\n```\nArduino Uno (Controller)\n       \u2502           \u2502\n      SDA         SCL\n       \u2502           \u2502\n   \u250c\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2510   \u250c\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2510   \u250c\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2510\n   \u2502  LCD  \u2502   \u2502 Clock \u2502   \u2502 Sensor\u2502\n   \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518   \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518   \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n```\n\n### The Two Roles on the Bus\n1. **Controller (Master):** The Arduino Uno is the manager of the network. It initiates every communication session, drives the clock pulses, and commands target devices to send or receive data.\n2. **Target (Peripheral / Slave):** The connected modules (such as LCD backpacks, sensors, or real-time clocks). They listen quietly on the bus and only respond when their unique address is called.\n\n### Open-Drain & Pull-Up Resistors\nHow can dozens of devices share the exact same wires without short-circuiting each other? I2C uses an **open-drain** architecture:\n- Both communication lines are passively held at +5V (**HIGH**) by **pull-up resistors** (typically 4.7k\u03a9).\n- Connected devices only ever pull the line to Ground (0V / **LOW**) using internal transistors. They never force a 5V HIGH onto the wire.\n- Because devices only pull LOW and never drive HIGH, two devices talking at once cannot create a direct short circuit between power and ground!\n\nTest the interactive pull-up resistor simulator below to see why I2C lines cannot float and how proper pull-up values ensure crisp digital signals!",
+      "quickCheck": [
+        {
+          "questionId": "q_l08_s02_1",
+          "question": "What is the primary role of the Arduino Uno when acting as the I2C Controller (Master)?",
+          "options": [
+            "It manages the shared bus, generates clock pulses, and initiates all communication sessions with peripheral devices.",
+            "It cuts power to the circuit whenever more than two peripherals are connected.",
+            "It converts serial signals into high-frequency radio waves."
+          ],
+          "correctIndex": 0,
+          "explanation": "In an I2C network, the Controller initiates all transactions and provides the synchronizing clock pulse train for target peripheral devices.",
+          "warmupExplanation": "Recall from Lesson 1 that the microcontroller acts as the central brain directing and coordinating peripherals in your robot."
+        },
+        {
+          "questionId": "q_l08_s02_2",
+          "question": "Why are pull-up resistors required on the shared I2C communication lines?",
+          "options": [
+            "They hold the open-drain lines at a stable HIGH voltage when idle so connected devices can pull the line LOW without creating a dead short circuit.",
+            "They amplify 5V signals up to 24V for long-distance industrial cables.",
+            "They slow down electrical current to keep wires from overheating."
+          ],
+          "correctIndex": 0,
+          "explanation": "I2C uses open-drain drivers. External pull-up resistors maintain lines at HIGH (5V) by default, allowing devices to safely pull lines to GND (LOW) to communicate.",
+          "warmupExplanation": "In Lesson 5, you learned that pull-up resistors keep inputs at a defined voltage rather than leaving lines floating in an undefined state."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

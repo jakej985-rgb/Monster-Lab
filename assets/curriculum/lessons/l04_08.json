@@ -1,0 +1,52 @@
+{
+  "id": "l04_08",
+  "title": "Common Cathode vs Common Anode",
+  "summary": "When using an RGB LED, you must know which internal wiring standard it uses: Common Cathode or Common Anode.",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_04",
+  "sortOrder": 8,
+  "isOptional": false,
+  "prerequisites": [
+    "l04_07"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l04_s08",
+      "title": "Common Cathode vs Common Anode",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "commonCathodeVsAnodeDiagram",
+      "markdownContent": "When using an RGB LED, you must know which internal wiring standard it uses: **Common Cathode** or **Common Anode**.\n\n### 1. Common Cathode (Standard in Monster Lab Kits)\n- **Cathode** means negative terminal (GND).\n- The longest shared pin connects to **GND (0V)**.\n- Driving a color pin HIGH (or positive PWM) turns that color **ON**.\n- `analogWrite(redPin, 255);` = 100% Brightness.\n- `analogWrite(redPin, 0);` = Completely OFF.\n- *Straightforward and intuitive logic!*\n\n### 2. Common Anode\n- **Anode** means positive terminal (+5V).\n- The longest shared pin connects to **+5V**.\n- Driving a color pin LOW (0V) completes the circuit and turns that color **ON**.\n- `analogWrite(redPin, 0);` = 100% Brightness!\n- `analogWrite(redPin, 255);` = Completely OFF!\n- *Inverted logic (Active-LOW)!*\n\n### Quick Hardware Test:\nPlug the longest pin into GND. Touch a 220\u03a9 resistor from 5V to any color pin. If that color lights up, congratulations\u2014you have a **Common Cathode** LED!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l04_s08_q1",
+          "question": "In a Common Cathode RGB LED, what does the shared longest pin connect to?",
+          "options": [
+            "Ground (GND / 0V)",
+            "Positive +5V power",
+            "An analog input header"
+          ],
+          "correctIndex": 0,
+          "explanation": "Cathode is the negative terminal, so a Common Cathode LED shares a single connection to Ground (GND).",
+          "warmupExplanation": "Cathode means negative (GND), while Anode means positive (+5V). Common Cathode connects to GND."
+        },
+        {
+          "questionId": "qc_l04_s08_q2",
+          "question": "If an RGB LED has Common Anode wiring (shared +5V), what code value turns a color channel fully ON?",
+          "options": [
+            "0 (or LOW), because current flows when the pin is pulled down to 0V",
+            "255 (or HIGH)",
+            "500"
+          ],
+          "correctIndex": 0,
+          "explanation": "Common Anode LEDs use inverted (active-LOW) logic: sending 0 connects the pin to Ground, completing the circuit from +5V.",
+          "warmupExplanation": "Common Anode has inverted logic: pulling a pin to 0V turns it ON, and sending 255 turns it OFF."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

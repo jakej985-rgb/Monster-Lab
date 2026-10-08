@@ -57,12 +57,28 @@ def validate_field(obj, key, expected_type, required=True, min_len=None, pattern
             raise ValidationError(f"Field '{key}' must be boolean, got {type(val).__name__}")
 
 
+def validate_course(data, path):
+    validate_field(
+        data,
+        "id",
+        str,
+        pattern=r"^(lesson_[0-9]{2,3}|coding_foundations|lesson_[0-9][a-z])$",
+    )
+    validate_field(data, "title", str, min_len=3)
+    validate_field(data, "summary", str, min_len=5)
+    validate_field(data, "lessonIds", list, min_len=1)
+    validate_field(data, "isOptional", bool)
+    validate_field(data, "prerequisites", list)
+    validate_field(data, "xpReward", int, min_val=50)
+    validate_field(data, "estimatedMinutes", int, min_val=10)
+
+
 def validate_lesson(data, path):
     validate_field(
         data,
         "id",
         str,
-        pattern=r"^(lesson_[0-9]{2,3}|cf_[0-9]{2}|l2a_[0-9]{2}|l2b_[0-9]{2})$",
+        pattern=r"^(lesson_[0-9]{2,3}|cf_[0-9]{2}|l2a_[0-9]{2}|l2b_[0-9]{2}|l[0-9]{2}[a-z]?_[0-9]{2})$",
     )
     validate_field(data, "title", str, min_len=3)
     validate_field(data, "summary", str)
@@ -266,6 +282,7 @@ def main():
         manifest = json.load(f)
 
     lessons = {}
+    courses = {}
     components = {}
     projects = {}
     challenges = {}
@@ -284,7 +301,20 @@ def main():
     else:
         errors.append(f"Badges file missing: {badges_file}")
 
-    # 2. Validate Lessons
+    # 2. Validate Courses
+    courses_dir = CURRICULUM_DIR / "courses"
+    if courses_dir.exists():
+        for cfile in sorted(courses_dir.glob("*.json")):
+            try:
+                with open(cfile, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                validate_course(data, cfile)
+                courses[data["id"]] = data
+                print(f"  [OK] Course: {data['id']} - {data['title']}")
+            except Exception as e:
+                errors.append(f"Course error in {cfile.name}: {e}")
+
+    # 3. Validate Lessons
     lessons_dir = CURRICULUM_DIR / "lessons"
     for lfile in sorted(lessons_dir.glob("*.json")):
         try:
@@ -296,7 +326,7 @@ def main():
         except Exception as e:
             errors.append(f"Lesson error in {lfile.name}: {e}")
 
-    # 3. Validate Components
+    # 4. Validate Components
     comp_dir = CURRICULUM_DIR / "components"
     for cfile in sorted(comp_dir.glob("*.json")):
         try:
@@ -308,7 +338,7 @@ def main():
         except Exception as e:
             errors.append(f"Component error in {cfile.name}: {e}")
 
-    # 4. Validate Projects
+    # 5. Validate Projects
     proj_dir = CURRICULUM_DIR / "projects"
     for pfile in sorted(proj_dir.glob("*.json")):
         try:
@@ -320,7 +350,7 @@ def main():
         except Exception as e:
             errors.append(f"Project error in {pfile.name}: {e}")
 
-    # 5. Validate Challenges
+    # 6. Validate Challenges
     chal_dir = CURRICULUM_DIR / "challenges"
     for chfile in sorted(chal_dir.glob("*.json")):
         try:
@@ -334,10 +364,19 @@ def main():
 
     print("\n--- Cross-Referential Integrity Checks ---")
 
+    # Course referential checks
+    for cid, c in courses.items():
+        for lid in c["lessonIds"]:
+            if lid not in lessons:
+                errors.append(f"Course '{cid}' references non-existent lesson '{lid}'")
+        for prereq in c["prerequisites"]:
+            if prereq not in lessons and prereq not in courses:
+                errors.append(f"Course '{cid}' has non-existent prerequisite '{prereq}'")
+
     # Lesson referential checks
     for lid, l in lessons.items():
         for prereq in l["prerequisites"]:
-            if prereq not in lessons:
+            if prereq not in lessons and prereq not in courses:
                 errors.append(f"Lesson '{lid}' has non-existent prerequisite lesson '{prereq}'")
         for cid in l["componentIds"]:
             if cid not in components:
@@ -349,7 +388,7 @@ def main():
             if req_c not in components:
                 errors.append(f"Project '{pid}' references non-existent required component '{req_c}'")
         for prereq_l in p["prerequisiteLessons"]:
-            if prereq_l not in lessons:
+            if prereq_l not in lessons and prereq_l not in courses:
                 errors.append(f"Project '{pid}' references non-existent prerequisite lesson '{prereq_l}'")
         if "badgeRewardId" in p and p["badgeRewardId"]:
             if p["badgeRewardId"] not in badges:
@@ -368,6 +407,7 @@ def main():
         sys.exit(1)
     else:
         print(f"\n[SUCCESS] 100% Curriculum Validation Passed!")
+        print(f"  Total Courses: {len(courses)}")
         print(f"  Total Lessons: {len(lessons)}")
         print(f"  Total Components: {len(components)}")
         print(f"  Total Projects: {len(projects)}")

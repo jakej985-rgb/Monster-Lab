@@ -1,0 +1,145 @@
+{
+  "id": "l05_16",
+  "title": "Input Challenge",
+  "summary": "You have mastered both sides of the physical input spectrum:",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_05",
+  "sortOrder": 16,
+  "isOptional": false,
+  "prerequisites": [
+    "l05_15"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_20"
+  ],
+  "steps": [
+    {
+      "stepId": "l05_s16",
+      "title": "Input Challenge",
+      "type": "quizCheckpoint",
+      "markdownContent": "### The Input Master Challenge\nCongratulations, Monster Engineer! You have mastered both sides of the physical input spectrum:\n- **Digital Inputs**: Mechanical contact switches, active-low logic, internal pull-up resistors, and contact debouncing.\n- **Analog Inputs**: Rotary potentiometers, voltage dividers, the 10-bit ADC, and mapping analog sensor telemetry into actuator output commands.\n\nDemonstrate your complete mastery by completing this 8-question input engineering challenge!",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What does digitalRead(pin) return when an active-low button wired with INPUT_PULLUP is physically pressed to GND?",
+            "options": [
+              "LOW (0)",
+              "HIGH (1)",
+              "1023",
+              "-1"
+            ],
+            "correctIndex": 0,
+            "explanation": "In an active-low circuit, pressing the button connects the pin directly to Ground, making digitalRead() return LOW."
+          },
+          {
+            "questionId": "q2",
+            "question": "Why is an internal pull-up resistor essential when reading a button connected between a pin and Ground?",
+            "options": [
+              "It prevents the pin from floating and picking up stray electromagnetic noise when the button is open",
+              "It increases the battery voltage to 24 volts",
+              "It slows down the CPU to save flash memory",
+              "It makes the button flash different colors"
+            ],
+            "correctIndex": 0,
+            "explanation": "Without a pull-up resistor, an open input pin floats and oscillates wildly between HIGH and LOW."
+          },
+          {
+            "question": "What physical phenomenon causes a mechanical button to register multiple false clicks during a single press?",
+            "options": [
+              "Mechanical contact bounce as internal metal contacts vibrate against each other",
+              "Solar radiation heating the breadboard",
+              "The Arduino USB cable is upside down",
+              "The pull-up resistor has too much resistance"
+            ],
+            "correctIndex": 0,
+            "explanation": "Microscopic mechanical contact chatter causes rapid voltage oscillations lasting several milliseconds upon closing."
+          },
+          {
+            "question": "What happens if you accidentally connect a potentiometer's center wiper to 5V and an outer leg to GND, then turn the knob fully?",
+            "options": [
+              "A dead short circuit between 5V and GND occurs, triggering USB safety shutdown",
+              "The potentiometer produces a musical tone",
+              "The LED blinks twice as fast",
+              "Nothing unusual happens"
+            ],
+            "correctIndex": 0,
+            "explanation": "Connecting the wiper to 5V and turning it to the GND terminal creates a zero-resistance path between 5V and GND (dead short)."
+          },
+          {
+            "question": "What voltage does a 10k potentiometer supply to its wiper when connected between 5V and GND and centered exactly halfway?",
+            "options": [
+              "2.50 Volts",
+              "0.00 Volts",
+              "5.00 Volts",
+              "1.25 Volts"
+            ],
+            "correctIndex": 0,
+            "explanation": "At the exact center, the resistance splits equally into two 5k resistors, dividing the 5V supply to 2.5V."
+          },
+          {
+            "question": "What integer range does the Arduino Uno's internal 10-bit ADC produce when reading analogRead(A0)?",
+            "options": [
+              "0 to 1023",
+              "0 to 255",
+              "0 to 1",
+              "1 to 100"
+            ],
+            "correctIndex": 0,
+            "explanation": "A 10-bit ADC provides 1024 discrete integer steps, ranging from 0 (0.0V) to 1023 (5.0V)."
+          },
+          {
+            "question": "Why must you divide an analogRead() value by 4 (or use map()) before passing it to analogWrite() on a PWM pin?",
+            "options": [
+              "Because analogRead() outputs 10 bits (0-1023) but analogWrite() only accepts 8 bits (0-255)",
+              "Because analogWrite() only works with even numbers",
+              "Because 4 is the lucky number of physical computing",
+              "Because PWM pins operate at 400 MHz"
+            ],
+            "correctIndex": 0,
+            "explanation": "analogRead produces 0-1023 (10-bit), while analogWrite accepts 0-255 (8-bit). Scaling is required to prevent overflow."
+          },
+          {
+            "question": "How many external jumper wires are needed to connect a pushbutton to Arduino using INPUT_PULLUP?",
+            "options": [
+              "Exactly 2 wires (one to the digital pin, one to GND)",
+              "4 wires including 5V and external resistors",
+              "1 wire with no ground connection",
+              "6 wires"
+            ],
+            "correctIndex": 0,
+            "explanation": "INPUT_PULLUP enables the internal resistor, so you only need two wires: one from the pin to the switch, and one from the switch to GND."
+          }
+        ]
+      },
+      "quickCheck": [
+        {
+          "questionId": "l05_s16_q1",
+          "question": "What fundamental property distinguishes digital inputs from analog inputs on an Arduino?",
+          "options": [
+            "Digital inputs measure binary HIGH/LOW states, while analog inputs measure continuous voltage from 0 to 1023",
+            "Digital inputs only work during the daytime",
+            "Analog inputs can only connect to loudspeakers"
+          ],
+          "correctIndex": 0,
+          "explanation": "Digital inputs measure two binary voltage levels (HIGH/LOW), while analog inputs convert continuous voltages to a 10-bit range (0-1023).",
+          "warmupExplanation": "Digital inputs evaluate binary logic states (HIGH/LOW); analog inputs measure continuous voltage gradients (0-1023)."
+        },
+        {
+          "questionId": "l05_s16_q2",
+          "question": "When wiring a pushbutton between an Arduino pin and GND, which code declaration ensures reliable, stable readings?",
+          "options": [
+            "pinMode(pin, INPUT_PULLUP)",
+            "pinMode(pin, OUTPUT)",
+            "digitalWrite(pin, 1023)"
+          ],
+          "correctIndex": 0,
+          "explanation": "`pinMode(pin, INPUT_PULLUP)` enables the internal pull-up resistor, holding the pin HIGH until pressed to GND.",
+          "warmupExplanation": "`INPUT_PULLUP` engages the internal resistor so the input pin stays stable at 5V when the switch is open."
+        }
+      ]
+    }
+  ],
+  "xpReward": 15
+}

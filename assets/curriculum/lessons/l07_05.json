@@ -1,0 +1,53 @@
+{
+  "id": "l07_05",
+  "title": "Light Sensors",
+  "summary": "Now let's give our monster the sense of sight using the Light Dependent Resistor (LDR / Photoresistor, comp19)!",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_07",
+  "sortOrder": 5,
+  "isOptional": false,
+  "prerequisites": [
+    "l07_04"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_01",
+    "comp_19"
+  ],
+  "steps": [
+    {
+      "stepId": "l07_s05",
+      "title": "Light Sensors",
+      "type": "physicalTask",
+      "markdownContent": "Now let's give our monster the sense of sight using the **Light Dependent Resistor (LDR / Photoresistor, `comp_19`)**!\n\n### How Light Changes Resistance:\nAn LDR is made of a light-sensitive semiconductor (cadmium sulfide) with a squiggly conductive track on top:\n- **In Pitch Darkness**: Electrons stay locked in place. The LDR has very high resistance (often $50\\text{k}\\Omega$ to $100\\text{k}\\Omega$ or more), blocking current flow.\n- **In Bright Light**: Incoming photons knock electrons loose! Electrical resistance plunges (down to $500\\Omega$ or less), letting current flow freely.\n\n### The Voltage Divider Partner:\nBecause the Arduino ADC only measures voltage ($0\\text{V}-5\\text{V}$) rather than raw resistance, we must pair the LDR with a fixed **10k\u03a9 resistor** to create a voltage divider:\n\n```\n5V Rail \u2794 LDR Leg 1 \u2794 [LDR Leg 2 + Junction to Pin A0] \u2794 10k Resistor \u2794 GND Rail\n```\n\n### Breadboard Wiring Tour:\n1. Insert the LDR into two separate breadboard rows.\n2. Connect one leg of the LDR to the **5V** rail with a jumper wire.\n3. Connect the other leg of the LDR to Uno Analog Pin **A0**.\n4. From that exact same junction row, insert one leg of a **10k\u03a9 fixed resistor** (brown-black-orange bands), and connect its other leg to the **GND** rail.\n\nNow, when light shifts across the sensor, the voltage at pin A0 glides between 0V and 5V!",
+      "quickCheck": [
+        {
+          "questionId": "l07_s05_q1",
+          "question": "What happens to the electrical resistance of a photoresistor (LDR) when exposed to bright light?",
+          "options": [
+            "Its resistance drops significantly, allowing current to flow more easily",
+            "Its resistance rises infinitely, blocking all current flow",
+            "Its resistance stays strictly constant at 10,000 ohms"
+          ],
+          "correctIndex": 0,
+          "explanation": "Light photons liberate electrons in the semiconductor material, dramatically reducing the LDR's electrical resistance.",
+          "warmupExplanation": "More light = less resistance! In the dark, the LDR resists current; in bright light, current flows freely."
+        },
+        {
+          "questionId": "l07_s05_q2",
+          "question": "Why must an LDR be paired with a fixed resistor in a voltage divider circuit to be read by an Arduino?",
+          "options": [
+            "Because the Arduino ADC measures voltage, so the circuit converts changing resistance into changing voltage",
+            "To prevent the Arduino USB cable from melting",
+            "Because photoresistors cannot connect to breadboards without a helper resistor"
+          ],
+          "correctIndex": 0,
+          "explanation": "Arduino analog pins read voltages (0-5V), not raw resistance. A voltage divider converts the LDR's resistance shifts into measurable voltage levels.",
+          "warmupExplanation": "Recall Lesson 6: Arduino's ADC pin measures voltage! Pairing the LDR with a fixed resistor creates a voltage divider that splits the 5V supply."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

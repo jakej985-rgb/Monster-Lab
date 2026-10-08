@@ -1,0 +1,55 @@
+{
+  "id": "l06_08",
+  "title": "Digital Output Experiment",
+  "summary": "Engineers master hardware through a disciplined learning loop:",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_06",
+  "sortOrder": 8,
+  "isOptional": false,
+  "prerequisites": [
+    "l06_07"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_breadboard",
+    "comp_01"
+  ],
+  "steps": [
+    {
+      "stepId": "l06_s08",
+      "title": "Digital Output Experiment",
+      "type": "physicalTask",
+      "markdownContent": "# Digital Output Experiment: Change One Thing!\n\nEngineers master hardware through a disciplined learning loop:\n**Wire \u2794 Observe \u2794 Change One Thing \u2794 Predict \u2794 Run \u2794 Explain**\n\n### The Build: Dual Monster Warning Lights\nLet's add a second independent output channel to your breadboard!\n1. Unplug USB.\n2. Grab a second LED (Green or Yellow) and a second 220\u03a9 resistor.\n3. Connect second resistor from **Row 20, column a** to **Row 25, column a**.\n4. Connect Arduino **Digital Pin 8** to **Row 20, column b**.\n5. Insert the second LED: Long leg (Anode +) into **Row 25, column b**, and Short leg (Cathode -) into **Row 26, column b**.\n6. Connect **Row 26, column c** with a jumper wire back to the shared **`-` Ground rail**.\n\n### Upload the Alternating Strobe Sketch:\n```cpp\nconst int redLed = 9;\nconst int greenLed = 8;\n\nvoid setup() {\n  pinMode(redLed, OUTPUT);\n  pinMode(greenLed, OUTPUT);\n}\n\nvoid loop() {\n  // Red ON, Green OFF\n  digitalWrite(redLed, HIGH);\n  digitalWrite(greenLed, LOW);\n  delay(300);\n\n  // Red OFF, Green ON\n  digitalWrite(redLed, LOW);\n  digitalWrite(greenLed, HIGH);\n  delay(300);\n}\n```\n\n### The 'Change One Thing' Challenge:\n- **Predict**: What happens if you unplug the Ground jumper wire from Row 26 while the code runs?\n- **Observe**: The green LED stops completely, while the red LED continues blinking happily! Both circuits share the ground highway, but each circuit loop must be independently complete.",
+      "quickCheck": [
+        {
+          "questionId": "q_l06_s08_01",
+          "question": "Can two different LEDs connected to Pin 8 and Pin 9 share the same Ground (GND) power rail on your breadboard?",
+          "options": [
+            "No, each LED requires its own separate battery pack",
+            "Yes, multiple components can share a common Ground return path",
+            "No, sharing Ground causes an instant short circuit",
+            "Yes, but only if they are the exact same color"
+          ],
+          "correctIndex": 1,
+          "explanation": "A common Ground rail provides a shared 0V return path for any number of components in a circuit.",
+          "warmupExplanation": "GND is the shared return highway: all components can safely return their current to the same GND rail."
+        },
+        {
+          "questionId": "q_l06_s08_02",
+          "question": "In the 'Change One Thing' scientific method, why do we change only one wire or code variable at a time?",
+          "options": [
+            "Because Arduino only allows one edit per week",
+            "To conserve electricity from our computer USB port",
+            "So we know exactly which change caused the new behavior or solved the bug",
+            "Because changing two things deletes all files on the board"
+          ],
+          "correctIndex": 2,
+          "explanation": "Changing one variable at a time isolates causes and effects, making engineering debugging systematic and reliable.",
+          "warmupExplanation": "Engineers change one thing at a time so they know exactly what created the fix or triggered the error."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

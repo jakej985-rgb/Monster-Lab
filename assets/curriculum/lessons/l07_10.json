@@ -1,0 +1,53 @@
+{
+  "id": "l07_10",
+  "title": "Sensor Troubleshooting",
+  "summary": "Even experienced lab engineers encounter misbehaving sensors.",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_07",
+  "sortOrder": 10,
+  "isOptional": false,
+  "prerequisites": [
+    "l07_09"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_01",
+    "comp_19"
+  ],
+  "steps": [
+    {
+      "stepId": "l07_s10",
+      "title": "Sensor Troubleshooting",
+      "type": "story",
+      "markdownContent": "Even experienced lab engineers encounter misbehaving sensors. Here is your master troubleshooting guide to conquer the most common sensing traps:\n\n### 1. Swapped TRIG and ECHO Wires:\n- **Symptom**: HC-SR04 always reads `0 cm` or times out completely.\n- **Cause**: Pin 9 is waiting for an echo while Pin 10 is sending triggers.\n- **Fix**: Double-check your jumper wires: Pin 9 connects to TRIG, Pin 10 connects to ECHO.\n\n### 2. The Floating Input Trap:\n- **Symptom**: The LDR light reading jumps erratically between 0 and 1023 when you barely move your hand near the breadboard.\n- **Cause**: Missing the 10k\u03a9 fixed pull-down resistor! Without a reference path to ground, pin A0 acts like an antenna picking up ambient electromagnetic noise.\n- **Fix**: Ensure the 10k\u03a9 resistor firmly connects the LDR junction row to the GND rail.\n\n### 3. Out-of-Range Distances:\n- **Symptom**: Ultrasonic reading suddenly spikes to huge numbers or drops to zero.\n- **Cause**: The HC-SR04 has an effective range between 2 cm and 400 cm. Objects closer than 2 cm reflect sound before the receiver is ready; objects farther than 4 meters produce echoes too weak to detect.\n- **Trap**: Soft, fluffy surfaces (like a wool sweater or plush monster fur) absorb ultrasonic pings instead of bouncing them!\n\n### 4. The Golden Rule of Sensor Debugging:\nWhen code seems broken, **never guess**! Always add `Serial.println()` statements to inspect the raw measurements. Telemetry never lies!",
+      "quickCheck": [
+        {
+          "questionId": "l07_s10_q1",
+          "question": "What is the primary symptom of an analog input pin that is 'floating' without a proper pull-down or circuit connection?",
+          "options": [
+            "Readings fluctuate wildly and unpredictably due to picking up stray ambient electromagnetic noise",
+            "The Arduino board immediately powers off with a short-circuit alert",
+            "The Serial Monitor stops responding and crashes"
+          ],
+          "correctIndex": 0,
+          "explanation": "A floating pin acts like an antenna, picking up stray electromagnetic radiation from the air and producing erratic, jumpy readings.",
+          "warmupExplanation": "Remember Lesson 6: an unanchored pin floats! It needs a resistor to hold it to a known reference voltage."
+        },
+        {
+          "questionId": "l07_s10_q2",
+          "question": "What is the very first diagnostic step you should take when a sensor circuit is not triggering an LED properly?",
+          "options": [
+            "Print the raw sensor readings to the Serial Monitor to observe what values the microcontroller is actually receiving",
+            "Replace the Arduino Uno with a brand-new microcontroller",
+            "Delete the entire sketch and start over from scratch"
+          ],
+          "correctIndex": 0,
+          "explanation": "Viewing live telemetry in the Serial Monitor instantly reveals whether the sensor is reading correctly, miswired, or missing its threshold.",
+          "warmupExplanation": "Always inspect your data first! The Serial Monitor is your diagnostic window into the Arduino's mind."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

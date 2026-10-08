@@ -1,0 +1,52 @@
+{
+  "id": "l08_05",
+  "title": "Your First I2C Device",
+  "summary": "A standard 16-character by 2-line liquid crystal display has 16 raw header pins.",
+  "tier": "engineer",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_08",
+  "sortOrder": 5,
+  "isOptional": false,
+  "prerequisites": [
+    "l08_04"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_07"
+  ],
+  "steps": [
+    {
+      "stepId": "l08_s05",
+      "title": "Your First I2C Device",
+      "type": "physicalTask",
+      "markdownContent": "### Inspecting the 16x2 Character LCD (`comp_07`)\nA standard 16-character by 2-line liquid crystal display has 16 raw header pins. Wiring it in parallel requires dozens of wires and consumes almost all Arduino I/O pins.\n\nOur `comp_07` display features an onboard black daughterboard: the **PCF8574 I2C Backpack**. The backpack converts those 16 parallel pins into a streamlined 4-pin I2C interface!\n\n### The 4 Backpack Pins:\n1. **GND:** Connect to Arduino Uno **GND** (Black / Slate wire).\n2. **VCC:** Connect to Arduino Uno **5V** (Red wire).\n3. **SDA:** Connect to Arduino Uno Analog Pin **A4** (Blue wire).\n4. **SCL:** Connect to Arduino Uno Analog Pin **A5** (Yellow wire).\n\n```\nLCD Backpack [ GND | VCC | SDA | SCL ]\n               \u2502     \u2502     \u2502     \u2502\nArduino Uno   [ GND | 5V  | A4  | A5  ]\n```\n\n### \u26a0\ufe0f The Blue Contrast Trimpot Trap\nLook at the small blue potentiometer on the back of the I2C backpack. If you power on the screen and see blank boxes or solid black rectangles, do not panic! Use a small screwdriver to gently rotate this trimpot until crisp, clear text appears.\n\n### Hands-On Wiring Steps:\n1. **Safety First:** Unplug the USB cable from your Arduino Uno.\n2. Connect female-to-male jumper wires to the LCD backpack header pins.\n3. Wire `GND` to Uno `GND` and `VCC` to Uno `5V`.\n4. Wire `SDA` to Uno `A4` and `SCL` to Uno `A5`.\n5. Double check every wire connection before reconnecting USB power!",
+      "quickCheck": [
+        {
+          "questionId": "q_l08_s05_1",
+          "question": "Before plugging jumper wires between your Arduino Uno and the 16x2 I2C LCD backpack, what safe hardware workflow step must you take?",
+          "options": [
+            "Unplug the USB cable from your computer to completely disconnect power.",
+            "Press the red reset button for ten seconds while powered on.",
+            "Increase the Arduino IDE baud rate to 115200."
+          ],
+          "correctIndex": 0,
+          "explanation": "Always disconnect USB power before creating or changing wiring connections on breadboards and breakout modules to prevent short circuits.",
+          "warmupExplanation": "Remember the fundamental lab rule from Lesson 2A and Lesson 5: never build or wire live circuits!"
+        },
+        {
+          "questionId": "q_l08_s05_2",
+          "question": "If your I2C LCD powers up with the backlight illuminated but characters do not appear on screen, what hardware adjustment should you check first?",
+          "options": [
+            "The blue contrast potentiometer on the back of the I2C backpack module.",
+            "Replace the Uno microcontroller chip.",
+            "Reverse the 5V and GND wires to invert polarity."
+          ],
+          "correctIndex": 0,
+          "explanation": "The blue contrast trimpot on the PCF8574 backpack sets the liquid crystal contrast voltage; if it is turned too far, characters become invisible or all black boxes.",
+          "warmupExplanation": "In Lesson 6, you learned that potentiometers act as adjustable voltage dividers; the LCD backpack uses a tiny trimpot to tune display contrast."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

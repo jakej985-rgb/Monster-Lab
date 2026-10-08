@@ -1,0 +1,143 @@
+{
+  "id": "l04_10",
+  "title": "PWM Challenge",
+  "summary": "Put all your new skills together: test your understanding of PWM, duty cycles, analogWrite commands, resistor safety, and RGB color synthesis with ...",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_04",
+  "sortOrder": 10,
+  "isOptional": false,
+  "prerequisites": [
+    "l04_09"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l04_s10",
+      "title": "PWM Challenge",
+      "type": "quizCheckpoint",
+      "markdownContent": "Congratulations on completing Lesson 04! Put all your new skills together: test your understanding of PWM, duty cycles, analogWrite commands, resistor safety, and RGB color synthesis with this checkpoint.",
+      "interactiveConfig": {
+        "question": "What is the primary purpose of Pulse Width Modulation (PWM) when controlling an LED?",
+        "options": [
+          "To simulate variable brightness by rapidly pulsing between ON and OFF",
+          "To convert the LED into a digital temperature sensor",
+          "To make the Arduino run at double clock speed"
+        ],
+        "correctIndex": 0,
+        "explanation": "PWM rapidly pulses a digital output so human eyes perceive smooth, variable brightness.",
+        "questions": [
+          {
+            "question": "What is the primary purpose of Pulse Width Modulation (PWM) when controlling an LED?",
+            "options": [
+              "To simulate variable brightness by rapidly pulsing between ON and OFF",
+              "To convert the LED into a digital temperature sensor",
+              "To make the Arduino run at double clock speed"
+            ],
+            "correctIndex": 0,
+            "explanation": "PWM rapidly pulses a digital output so human eyes perceive smooth, variable brightness."
+          },
+          {
+            "question": "What duty cycle percentage produces medium (approximately half) brightness on an LED?",
+            "options": [
+              "50% duty cycle",
+              "10% duty cycle",
+              "100% duty cycle"
+            ],
+            "correctIndex": 0,
+            "explanation": "A 50% duty cycle powers the LED for half the pulse duration, creating roughly half brightness."
+          },
+          {
+            "question": "What integer value in analogWrite(pin, value) corresponds to full 100% brightness?",
+            "options": [
+              "255",
+              "100",
+              "1023"
+            ],
+            "correctIndex": 0,
+            "explanation": "analogWrite is 8-bit, so values range from 0 (OFF) to 255 (full 100% duty cycle)."
+          },
+          {
+            "question": "Which pins on an Arduino Uno support hardware PWM output?",
+            "options": [
+              "Pins marked with a tilde (~) such as 3, 5, 6, 9, 10, and 11",
+              "All digital pins from 0 to 13",
+              "Only analog pins A0 through A5"
+            ],
+            "correctIndex": 0,
+            "explanation": "Only pins marked with a tilde (~) on the Uno silkscreen support PWM output."
+          },
+          {
+            "question": "Why does an RGB LED need a separate resistor on each color channel?",
+            "options": [
+              "Because Red, Green, and Blue have different forward voltages and each need dedicated current limiting",
+              "To change the frequency of the microcontroller oscillator",
+              "To convert alternating current into direct current"
+            ],
+            "correctIndex": 0,
+            "explanation": "Independent resistors ensure safe current distribution across colors with different forward voltage drops."
+          },
+          {
+            "question": "In additive light mixing, what color is created when Red and Green light shine at full intensity?",
+            "options": [
+              "Yellow",
+              "Brown",
+              "Cyan"
+            ],
+            "correctIndex": 0,
+            "explanation": "In additive color optics, combining red light and green light produces yellow light."
+          },
+          {
+            "question": "Where does the longest lead of a Common Cathode RGB LED connect?",
+            "options": [
+              "Ground (GND)",
+              "+5V power supply",
+              "Digital Pin 13"
+            ],
+            "correctIndex": 0,
+            "explanation": "The cathode is negative, so a Common Cathode LED connects its longest shared lead to Ground (GND)."
+          },
+          {
+            "question": "If your RGB LED shows Cyan when you commanded Red, what is the most likely cause?",
+            "options": [
+              "The LED is Common Anode, so its logic is inverted (Active-LOW)",
+              "The Arduino has run out of memory",
+              "The breadboard is too close to a magnet"
+            ],
+            "correctIndex": 0,
+            "explanation": "Common Anode LEDs turn ON with LOW (0) and OFF with HIGH (255), so an un-inverted Red command leaves Green and Blue ON (producing Cyan)."
+          }
+        ]
+      },
+      "quickCheck": [
+        {
+          "questionId": "qc_l04_s10_q1",
+          "question": "What happens if you run analogWrite(8, 128) on digital pin 8 on an Arduino Uno?",
+          "options": [
+            "Pin 8 lacks PWM (~), so it will only switch ON or OFF without smooth dimming",
+            "The board will immediately reset",
+            "Pin 8 will output a continuous analog sine wave"
+          ],
+          "correctIndex": 0,
+          "explanation": "Pin 8 is not a PWM pin, so analogWrite acts like a simple threshold switch rather than pulsing.",
+          "warmupExplanation": "Always check for the tilde (~)! Non-PWM pins cannot dim with analogWrite."
+        },
+        {
+          "questionId": "qc_l04_s10_q2",
+          "question": "In a Common Cathode RGB LED, what code turns both Red and Blue ON to create vibrant Magenta (purple) light?",
+          "options": [
+            "analogWrite(redPin, 255); analogWrite(bluePin, 255); analogWrite(greenPin, 0);",
+            "analogWrite(greenPin, 255); analogWrite(redPin, 0); analogWrite(bluePin, 0);",
+            "analogWrite(redPin, 0); analogWrite(bluePin, 0); analogWrite(greenPin, 0);"
+          ],
+          "correctIndex": 0,
+          "explanation": "Magenta is made of Red plus Blue; with Common Cathode, 255 turns a channel full ON while 0 keeps Green OFF.",
+          "warmupExplanation": "Red + Blue = Magenta! Set Red to 255, Blue to 255, and Green to 0."
+        }
+      ]
+    }
+  ],
+  "xpReward": 15
+}

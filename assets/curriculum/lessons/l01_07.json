@@ -1,0 +1,52 @@
+{
+  "id": "l01_07",
+  "title": "Power and Ground",
+  "summary": "Electricity is like a train on a circular railway track: it must travel in a complete, unbroken loop!",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_01",
+  "sortOrder": 7,
+  "isOptional": false,
+  "prerequisites": [
+    "l01_06"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l01_s07",
+      "title": "Power and Ground",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "groundTroubleshooting",
+      "markdownContent": "Electricity is like a train on a circular railway track: it must travel in a **complete, unbroken loop**! That loop is called a **circuit**.\n\n### The Two Halves of a Circuit:\n1. **Power (+5V)**: The starting station where electricity begins its journey with energy.\n2. **Ground (GND)**: The return station where electricity safely comes home.\n\n```\n+5V Station \u2794 Jumper Wire \u2794 LED Light (Glows!) \u2794 Jumper Wire \u2794 GND Return Station\n```\n\n> **The Golden Ground Rule**: GND is not a trash can where electricity disappears! It is the return path. If the GND wire is disconnected, the train track is broken, the circuit opens, and nothing works!\n\nExplore the 4 circuit conditions below to see what happens when the Ground connection is connected, loose, or broken!",
+      "quickCheck": [
+        {
+          "questionId": "l01_s07_q1",
+          "question": "What does electricity need in order to flow and light up a bulb?",
+          "options": [
+            "A complete, unbroken loop from power to ground",
+            "A broken wire with a big gap in it",
+            "A cold glass of lemonade"
+          ],
+          "correctIndex": 0,
+          "explanation": "Electricity can only flow when there is a complete, unbroken circle (circuit) from power back to ground!",
+          "warmupExplanation": "The word 'circuit' means circle! Electricity must travel in a full circle from power back to ground."
+        },
+        {
+          "questionId": "l01_s07_q2",
+          "question": "What does the label 'GND' stand for on the Arduino board?",
+          "options": [
+            "Ground \u2014 the return path for electric current",
+            "Giant Number Dial",
+            "Game Never Done"
+          ],
+          "correctIndex": 0,
+          "explanation": "GND stands for Ground! It is the essential return path for electricity in every circuit.",
+          "warmupExplanation": "GND is short for Ground. In electronics, Ground is the safe return route for electric current."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

@@ -1,0 +1,53 @@
+{
+  "id": "l08_08",
+  "title": "Multiple I2C Devices",
+  "summary": "In I2C, daisy-chaining refers to running parallel connections from device to device along the shared 4-wire bus (VCC, GND, SDA, SCL).",
+  "tier": "engineer",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_08",
+  "sortOrder": 8,
+  "isOptional": false,
+  "prerequisites": [
+    "l08_07"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_07"
+  ],
+  "steps": [
+    {
+      "stepId": "l08_s08",
+      "title": "Multiple I2C Devices",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "i2cDaisyChainSimulator",
+      "markdownContent": "### Daisy-Chaining Topologies\nIn I2C, **daisy-chaining** refers to running parallel connections from device to device along the shared 4-wire bus (VCC, GND, SDA, SCL). Because every device shares the same electrical bus, you can attach 2, 5, or 10 peripherals while using only pins A4 and A5 on the Uno!\n\n```\nUno (Controller)\n  \u2502        \u2502\n SDA      SCL\n  \u251c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2524\n  \u2502   \u2502    \u2502\n LCD RTC Temp\n0x27 0x68 0x48\n```\n\n### The Golden Rule: Unique Addresses Only\nEvery device connected to an active I2C bus **MUST have a unique 7-bit hardware address**.\n\n### What is an Address Collision?\nIf you attach two identical display modules that both use address `0x27`:\n1. The Arduino sends a message targeting `0x27`.\n2. **Both devices** think they are being addressed!\n3. Both devices attempt to drive the SDA line simultaneously.\n4. Bits collide and corrupt each other, causing communications to freeze or display nonsense.\n\n### Changing Hardware Addresses\nWhat if you want to use two identical modules in the same robot? Most I2C breakout boards include **address solder pads** (labeled A0, A1, A2):\n- By default, pads are open (representing binary 1s).\n- Bridging a pad with a tiny drop of solder ties that address line to GND (representing binary 0).\n- This changes the device address (for example, shifting `0x27` to `0x26`), enabling both identical devices to communicate happily on the exact same bus!\n\nUse the interactive daisy-chain simulator below to add multiple peripherals, detect address collisions, and adjust solder pads to resolve conflicts!",
+      "quickCheck": [
+        {
+          "questionId": "q_l08_s08_1",
+          "question": "What happens on the I2C bus if two different peripherals share the exact same hardware address (e.g. both configured to 0x27)?",
+          "options": [
+            "An address collision occurs: both devices attempt to drive the SDA wire simultaneously, causing corrupt data and failed packets.",
+            "The Arduino Uno automatically assigns a new address to the second device.",
+            "The device with longer wires is ignored while the other functions normally."
+          ],
+          "correctIndex": 0,
+          "explanation": "Address collisions cause multiple peripherals to acknowledge and drive the bus at once, scrambling data packets.",
+          "warmupExplanation": "Think about what happens if two people have the identical phone number or home address: messages collide!"
+        },
+        {
+          "questionId": "q_l08_s08_2",
+          "question": "How can you resolve an address conflict between two identical breakout boards on the same I2C bus?",
+          "options": [
+            "Change the hardware address on one board by bridging or cutting an address selection pad (like A0, A1, or AD0).",
+            "Power one board with 3.3V and the other with 5V.",
+            "Swap the SDA and SCL wires on one of the boards."
+          ],
+          "correctIndex": 0,
+          "explanation": "Breakout boards provide address pads (often labeled A0, A1, A2) so developers can change the base address by bridging solder pads.",
+          "warmupExplanation": "Many sensor boards provide hardware jumpers to alter the lowest bits of their 7-bit I2C address."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

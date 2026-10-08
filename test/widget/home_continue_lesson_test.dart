@@ -47,9 +47,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('START HERE'), findsOneWidget);
-      expect(find.textContaining('Lesson 1: Arduino Fundamentals'),
-          findsOneWidget);
-      expect(find.text('Start Lesson 1'), findsOneWidget);
+      expect(find.textContaining('What Is Arduino?'), findsOneWidget);
+      expect(find.text('Start Lesson'), findsOneWidget);
     });
 
     testWidgets(
@@ -61,6 +60,45 @@ void main() {
             '[{"id":"prof_1","nickname":"Sparky","avatarId":"monster_spark","ageBracket":"ages10_12","createdAt":"2026-01-01T00:00:00.000Z","lastActiveAt":"2026-01-01T00:00:00.000Z","settings":{}}]',
         'monster_lab_progress_prof_1':
             '{"learnerId":"prof_1","totalXp":100,"completedLessonIds":["lesson_01"],"completedProjectIds":[],"discoveredComponentIds":[],"solvedChallengeIds":[],"unlockedBadgeIds":[],"stepProgress":{},"lastSessionDate":"2026-01-01T00:00:00.000Z"}',
+      });
+      final storageService = await StorageService.init();
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            storageServiceProvider.overrideWithValue(storageService),
+            curriculumRepositoryProvider
+                .overrideWithValue(CurriculumRepositoryImpl(engine)),
+          ],
+          child: const MaterialApp(
+            home: HomeScreen(),
+          ),
+        ),
+      );
+
+      await tester.pump();
+      final element = tester.element(find.byType(HomeScreen));
+      final container = ProviderScope.containerOf(element);
+      await container.read(nextLessonProvider.future);
+      await tester.pumpAndSettle();
+
+      expect(find.text('UP NEXT'), findsOneWidget);
+      expect(find.textContaining('What Is Code?'), findsOneWidget);
+      expect(find.text('Start Lesson'), findsOneWidget);
+    });
+
+    testWidgets(
+        'When all sub-lessons l01_01..l01_12 and course lesson_01 are completed without legacy ID, advances to next lesson',
+        (tester) async {
+      final l01SubLessons = [
+        for (int i = 1; i <= 12; i++) '"l01_${i.toString().padLeft(2, '0')}"'
+      ];
+      SharedPreferences.setMockInitialValues({
+        'monster_lab_active_profile_id': 'prof_1',
+        'monster_lab_profiles':
+            '[{"id":"prof_1","nickname":"Sparky","avatarId":"monster_spark","ageBracket":"ages10_12","createdAt":"2026-01-01T00:00:00.000Z","lastActiveAt":"2026-01-01T00:00:00.000Z","settings":{}}]',
+        'monster_lab_progress_prof_1':
+            '{"learnerId":"prof_1","totalXp":220,"completedLessonIds":[${l01SubLessons.join(',')}],"completedCourseIds":["lesson_01"],"completedProjectIds":[],"discoveredComponentIds":[],"solvedChallengeIds":[],"unlockedBadgeIds":[],"stepProgress":{},"lastSessionDate":"2026-01-01T00:00:00.000Z"}',
       });
       final storageService = await StorageService.init();
 

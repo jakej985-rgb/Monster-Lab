@@ -1,0 +1,52 @@
+{
+  "id": "l04_02",
+  "title": "What Is PWM?",
+  "summary": "Pulse Width Modulation (PWM) is the clever engineering technique microcontrollers use to simulate variable brightness using only digital ON and OFF...",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_04",
+  "sortOrder": 2,
+  "isOptional": false,
+  "prerequisites": [
+    "l04_01"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l04_s02",
+      "title": "What Is PWM?",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "pwmDutyCycleVisualizer",
+      "markdownContent": "**Pulse Width Modulation (PWM)** is the clever engineering technique microcontrollers use to simulate variable brightness using only digital ON and OFF signals!\n\nHere is the secret: instead of lowering the voltage, the Arduino flips the pin ON and OFF hundreds of times every single second (about 490 to 980 times per second)!\n\nWhy doesn't the LED look like a flickering strobe light?\nBecause of a property of human vision called **Persistence of Vision** (flicker fusion). Your eyes and brain can only process about 60 image updates per second. When an LED flickers at 490 times per second, the flashes blur together!\n\nYour eyes integrate the bursts of light:\n- If the LED is ON for tiny slivers of time and OFF most of the cycle, your brain perceives a **dim, gentle glow**.\n- If the LED is ON most of the cycle and OFF for only tiny moments, your brain perceives **bright light**.\n\nIt is like flipping a light switch on and off at superhero speed!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l04_s02_q1",
+          "question": "When a light flashes on and off hundreds of times every second, how do human eyes perceive it?",
+          "options": [
+            "As a steady, smooth glow without visible flickering",
+            "As slow, separate flashes that can be counted",
+            "As total darkness"
+          ],
+          "correctIndex": 0,
+          "explanation": "Because our eyes blend fast light pulses together (persistence of vision), rapid flashing appears as a continuous steady glow.",
+          "warmupExplanation": "When light blinks faster than ~60 times a second, our eyes cannot see the flicker and blend it into a steady glow."
+        },
+        {
+          "questionId": "qc_l04_s02_q2",
+          "question": "Does a standard digital output pin physically change its DC voltage to 2.5V, or does it rapidly pulse between 0V and 5V?",
+          "options": [
+            "It rapidly pulses between 0V and 5V to simulate an average voltage",
+            "It physically steps down its DC voltage to 2.5V",
+            "It changes the chemical composition of the wire"
+          ],
+          "correctIndex": 0,
+          "explanation": "Digital pins only output 0V or 5V; they create in-between brightness by rapidly pulsing between the two states.",
+          "warmupExplanation": "Microcontrollers are digital: they only output 0V (OFF) or 5V (ON). To get medium brightness, they pulse!"
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

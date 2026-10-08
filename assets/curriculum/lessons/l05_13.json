@@ -1,0 +1,52 @@
+{
+  "id": "l05_13",
+  "title": "Button + LED",
+  "summary": "Now let's synthesize inputs and outputs together!",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_05",
+  "sortOrder": 13,
+  "isOptional": false,
+  "prerequisites": [
+    "l05_12"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_20"
+  ],
+  "steps": [
+    {
+      "stepId": "l05_s13",
+      "title": "Button + LED",
+      "type": "physicalTask",
+      "markdownContent": "### The Fundamental Loop of Robotics: Input Directly Driving Output\nNow let's synthesize inputs and outputs together! We will build a circuit where a physical pushbutton directly commands an LED.\n\n### Breadboard Circuit Assembly:\n1. **Pushbutton**: Place the button straddling the breadboard center ravine.\n   - Wire Leg A to Arduino **Digital Pin 2**.\n   - Wire opposing Leg B to Arduino **GND**.\n2. **LED Indicator**:\n   - Connect a 220\u03a9 resistor from Arduino **Digital Pin 8** to the breadboard.\n   - Connect the LED long leg (Anode, +) to the resistor.\n   - Connect the LED short leg (Cathode, \u2212) to **GND**.\n\n```\nWiring Diagram:\n  Pin 2 ======= [ Button ] ======= GND   (Active-low with INPUT_PULLUP)\n  Pin 8 ===[ 220R Resistor ]===>|=== GND   (Standard LED output)\n```\n\n### The Sketch:\n```cpp\nconst int buttonPin = 2;\nconst int ledPin = 8;\n\nvoid setup() {\n  pinMode(buttonPin, INPUT_PULLUP);\n  pinMode(ledPin, OUTPUT);\n}\n\nvoid loop() {\n  int pressed = (digitalRead(buttonPin) == LOW);\n\n  if (pressed) {\n    digitalWrite(ledPin, HIGH); // Light ON while button is held\n  } else {\n    digitalWrite(ledPin, LOW);  // Light OFF when button released\n  }\n}\n```\n\n### Challenge: Toggle Mode (Push ON, Push OFF)\nCan you modify the code so the LED flips state and stays ON even after you release the button? That's software latching\u2014you've built a software toggle switch!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s13_q1",
+          "question": "Why must an external LED have a resistor in series when driven by an Arduino digital pin?",
+          "options": [
+            "To limit electric current and protect both the LED semiconductor and Arduino pin from burning out",
+            "To change the color of the emitted light",
+            "To convert direct current into alternating current"
+          ],
+          "correctIndex": 0,
+          "explanation": "LEDs have negligible internal resistance; a series resistor prevents destructive overcurrent.",
+          "warmupExplanation": "Remember from Lesson 4: LEDs draw excessive current unless protected by a current-limiting resistor."
+        },
+        {
+          "questionId": "l05_s13_q2",
+          "question": "How do you invert your code so the LED stays ON normally and turns OFF only when the button is held?",
+          "options": [
+            "Change the condition to write HIGH when buttonState == HIGH, and LOW when buttonState == LOW",
+            "Reverse the power wires on the Arduino Uno",
+            "Change the baud rate in Serial.begin()"
+          ],
+          "correctIndex": 0,
+          "explanation": "Flipping the conditional logic in code inverts how the output responds to the physical input state.",
+          "warmupExplanation": "Software logic controls the relationship: flipping your `if-else` branch reverses the action."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

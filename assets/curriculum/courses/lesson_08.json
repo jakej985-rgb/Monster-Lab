@@ -1,0 +1,24 @@
+{
+  "id": "lesson_08",
+  "title": "Lesson 8 \u2014 I2C & Connected Devices",
+  "summary": "Master 2-wire serial communication, hardware addressing, and connect multi-device I2C buses with libraries.",
+  "lessonIds": [
+    "l08_01",
+    "l08_02",
+    "l08_03",
+    "l08_04",
+    "l08_05",
+    "l08_06",
+    "l08_07",
+    "l08_08",
+    "l08_09",
+    "l08_10"
+  ],
+  "isOptional": false,
+  "placementLessonId": null,
+  "prerequisites": [
+    "lesson_07"
+  ],
+  "xpReward": 100,
+  "estimatedMinutes": 50
+}

@@ -1,0 +1,52 @@
+{
+  "id": "l03_07",
+  "title": "Meet the Library API",
+  "summary": "You might hear programmers talk about a library's API.",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_03",
+  "sortOrder": 7,
+  "isOptional": false,
+  "prerequisites": [
+    "l03_06"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_07"
+  ],
+  "steps": [
+    {
+      "stepId": "l03_s07",
+      "title": "Meet the Library API",
+      "type": "visualExplanation",
+      "markdownContent": "You might hear programmers talk about a library's **API**.\n\nAPI stands for **Application Programming Interface**. That sounds super fancy, but it just means:\n> **The list of commands a library gives you to talk to it!**\n\nThink of an API like the menu at an ice cream shop \ud83c\udf66. The menu tells you all the flavors you can order. If you ask for something that isn't on the menu, the shopkeeper looks confused!\n\nHere is a quick look at the `LiquidCrystal_I2C` library menu (its API):\n- `lcd.init()`: Wakes up and configures the screen.\n- `lcd.backlight()`: Turns on the blue LED light behind the screen.\n- `lcd.noBacklight()`: Turns off the light to save power.\n- `lcd.clear()`: Erases everything on the screen.\n- `lcd.setCursor(col, row)`: Jumps the writing pen to a grid position.\n- `lcd.print(message)`: Writes text or numbers on the display.\n\nWhenever you use a new library, checking its documentation or README gives you its complete menu of commands!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l03_s07_q1",
+          "question": "What does a library's 'API' mean in friendly terms?",
+          "options": [
+            "The menu of commands and functions the library allows you to call",
+            "The physical plastic casing around the Arduino",
+            "The battery voltage needed to power the board"
+          ],
+          "correctIndex": 0,
+          "explanation": "An API is the set of functions, methods, and commands exposed by a library for you to control the device.",
+          "warmupExplanation": "Think of an API like a restaurant menu: it lists all the options and commands you can use!"
+        },
+        {
+          "questionId": "qc_l03_s07_q2",
+          "question": "If you want to erase all text currently shown on an LCD screen, which API command would you look for?",
+          "options": [
+            "lcd.clear()",
+            "lcd.destroy()",
+            "lcd.burn()"
+          ],
+          "correctIndex": 0,
+          "explanation": "lcd.clear() is the standard API function that wipes the character memory and leaves the screen blank.",
+          "warmupExplanation": "Most display libraries provide a clear() command to wipe the display clean."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

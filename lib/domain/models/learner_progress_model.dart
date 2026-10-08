@@ -250,19 +250,58 @@ class LearnerProgressModel {
   }
 
   static LearnerProgressModel migrateFromOldFormat(LearnerProgressModel old) {
-    if (old.completedLessonIds.contains('lesson_02')) {
-      final updatedLessonIds = Set<String>.from(old.completedLessonIds);
-      updatedLessonIds.addAll([
-        'l2b_01',
-        'l2b_02',
-        'l2b_03',
-        'l2b_04',
-        'l2b_05',
-        'l2b_06',
-        'l2b_07',
-        'l2b_08',
-      ]);
-      return old.copyWith(completedLessonIds: updatedLessonIds);
+    final updatedLessonIds = Set<String>.from(old.completedLessonIds);
+    final updatedCourseIds = Set<String>.from(old.completedCourseIds);
+    bool changed = false;
+
+    final legacyMapping = <String, (String, List<String>)>{
+      'lesson_01': (
+        'lesson_01',
+        [for (int i = 1; i <= 12; i++) 'l01_${i.toString().padLeft(2, '0')}'],
+      ),
+      'lesson_02': (
+        'lesson_2b',
+        [for (int i = 1; i <= 8; i++) 'l2b_${i.toString().padLeft(2, '0')}'],
+      ),
+      'lesson_03': (
+        'lesson_03',
+        [for (int i = 1; i <= 9; i++) 'l03_${i.toString().padLeft(2, '0')}'],
+      ),
+      'lesson_04': (
+        'lesson_04',
+        [for (int i = 1; i <= 10; i++) 'l04_${i.toString().padLeft(2, '0')}'],
+      ),
+      'lesson_05': (
+        'lesson_05',
+        [for (int i = 1; i <= 16; i++) 'l05_${i.toString().padLeft(2, '0')}'],
+      ),
+      'lesson_06': (
+        'lesson_06',
+        [for (int i = 1; i <= 11; i++) 'l06_${i.toString().padLeft(2, '0')}'],
+      ),
+      'lesson_07': (
+        'lesson_07',
+        [for (int i = 1; i <= 11; i++) 'l07_${i.toString().padLeft(2, '0')}'],
+      ),
+      'lesson_08': (
+        'lesson_08',
+        [for (int i = 1; i <= 10; i++) 'l08_${i.toString().padLeft(2, '0')}'],
+      ),
+    };
+
+    for (final entry in legacyMapping.entries) {
+      if (old.completedLessonIds.contains(entry.key)) {
+        updatedCourseIds.add(entry.value.$1);
+        updatedLessonIds.addAll(entry.value.$2);
+        changed = true;
+      }
+    }
+
+    if (changed) {
+      return old.copyWith(
+        completedLessonIds: updatedLessonIds,
+        completedCourseIds: updatedCourseIds,
+      );
     }
     return old;
   }

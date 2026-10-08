@@ -1,0 +1,52 @@
+{
+  "id": "l08_09",
+  "title": "I2C Troubleshooting",
+  "summary": "Even veteran robotics engineers encounter I2C communication failures.",
+  "tier": "engineer",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_08",
+  "sortOrder": 9,
+  "isOptional": false,
+  "prerequisites": [
+    "l08_08"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_07"
+  ],
+  "steps": [
+    {
+      "stepId": "l08_s09",
+      "title": "I2C Troubleshooting",
+      "type": "story",
+      "markdownContent": "### The Engineer's Diagnostic Playbook\nEven veteran robotics engineers encounter I2C communication failures. When your display won't print or your scanner freezes, follow this systematic diagnostic triage:\n\n### 1. Swapped SDA and SCL Wires\n- **Symptom:** Sketch hangs in `Wire.endTransmission()` or scanner reports 0 devices detected.\n- **Cause:** Pin A4 is accidentally plugged into SCL, and Pin A5 into SDA.\n- **Remedy:** Verify wire paths. **A4 = SDA** (Data), **A5 = SCL** (Clock).\n\n### 2. Missing Common Ground (GND)\n- **Symptom:** Random garbled symbols appear on screen, or sensor values jump wildly.\n- **Cause:** The peripheral has power, but no return GND wire to the Arduino.\n- **Remedy:** Ensure a solid ground jumper wire connects the peripheral to the Uno GND header.\n\n### 3. Wrong Address in Firmware\n- **Symptom:** LCD backlight turns on, but text never renders; code runs without throwing errors.\n- **Cause:** Your code specified `0x27`, but your specific backpack hardware is configured to `0x3F`!\n- **Remedy:** Run an I2C scanner sketch to discover the true address, then update your sketch declaration.\n\n### 4. Excessive Wire Length & Capacitance\n- **Symptom:** Devices work on a small breadboard, but fail when connected through long 2-meter ribbon cables.\n- **Cause:** Long wires introduce electrical capacitance, rounding off square-wave clock edges.\n- **Remedy:** Keep I2C jumper wires under 30 cm (12 inches) or lower bus speed to standard mode (100 kHz).\n\n### 5. 3.3V vs. 5V Logic Incompatibility\n- **Symptom:** Fragile modern sensors overheat or burn out.\n- **Cause:** Connecting an Uno's 5V I2C bus directly to a 3.3V-only sensor without logic level shifting.\n- **Remedy:** Always verify the sensor board has built-in level-shifting FETs or use a bidirectional logic level shifter!",
+      "quickCheck": [
+        {
+          "questionId": "q_l08_s09_1",
+          "question": "If your I2C scanner sketch reports 'No I2C devices found' despite power LEDs glowing on all modules, what is the most common wiring error?",
+          "options": [
+            "The SDA and SCL lines are swapped (SDA plugged into A5 and SCL plugged into A4).",
+            "The USB cable is plugged into the wrong computer port.",
+            "The breadboard has too much electricity stored in it."
+          ],
+          "correctIndex": 0,
+          "explanation": "Swapping SDA and SCL prevents clock edges from synchronizing with data bits, completely preventing communication on the bus.",
+          "warmupExplanation": "Remember: SDA must go to A4, and SCL must go to A5. If swapped, neither device can understand the signals."
+        },
+        {
+          "questionId": "q_l08_s09_2",
+          "question": "Why is running an I2C scanner sketch the best first step when a new I2C display or sensor fails to communicate?",
+          "options": [
+            "It tests electrical connectivity and discovers the exact 7-bit hardware address responding on the bus without requiring complex library code.",
+            "It uploads new operating systems onto peripheral chips.",
+            "It automatically solders loose jumper wires."
+          ],
+          "correctIndex": 0,
+          "explanation": "An I2C scanner sketch verifies physical bus wiring and prints the exact hex address where devices respond, isolating hardware issues from software bugs.",
+          "warmupExplanation": "In Step 4 and Step 6, we saw how testing the raw address confirms electrical continuity before writing full application code."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

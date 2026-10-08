@@ -1,0 +1,52 @@
+{
+  "id": "l01_11",
+  "title": "Basic Troubleshooting",
+  "summary": "What happens when your circuit doesn't work?",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_01",
+  "sortOrder": 11,
+  "isOptional": false,
+  "prerequisites": [
+    "l01_10"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l01_s11",
+      "title": "Basic Troubleshooting",
+      "type": "story",
+      "interactiveWidgetType": "interactiveTroubleshooting",
+      "markdownContent": "What happens when your circuit doesn't work? Don't worry\u2014every engineer runs into bugs! You just need to become an **Engineering Detective**! \ud83d\udd75\ufe0f\n\n### The 3 Clues to Check:\n1. **Check Power**: Is the little green light labeled **'ON'** lit on the Arduino? If not, check if the USB cable is firmly plugged in.\n2. **Check the Pin Match**: Look at your code. Did the code command **Pin 13**, but the wire is plugged into **Pin 12**? If the pins don't match, the signal won't reach your part!\n3. **Check Ground (GND)**: Is the ground wire securely plugged in? Remember, electricity can't flow without a complete return path.\n\nTake on the troubleshooting mission below: find the mismatched pin and fix the circuit!",
+      "quickCheck": [
+        {
+          "questionId": "l01_s11_q1",
+          "question": "If an LED light does not turn on, what is the best first thing to check?",
+          "options": [
+            "Check that wires are plugged into the right pins and firmly connected",
+            "Throw all the parts into the trash",
+            "Paint the wires with colorful glitter"
+          ],
+          "correctIndex": 0,
+          "explanation": "Checking that wires are firmly connected to the correct pins fixes most electronics puzzles!",
+          "warmupExplanation": "When something doesn't work, stay calm and check connections first: are wires in the right spots?"
+        },
+        {
+          "questionId": "l01_s11_q2",
+          "question": "If your code commands Pin 13, but your wire is plugged into Pin 8, what will happen?",
+          "options": [
+            "The part on Pin 8 will not receive the command",
+            "The computer will turn into a pumpkin",
+            "Pin 8 will automatically slide over to Pin 13"
+          ],
+          "correctIndex": 0,
+          "explanation": "Code commands specific pins! If the wire is plugged into the wrong pin, the signal won't reach it.",
+          "warmupExplanation": "Code and wires must match! If code commands Pin 13, the wire must be connected to Pin 13."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

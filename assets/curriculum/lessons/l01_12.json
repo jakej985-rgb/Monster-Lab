@@ -1,0 +1,143 @@
+{
+  "id": "l01_12",
+  "title": "Review and Challenge",
+  "summary": "You have completed your tour of the Arduino Uno robot brain!",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_01",
+  "sortOrder": 12,
+  "isOptional": false,
+  "prerequisites": [
+    "l01_11"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l01_s12",
+      "title": "Review and Challenge",
+      "type": "quizCheckpoint",
+      "markdownContent": "Hooray! \ud83c\udf89 You have completed your tour of the Arduino Uno robot brain!\n\nLet's review the big ideas you mastered:\n- The **Arduino Uno** is a microcontroller development board that serves as the brain of your robot.\n- A **microcontroller** is a complete computer on a single chip.\n- **Inputs** gather senses from the world; **Outputs** perform physical actions.\n- **Digital** signals have two states (HIGH/LOW); **Analog** signals cover a smooth range.\n- Circuits require a complete loop from **Power (+5V)** through components and back to **Ground (GND)**.\n- Code commands like `digitalWrite(13, HIGH);` tell specific pins what to do.\n\nPut on your detective hat and complete the final Knowledge Check below to earn your XP!",
+      "quickCheck": [
+        {
+          "questionId": "l01_s12_q1",
+          "question": "What is the main role of the Arduino Uno in a robotics project?",
+          "options": [
+            "To act as the brain reading sensors and controlling parts",
+            "To serve as a heavy paperweight",
+            "To play loud music like a radio"
+          ],
+          "correctIndex": 0,
+          "explanation": "The Arduino is the brain of your robot, taking in sensor data and commanding outputs!",
+          "warmupExplanation": "Remember our main big idea: the Arduino Uno is the brain that brings robots to life."
+        },
+        {
+          "questionId": "l01_s12_q2",
+          "question": "Why do we take quizzes and challenges at the end of a lesson?",
+          "options": [
+            "To celebrate what we learned and prove our new skills",
+            "To erase our memory of what we did",
+            "To lose points and start over"
+          ],
+          "correctIndex": 0,
+          "explanation": "Challenges help review key concepts, celebrate your progress, and earn XP!",
+          "warmupExplanation": "Reviews help lock in your new skills and show how much you've learned as a young engineer."
+        }
+      ],
+      "interactiveConfig": {
+        "question": "What is the Arduino Uno?",
+        "options": [
+          "A microcontroller board that acts as a robot brain",
+          "A mechanical toy car",
+          "A computer monitor"
+        ],
+        "correctIndex": 0,
+        "explanation": "The Arduino Uno is a microcontroller development board that acts as the brain for your robot projects.",
+        "questions": [
+          {
+            "question": "What is the Arduino Uno?",
+            "options": [
+              "A microcontroller board that acts as a robot brain",
+              "A mechanical toy car",
+              "A computer monitor"
+            ],
+            "correctIndex": 0,
+            "explanation": "The Arduino Uno is a microcontroller development board that acts as the brain for your robot projects."
+          },
+          {
+            "question": "A distance sensor measures how close an object is. Is it an input or an output?",
+            "options": [
+              "Input (senses the world)",
+              "Output (takes physical action)",
+              "Power supply"
+            ],
+            "correctIndex": 0,
+            "explanation": "Distance sensors measure the physical world and feed information into the Arduino, making them inputs."
+          },
+          {
+            "question": "An LED light controlled by the Arduino is an example of what?",
+            "options": [
+              "Input",
+              "Output",
+              "Ground"
+            ],
+            "correctIndex": 1,
+            "explanation": "LED lights produce visual illumination when commanded by the Arduino, making them outputs."
+          },
+          {
+            "question": "What does GND stand for in an electronic circuit?",
+            "options": [
+              "Ground \u2014 the return path for electrical current",
+              "Green Night Light",
+              "Giant Number Dial"
+            ],
+            "correctIndex": 0,
+            "explanation": "Ground (GND) is the 0V reference point and the safe return path for electric current."
+          },
+          {
+            "question": "What does HIGH mean when sent to a digital pin?",
+            "options": [
+              "The pin is turned ON (+5V)",
+              "The pin is broken",
+              "The pin is turned OFF"
+            ],
+            "correctIndex": 0,
+            "explanation": "In 5V digital electronics, HIGH connects the pin to the positive +5V power rail, turning it ON."
+          },
+          {
+            "question": "In digitalWrite(13, HIGH);, what does the number 13 mean?",
+            "options": [
+              "The pin number being controlled",
+              "The speed of the Arduino",
+              "The number of seconds to wait"
+            ],
+            "correctIndex": 0,
+            "explanation": "The first number in digitalWrite tells the Arduino which pin on the board header to command."
+          },
+          {
+            "question": "A volume knob turns smoothly from low to high. Is that digital or analog?",
+            "options": [
+              "Analog (a smooth range of values)",
+              "Digital (only two states)",
+              "Neither"
+            ],
+            "correctIndex": 0,
+            "explanation": "Because a volume knob moves continuously through a smooth range of levels, it is an analog signal."
+          },
+          {
+            "question": "If code commands Pin 13 to turn ON, but the LED wire is plugged into Pin 7, what is the problem?",
+            "options": [
+              "A pin mismatch between code and wiring",
+              "The Arduino is out of memory",
+              "The USB cable is backwards"
+            ],
+            "correctIndex": 0,
+            "explanation": "Your physical wiring must always match the pin numbers commanded in your code!"
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 15
+}

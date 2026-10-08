@@ -1,0 +1,53 @@
+{
+  "id": "l05_07",
+  "title": "INPUT_PULLUP",
+  "summary": "Wiring an external 10k resistor on your breadboard for every single button takes up space and requires extra jumper wires.",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_05",
+  "sortOrder": 7,
+  "isOptional": false,
+  "prerequisites": [
+    "l05_06"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_20"
+  ],
+  "steps": [
+    {
+      "stepId": "l05_s07",
+      "title": "INPUT_PULLUP",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "activeLowLogicChecker",
+      "markdownContent": "### The Secret Silicon Superpower: Built-In Pull-Ups\nWiring an external 10k resistor on your breadboard for every single button takes up space and requires extra jumper wires. Fortunately, the designers of the ATmega328P microcontroller gave us a brilliant shortcut:\n\nEvery digital I/O pin on the Arduino Uno has an **internal 20k\u03a9 to 50k\u03a9 pull-up resistor** manufactured directly inside the silicon chip!\n\nAll you have to do is activate it in code using:\n```cpp\npinMode(buttonPin, INPUT_PULLUP);\n```\n\n```\nMinimalist 2-Wire Hardware Wiring:\n  Arduino Pin 2 <================== [ Pushbutton Leg A ]\n                                     [ Pushbutton Leg B ] <==== Arduino GND\n  (No external resistor or 5V power wire needed on breadboard!)\n```\n\n### The Canonical Active-Low Sketch:\n```cpp\nconst int buttonPin = 2;\nconst int ledPin = 13; // Built-in Uno LED\n\nvoid setup() {\n  pinMode(buttonPin, INPUT_PULLUP); // Turn ON internal pull-up resistor!\n  pinMode(ledPin, OUTPUT);          // Status indicator LED\n}\n\nvoid loop() {\n  int buttonState = digitalRead(buttonPin);\n\n  // Remember: In active-low logic, LOW means the button is PRESSED!\n  if (buttonState == LOW) {\n    digitalWrite(ledPin, HIGH); // Turn LED ON when pressed\n  } else {\n    digitalWrite(ledPin, LOW);  // Turn LED OFF when released\n  }\n}\n```\n\nWire one leg of your button to Pin 2, the other leg to GND, upload this sketch, and press the button: instant, rock-solid control!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s07_q1",
+          "question": "What is the primary benefit of configuring a pin with pinMode(pin, INPUT_PULLUP)?",
+          "options": [
+            "It activates the Arduino's built-in pull-up resistor, eliminating the need for an external breadboard resistor",
+            "It turns the pin into a high-voltage motor output",
+            "It makes the Arduino run without USB power"
+          ],
+          "correctIndex": 0,
+          "explanation": "`INPUT_PULLUP` uses the chip's internal 20k-50k resistor to hold the pin at 5V, reducing parts and wiring complexity.",
+          "warmupExplanation": "The microcontroller has internal pull-up resistors in silicon that can be enabled with `INPUT_PULLUP`."
+        },
+        {
+          "questionId": "l05_s07_q2",
+          "question": "When using INPUT_PULLUP, what does digitalRead(pin) return when nobody is touching the button?",
+          "options": [
+            "HIGH (held at +5V by the internal pull-up)",
+            "LOW (0V)",
+            "Random fluctuating numbers"
+          ],
+          "correctIndex": 0,
+          "explanation": "When unpressed, the internal pull-up holds the pin securely at 5V (HIGH) with zero floating noise.",
+          "warmupExplanation": "The internal pull-up resistor pulls the pin voltage up to HIGH (+5V) when the switch is open."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

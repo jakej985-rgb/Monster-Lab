@@ -1,0 +1,55 @@
+{
+  "id": "l06_06",
+  "title": "LED + Resistor",
+  "summary": "Let's construct your very first physical light circuit on the breadboard!",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_06",
+  "sortOrder": 6,
+  "isOptional": false,
+  "prerequisites": [
+    "l06_05"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_breadboard",
+    "comp_01"
+  ],
+  "steps": [
+    {
+      "stepId": "l06_s06",
+      "title": "LED + Resistor",
+      "type": "physicalTask",
+      "markdownContent": "# LED + Resistor: The Foundational Circuit\n\nLet's construct your very first physical light circuit on the breadboard!\n\n### Know Your 5mm LED:\n- **Anode (+)**: The **longer leg**. Needs positive voltage (+5V).\n- **Cathode (-)**: The **shorter leg** (and the flat bevel on the rim). Needs Ground (0V).\n\n### Step-by-Step Build Instructions:\n1. Unplug USB power from your Arduino.\n2. **Place the Resistor (220\u03a9)**:\n   - Bend the leads into a gentle 'U' shape.\n   - Plug one leg into the **`+` (red) power rail**.\n   - Plug the second leg into **Row 15, column a**.\n3. **Place the LED**:\n   - Plug the **Long leg (Anode +)** into **Row 15, column b** (sharing Row 15 with the resistor!).\n   - Plug the **Short leg (Cathode -)** into **Row 16, column b**.\n4. **Place the Ground Wire**:\n   - Take a jumper wire. Plug one end into **Row 16, column c** (sharing Row 16 with the short leg!).\n   - Plug the other end into the **`-` (blue) Ground rail**.\n5. **Plug in USB and Behold!**\n   - Connect your USB cable. The LED glows brightly!\n\n### Trace the Complete Electrical Journey:\n```\n5V Rail \u2794 220\u03a9 Resistor \u2794 Row 15 \u2794 LED Anode (+) \u2794 Semiconductor \u2794 LED Cathode (-) \u2794 Row 16 \u2794 Jumper \u2794 GND Rail\n```\n\n### Systematic Troubleshooting:\n- *LED not glowing?* Unplug USB. Check if the LED is backwards (short leg must face Row 16 / GND). Check that the resistor and LED long leg are truly sharing Row 15!",
+      "quickCheck": [
+        {
+          "questionId": "q_l06_s06_01",
+          "question": "Which lead of a standard 5mm LED should connect toward the positive (+5V) side of the circuit?",
+          "options": [
+            "The longer lead (the Anode)",
+            "The shorter lead (the Cathode)",
+            "Either lead because LEDs are completely reversible",
+            "The plastic rim on the flat side"
+          ],
+          "correctIndex": 0,
+          "explanation": "The longer lead of an LED is the Anode (+), which must connect toward positive voltage so forward current can flow.",
+          "warmupExplanation": "Remember: Long leg = Anode (+) connected toward power; Short leg = Cathode (-) connected toward Ground."
+        },
+        {
+          "questionId": "q_l06_s06_02",
+          "question": "If the resistor is plugged into Row 15 column 'a' and the LED long leg is in Row 16 column 'a', why won't the LED light up?",
+          "options": [
+            "The breadboard will overheat and shut down",
+            "Row 15 and Row 16 are separate electrical rows, leaving the circuit open with no connection between them",
+            "The resistor will turn into a battery",
+            "The LED burns out instantly from too much voltage"
+          ],
+          "correctIndex": 1,
+          "explanation": "Different numbered rows are electrically isolated; components only connect when sharing the same numbered row.",
+          "warmupExplanation": "To connect two parts on a breadboard, their pins must plug into the same numbered row (e.g., both into row 15)."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

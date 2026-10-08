@@ -1,0 +1,51 @@
+{
+  "id": "l04_01",
+  "title": "From ON/OFF to Control",
+  "summary": "Imagine you are building a robotic monster in the dark!",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_04",
+  "sortOrder": 1,
+  "isOptional": false,
+  "prerequisites": [
+    "l03_09"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l04_s01",
+      "title": "From ON/OFF to Control",
+      "type": "story",
+      "markdownContent": "Imagine you are building a robotic monster in the dark! So far, your digital output pins act like a standard light switch on the wall: they can only be completely **ON (+5V)** or completely **OFF (0V)**.\n\nWhen you call `digitalWrite(pin, HIGH)`, the light turns on at full power. When you call `digitalWrite(pin, LOW)`, the light switches off entirely.\n\n```\nDigital Output:  0V (LOW / OFF)  \u27f7  5V (HIGH / ON)\n```\n\nWhat if your monster wants to wake up slowly with a gentle dawn glow? What if you want a soft nightlight, a pulsing heartbeat beacon, or smooth motor speed control instead of full-throttle jerking?\n\nIn the physical world, things do not simply snap between 0% and 100%. We need **variable control**\u2014the ability to choose any brightness between total darkness and full blast!\n\nMicrocontrollers do not have built-in dials that turn voltage down to 2.5V or 1.2V on their digital pins. So how can a digital chip that only speaks 0s and 1s create smooth, gentle brightness?\n\nGet ready to discover the magic trick of electronics: **Pulse Width Modulation (PWM)**!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l04_s01_q1",
+          "question": "What happens when an Arduino digital output pin is set to HIGH?",
+          "options": [
+            "It connects to the full +5V supply rail (turned ON)",
+            "It drops the voltage to half-power (+2.5V)",
+            "It disconnects power and turns off the circuit"
+          ],
+          "correctIndex": 0,
+          "explanation": "A digital HIGH connects the pin to the full +5V supply rail, turning the output completely ON.",
+          "warmupExplanation": "Digital pins have two states: HIGH means ON (+5V) and LOW means OFF (0V)."
+        },
+        {
+          "questionId": "qc_l04_s01_q2",
+          "question": "If you want an LED connected to an output pin to turn completely dark, what command state do you send?",
+          "options": [
+            "LOW (0V)",
+            "HIGH (+5V)",
+            "HALF (+2.5V)"
+          ],
+          "correctIndex": 0,
+          "explanation": "Sending LOW switches the pin to 0V (Ground level), stopping current and turning off the LED.",
+          "warmupExplanation": "In digital electronics, LOW means 0 Volts, which turns off power to components."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

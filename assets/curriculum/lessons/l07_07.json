@@ -1,0 +1,53 @@
+{
+  "id": "l07_07",
+  "title": "Sensor Thresholds",
+  "summary": "Raw data numbers like 642 or 14 cm mean nothing to a monster robot on their own.",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_07",
+  "sortOrder": 7,
+  "isOptional": false,
+  "prerequisites": [
+    "l07_06"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_01",
+    "comp_19"
+  ],
+  "steps": [
+    {
+      "stepId": "l07_s07",
+      "title": "Sensor Thresholds",
+      "type": "visualExplanation",
+      "markdownContent": "Raw data numbers like `642` or `14 cm` mean nothing to a monster robot on their own. To give your creation intelligence, you must define **thresholds**!\n\n### What Is a Threshold?\nA **threshold** is a boundary value in code that divides one decision state from another. When sensor data crosses this invisible line, your robot changes its behavior:\n\n```cpp\nconst int PROXIMITY_THRESHOLD = 20; // 20 cm boundary\n\nif (distanceCm < PROXIMITY_THRESHOLD) {\n  // Action when an obstacle gets closer than 20 cm!\n}\n```\n\n### Multi-Level Decision Zones:\nYou can create multiple thresholds to categorize the world into nuanced zones:\n- **Zone 1: Danger Close (`< 10 cm`)**: Halt all motors and sound the loud alarm!\n- **Zone 2: Caution (`10 cm to 30 cm`)**: Slow down and blink a warning light.\n- **Zone 3: Clear (`> 30 cm`)**: Cruise forward freely.\n\n### The Calibration Principle:\nEvery environment is unique! On a bright sunny morning, your LDR might read `750` in ambient light and `250` in shadow. On an overcast evening in a dim room, it might read `400` in ambient light and `120` in shadow.\n\n\u26a0\ufe0f **Golden Rule of Calibration**: Never guess threshold numbers! Always open the Serial Monitor, observe your sensor's minimum and maximum readings in your actual physical room, and choose a threshold midway between them!",
+      "quickCheck": [
+        {
+          "questionId": "l07_s07_q1",
+          "question": "What is a 'threshold' in sensor programming?",
+          "options": [
+            "A cutoff value used in comparison statements to trigger actions or mode changes",
+            "The maximum voltage a wire can carry before breaking",
+            "The total memory size available on the ATmega328P chip"
+          ],
+          "correctIndex": 0,
+          "explanation": "A threshold is a boundary number used in conditional statements (like if/else) to decide when an action should trigger.",
+          "warmupExplanation": "Think of a height requirement on a roller coaster: 'You must be this tall to ride!' That minimum height is a threshold."
+        },
+        {
+          "questionId": "l07_s07_q2",
+          "question": "Why is sensor calibration necessary before hardcoding threshold values in code?",
+          "options": [
+            "Because environmental baselines (like room lighting and acoustic reflections) differ across locations",
+            "Because Arduino analog pins lose their settings whenever power is disconnected",
+            "Because sensors only work if calibrated by the factory every week"
+          ],
+          "correctIndex": 0,
+          "explanation": "Sensors respond to real ambient environments. A room on a sunny day produces very different baseline readings than the same room at dusk.",
+          "warmupExplanation": "Always check raw numbers in the Serial Monitor first so you know what 'normal' looks like in your specific room!"
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

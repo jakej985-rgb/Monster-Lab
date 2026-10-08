@@ -4,6 +4,8 @@ import '../../domain/models/project_model.dart';
 import '../../domain/models/challenge_model.dart';
 import '../../domain/models/badge_model.dart';
 
+import '../../domain/models/course_model.dart';
+
 class CurriculumValidationException implements Exception {
   final String entityId;
   final String entityType;
@@ -29,19 +31,54 @@ class CurriculumValidationException implements Exception {
 }
 
 class CurriculumValidator {
-  static final RegExp _lessonIdPattern =
-      RegExp(r'^(lesson_[0-9]{2,3}|cf_[0-9]{2}|l2a_[0-9]{2}|l2b_[0-9]{2})$');
+  static final RegExp _lessonIdPattern = RegExp(
+      r'^(lesson_[0-9]{2,3}|cf_[0-9]{2}|l2a_[0-9]{2}|l2b_[0-9]{2}|l[0-9]{2}[a-z]?_[0-9]{2})$');
+  static final RegExp _courseIdPattern =
+      RegExp(r'^(lesson_[0-9]{2,3}|coding_foundations|lesson_[0-9][a-z])$');
   static final RegExp _componentIdPattern = RegExp(r'^comp_[a-z0-9_]+$');
   static final RegExp _projectIdPattern = RegExp(r'^proj_[0-9]{2}$');
   static final RegExp _challengeIdPattern = RegExp(r'^chal_[a-z0-9_]+$');
+
+  /// Validates a single course
+  static void validateCourse(CourseModel course) {
+    final errors = <String>[];
+
+    if (!_courseIdPattern.hasMatch(course.id)) {
+      errors.add("Course ID '${course.id}' does not match pattern");
+    }
+    if (course.title.trim().length < 3) {
+      errors.add("Course title must be at least 3 characters");
+    }
+    if (course.summary.trim().isEmpty) {
+      errors.add("Course summary cannot be empty");
+    }
+    if (course.lessonIds.isEmpty) {
+      errors.add("Course must contain at least 1 lessonId");
+    }
+    if (course.xpReward < 50) {
+      errors.add("xpReward must be at least 50 (got ${course.xpReward})");
+    }
+    if (course.estimatedMinutes < 10) {
+      errors.add(
+          "estimatedMinutes must be at least 10 (got ${course.estimatedMinutes})");
+    }
+
+    if (errors.isNotEmpty) {
+      throw CurriculumValidationException(
+        entityId: course.id,
+        entityType: 'Course',
+        message: 'Course failed validation constraints',
+        details: errors,
+      );
+    }
+  }
 
   /// Validates a single lesson
   static void validateLesson(Lesson lesson) {
     final errors = <String>[];
 
     if (!_lessonIdPattern.hasMatch(lesson.id)) {
-      errors.add(
-          "Lesson ID '${lesson.id}' does not match pattern '^lesson_[0-9]{2,3}\$'");
+      errors.add("Lesson ID '${lesson.id}' does not match pattern");
     }
     if (lesson.title.trim().length < 3) {
       errors.add("Lesson title must be at least 3 characters");
@@ -275,19 +312,43 @@ class CurriculumValidator {
     required List<ProjectModel> projects,
     required List<ChallengeModel> challenges,
     required List<BadgeModel> badges,
+    List<CourseModel>? courses,
   }) {
     final lessonMap = {for (final l in lessons) l.id: l};
     final componentMap = {for (final c in components) c.id: c};
     final projectMap = {for (final p in projects) p.id: p};
     final badgeMap = {for (final b in badges) b.id: b};
+    final courseMap = {
+      for (final c in courses ?? const <CourseModel>[]) c.id: c
+    };
 
     final referentialErrors = <String>[];
+
+    // Check Courses if provided
+    if (courses != null) {
+      for (final course in courses) {
+        validateCourse(course);
+        for (final lid in course.lessonIds) {
+          if (!lessonMap.containsKey(lid)) {
+            referentialErrors
+                .add("Course '${course.id}' references missing lesson '$lid'");
+          }
+        }
+        for (final prereq in course.prerequisites) {
+          if (!lessonMap.containsKey(prereq) &&
+              !courseMap.containsKey(prereq)) {
+            referentialErrors.add(
+                "Course '${course.id}' references missing prerequisite '$prereq'");
+          }
+        }
+      }
+    }
 
     // Check Lessons
     for (final lesson in lessons) {
       validateLesson(lesson);
       for (final prereq in lesson.prerequisites) {
-        if (!lessonMap.containsKey(prereq)) {
+        if (!lessonMap.containsKey(prereq) && !courseMap.containsKey(prereq)) {
           referentialErrors
               .add("Lesson '${lesson.id}' has missing prerequisite '$prereq'");
         }
@@ -321,7 +382,8 @@ class CurriculumValidator {
         }
       }
       for (final prereqL in project.prerequisiteLessons) {
-        if (!lessonMap.containsKey(prereqL)) {
+        if (!lessonMap.containsKey(prereqL) &&
+            !courseMap.containsKey(prereqL)) {
           referentialErrors.add(
               "Project '${project.id}' references missing prerequisite lesson '$prereqL'");
         }

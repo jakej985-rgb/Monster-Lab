@@ -1,0 +1,52 @@
+{
+  "id": "l04_05",
+  "title": "analogWrite",
+  "summary": "To output a PWM signal in Arduino code, we use the analogWrite() function!",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_04",
+  "sortOrder": 5,
+  "isOptional": false,
+  "prerequisites": [
+    "l04_04"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l04_s05",
+      "title": "analogWrite",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "pwmPinIdentifier",
+      "markdownContent": "To output a PWM signal in Arduino code, we use the `analogWrite()` function!\n\n```cpp\nanalogWrite(pin, value);\n```\n\n### The 8-Bit Range: 0 to 255\nThe `value` parameter accepts a whole number from **0 to 255**:\n- `analogWrite(9, 0);` \u2192 0% duty cycle (Completely OFF).\n- `analogWrite(9, 64);` \u2192 25% duty cycle (Dim glow).\n- `analogWrite(9, 127);` \u2192 50% duty cycle (Medium brightness).\n- `analogWrite(9, 255);` \u2192 100% duty cycle (Maximum brightness).\n\n*Why 255?* Arduino PWM uses an 8-bit scale ($2^8 = 256$ distinct levels: 0 through 255).\n\n### Spotting PWM Pins: Look for the Tilde (~)\nNot every digital pin supports PWM! Look closely at the numbers printed on your Arduino Uno:\n- Only pins marked with a wavy tilde (`~`) support PWM: **Pins 3, 5, 6, 9, 10, and 11**.\n- If you call `analogWrite()` on a non-PWM pin (like Pin 8), it behaves like `digitalWrite()`: 0\u2013127 turns OFF, and 128\u2013255 turns full ON!\n\n### Smooth Fading Loop:\n```cpp\nvoid loop() {\n  for (int b = 0; b <= 255; b += 5) {\n    analogWrite(9, b); // Fade up\n    delay(20);\n  }\n  for (int b = 255; b >= 0; b -= 5) {\n    analogWrite(9, b); // Fade down\n    delay(20);\n  }\n}\n```",
+      "quickCheck": [
+        {
+          "questionId": "qc_l04_s05_q1",
+          "question": "What symbol on the Arduino Uno printed silkscreen marks digital pins that support PWM output?",
+          "options": [
+            "A tilde symbol (~)",
+            "An exclamation mark (!)",
+            "A plus sign (+)"
+          ],
+          "correctIndex": 0,
+          "explanation": "Pins marked with a tilde (~) such as 3, 5, 6, 9, 10, and 11 support hardware PWM output.",
+          "warmupExplanation": "Look at the digital pin headers on your Arduino board: the wavy line ~ marks PWM pins."
+        },
+        {
+          "questionId": "qc_l04_s05_q2",
+          "question": "In the Arduino analogWrite(pin, value) command, what value produces full 100% brightness?",
+          "options": [
+            "255",
+            "100",
+            "1023"
+          ],
+          "correctIndex": 0,
+          "explanation": "analogWrite uses an 8-bit scale from 0 (OFF) to 255 (maximum 100% duty cycle).",
+          "warmupExplanation": "Arduino PWM operates on an 8-bit scale: 0 is completely off, and 255 is maximum power."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

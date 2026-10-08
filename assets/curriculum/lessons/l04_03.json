@@ -1,0 +1,52 @@
+{
+  "id": "l04_03",
+  "title": "Duty Cycle",
+  "summary": "To control how bright the LED appears, we adjust the Duty Cycle.",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_04",
+  "sortOrder": 3,
+  "isOptional": false,
+  "prerequisites": [
+    "l04_02"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l04_s03",
+      "title": "Duty Cycle",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "pwmDutyCycleVisualizer",
+      "markdownContent": "To control how bright the LED appears, we adjust the **Duty Cycle**.\n\nThe duty cycle is simply the **percentage of time** that the signal stays ON (+5V) during each repeating pulse cycle:\n\n- **0% Duty Cycle**: The signal is ON 0% of the time (always 0V). The LED is completely **OFF**.\n- **25% Duty Cycle**: The signal is ON for 1/4 of the time and OFF for 3/4 of the time. The LED glows **dimly**.\n- **50% Duty Cycle**: The signal is ON half the time and OFF half the time. The LED shines at **medium brightness**.\n- **75% Duty Cycle**: The signal is ON 3/4 of the time and OFF 1/4 of the time. The LED shines **brightly**.\n- **100% Duty Cycle**: The signal is ON 100% of the time (always +5V). The LED shines at **maximum brightness**!\n\n```\n 0% Duty:  ____________________________________ (OFF)\n25% Duty:  _--________--________--________--___ (DIM)\n50% Duty:  _----____----____----____----____--- (MEDIUM)\n75% Duty:  _------__------__------__------__--- (BRIGHT)\n100% Duty: ------------------------------------ (MAX)\n```\n\nThe width of the ON pulse determines the brightness. That is why it is called **Pulse Width Modulation**\u2014we modulate (adjust) the width of the pulse!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l04_s03_q1",
+          "question": "If an electrical signal spends half of each cycle turned ON and half turned OFF, what is its duty cycle?",
+          "options": [
+            "50% duty cycle",
+            "10% duty cycle",
+            "100% duty cycle"
+          ],
+          "correctIndex": 0,
+          "explanation": "Spending half the time active and half inactive corresponds to a 50% duty cycle.",
+          "warmupExplanation": "Duty cycle is the percentage of ON time: half of 100% is 50%."
+        },
+        {
+          "questionId": "qc_l04_s03_q2",
+          "question": "What happens to the perceived brightness of an LED as its ON-time percentage increases?",
+          "options": [
+            "The LED appears brighter",
+            "The LED becomes dimmer",
+            "The LED turns completely dark"
+          ],
+          "correctIndex": 0,
+          "explanation": "More time ON during each cycle delivers more light energy to your eyes, making the LED appear brighter.",
+          "warmupExplanation": "The longer the pulse stays ON during each cycle, the brighter the light appears."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

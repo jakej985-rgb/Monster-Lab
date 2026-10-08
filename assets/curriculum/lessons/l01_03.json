@@ -1,0 +1,51 @@
+{
+  "id": "l01_03",
+  "title": "What Is a Microcontroller?",
+  "summary": "Look right at the middle of your Arduino board.",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_01",
+  "sortOrder": 3,
+  "isOptional": false,
+  "prerequisites": [
+    "l01_02"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l01_s03",
+      "title": "What Is a Microcontroller?",
+      "type": "story",
+      "markdownContent": "Look right at the middle of your Arduino board. Do you see that black rectangular chip with shiny metal legs? That is the **Microcontroller**!\n\nLet's break down that big word:\n- **Micro** means super small!\n- **Controller** means it is in charge!\n\nA microcontroller is a complete computer shrunk down onto a single chip. Unlike a desktop computer or tablet with a giant screen, a microcontroller is built to live inside physical devices:\n- **Microwave ovens**: Counts seconds and beeps when your popcorn is hot.\n- **Washing machines**: Controls water valves and spins the drum.\n- **Robot arms**: Reads joint angles and moves motors.\n\nInside this tiny chip lives a **processor** (the thinker) and **memory** (a notebook that stores your code even when you unplug power).",
+      "quickCheck": [
+        {
+          "questionId": "l01_s03_q1",
+          "question": "Which of these everyday machines has a tiny computer inside it?",
+          "options": [
+            "A microwave oven with a digital timer",
+            "A plain wooden pencil",
+            "A metal spoon"
+          ],
+          "correctIndex": 0,
+          "explanation": "Microwaves use tiny microcontroller computers to count seconds, read button presses, and heat food!",
+          "warmupExplanation": "Many household gadgets that beep, show numbers, or have buttons have tiny computers inside them."
+        },
+        {
+          "questionId": "l01_s03_q2",
+          "question": "Why does a computer chip need memory?",
+          "options": [
+            "To store instructions so it knows what to do",
+            "To make delicious snacks",
+            "To grow bigger leaves"
+          ],
+          "correctIndex": 0,
+          "explanation": "Memory holds the instructions and numbers a computer needs to do its job!",
+          "warmupExplanation": "Just like you use memory to remember a phone number or story, computers use memory to remember code instructions."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

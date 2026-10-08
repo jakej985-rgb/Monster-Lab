@@ -1,0 +1,52 @@
+{
+  "id": "l08_07",
+  "title": "I2C Sensor",
+  "summary": "Now let's add a smart I2C sensorsuch as a digital temperature sensor, a barometric pressure altimeter, or a real-time clock.",
+  "tier": "engineer",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_08",
+  "sortOrder": 7,
+  "isOptional": false,
+  "prerequisites": [
+    "l08_06"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_07"
+  ],
+  "steps": [
+    {
+      "stepId": "l08_s07",
+      "title": "I2C Sensor",
+      "type": "physicalTask",
+      "markdownContent": "### Expanding the Bus with Smart Sensors\nNow let's add a smart I2C sensor\u2014such as a digital temperature sensor, a barometric pressure altimeter, or a real-time clock.\n\nBecause I2C is a shared parallel bus, the sensor does NOT require new GPIO pins on the Arduino! It connects directly to the exact same **SDA (A4)** and **SCL (A5)** wires as the LCD display.\n\n### Breadboard Bus Distribution Architecture\nTo attach multiple devices cleanly without cramming multiple wires into a single Arduino pin socket, use the breadboard distribution rails:\n\n```\nArduino Uno 5V  \u2500\u2500\u2500\u2500\u2500\u2500\u25ba Breadboard Power Rail (+)\nArduino Uno GND \u2500\u2500\u2500\u2500\u2500\u2500\u25ba Breadboard Ground Rail (-)\nArduino Uno A4  \u2500\u2500\u2500\u2500\u2500\u2500\u25ba Breadboard Row 20 (SDA Bus)\nArduino Uno A5  \u2500\u2500\u2500\u2500\u2500\u2500\u25ba Breadboard Row 21 (SCL Bus)\n```\n\n1. Connect LCD `VCC` and Sensor `VCC` to the breadboard `+` rail.\n2. Connect LCD `GND` and Sensor `GND` to the breadboard `-` rail.\n3. Connect LCD `SDA` and Sensor `SDA` together into Row 20.\n4. Connect LCD `SCL` and Sensor `SCL` together into Row 21.\n\n### How Data Flows\nWhen the Arduino requests temperature readings, it broadcasts the sensor's address (e.g., `0x44` or `0x68`). The LCD ignores the packet. The sensor processes the command and returns measurement bytes. A fraction of a millisecond later, the Arduino addresses `0x27` and writes the new temperature string onto the LCD!",
+      "quickCheck": [
+        {
+          "questionId": "q_l08_s07_1",
+          "question": "When connecting an I2C sensor to an Arduino Uno that already has an I2C display wired up, where must the sensor's SDA and SCL pins be connected?",
+          "options": [
+            "In parallel to the exact same SDA (A4) and SCL (A5) bus lines as the display.",
+            "To digital pins 2 and 3 to keep them separated.",
+            "To analog inputs A0 and A1."
+          ],
+          "correctIndex": 0,
+          "explanation": "All I2C peripherals connect in parallel to the shared SDA (A4) and SCL (A5) bus wires.",
+          "warmupExplanation": "Remember the defining feature of a bus: all connected devices share the exact same clock and data lines."
+        },
+        {
+          "questionId": "q_l08_s07_2",
+          "question": "Why is a breadboard power rail helpful when wiring multiple I2C devices to an Arduino Uno?",
+          "options": [
+            "It distributes the Uno's single 5V pin and GND pin across multiple tie-points so all devices receive power and share ground cleanly.",
+            "It doubles the voltage supplied to each attached sensor.",
+            "It converts direct current into alternating current."
+          ],
+          "correctIndex": 0,
+          "explanation": "The breadboard power rails allow multiple modules to tap into the Uno's 5V and GND pins reliably.",
+          "warmupExplanation": "In Lesson 6, you learned how breadboard power buses distribute 5V and GND across dozens of connection points."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

@@ -1,0 +1,55 @@
+{
+  "id": "l06_09",
+  "title": "Distance Sensor Experiment",
+  "summary": "Meet Component comp01: The HC-SR04 Ultrasonic Distance Sensor!",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_06",
+  "sortOrder": 9,
+  "isOptional": false,
+  "prerequisites": [
+    "l06_08"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_breadboard",
+    "comp_01"
+  ],
+  "steps": [
+    {
+      "stepId": "l06_s09",
+      "title": "Distance Sensor Experiment",
+      "type": "physicalTask",
+      "markdownContent": "# Distance Sensor Experiment: Echolocation in Code\n\nMeet Component `comp_01`: The **HC-SR04 Ultrasonic Distance Sensor**! This sensor gives your robot creature the sense of spatial awareness.\n\n### How Bats and Robots See with Sound:\nThe sensor features two metal cylinders that look like robot eyes:\n- **Transmitter (Trig)**: Emits a sharp ultrasonic burst at **40,000 Hz** (40 kHz)\u2014far too high for human ears to detect.\n- **Receiver (Echo)**: Listens for the reflected sound echo bouncing off nearby surfaces.\n- Because the speed of sound through room air is roughly **340 meters/second (0.034 cm/microsecond)**, the Arduino measures time ($t$) and calculates distance:\n\n$$\\text{Distance (cm)} = \\frac{\\text{Echo Time (microseconds)} \\times 0.034}{2}$$\n\n### Wiring the 4-Pin Sensor:\n1. Unplug USB.\n2. Gently press the HC-SR04 pins into 4 adjacent breadboard rows (e.g. Rows 1, 2, 3, 4 across the center):\n   - **VCC Pin** \u2794 Red `+` Power Rail (+5V)\n   - **Trig Pin** \u2794 Arduino **Digital Pin 12**\n   - **Echo Pin** \u2794 Arduino **Digital Pin 11**\n   - **GND Pin** \u2794 Blue `-` Ground Rail (GND)\n\n### The Distance Telemetry Sketch:\n```cpp\nconst int trigPin = 12;\nconst int echoPin = 11;\n\nvoid setup() {\n  Serial.begin(9600); // 9600 baud communication\n  pinMode(trigPin, OUTPUT);\n  pinMode(echoPin, INPUT);\n}\n\nvoid loop() {\n  digitalWrite(trigPin, LOW);\n  delayMicroseconds(2);\n  digitalWrite(trigPin, HIGH);\n  delayMicroseconds(10); // 10-microsecond trigger pulse\n  digitalWrite(trigPin, LOW);\n\n  long duration = pulseIn(echoPin, HIGH); // Measure echo pulse length\n  int distanceCm = duration * 0.034 / 2;  // Convert echo time to cm\n\n  Serial.print(\"Measured Distance: \");\n  Serial.print(distanceCm);\n  Serial.println(\" cm\");\n\n  delay(200); // Sample 5 times per second\n}\n```\n\n### Hands-On Observation:\nOpen the **Serial Monitor** at 9600 baud. Move your palm toward and away from the sensor cylinders. Watch the distance readings update live! A physical sensor converts physical reality into digital numbers in memory!",
+      "quickCheck": [
+        {
+          "questionId": "q_l06_s09_01",
+          "question": "How does the HC-SR04 ultrasonic distance sensor measure how far away an obstacle is?",
+          "options": [
+            "It times how long a high-frequency sound wave takes to bounce off an object and return",
+            "It uses an infrared laser beam to heat up the target object",
+            "It weighs the air pressure pushing against its front cylinders",
+            "It takes high-resolution color photographs with dual cameras"
+          ],
+          "correctIndex": 0,
+          "explanation": "The sensor uses echolocation: it sends an ultrasonic sound pulse and measures the time until the echo bounces back.",
+          "warmupExplanation": "Like a bat navigating at night, the ultrasonic sensor bounces sound waves off obstacles to calculate distance."
+        },
+        {
+          "questionId": "q_l06_s09_02",
+          "question": "Which pin on the ultrasonic sensor receives the returning sound echo signal and sends it to the Arduino?",
+          "options": [
+            "The VCC power pin",
+            "The Echo pin",
+            "The Ground (GND) pin",
+            "The Trig (Trigger) pin"
+          ],
+          "correctIndex": 1,
+          "explanation": "The Trig pin sends the sound pulse out, while the Echo pin listens for the reflected sound and pulses HIGH when it arrives.",
+          "warmupExplanation": "Trig triggers the sound pulse out; Echo listens for the reflected sound wave coming back."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

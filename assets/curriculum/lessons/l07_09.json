@@ -1,0 +1,53 @@
+{
+  "id": "l07_09",
+  "title": "Multiple Sensors",
+  "summary": "Living creatures do not rely on just one sense.",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_07",
+  "sortOrder": 9,
+  "isOptional": false,
+  "prerequisites": [
+    "l07_08"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_01",
+    "comp_19"
+  ],
+  "steps": [
+    {
+      "stepId": "l07_s09",
+      "title": "Multiple Sensors",
+      "type": "physicalTask",
+      "markdownContent": "Living creatures do not rely on just one sense. A monster guards its territory using both sight and hearing simultaneously!\n\n### Multi-Sensor Fusion:\nWhen you combine multiple sensors, your robot can make sophisticated, multi-factor decisions using C++ boolean logic:\n\n#### 1. Logical AND (`&&`) \u2014 Both Conditions Required:\nSuppose we want a **Night-Watch Sentry**: the alarm should only wake up if it is pitch dark in the room **AND** someone sneaks within 20 cm of the guard post!\n\n```cpp\nif (lightLevel < 250 && distanceCm < 20) {\n  digitalWrite(alarmLed, HIGH); // Intruder lurking in the shadows!\n} else {\n  digitalWrite(alarmLed, LOW);\n}\n```\n\n#### 2. Logical OR (`||`) \u2014 Either Condition Triggers:\nSuppose we want an **Emergency Security Alarm**: trigger if an object is dangerously close **OR** if an intruder turns on a flashlight:\n\n```cpp\nif (distanceCm < 10 || lightLevel > 800) {\n  digitalWrite(alarmLed, HIGH); // Emergency breach!\n}\n```\n\n### Prioritized Conditions:\nWhat if sensor readings conflict? By ordering `if`, `else if`, and `else` blocks strategically, you establish clear priority hierarchy so safety rules always take precedence over everyday tasks!",
+      "quickCheck": [
+        {
+          "questionId": "l07_s09_q1",
+          "question": "Which C++ logical operator requires BOTH sensor conditions to be true before executing an `if` block?",
+          "options": [
+            "The logical AND operator (&&)",
+            "The logical OR operator (||)",
+            "The assignment operator (=)"
+          ],
+          "correctIndex": 0,
+          "explanation": "The && operator evaluates to true only when both conditions on either side are true simultaneously.",
+          "warmupExplanation": "From Coding Foundations: && means both must be true, while || means either one can be true."
+        },
+        {
+          "questionId": "l07_s09_q2",
+          "question": "If you want a robot alarm to sound if a collision switch hits an obstacle OR a distance sensor reads under 5 cm, which operator should connect the conditions?",
+          "options": [
+            "The logical OR operator (||)",
+            "The logical AND operator (&&)",
+            "The equality operator (==)"
+          ],
+          "correctIndex": 0,
+          "explanation": "The || (OR) operator triggers the action if either one of the conditions is met.",
+          "warmupExplanation": "Use || when either warning signal is enough to trigger the protective response!"
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

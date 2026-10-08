@@ -1,0 +1,55 @@
+{
+  "id": "l06_04",
+  "title": "Resistors",
+  "summary": "Why does almost every LED circuit need a resistor?",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_06",
+  "sortOrder": 4,
+  "isOptional": false,
+  "prerequisites": [
+    "l06_03"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_breadboard",
+    "comp_01"
+  ],
+  "steps": [
+    {
+      "stepId": "l06_s04",
+      "title": "Resistors",
+      "type": "visualExplanation",
+      "markdownContent": "# Resistors: The Guardians of Your Circuit\n\nWhy does almost every LED circuit need a resistor? Let's uncover the guardian of your electronic parts!\n\n### The Water Hose Analogy\nImagine a giant fire hose hooked to high water pressure. If you attach a fragile paper balloon directly to the wide open nozzle, the immense rush of water bursts the balloon in a fraction of a second!\n\nA **resistor** acts like an adjustable pinch-valve or narrow nozzle. It restricts the volume of electric current flowing through the wire, keeping it at a safe, controlled trickle.\n\n### Why LEDs Need Current Protection\n- A Light Emitting Diode (LED) is a specialized semiconductor crystal. Once it turns ON, it has almost zero internal electrical resistance.\n- If you connect an LED straight across 5V and GND without a resistor, immense current surges through the tiny crystal. The LED will flash blindingly for a split second, turn brown, smell like burnt plastic, and die forever!\n- Drawing too much current (> 20\u201340 mA) can also permanently damage the Arduino microcontroller pin driver.\n\n### Meet the 220\u03a9 Resistor\n- Locate a small striped cylinder with two bendable metal legs in your kit.\n- Look at its color stripes: **Red \u2013 Red \u2013 Brown \u2013 Gold** = **220 Ohms (220\u03a9)**.\n- A 220\u03a9 resistor limits the current from a 5V supply to approximately **15 to 20 milliamps (mA)**\u2014plenty bright for your eyes and 100% safe for both LED and Arduino!\n\n### Fun Fact: Zero Polarity!\nResistors are completely symmetrical. It does not matter which way you plug them into the breadboard\u2014electricity flows through them identically in both directions!",
+      "quickCheck": [
+        {
+          "questionId": "q_l06_s04_01",
+          "question": "Why must you always place a protective resistor in series with an LED connected to an Arduino?",
+          "options": [
+            "To increase the battery voltage up to 100 Volts",
+            "To make the LED shine ultraviolet light",
+            "To limit electrical current so neither the LED nor Arduino pin burns out",
+            "Because LEDs cannot produce light without high resistance"
+          ],
+          "correctIndex": 2,
+          "explanation": "An LED has very low internal resistance. A resistor restricts current to a safe level (~15-20 mA) so neither the LED nor pin is damaged.",
+          "warmupExplanation": "A resistor is an electronic shield: it restricts current so fragile components like LEDs don't overheat and pop."
+        },
+        {
+          "questionId": "q_l06_s04_02",
+          "question": "Does a resistor have positive and negative polarity (does it matter which direction it faces)?",
+          "options": [
+            "No, resistors work identically in either direction and have no positive or negative leads",
+            "Yes, the gold band must always point toward the Arduino reset button",
+            "Yes, backwards resistors block all electricity permanently",
+            "Yes, reversing a resistor reverses the direction of current"
+          ],
+          "correctIndex": 0,
+          "explanation": "Resistors are non-polar components; current flows through them in either direction with the same resistance.",
+          "warmupExplanation": "Unlike LEDs which only let current flow one way, resistors are symmetrical. Either leg can connect to power or ground."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

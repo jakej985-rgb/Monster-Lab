@@ -1,0 +1,53 @@
+{
+  "id": "l05_03",
+  "title": "Digital Inputs",
+  "summary": "Up until now, you have used Arduino pins as OUTPUTS to push electrical energy into LEDs, buzzers, and displays.",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_05",
+  "sortOrder": 3,
+  "isOptional": false,
+  "prerequisites": [
+    "l05_02"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_20"
+  ],
+  "steps": [
+    {
+      "stepId": "l05_s03",
+      "title": "Digital Inputs",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "decisionSimulator",
+      "markdownContent": "### Senses vs. Muscles: Listening to Voltage\nUp until now, you have used Arduino pins as **OUTPUTS** to push electrical energy into LEDs, buzzers, and displays. But an interactive monster brain also needs to **listen**!\n\nWhen you set an Arduino pin to `INPUT` mode:\n1. The pin enters a **high-impedance state** (nearly 100 million ohms of resistance).\n2. It stops driving current and instead behaves like an ultra-sensitive electronic ear, measuring the voltage placed upon it without interfering with the circuit.\n3. It evaluates that voltage using binary digital logic thresholds.\n\n```\n+5.0V -------------- HIGH Region (Logic 1) ---------------\n+3.0V -----------------------------------------------------\n       Undefined / Floating Zone (Unpredictable! Avoid!)\n+1.5V -----------------------------------------------------\n 0.0V -------------- LOW Region  (Logic 0) ---------------\n```\n\n### Arduino Uno Digital Logic Rules:\n- **`HIGH`**: Any voltage between **+3.0V and +5.0V**. The microcontroller interprets this as binary `1` or `true`.\n- **`LOW`**: Any voltage between **0.0V and +1.5V**. The microcontroller interprets this as binary `0` or `false`.\n- **The Dead Zone**: Voltages floating between 1.5V and 3.0V are unpredictable and must be avoided by using decisive switching!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s03_q1",
+          "question": "What are the two discrete binary states of a digital pin on an Arduino Uno?",
+          "options": [
+            "HIGH (+5V) and LOW (0V / Ground)",
+            "Positive (+12V) and Negative (-12V)",
+            "Alternating (AC) and Direct (DC)"
+          ],
+          "correctIndex": 0,
+          "explanation": "Digital pins only recognize two binary voltage states: HIGH (+5V) and LOW (0V / Ground).",
+          "warmupExplanation": "Digital pins in 5V microcontrollers recognize binary logic: 5V is HIGH and 0V is LOW."
+        },
+        {
+          "questionId": "l05_s03_q2",
+          "question": "When an Arduino pin is configured as an INPUT, what is its primary function?",
+          "options": [
+            "To measure incoming electrical voltage without sourcing heavy current",
+            "To deliver high current to drive large mechanical motors",
+            "To step down battery power from 120 volts"
+          ],
+          "correctIndex": 0,
+          "explanation": "Inputs act as high-impedance sensors that read incoming voltage signals from external devices.",
+          "warmupExplanation": "Output pins drive voltages out; input pins sample incoming voltages from the world."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

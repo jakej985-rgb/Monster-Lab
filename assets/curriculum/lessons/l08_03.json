@@ -1,0 +1,53 @@
+{
+  "id": "l08_03",
+  "title": "SDA and SCL",
+  "summary": "I2C communication relies on two dedicated electrical pathways:",
+  "tier": "engineer",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_08",
+  "sortOrder": 3,
+  "isOptional": false,
+  "prerequisites": [
+    "l08_02"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_07"
+  ],
+  "steps": [
+    {
+      "stepId": "l08_s03",
+      "title": "SDA and SCL",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "i2cBusTimingDiagram",
+      "markdownContent": "### The Two Signal Lines\nI2C communication relies on two dedicated electrical pathways:\n\n1. **SDA (Serial Data):** The information highway. Binary bits of data (1s and 0s) travel back and forth over this single bidirectional wire.\n2. **SCL (Serial Clock):** The heartbeat rhythm. Generated exclusively by the Arduino Uno Controller, this clock pulse train synchronizes the exact moment each bit is transmitted and read.\n\n### Why Synchronization Matters\nSerial transmission requires a shared clock rhythm. If a sender transmits a stream of high and low voltages without a clock, the receiver cannot tell whether a long high pulse means three '1' bits or four '1' bits. With SCL:\n- When SCL is **LOW**, the transmitting device changes the voltage on SDA.\n- When SCL transitions to **HIGH**, the receiving device samples and locks in the bit on SDA!\n\n```\nSCL:  \u2500\u2500\u2510   \u250c\u2500\u2500\u2500\u2510   \u250c\u2500\u2500\u2500\u2510   \u250c\u2500\u2500\u2500\u2510   \u250c\u2500\u2500\u2500\n        \u2514\u2500\u2500\u2500\u2518   \u2514\u2500\u2500\u2500\u2518   \u2514\u2500\u2500\u2500\u2518   \u2514\u2500\u2500\u2500\u2518\nSDA:  \u2500\u2500\u2500\u2500\u2500\u2500[ Bit 7 ]\u2500\u2500\u2500[ Bit 6 ]\u2500\u2500\u2500[ Bit 5 ]\u2500\u2500\u2500\n            \u2191 Sample    \u2191 Sample    \u2191 Sample\n```\n\n### Arduino Uno Hardware Pins\nOn the Arduino Uno R3, hardware I2C lines are routed to:\n- **SDA:** Analog Pin **A4** (and the top header pin marked SDA next to AREF).\n- **SCL:** Analog Pin **A5** (and the top header pin marked SCL).\n\n> **The 4-Wire Reality:** Even though I2C is called a \"2-wire serial bus,\" every peripheral still needs **+5V** for power and **GND** for an electrical reference return path. You will connect 4 wires per device: VCC, GND, SDA, and SCL.\n\nExplore the interactive bus timing diagram below to step through clock edges, address bits, and data transitions!",
+      "quickCheck": [
+        {
+          "questionId": "q_l08_s03_1",
+          "question": "Which dedicated pins on an Arduino Uno R3 are connected to the hardware I2C bus?",
+          "options": [
+            "Analog Pin A4 (SDA) and Analog Pin A5 (SCL)",
+            "Digital Pin 0 (RX) and Digital Pin 1 (TX)",
+            "Digital Pin 10 (SS) and Digital Pin 13 (SCK)"
+          ],
+          "correctIndex": 0,
+          "explanation": "On the Arduino Uno, the ATmega328P Two-Wire Interface (TWI) routes the Serial Data line (SDA) to pin A4 and the Serial Clock line (SCL) to pin A5.",
+          "warmupExplanation": "Check the Uno pinout: while A4 and A5 can read analog signals, they double as the hardware I2C bus pins."
+        },
+        {
+          "questionId": "q_l08_s03_2",
+          "question": "Why is a common Ground (GND) connection mandatory when connecting an I2C peripheral to an Arduino Uno?",
+          "options": [
+            "GND establishes a shared zero-volt electrical reference so both devices interpret HIGH and LOW voltage levels identically.",
+            "The ground wire is only needed if the devices use different color jumper wires.",
+            "GND prevents the Arduino clock speed from drifting."
+          ],
+          "correctIndex": 0,
+          "explanation": "Voltage is a difference in electrical potential. Without a common ground reference between devices, digital signals cannot be accurately measured.",
+          "warmupExplanation": "Remember from Lesson 1 and Lesson 6: every electrical circuit requires a complete return path to GND."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

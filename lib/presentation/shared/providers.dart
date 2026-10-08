@@ -75,8 +75,11 @@ final nextLessonProvider = FutureProvider<Lesson?>((ref) async {
       continue;
     }
 
+    final completedLessons = progress?.completedLessonIds ?? const <String>{};
+    final completedCourses = progress?.completedCourseIds ?? const <String>{};
     final missingPrereqs = lesson.prerequisites.where(
-      (req) => !(progress?.completedLessonIds.contains(req) ?? false),
+      (req) =>
+          !completedLessons.contains(req) && !completedCourses.contains(req),
     );
     if (missingPrereqs.isEmpty) {
       return lesson;

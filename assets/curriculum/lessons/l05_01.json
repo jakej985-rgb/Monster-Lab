@@ -1,0 +1,52 @@
+{
+  "id": "l05_01",
+  "title": "What Is a Switch?",
+  "summary": "Every interactive robot begins with a way to sense physical human contact.",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_05",
+  "sortOrder": 1,
+  "isOptional": false,
+  "prerequisites": [
+    "l04_10"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_20"
+  ],
+  "steps": [
+    {
+      "stepId": "l05_s01",
+      "title": "What Is a Switch?",
+      "type": "story",
+      "markdownContent": "### Bridging the Physical and Digital Worlds\nEvery interactive robot begins with a way to sense physical human contact. The simplest and most universal sensor in all of electronics is the **switch**!\n\nThink of an electrical switch like a drawbridge across a river:\n- **Closed Circuit (Bridge Down)**: The metal contacts touch. Electricity has an unbroken conductive road to travel from the power source, through the device, and back to ground. Current flows and the circuit comes alive!\n- **Open Circuit (Bridge Up)**: The metal contacts separate. There is an air gap between the conductors. Electricity cannot leap across the gap, so current immediately drops to zero. The circuit turns completely OFF.\n\n```\nClosed (ON):   [5V Power] ====== [Closed Contacts] ======> [Robot Load] ======> [GND]\nOpen (OFF):    [5V Power] ====== [   Air Gap     ]   X   [Robot Load] ....... [GND]\n```\n\n### Latching vs. Momentary Switches\n1. **Latching Switches**: Like a bedroom wall toggle or your robot's master power switch. When you flip it ON, it clicks and mechanically stays ON until you manually flip it back.\n2. **Momentary Switches**: Like a doorbell, keyboard key, or game controller button. An internal spring keeps the switch open until your finger physically pushes it down. The split second you let go, the spring snaps the contacts apart again!\n\nIn Monster Lab, switches let your creations sense when a door opens, when a foot hits the floor, or when an emergency stop button is pressed.",
+      "quickCheck": [
+        {
+          "questionId": "l05_s01_q1",
+          "question": "What must exist for electric current to flow through a circuit?",
+          "options": [
+            "A continuous, closed conductive path from power to ground",
+            "An open circuit with a gap between wires",
+            "Only a battery with no wires connected"
+          ],
+          "correctIndex": 0,
+          "explanation": "Electricity requires an unbroken conductive loop (closed circuit) from power through a load to ground.",
+          "warmupExplanation": "Electric current requires a continuous conductive path to flow; air gaps stop the current."
+        },
+        {
+          "questionId": "l05_s01_q2",
+          "question": "What happens when a switch opens, creating a gap between conductors?",
+          "options": [
+            "Current immediately stops flowing through the gap",
+            "Current speeds up and sparks continuously",
+            "The circuit voltage doubles automatically"
+          ],
+          "correctIndex": 0,
+          "explanation": "Opening a switch breaks the conductive loop, dropping current flow to zero.",
+          "warmupExplanation": "An open circuit breaks the loop, preventing electrons from traveling through the circuit."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

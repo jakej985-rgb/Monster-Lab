@@ -1,0 +1,52 @@
+{
+  "id": "l01_02",
+  "title": "Meet the Arduino Uno",
+  "summary": "Pick up your Arduino Uno board and hold it gently by its edges, just like holding a tasty cracker!",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_01",
+  "sortOrder": 2,
+  "isOptional": false,
+  "prerequisites": [
+    "l01_01"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l01_s02",
+      "title": "Meet the Arduino Uno",
+      "type": "physicalTask",
+      "interactiveWidgetType": "boardLabelDragDrop",
+      "markdownContent": "Pick up your **Arduino Uno** board and hold it gently by its edges, just like holding a tasty cracker! \ud83c\udf6a\n\nLook closely at the board. Notice these important landmarks:\n1. **USB Port**: The shiny silver metal box. This is where you plug in the cable to send code and power from your computer!\n2. **Power Jack**: The round black socket. You can plug in a battery pack here when your robot is on the move.\n3. **Reset Button**: The small push button in the corner. Pressing it restarts your program from the very beginning.\n4. **Built-in LED**: A tiny light labeled **'L'** right on the board next to Pin 13.\n5. **Pin Headers**: The long rows of black plastic sockets with little holes along the edges.\n\nTry the matching challenge below to drag each label badge to its matching landmark!",
+      "quickCheck": [
+        {
+          "questionId": "l01_s02_q1",
+          "question": "How should you hold an electronic circuit board like an Arduino?",
+          "options": [
+            "Gently by the outer edges",
+            "By grabbing the delicate metal pins",
+            "With wet hands right out of the sink"
+          ],
+          "correctIndex": 0,
+          "explanation": "Holding circuit boards gently by their outer edges keeps all the delicate electronic parts safe and clean!",
+          "warmupExplanation": "Electronics are friendly but delicate! Hold circuit boards by their plastic edges, just like a favorite trading card."
+        },
+        {
+          "questionId": "l01_s02_q2",
+          "question": "What cable connects your Arduino to your computer to share power and code?",
+          "options": [
+            "A USB cable",
+            "A jump rope",
+            "A garden hose"
+          ],
+          "correctIndex": 0,
+          "explanation": "A USB cable delivers electrical power and transfers your code from the computer into the Arduino!",
+          "warmupExplanation": "Computers use USB cables to talk to printers, game controllers, and Arduino boards."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

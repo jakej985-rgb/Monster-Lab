@@ -1,0 +1,30 @@
+{
+  "id": "lesson_05",
+  "title": "Lesson 5 \u2014 Switches, Buttons & Potentiometers: Physical Inputs",
+  "summary": "Combine digital switches, pushbuttons with pull-up resistors, and rotary potentiometers to command hardware.",
+  "lessonIds": [
+    "l05_01",
+    "l05_02",
+    "l05_03",
+    "l05_04",
+    "l05_05",
+    "l05_06",
+    "l05_07",
+    "l05_08",
+    "l05_09",
+    "l05_10",
+    "l05_11",
+    "l05_12",
+    "l05_13",
+    "l05_14",
+    "l05_15",
+    "l05_16"
+  ],
+  "isOptional": false,
+  "placementLessonId": null,
+  "prerequisites": [
+    "lesson_04"
+  ],
+  "xpReward": 150,
+  "estimatedMinutes": 80
+}

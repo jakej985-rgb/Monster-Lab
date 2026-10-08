@@ -204,8 +204,8 @@ void main() {
       expect(engine.isInitialized, isTrue);
 
       final lessons = await engine.getLessons();
-      expect(lessons.length, equals(35));
-      expect(lessons.first.id, equals('lesson_01'));
+      expect(lessons.length, equals(107));
+      expect(lessons.first.id, equals('l01_01'));
       expect(lessons.first.title, contains('Arduino'));
 
       final components = await engine.getComponents();

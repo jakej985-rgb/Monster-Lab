@@ -1,0 +1,144 @@
+{
+  "id": "l08_10",
+  "title": "I2C Challenge",
+  "summary": "You have mastered the fundamentals of serial bus communication, open-drain pull-up physics, SDA/SCL pinouts, 7-bit hardware addressing, multi-devic...",
+  "tier": "engineer",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_08",
+  "sortOrder": 10,
+  "isOptional": false,
+  "prerequisites": [
+    "l08_09"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_07"
+  ],
+  "steps": [
+    {
+      "stepId": "l08_s10",
+      "title": "I2C Challenge",
+      "type": "quizCheckpoint",
+      "markdownContent": "### Master Certification: 2-Wire Serial Networking\nYou have mastered the fundamentals of serial bus communication, open-drain pull-up physics, SDA/SCL pinouts, 7-bit hardware addressing, multi-device daisy-chaining, and systematic troubleshooting!\n\n### The Final Challenge Mission\nImagine designing an **Environmental Telemetry Station**: you have an I2C LCD at address `0x27` and a temperature sensor at address `0x48`. Both connect in parallel to pins A4 and A5 on your Arduino Uno.\n\nComplete this comprehensive 8-question assessment to prove your readiness for connected embedded devices!",
+      "interactiveConfig": {
+        "question": "How many signal wires does the I2C protocol require to communicate between a microcontroller and multiple peripherals?",
+        "options": [
+          "2 wires (SDA for data and SCL for clock)",
+          "8 wires (one for each bit of a byte)",
+          "4 wires (MISO, MOSI, SCK, and SS)"
+        ],
+        "correctIndex": 0,
+        "explanation": "I2C requires only 2 signal wires (SDA and SCL) to coordinate communications with up to 127 devices.",
+        "questions": [
+          {
+            "question": "How many signal wires does the I2C protocol require to communicate between a microcontroller and multiple peripherals?",
+            "options": [
+              "2 wires (SDA for data and SCL for clock)",
+              "8 wires (one for each bit of a byte)",
+              "4 wires (MISO, MOSI, SCK, and SS)"
+            ],
+            "correctIndex": 0,
+            "explanation": "I2C requires only 2 signal wires (SDA and SCL) to coordinate communications with up to 127 devices."
+          },
+          {
+            "question": "Which Arduino Uno pins are used for hardware I2C communication?",
+            "options": [
+              "A4 (SDA) and A5 (SCL)",
+              "Pin 0 (RX) and Pin 1 (TX)",
+              "Pin 9 (PWM) and Pin 10 (PWM)"
+            ],
+            "correctIndex": 0,
+            "explanation": "Analog pin A4 carries the SDA data line and analog pin A5 carries the SCL clock line."
+          },
+          {
+            "question": "What is the purpose of the 7-bit address in an I2C communication packet?",
+            "options": [
+              "It identifies which specific peripheral on the shared bus should listen to and execute the transmission.",
+              "It sets the screen brightness of connected displays.",
+              "It determines the physical wire length of the circuit."
+            ],
+            "correctIndex": 0,
+            "explanation": "Every peripheral has a unique 7-bit address so the Controller can communicate with one specific device without interference."
+          },
+          {
+            "question": "Why do I2C bus lines use pull-up resistors connected to 5V?",
+            "options": [
+              "They establish a default HIGH state so devices can pull lines LOW safely using open-drain transistors without short circuits.",
+              "They convert digital signals into analog sound waves.",
+              "They prevent static electricity from entering the computer."
+            ],
+            "correctIndex": 0,
+            "explanation": "I2C is an open-drain bus: pull-up resistors pull lines HIGH to 5V when idle, and devices pull lines LOW to send binary bits."
+          },
+          {
+            "question": "What is the consequence of having two devices with identical addresses (such as two 0x27 displays) on the same I2C bus?",
+            "options": [
+              "An address collision occurs, causing both devices to drive the data line simultaneously and corrupting data.",
+              "The Arduino Uno will assign one device to run at double speed.",
+              "The circuit will safely alternate between the two devices automatically."
+            ],
+            "correctIndex": 0,
+            "explanation": "Two devices sharing the same address will both attempt to respond, causing data corruption and bus contention."
+          },
+          {
+            "question": "Which standard library header file is built into Arduino to manage I2C hardware?",
+            "options": [
+              "<Wire.h>",
+              "<SPI.h>",
+              "<LiquidCrystal.h>"
+            ],
+            "correctIndex": 0,
+            "explanation": "The built-in <Wire.h> library provides all the fundamental Two-Wire Interface (I2C) functions on Arduino."
+          },
+          {
+            "question": "If your 16x2 I2C LCD displays solid white/black boxes instead of text, what should you do first?",
+            "options": [
+              "Adjust the blue contrast potentiometer on the back of the backpack with a small screwdriver.",
+              "Cut the SDA wire in half.",
+              "Reinstall the Arduino IDE software."
+            ],
+            "correctIndex": 0,
+            "explanation": "The blue contrast trimpot adjusts the voltage to the liquid crystal fluid; tuning it reveals text hidden by over- or under-contrast."
+          },
+          {
+            "question": "How do you connect a second I2C device when the Arduino Uno's A4 and A5 pins already have wires in them?",
+            "options": [
+              "Use a breadboard to branch A4 and A5 into parallel rows so both devices connect to the same pins.",
+              "Connect the second device to analog pin A0 and A1.",
+              "Stack two Arduino Uno boards on top of each other."
+            ],
+            "correctIndex": 0,
+            "explanation": "I2C is a parallel bus: breadboard tie-points allow multiple devices to connect to SDA (A4) and SCL (A5) simultaneously."
+          }
+        ]
+      },
+      "quickCheck": [
+        {
+          "questionId": "q_l08_s10_1",
+          "question": "What is the primary advantage of connecting multiple robot sensors and displays using an I2C bus rather than dedicated pins?",
+          "options": [
+            "It conserves GPIO pins by networking up to 127 devices across only two shared signal lines (SDA and SCL).",
+            "It eliminates the need for any programming libraries.",
+            "It operates without consuming any battery electrical power."
+          ],
+          "correctIndex": 0,
+          "explanation": "I2C allows multiple peripherals to communicate over just two shared wires, preventing microcontroller pin exhaustion.",
+          "warmupExplanation": "Remember the primary motivation introduced in Step 1: preventing pin starvation on your microcontroller."
+        },
+        {
+          "questionId": "q_l08_s10_2",
+          "question": "When developing an embedded project with an I2C peripheral, which two software components work together in your sketch?",
+          "options": [
+            "The Arduino <Wire.h> bus library and the device-specific driver library (such as <LiquidCrystal_I2C.h>).",
+            "The <Keyboard.h> library and the <Mouse.h> library.",
+            "The <SD.h> file system library and the <WiFi.h> library."
+          ],
+          "correctIndex": 0,
+          "explanation": "<Wire.h> manages the hardware I2C bus protocol, while the device library provides high-level commands for the specific module.",
+          "warmupExplanation": "In Step 6 and Lesson 3, you saw how hardware bus libraries partner with device drivers to control complex peripherals."
+        }
+      ]
+    }
+  ],
+  "xpReward": 15
+}

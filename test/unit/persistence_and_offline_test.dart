@@ -146,7 +146,7 @@ void main() {
       final challenges = await engine.getChallenges();
       final badges = await engine.getBadges();
 
-      expect(lessons.length, equals(35));
+      expect(lessons.length, equals(107));
       expect(components.length, equals(54));
       expect(projects.length, equals(20));
       expect(challenges.length, equals(24));

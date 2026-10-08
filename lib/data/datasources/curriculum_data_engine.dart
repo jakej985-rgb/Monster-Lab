@@ -128,6 +128,7 @@ class CurriculumDataEngine {
         projects: _projects.values.toList(),
         challenges: _challenges.values.toList(),
         badges: _badges.values.toList(),
+        courses: _courses.values.toList(),
       );
 
       _isInitialized = true;
@@ -222,21 +223,10 @@ class CurriculumDataEngine {
 
     final result = <Lesson>[];
 
-    final lesson1Index = standalone.indexWhere((l) => l.id == 'lesson_01');
-    if (lesson1Index != -1) {
-      result.add(standalone.removeAt(lesson1Index));
-    }
-
-    if (courseLessons.containsKey('coding_foundations')) {
-      result.addAll(courseLessons['coding_foundations']!);
-    }
-
-    if (courseLessons.containsKey('lesson_2a')) {
-      result.addAll(courseLessons['lesson_2a']!);
-    }
-
-    if (courseLessons.containsKey('lesson_2b')) {
-      result.addAll(courseLessons['lesson_2b']!);
+    for (final course in _courses.values) {
+      if (courseLessons.containsKey(course.id)) {
+        result.addAll(courseLessons[course.id]!);
+      }
     }
 
     result.addAll(standalone);

@@ -1,0 +1,53 @@
+{
+  "id": "l07_08",
+  "title": "Sensor -> Output",
+  "summary": "Now let's complete the loop by connecting a sensor input directly to a physical output actuator!",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_07",
+  "sortOrder": 8,
+  "isOptional": false,
+  "prerequisites": [
+    "l07_07"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_01",
+    "comp_19"
+  ],
+  "steps": [
+    {
+      "stepId": "l07_s08",
+      "title": "Sensor -> Output",
+      "type": "physicalTask",
+      "markdownContent": "Now let's complete the loop by connecting a sensor input directly to a physical output actuator!\n\n### Hardware Mission: Proximity Alarm LED\nKeep your HC-SR04 ultrasonic sensor wired on pins `9` (TRIG) and `10` (ECHO). Add an indicator LED:\n- Connect the **Anode** (longer leg) of a Red LED to Uno Digital Pin **13** (which has an onboard series resistor).\n- Connect the **Cathode** (shorter flat leg) of the LED to the **GND** rail.\n\n### Firmware Architecture:\nHere is how sensor readings drive output decisions:\n\n```cpp\nconst int trigPin = 9;\nconst int echoPin = 10;\nconst int alertLedPin = 13;\nconst int NEAR_THRESHOLD_CM = 15; // Trigger alarm if closer than 15 cm\n\nvoid setup() {\n  pinMode(trigPin, OUTPUT);\n  pinMode(echoPin, INPUT);\n  pinMode(alertLedPin, OUTPUT);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  // Ping ultrasonic sensor\n  digitalWrite(trigPin, LOW);\n  delayMicroseconds(2);\n  digitalWrite(trigPin, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(trigPin, LOW);\n\n  long duration = pulseIn(echoPin, HIGH);\n  int distanceCm = duration * 0.034 / 2;\n\n  // Threshold decision logic\n  if (distanceCm > 0 && distanceCm < NEAR_THRESHOLD_CM) {\n    digitalWrite(alertLedPin, HIGH); // Alarm ON: Monster eye glows!\n    Serial.println(\"WARNING: Intruder in perimeter!\");\n  } else {\n    digitalWrite(alertLedPin, LOW);  // Alarm OFF: Area clear\n    Serial.println(\"Status: Patrol normal.\");\n  }\n\n  delay(100);\n}\n```\n\nUpload the sketch, wave your hand in front of the sensor, and observe how your monster instantly reacts to proximity!",
+      "quickCheck": [
+        {
+          "questionId": "l07_s08_q1",
+          "question": "In a complete robotic control loop, what is the correct chronological sequence of operations?",
+          "options": [
+            "Sense the environment -> Process data with logic -> Command output actuators",
+            "Command output actuators -> Sense the environment -> Turn off the power",
+            "Process logic -> Command output actuators -> Wire the breadboard"
+          ],
+          "correctIndex": 0,
+          "explanation": "Robotic systems follow the Sense -> Think -> Act loop: gather sensor data, process decisions in code, and command physical outputs.",
+          "warmupExplanation": "Sense, Think, Act! First your robot gathers info, then its code decides, and finally it takes action in the world."
+        },
+        {
+          "questionId": "l07_s08_q2",
+          "question": "Which command turns an alert LED connected to digital pin 13 ON when a sensor threshold is triggered?",
+          "options": [
+            "digitalWrite(13, HIGH);",
+            "digitalRead(13, HIGH);",
+            "analogWrite(13, 0);"
+          ],
+          "correctIndex": 0,
+          "explanation": "digitalWrite(13, HIGH) sends 5V to digital pin 13, illuminating the connected LED.",
+          "warmupExplanation": "From Lesson 5: digitalWrite(pin, HIGH) applies full 5V power to make an LED illuminate."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

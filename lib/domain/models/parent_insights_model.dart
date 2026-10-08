@@ -38,7 +38,8 @@ class ParentCompetencyAnalyzer {
     ];
     final circuitCompleted = circuitItems.where((id) {
       if (id.startsWith('lesson')) {
-        return progress.completedLessonIds.contains(id);
+        return progress.completedLessonIds.contains(id) ||
+            progress.completedCourseIds.contains(id);
       }
       if (id.startsWith('proj')) {
         return progress.completedProjectIds.contains(id);
@@ -55,7 +56,8 @@ class ParentCompetencyAnalyzer {
     final analogItems = ['lesson_06', 'comp_20', 'chal_02', 'chal_08'];
     final analogCompleted = analogItems.where((id) {
       if (id.startsWith('lesson')) {
-        return progress.completedLessonIds.contains(id);
+        return progress.completedLessonIds.contains(id) ||
+            progress.completedCourseIds.contains(id);
       }
       if (id.startsWith('comp')) {
         return progress.discoveredComponentIds.contains(id);
@@ -71,7 +73,8 @@ class ParentCompetencyAnalyzer {
     final pwmItems = ['lesson_07', 'proj_03', 'chal_04', 'chal_07'];
     final pwmCompleted = pwmItems.where((id) {
       if (id.startsWith('lesson')) {
-        return progress.completedLessonIds.contains(id);
+        return progress.completedLessonIds.contains(id) ||
+            progress.completedCourseIds.contains(id);
       }
       if (id.startsWith('proj')) {
         return progress.completedProjectIds.contains(id);
@@ -87,7 +90,8 @@ class ParentCompetencyAnalyzer {
     final busItems = ['lesson_03', 'comp_07', 'chal_05', 'chal_15'];
     final busCompleted = busItems.where((id) {
       if (id.startsWith('lesson')) {
-        return progress.completedLessonIds.contains(id);
+        return progress.completedLessonIds.contains(id) ||
+            progress.completedCourseIds.contains(id);
       }
       if (id.startsWith('comp')) {
         return progress.discoveredComponentIds.contains(id);

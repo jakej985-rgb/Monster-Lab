@@ -1,0 +1,52 @@
+{
+  "id": "l01_04",
+  "title": "Inputs and Outputs",
+  "summary": "Robots interact with the world through two main kinds of parts: Inputs and Outputs.",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_01",
+  "sortOrder": 4,
+  "isOptional": false,
+  "prerequisites": [
+    "l01_03"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l01_s04",
+      "title": "Inputs and Outputs",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "inputOutputClassification",
+      "markdownContent": "Robots interact with the world through two main kinds of parts: **Inputs** and **Outputs**.\n\n### 1. Inputs (The Senses) \ud83d\udc40\nInputs bring information **IN** from the physical world to the Arduino:\n- **Pushbutton**: Senses when your finger presses down.\n- **Light Sensor**: Measures how bright or dark the room is.\n- **Distance Sensor**: Measures how far away an obstacle is.\n\n### 2. Outputs (The Muscles and Voice) \ud83d\udca1\nOutputs send actions **OUT** into the physical world from the Arduino:\n- **LED Light**: Shines bright colors.\n- **Buzzer**: Makes musical beeps and siren sounds.\n- **Motor**: Spins wheels and waves robotic arms.\n\n```\nWorld \u2794 [Input / Sense] \u2794 Arduino Brain \u2794 [Output / Action] \u2794 World\n```\n\nTest your detective skills in the sorting activity below!",
+      "quickCheck": [
+        {
+          "questionId": "l01_s04_q1",
+          "question": "When you push a doorbell button, is the button an input or an output?",
+          "options": [
+            "An input sending a signal in",
+            "An output making a ringing sound",
+            "A power cable"
+          ],
+          "correctIndex": 0,
+          "explanation": "Pushing the button sends information IN to the system, so the button is an input!",
+          "warmupExplanation": "Inputs send information IN to the brain (like a button press). Outputs send actions OUT (like a chime)."
+        },
+        {
+          "questionId": "l01_s04_q2",
+          "question": "When a flashlight bulb shines bright light in a dark room, is the bulb an input or an output?",
+          "options": [
+            "An output creating light",
+            "An input sensing the dark",
+            "A battery holder"
+          ],
+          "correctIndex": 0,
+          "explanation": "The bulb creates light and sends it OUT into the room, making it an output!",
+          "warmupExplanation": "Outputs do things in the physical world, like shining lights, making sounds, or moving motors."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

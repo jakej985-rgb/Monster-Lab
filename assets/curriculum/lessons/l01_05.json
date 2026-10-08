@@ -1,0 +1,52 @@
+{
+  "id": "l01_05",
+  "title": "Digital vs Analog",
+  "summary": "Electronic signals talk to the Arduino in two different ways:",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_01",
+  "sortOrder": 5,
+  "isOptional": false,
+  "prerequisites": [
+    "l01_04"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l01_s05",
+      "title": "Digital vs Analog",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "arduinoBoardInspector",
+      "markdownContent": "Electronic signals talk to the Arduino in two different ways:\n\n### 1. Digital Signals: Two Clear Choices \ud83d\udca1\nDigital is like a standard light switch. It is either completely **ON** or completely **OFF**:\n- **HIGH**: Full power (+5 Volts) \u2794 ON!\n- **LOW**: Zero power (0 Volts) \u2794 OFF!\nThere is no halfway state in digital logic.\n\n### 2. Analog Signals: A Smooth Slide \ud83c\udf9a\ufe0f\nAnalog is like a volume dial or dimmer slider. It can be any smooth value along a range:\n- Whisper quiet, medium sound, or full blast!\n- Nighttime dark, twilight, or blazing sunshine!\n\nOn the Arduino, analog inputs measure voltages smoothly from **0 all the way to 1023**.\n\nUse the interactive inspector below to flip a digital switch and slide an analog voltage knob!",
+      "quickCheck": [
+        {
+          "questionId": "l01_s05_q1",
+          "question": "A standard light switch is either flipped ON or flipped OFF. Is this digital or analog?",
+          "options": [
+            "Digital (two clear states)",
+            "Analog (a smooth range)",
+            "Disconnected"
+          ],
+          "correctIndex": 0,
+          "explanation": "Digital signals have only two states (ON or OFF), just like a regular light switch!",
+          "warmupExplanation": "Digital means two simple choices: ON or OFF, HIGH or LOW. Think of a simple light switch."
+        },
+        {
+          "questionId": "l01_s05_q2",
+          "question": "A volume knob turns smoothly from whisper-quiet to super loud. Is that digital or analog?",
+          "options": [
+            "Analog (smooth range with many levels)",
+            "Digital (only ON or OFF)",
+            "Empty"
+          ],
+          "correctIndex": 0,
+          "explanation": "Because the volume changes smoothly through many levels in between, it is an analog signal!",
+          "warmupExplanation": "Analog signals can be any level in between, like sliding a volume bar up and down."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

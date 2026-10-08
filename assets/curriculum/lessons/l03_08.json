@@ -1,0 +1,53 @@
+{
+  "id": "l03_08",
+  "title": "When Should I Use a Library?",
+  "summary": "Now that you know how awesome libraries are, an important engineering question arises:",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_03",
+  "sortOrder": 8,
+  "isOptional": false,
+  "prerequisites": [
+    "l03_07"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_07"
+  ],
+  "steps": [
+    {
+      "stepId": "l03_s08",
+      "title": "When Should I Use a Library?",
+      "type": "story",
+      "interactiveWidgetType": "missingLibraryTroubleshooting",
+      "markdownContent": "Now that you know how awesome libraries are, an important engineering question arises:\n\n**Should you use a library for EVERYTHING?** \ud83e\udd14\n\nLet's compare two scenarios:\n\n### 1. When You DO Want a Library:\n- Complex communication (talking to an LCD screen, an OLED display, or a Wi-Fi chip).\n- Precise timing devices (servo motors, ultrasonic distance sensors, sound decoders).\n- Complicated math (reading a 6-axis gyroscope, calculating angles, or encrypting data).\n\n### 2. When You DON'T Need a Library:\n- Simple things built right into Arduino! Turning a single LED on or off only needs `digitalWrite(pin, HIGH);`.\n- Reading a basic pushbutton switch only needs `digitalRead(pin);`.\n- Reading a potentiometer dial only needs `analogRead(pin);`.\n\nUsing a giant library for a simple pushbutton is like calling a helicopter just to cross the street! A great engineer chooses the right tool for the job: simple built-in commands for basic pins, and powerful libraries for smart modules.",
+      "quickCheck": [
+        {
+          "questionId": "qc_l03_s08_q1",
+          "question": "Do you need to install an external library just to turn a single basic LED on and off?",
+          "options": [
+            "No, simple built-in commands like digitalWrite() are already part of Arduino",
+            "Yes, you cannot turn on any LED without downloading a library",
+            "Yes, an LED requires at least three different libraries"
+          ],
+          "correctIndex": 0,
+          "explanation": "Basic input/output like digitalWrite() and digitalRead() are built right into the Arduino language\u2014no extra libraries needed!",
+          "warmupExplanation": "Simple LED control is already built into Arduino: digitalWrite() does the job with zero extra downloads!"
+        },
+        {
+          "questionId": "qc_l03_s08_q2",
+          "question": "When is installing an external library strongly recommended?",
+          "options": [
+            "When working with complex modules like screens, motors, or special sensors",
+            "Only when you want to make your code run slower",
+            "Never, engineers avoid libraries at all costs"
+          ],
+          "correctIndex": 0,
+          "explanation": "External libraries handle the intricate timing and protocol math required by complex hardware devices like screens and servos.",
+          "warmupExplanation": "Use libraries whenever a component requires dozens of complex timing steps to operate safely."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

@@ -1,0 +1,55 @@
+{
+  "id": "l06_07",
+  "title": "Blink on a Real Circuit",
+  "summary": "In Step 6, your LED was tied directly to the constant 5V power rail, so it stayed on continuously.",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_06",
+  "sortOrder": 7,
+  "isOptional": false,
+  "prerequisites": [
+    "l06_06"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_breadboard",
+    "comp_01"
+  ],
+  "steps": [
+    {
+      "stepId": "l06_s07",
+      "title": "Blink on a Real Circuit",
+      "type": "codeExperiment",
+      "markdownContent": "# Blink on a Real Circuit\n\nIn Step 6, your LED was tied directly to the constant 5V power rail, so it stayed on continuously. Now, let's put the Arduino microcontroller in command!\n\n### Hardware Transition:\n1. Unplug the USB cable.\n2. Gently unplug the resistor leg from the `+` rail.\n3. Move that resistor leg into **Row 10, column a**.\n4. Take a jumper wire: connect Arduino **Digital Pin 9** to **Row 10, column b**.\n5. Leave the LED short leg connected through Row 16 to Ground.\n\nNow, Digital Pin 9 controls whether 5V is supplied to the circuit!\n\n### Upload the External Blink Sketch:\n```cpp\nconst int ledPin = 9; // External circuit wired to Digital Pin 9\n\nvoid setup() {\n  pinMode(ledPin, OUTPUT); // Configure Pin 9 as an active driver\n}\n\nvoid loop() {\n  digitalWrite(ledPin, HIGH); // Supply +5V: Circuit closes, LED lights up!\n  delay(1000);                // Wait 1000 ms (1 second)\n  digitalWrite(ledPin, LOW);  // Drive to 0V: Circuit off, LED dark!\n  delay(1000);                // Wait 1000 ms (1 second)\n}\n```\n\n### The Hardware-Software Bridge:\n- When code calls `digitalWrite(9, HIGH)`, an internal transistor inside the ATmega328P connects Pin 9 to the internal 5V supply, sourcing electric current.\n- When code calls `digitalWrite(9, LOW)`, the transistor connects Pin 9 to Ground (0V), collapsing the voltage across the LED so current ceases.",
+      "quickCheck": [
+        {
+          "questionId": "q_l06_s07_01",
+          "question": "What voltage appears on Digital Pin 9 when code executes `digitalWrite(9, HIGH)` on an Arduino Uno?",
+          "options": [
+            "0.0 Volts (Ground)",
+            "-12.0 Volts AC",
+            "+5.0 Volts DC",
+            "120 Volts house current"
+          ],
+          "correctIndex": 2,
+          "explanation": "Calling `digitalWrite(pin, HIGH)` drives the digital pin to +5V DC, sourcing current to the external circuit.",
+          "warmupExplanation": "In Arduino digital logic, HIGH means +5V (active power) and LOW means 0V (Ground)."
+        },
+        {
+          "questionId": "q_l06_s07_02",
+          "question": "If you want an LED on Pin 9 to blink rapidly twice every second, what delay duration should you use?",
+          "options": [
+            "delay(250); for 250 milliseconds ON and 250 milliseconds OFF",
+            "delay(5000); for 5 seconds",
+            "delay(0); with no waiting",
+            "delay(60000); for 1 minute"
+          ],
+          "correctIndex": 0,
+          "explanation": "250 ms ON + 250 ms OFF = 500 ms per cycle, resulting in 2 complete blinks every second (1000 ms).",
+          "warmupExplanation": "One second is 1000 milliseconds. 250 ms ON plus 250 ms OFF creates two swift blink pulses per second."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

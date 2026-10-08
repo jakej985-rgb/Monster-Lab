@@ -1,0 +1,53 @@
+{
+  "id": "l05_09",
+  "title": "Meet the Potentiometer",
+  "summary": "Buttons and switches are binary: either ON or OFF, black or white, 1 or 0.",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_05",
+  "sortOrder": 9,
+  "isOptional": false,
+  "prerequisites": [
+    "l05_08"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_20"
+  ],
+  "steps": [
+    {
+      "stepId": "l05_s09",
+      "title": "Meet the Potentiometer",
+      "type": "physicalTask",
+      "interactiveWidgetType": "wiperPinoutChecker",
+      "markdownContent": "### Stepping Beyond Binary: Continuous Sensory Control\nButtons and switches are binary: either ON or OFF, black or white, 1 or 0. But the physical universe is not binary!\n- A robot's arm doesn't just snap between fully extended and fully retracted\u2014it moves through a smooth arc of angles.\n- A sound volume dial doesn't jump from silent to deafening\u2014it glides continuously.\n\nMeet **`comp_20`**: The **10k\u03a9 Rotary Potentiometer** (engineers affectionately call it a \"pot\").\n\n### Anatomy of the Potentiometer\nPick up `comp_20` from your kit and examine its features:\n1. **Rotating Shaft**: A metal or plastic shaft that turns smoothly across about 270 degrees of rotation.\n2. **Three Stamped Terminal Pins**:\n   - **Pin 1 (Outer Leg)**: Connects to one end of an internal horseshoe-shaped carbon resistive strip.\n   - **Pin 2 (Center Leg)**: Connects to a movable metal contact called the **wiper** that sweeps along the carbon track as you turn the knob!\n   - **Pin 3 (Outer Leg)**: Connects to the opposite end of the carbon resistive strip.\n\n```\nPotentiometer Internal Cutaway:\n\n      Pin 1 (5V) ---------\\  (10k Horseshoe Carbon Track)\n                           \\    \n                            [ Wiper Arm ] <==== Pin 2 (Center Output)\n                           /    \n      Pin 3 (GND) --------/ \n```\n\n\u26a0\ufe0f **Safety Rule**: Never connect the center wiper pin directly between 5V and GND! The outer pins receive 5V and GND, while the center wiper connects to an **Analog Input pin** (such as A0).",
+      "quickCheck": [
+        {
+          "questionId": "l05_s09_q1",
+          "question": "How many external terminal pins does a standard rotary potentiometer possess?",
+          "options": [
+            "3 pins (two outer track ends and one center wiper)",
+            "1 pin",
+            "8 pins"
+          ],
+          "correctIndex": 0,
+          "explanation": "A standard potentiometer has 3 pins: two outer fixed terminals and one movable center wiper terminal.",
+          "warmupExplanation": "Potentiometers use two reference power pins and one variable center wiper pin."
+        },
+        {
+          "questionId": "l05_s09_q2",
+          "question": "What internal component moves when you rotate a potentiometer shaft?",
+          "options": [
+            "A conductive wiper arm that glides along a resistive track",
+            "A miniature lithium battery",
+            "An optical laser diode"
+          ],
+          "correctIndex": 0,
+          "explanation": "Rotating the knob moves the wiper arm across the carbon track, tapping into different points of resistance.",
+          "warmupExplanation": "A potentiometer has an internal wiper contact that slides across a resistive strip."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

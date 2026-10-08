@@ -1,0 +1,52 @@
+{
+  "id": "l04_07",
+  "title": "Mixing Colors",
+  "summary": "Mixing light is pure physics magic!",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_04",
+  "sortOrder": 7,
+  "isOptional": false,
+  "prerequisites": [
+    "l04_06"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l04_s07",
+      "title": "Mixing Colors",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "rgbColorSynthesizer",
+      "markdownContent": "Mixing light is pure physics magic!\n\nWhen you mix paint in art class (subtractive color), combining colors absorbs wavelengths, eventually creating muddy dark brown or black.\n\nWith light, we use **Additive Color Mixing**. When colored light beams overlap, they add energy together:\n\n- **Red + Green = Yellow** (Red and green light beams combine into bright yellow!)\n- **Green + Blue = Cyan** (Vibrant aqua / sky blue)\n- **Red + Blue = Magenta** (Vivid purple / hot pink)\n- **Red + Green + Blue = White** (All three primary wavelengths create clean white light!)\n\n### Creating Custom Shades with PWM:\nBy varying the PWM values between 0 and 255 on each channel, you can blend any shade imaginable:\n- **Orange**: High Red (`255`) + Medium-Low Green (`80`) + Zero Blue (`0`)\n- **Purple**: Medium Red (`160`) + Zero Green (`0`) + High Blue (`255`)\n- **Soft Pink**: Full Red (`255`) + Low Green (`80`) + Low Blue (`80`)\n\nWith $256 \\times 256 \\times 256$ possible combinations, your Arduino can synthesize over **16.7 million distinct colors**!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l04_s07_q1",
+          "question": "In additive light color mixing, what color do you see when Red light and Green light shine together at equal brightness?",
+          "options": [
+            "Yellow",
+            "Brown",
+            "Black"
+          ],
+          "correctIndex": 0,
+          "explanation": "In additive light physics, combining pure Red and Green beams creates bright Yellow light.",
+          "warmupExplanation": "Light mixing is additive! Unlike paint, combining red light and green light shines as bright yellow."
+        },
+        {
+          "questionId": "qc_l04_s07_q2",
+          "question": "What color is created when Red, Green, and Blue light all shine simultaneously at full brightness?",
+          "options": [
+            "White",
+            "Pitch black",
+            "Dark brown"
+          ],
+          "correctIndex": 0,
+          "explanation": "Combining all three primary light wavelengths (Red, Green, Blue) at full intensity produces White light.",
+          "warmupExplanation": "When all three light channels are turned on at full power, their wavelengths blend to form White light."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

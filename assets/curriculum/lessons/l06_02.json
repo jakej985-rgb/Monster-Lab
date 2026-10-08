@@ -1,0 +1,55 @@
+{
+  "id": "l06_02",
+  "title": "Meet the Breadboard",
+  "summary": "Take your solderless breadboard (compbreadboard) out of your kit.",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_06",
+  "sortOrder": 2,
+  "isOptional": false,
+  "prerequisites": [
+    "l06_01"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_breadboard",
+    "comp_01"
+  ],
+  "steps": [
+    {
+      "stepId": "l06_s02",
+      "title": "Meet the Breadboard",
+      "type": "physicalTask",
+      "markdownContent": "# Meet the Breadboard\n\nTake your solderless breadboard (`comp_breadboard`) out of your kit. This is your electronic sandbox where circuits come alive!\n\n### Why Is It Called a 'Breadboard'?\nIn the 1920s, early radio tinkerers literally grabbed wooden bread-cutting boards from their family kitchens and hammered metal nails into the wood to mount radio tubes and coils without permanent soldering. Today's modern breadboard has hundreds of reusable spring clips hidden underneath smooth plastic!\n\n### Anatomy of the Breadboard\n- **Tie-Points (Holes)**: Grid holes spaced exactly 0.1 inches (2.54 mm) apart\u2014the international standard for electronic pins.\n- **Internal Spring Clips**: Inside every tiny hole is a bronze spring clip that grips your wire pins and bonds them together electrically.\n- **Power Rails (Outer Edges)**: Two long columns running down each side, clearly painted with red `+` and blue/black `-` lines.\n- **Terminal Columns & Numbered Rows**: Numbered horizontal strips (1 to 30 or 1 to 60) divided by a central canyon.\n\n### Hands-On Exploration:\n1. Unplug the Arduino from USB.\n2. Pick up a male-to-male jumper wire.\n3. Gently push one metal pin into any breadboard hole.\n4. Notice the firm mechanical grip of the internal spring clip holding your wire securely!\n5. Pull it out gently\u2014no solder, no glue, 100% reusable!",
+      "quickCheck": [
+        {
+          "questionId": "q_l06_s02_01",
+          "question": "What safe habit should you always follow before placing or moving wires on your breadboard?",
+          "options": [
+            "Leave USB power running so you can see sparks",
+            "Submerge the breadboard in water to keep it cool",
+            "Unplug the Arduino USB cable to safely remove power",
+            "Press the reset button continuously with both hands"
+          ],
+          "correctIndex": 2,
+          "explanation": "Always disconnect USB power before moving or adding wires. This prevents accidental short circuits while working!",
+          "warmupExplanation": "Safety first! Turning off power or unplugging USB before touching wires protects your board and computer."
+        },
+        {
+          "questionId": "q_l06_s02_02",
+          "question": "Why do roboticists and engineers build prototypes on a solderless breadboard?",
+          "options": [
+            "To connect and test circuits quickly without melting solder or using permanent glue",
+            "Because breadboards generate their own high-voltage electricity",
+            "To slice sandwiches while coding firmware",
+            "Because pins can never be unplugged once inserted"
+          ],
+          "correctIndex": 0,
+          "explanation": "Breadboards use internal spring clips that allow parts and wires to be plugged in, tested, and moved easily without soldering.",
+          "warmupExplanation": "A breadboard is like reusable building blocks: you can push pins in, test your circuit, and pull them out freely."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

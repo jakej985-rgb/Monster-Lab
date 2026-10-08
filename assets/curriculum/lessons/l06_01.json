@@ -1,0 +1,55 @@
+{
+  "id": "l06_01",
+  "title": "What Is a Circuit?",
+  "summary": "In Lesson 5, you commanded an on-board LED to flash.",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_06",
+  "sortOrder": 1,
+  "isOptional": false,
+  "prerequisites": [
+    "l05_16"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_breadboard",
+    "comp_01"
+  ],
+  "steps": [
+    {
+      "stepId": "l06_s01",
+      "title": "What Is a Circuit?",
+      "type": "story",
+      "markdownContent": "# What Is a Circuit?\n\nWelcome to physical hardware building! In Lesson 5, you commanded an on-board LED to flash. Now, it is time to leap beyond the board and build real, tangible circuits on your workbench!\n\n### The Closed Loop Principle\nAn electrical circuit is a **complete, unbroken loop** through which electrical energy travels:\n\n```\nPower (+5V) \u2794 Conductor Wires \u2794 Working Device (LED / Sensor) \u2794 Ground Return (GND)\n```\n\n1. **Energy leaves the source**: Positive voltage (+5V) pushes electrical charges forward.\n2. **Energy does useful work**: As charges travel through components (like an LED or buzzer), electrical energy transforms into photons (light), sound, or motion.\n3. **Energy returns home**: Electricity must return to **Ground (GND)**. If the return highway to GND is missing, current stops instantly!\n\n### Open vs. Closed Circuits\n- **Closed Circuit**: A continuous conductive pathway connects +5V all the way to GND. Electricity flows and components activate!\n- **Open Circuit**: A broken wire, loose pin, or open switch interrupts the path. Current drops to 0 mA immediately, and the circuit sleeps.\n- **Short Circuit**: When +5V connects straight into GND with zero resistance in between! Electricity rushes dangerously fast without doing work. Always place protective components like resistors in your circuits!\n\n### Bench Rule #1\n**Always unplug your Arduino USB cable before modifying or inserting wires on your workbench!**",
+      "quickCheck": [
+        {
+          "questionId": "q_l06_s01_01",
+          "question": "What is required for electricity to flow and power an electronic component?",
+          "options": [
+            "A wireless internet connection to the cloud",
+            "A closed, continuous loop connecting power (+5V) to Ground (GND)",
+            "Only a single wire connected to 5V with no return path",
+            "An open gap in the wire so air can flow through"
+          ],
+          "correctIndex": 1,
+          "explanation": "Electricity requires a closed, unbroken loop from the power source (+5V) through components and back to Ground (GND) to flow.",
+          "warmupExplanation": "Electric current flows like water in a closed loop. It must have a way out (+5V) and an unbroken return path home (GND)."
+        },
+        {
+          "questionId": "q_l06_s01_02",
+          "question": "What happens when a circuit is 'open' (has a loose wire or disconnected pin)?",
+          "options": [
+            "Electric current stops flowing immediately and components turn off",
+            "Electricity leaps through the air as sparks",
+            "The components work twice as fast",
+            "The Arduino generates extra battery power"
+          ],
+          "correctIndex": 0,
+          "explanation": "In an open circuit, the electrical path is broken, so no current can flow and devices turn off.",
+          "warmupExplanation": "Think of a drawbridge: when open, traffic stops completely. In electronics, any gap halts current flow."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

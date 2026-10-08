@@ -39,10 +39,11 @@ void main() {
   });
 
   group('Curriculum Automated Validation Suite', () {
-    test('All 35 lessons pass CurriculumValidator schema and pedagogical rules',
+    test(
+        'All 107 lessons pass CurriculumValidator schema and pedagogical rules',
         () async {
       final lessons = await engine.getLessons();
-      expect(lessons.length, equals(35));
+      expect(lessons.length, equals(107));
 
       for (final lesson in lessons) {
         expect(
@@ -112,13 +113,14 @@ void main() {
     });
 
     test(
-        'CurriculumValidator.validateCurriculumIntegrity passes across all 114 curriculum items',
+        'CurriculumValidator.validateCurriculumIntegrity passes across all curriculum items',
         () async {
       final lessons = await engine.getLessons();
       final components = await engine.getComponents();
       final projects = await engine.getProjects();
       final challenges = await engine.getChallenges();
       final badges = await engine.getBadges();
+      final courses = await engine.getCourses();
 
       expect(
         () => CurriculumValidator.validateCurriculumIntegrity(
@@ -127,6 +129,7 @@ void main() {
           projects: projects,
           challenges: challenges,
           badges: badges,
+          courses: courses,
         ),
         returnsNormally,
       );

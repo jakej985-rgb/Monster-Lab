@@ -97,17 +97,7 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
                   list.sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
                 }
 
-                // Separate Lesson 1 as first intro mission
-                Lesson? lesson1;
-                final otherStandalone = <Lesson>[];
-                for (final l in standaloneLessons) {
-                  if (l.id == 'lesson_01') {
-                    lesson1 = l;
-                  } else {
-                    otherStandalone.add(l);
-                  }
-                }
-                otherStandalone.sort((a, b) => a.id.compareTo(b.id));
+                standaloneLessons.sort((a, b) => a.id.compareTo(b.id));
 
                 final courses = coursesAsync.value ?? const [];
 
@@ -121,6 +111,7 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
                             false);
                     if (!isComplete) {
                       _expandedCourseIds.add(course.id);
+                      break;
                     }
                   }
                   // If all complete or none found, expand first course
@@ -134,13 +125,7 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
                 return ListView(
                   padding: const EdgeInsets.all(16.0),
                   children: [
-                    // Standalone Mission 1 (First Spark)
-                    if (lesson1 != null) ...[
-                      _buildLessonCard(lesson1, activeProgress),
-                      const SizedBox(height: 12),
-                    ],
-
-                    // Course Folders for 1B, 2A, 2B
+                    // All 10 Course Folders
                     for (final course in courses) ...[
                       if (courseLessonsMap.containsKey(course.id)) ...[
                         _buildCourseFolderCard(
@@ -152,8 +137,8 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
                       ],
                     ],
 
-                    // Core Missions 3 to 12
-                    for (final l in otherStandalone) ...[
+                    // Standalone Lessons 9 to 12
+                    for (final l in standaloneLessons) ...[
                       _buildLessonCard(l, activeProgress),
                       const SizedBox(height: 12),
                     ],
@@ -377,10 +362,16 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
     final isCompleted =
         activeProgress?.completedLessonIds.contains(lesson.id) ?? false;
 
-    // Prerequisite check
+    // Prerequisite check: supports both lesson and course prerequisites
+    final completedLessons =
+        activeProgress?.completedLessonIds ?? const <String>{};
+    final completedCourses =
+        activeProgress?.completedCourseIds ?? const <String>{};
     final missingPrereqs = lesson.prerequisites
         .where(
-          (req) => !(activeProgress?.completedLessonIds.contains(req) ?? false),
+          (req) =>
+              !completedLessons.contains(req) &&
+              !completedCourses.contains(req),
         )
         .toList();
     final isLocked = missingPrereqs.isNotEmpty;

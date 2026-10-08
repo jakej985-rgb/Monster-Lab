@@ -1,0 +1,53 @@
+{
+  "id": "l03_01",
+  "title": "What Is a Library?",
+  "summary": "Imagine you want your monster robot to speak numbers on an LCD display screen or steer a robotic arm with a motor.",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_03",
+  "sortOrder": 1,
+  "isOptional": false,
+  "prerequisites": [
+    "l2b_08"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_07"
+  ],
+  "steps": [
+    {
+      "stepId": "l03_s01",
+      "title": "What Is a Library?",
+      "type": "story",
+      "interactiveWidgetType": "libraryConceptDiagram",
+      "markdownContent": "Welcome to Monster Lab! Imagine you want your monster robot to speak numbers on an LCD display screen or steer a robotic arm with a motor. \ud83e\udd16\n\nInside the screen or motor, thousands of tiny electrical pulses have to happen in the exact right microsecond pattern. If you had to write every single pulse, every timing rule, and every wire signal from scratch, building a simple blinking robot would take months!\n\nLuckily, you don't have to reinvent the wheel! In the coding world, expert engineers have already figured out those tricky signals and bundled them into neat packages called **Libraries**.\n\nA **library** is a pre-built toolbox of reusable code written by other friendly engineers. Instead of writing 500 lines of complex wire commands, you just use simple actions like `lcd.print(\"Monster Lab!\");` or `servo.write(90);`.\n\nThink of a library like a recipe book for your monster: you don't need to reinvent bread every time you make a sandwich\u2014you just follow the recipe!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l03_s01_q1",
+          "question": "What is a software library in programming?",
+          "options": [
+            "A collection of pre-written, reusable code tools that makes building projects easier",
+            "A physical bookshelf where you store robot batteries",
+            "A piece of metal used to solder electronic parts together"
+          ],
+          "correctIndex": 0,
+          "explanation": "A library is a collection of pre-written code that provides helpful functions so you don't have to write everything from scratch.",
+          "warmupExplanation": "Think of a library as a handy toolkit: someone else made the tools so you can build your robot faster!"
+        },
+        {
+          "questionId": "qc_l03_s01_q2",
+          "question": "Why do programmers use libraries instead of writing every tiny instruction themselves?",
+          "options": [
+            "To save time and avoid re-solving difficult hardware problems",
+            "Because microcontrollers refuse to run any custom code",
+            "To make their computer run out of memory"
+          ],
+          "correctIndex": 0,
+          "explanation": "Libraries save huge amounts of time and prevent tricky bugs by reusing proven solutions written by experienced engineers.",
+          "warmupExplanation": "Reusing reliable tools lets you focus on building fun robot features instead of debugging low-level timing pulses."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

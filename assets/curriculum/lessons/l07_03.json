@@ -1,0 +1,53 @@
+{
+  "id": "l07_03",
+  "title": "Analog Sensors",
+  "summary": "The physical universe does not always flip between pure black and white!",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_07",
+  "sortOrder": 3,
+  "isOptional": false,
+  "prerequisites": [
+    "l07_02"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_01",
+    "comp_19"
+  ],
+  "steps": [
+    {
+      "stepId": "l07_s03",
+      "title": "Analog Sensors",
+      "type": "visualExplanation",
+      "markdownContent": "The physical universe does not always flip between pure black and white! Shadows deepen gradually, temperatures climb fraction by fraction of a degree, and robotic monster arms pivot smoothly through angles.\n\n### The Continuous Spectrum:\nAn **analog sensor** provides a continuous, smoothly varying measurement across an entire range of voltages between 0.0V and 5.0V.\n\nIn Lesson 06, you explored how a rotary potentiometer functions as a variable voltage divider. The Arduino Uno contains an internal **10-bit Analog-to-Digital Converter (ADC)** wired to pins `A0` through `A5`. When you call `analogRead(A0)`, the ADC converts continuous input voltage into an integer from `0` to `1023`:\n\n- **0.0 Volts** = `0`\n- **2.5 Volts** = `512`\n- **5.0 Volts** = `1023`\n- Each count represents $\\approx 4.89\\text{ mV}$ of change!\n\n### Digital vs. Analog Comparison:\n- **Digital Sensor**: *'Is it dark outside? Yes or No.'*\n- **Analog Sensor**: *'Exactly how bright is the room right now? It measures 648 out of 1023.'*\n\nAnalog sensing gives your robot nuanced awareness of its environment!",
+      "quickCheck": [
+        {
+          "questionId": "l07_s03_q1",
+          "question": "What range of integer values does `analogRead()` return on an Arduino Uno?",
+          "options": [
+            "0 to 1023 (10-bit resolution)",
+            "0 to 255 (8-bit resolution)",
+            "Only binary 0 or 1"
+          ],
+          "correctIndex": 0,
+          "explanation": "The Uno has a 10-bit ADC, which quantizes analog voltages between 0V and 5V into 1024 discrete steps (0 through 1023).",
+          "warmupExplanation": "From Lesson 6: 10 bits means 2 to the 10th power = 1024 possible values, counting from 0 up to 1023."
+        },
+        {
+          "questionId": "l07_s03_q2",
+          "question": "Why would an engineer choose an analog sensor instead of a digital sensor for a thermometer?",
+          "options": [
+            "Because temperature changes smoothly and requires measuring subtle gradients across a range",
+            "Because analog pins use less electrical current than digital pins",
+            "Because digital pins cannot be connected to any microcontroller"
+          ],
+          "correctIndex": 0,
+          "explanation": "Analog sensors capture continuous gradients of physical phenomena, such as smooth temperature fluctuations.",
+          "warmupExplanation": "Digital sensors can only answer 'Is it hot: YES/NO?'. An analog sensor can report the exact continuous temperature value."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

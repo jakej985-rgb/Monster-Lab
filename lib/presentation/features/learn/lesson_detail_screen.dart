@@ -428,6 +428,34 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                                       .read(activeProgressProvider.notifier)
                                       .completeLesson(
                                           lesson.id, lesson.xpReward);
+
+                                  if (lesson.courseId != null) {
+                                    try {
+                                      final curriculumRepo = ref
+                                          .read(curriculumRepositoryProvider);
+                                      final siblings = await curriculumRepo
+                                          .getCourseLessons(lesson.courseId!);
+                                      final updatedProgress =
+                                          ref.read(activeProgressProvider);
+                                      final allDone = siblings.isNotEmpty &&
+                                          siblings.every((Lesson s) =>
+                                              (updatedProgress
+                                                      ?.completedLessonIds
+                                                      .contains(s.id) ??
+                                                  false) ||
+                                              s.id == lesson.id);
+                                      if (allDone) {
+                                        final course = await curriculumRepo
+                                            .getCourseById(lesson.courseId!);
+                                        await ref
+                                            .read(
+                                                activeProgressProvider.notifier)
+                                            .completeCourse(
+                                                course.id, course.xpReward);
+                                      }
+                                    } catch (_) {}
+                                  }
+
                                   if (context.mounted) {
                                     _showCompletionDialog(context, lesson,
                                         isFirstCompletion: isFirstCompletion);

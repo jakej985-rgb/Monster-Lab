@@ -1,0 +1,53 @@
+{
+  "id": "l05_05",
+  "title": "Floating Inputs",
+  "summary": "If you run digitalRead(2) with nothing connected to Pin 2, you might expect it to read LOW (0V).",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_05",
+  "sortOrder": 5,
+  "isOptional": false,
+  "prerequisites": [
+    "l05_04"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_20"
+  ],
+  "steps": [
+    {
+      "stepId": "l05_s05",
+      "title": "Floating Inputs",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "floatingPinSimulator",
+      "markdownContent": "### The Ghost Button: Why Unconnected Pins Go Crazy\nIf you run `digitalRead(2)` with nothing connected to Pin 2, you might expect it to read `LOW` (0V). But look at the Serial Monitor: it bounces wildly between `0` and `1`!\n\nIf you wave your hand near the Arduino board or touch the plastic wire insulation, the numbers flicker like mad. Your robot thinks a phantom monster is smashing the button hundreds of times per second!\n\n```\nUnconnected Pin:  [Stray Electrostatic Fields] ~~~> [Pin 2 Antenna] ===> ??? (0 or 1 at random!)\n```\n\n### The Physics Behind the Float\n1. **High Impedance**: Remember, an input pin has nearly 100 M\u03a9 of resistance. It takes virtually zero electric current to influence it.\n2. **Stray Electromagnetic Radiation**: The room around you is full of electromagnetic noise: 60Hz wall wiring, Wi-Fi routers, fluorescent lights, and electrostatic charges on your skin and clothing.\n3. **The Unintentional Antenna**: With nothing holding the pin firmly to a voltage source, the wire acts as a radio antenna, picking up micro-volt charges that randomly push the pin above 3V (HIGH) and below 1.5V (LOW).\n\nAn input pin left open with no definitive connection to power or ground is called a **floating pin**. In robotics, a floating pin is a catastrophic bug!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s05_q1",
+          "question": "What is an electrical 'floating pin' in microcontroller systems?",
+          "options": [
+            "An input pin left unconnected to power or ground, making its logic state random and erratic",
+            "A pin submerged in water during cooling",
+            "An output pin that powers a hovercraft motor"
+          ],
+          "correctIndex": 0,
+          "explanation": "A floating pin lacks a solid reference connection to 5V or GND, causing it to pick up ambient noise and toggle unpredictably.",
+          "warmupExplanation": "Without a physical connection to 5V or Ground, an input pin's voltage is undefined and floats."
+        },
+        {
+          "questionId": "l05_s05_q2",
+          "question": "Why does waving your hand near an unconnected input pin cause the Serial Monitor readings to flip?",
+          "options": [
+            "Your body carries electrostatic charges that couple into high-impedance inputs",
+            "Your hand blocks the microcontroller's internal radio receiver",
+            "Human body heat slows down the quartz crystal clock"
+          ],
+          "correctIndex": 0,
+          "explanation": "High-impedance inputs easily detect tiny electrostatic electric fields radiating from human bodies and clothing.",
+          "warmupExplanation": "High-impedance inputs are so sensitive that ambient electrical charges nearby induce false signals."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

@@ -1,0 +1,55 @@
+{
+  "id": "l06_10",
+  "title": "Sensor + Output Mini Project",
+  "summary": "Now we unite everything you have mastered into a full Cyber-Physical System:",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_06",
+  "sortOrder": 10,
+  "isOptional": false,
+  "prerequisites": [
+    "l06_09"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_breadboard",
+    "comp_01"
+  ],
+  "steps": [
+    {
+      "stepId": "l06_s10",
+      "title": "Sensor + Output Mini Project",
+      "type": "physicalTask",
+      "markdownContent": "# Sensor + Output Mini Project: Monster Proximity Sentry\n\nNow we unite everything you have mastered into a full Cyber-Physical System:\n**Sensory Input \u2794 Microcontroller Decision Logic \u2794 Physical Output Action**!\n\n### The Robotic Mission\nYour monster sentry will guard your desk. When an intruder's hand gets closer than **20 centimeters**, the sentry sounds an alarm by flashing the Pin 9 LED rapidly! When clear, the sentry stays peaceful.\n\n### System Circuit Checklist:\n1. **Breadboard Power Rails**: 5V to red rail, GND to blue rail.\n2. **Ultrasonic Sensor**: VCC to 5V rail, GND to GND rail, Trig to Pin 12, Echo to Pin 11.\n3. **Warning LED Circuit**: Digital Pin 9 \u2794 220\u03a9 resistor \u2794 LED Anode (+) \u2794 LED Cathode (-) \u2794 GND rail.\n\n### Upload the Sentry Firmware:\n```cpp\nconst int trigPin = 12;\nconst int echoPin = 11;\nconst int alertLed = 9;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(trigPin, OUTPUT);\n  pinMode(echoPin, INPUT);\n  pinMode(alertLed, OUTPUT);\n}\n\nvoid loop() {\n  // 1. Emit ultrasonic trigger\n  digitalWrite(trigPin, LOW);\n  delayMicroseconds(2);\n  digitalWrite(trigPin, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(trigPin, LOW);\n\n  // 2. Measure echo and compute distance\n  long duration = pulseIn(echoPin, HIGH);\n  int distance = duration * 0.034 / 2;\n\n  Serial.print(\"Distance: \");\n  Serial.print(distance);\n  Serial.println(\" cm\");\n\n  // 3. Autonomous Decision Pipeline\n  if (distance > 0 && distance < 20) {\n    // Intruder in security zone! Rapid strobe alarm!\n    digitalWrite(alertLed, HIGH);\n    delay(100);\n    digitalWrite(alertLed, LOW);\n    delay(100);\n  } else {\n    // Perimeter secure: quiet mode\n    digitalWrite(alertLed, LOW);\n    delay(250);\n  }\n}\n```\n\n### Test the System:\nWave your hand in front of the sensor. When you cross inside 20 cm, the alarm fires! You have built a complete, intelligent automated robotic sentry!",
+      "quickCheck": [
+        {
+          "questionId": "q_l06_s10_01",
+          "question": "In our Monster Sentry project, what role does the ultrasonic sensor play in the Input \u2192 Decision \u2192 Output pipeline?",
+          "options": [
+            "It acts as the visual Output displaying the warning signal",
+            "It computes the mathematical code logic in its own microprocessor",
+            "It supplies high-voltage power to the breadboard",
+            "It provides the sensory Input data (distance measurement) to the Arduino"
+          ],
+          "correctIndex": 3,
+          "explanation": "The ultrasonic sensor is the Input device that gathers real-world distance data and delivers it to the Arduino.",
+          "warmupExplanation": "In robotics: Sensors are Inputs (the senses), code makes Decisions, and LEDs/motors are Outputs (the actions)."
+        },
+        {
+          "questionId": "q_l06_s10_02",
+          "question": "If the alert LED never turns on even when your hand is 5 cm away, what is the best systematic troubleshooting step?",
+          "options": [
+            "Open the Serial Monitor to check if distance values are being read, then inspect the LED wiring and resistor",
+            "Immediately replace your computer with a new one",
+            "Change every wire and all code lines simultaneously",
+            "Connect the LED directly to 120V wall power"
+          ],
+          "correctIndex": 0,
+          "explanation": "Checking Serial Monitor telemetry first isolates whether the problem is in the sensor input/code or the LED output circuit.",
+          "warmupExplanation": "Use telemetry first: Serial Monitor reveals whether the sensor is reading correctly before you debug the output circuit."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

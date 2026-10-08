@@ -1,0 +1,53 @@
+{
+  "id": "l03_04",
+  "title": "Find and Install",
+  "summary": "Where do you get libraries?",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_03",
+  "sortOrder": 4,
+  "isOptional": false,
+  "prerequisites": [
+    "l03_03"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_07"
+  ],
+  "steps": [
+    {
+      "stepId": "l03_s04",
+      "title": "Find and Install",
+      "type": "physicalTask",
+      "interactiveWidgetType": "libraryManagerSimulator",
+      "markdownContent": "Where do you get libraries? Inside the Arduino IDE, there is a built-in search tool called the **Library Manager**!\n\nThink of the Library Manager like an **App Store for code**. Thousands of community engineers publish open-source drivers there for free.\n\n### How to Install in Arduino IDE:\n1. Open the Arduino IDE on your computer.\n2. Click **Tools > Manage Libraries...** (or click the stacked books icon on the left navigation bar).\n3. In the search box, type the name of the library (for example, `LiquidCrystal I2C`).\n4. Find the version by Frank de Brabander and click **INSTALL**.\n5. The IDE downloads the library files into your computer's `libraries` folder automatically!\n\nTry the interactive Library Manager below: search for `LiquidCrystal_I2C` and press Install to watch how packages download and register!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l03_s04_q1",
+          "question": "Where inside the Arduino IDE can you search for and install community libraries?",
+          "options": [
+            "Tools > Manage Libraries (or the Library Manager sidebar tab)",
+            "File > Save As",
+            "Help > About Arduino"
+          ],
+          "correctIndex": 0,
+          "explanation": "Tools > Manage Libraries opens the Arduino Library Manager, which searches the global library index.",
+          "warmupExplanation": "The Library Manager is your built-in tool for discovering and installing code packages."
+        },
+        {
+          "questionId": "qc_l03_s04_q2",
+          "question": "What happens if your sketch has #include <CoolSensor.h>, but you forgot to install CoolSensor?",
+          "options": [
+            "The compiler shows a 'No such file or directory' error and halts",
+            "The Arduino automatically invents the sensor code",
+            "The computer plays a musical song"
+          ],
+          "correctIndex": 0,
+          "explanation": "If a library isn't installed, the compiler cannot find the header file and halts with 'No such file or directory'.",
+          "warmupExplanation": "If the compiler can't find your tool in the workshop, it stops and tells you the file is missing!"
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

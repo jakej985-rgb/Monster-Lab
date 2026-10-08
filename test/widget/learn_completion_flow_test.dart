@@ -45,7 +45,7 @@ void main() {
         (tester) async {
       await tester.pumpWidget(
         createTestWidget(
-          child: const LessonDetailScreen(lessonId: 'lesson_01'),
+          child: const LessonDetailScreen(lessonId: 'l01_01'),
         ),
       );
       await tester.pumpAndSettle();
@@ -58,7 +58,7 @@ void main() {
       }
 
       // Step N -> Complete Lesson
-      final completeButton = find.text('Complete Lesson (+50 XP)');
+      final completeButton = find.text('Complete Lesson (+10 XP)');
       await tester.ensureVisible(completeButton);
       expect(completeButton, findsOneWidget);
       await tester.tap(completeButton);
@@ -74,7 +74,7 @@ void main() {
     });
 
     testWidgets(
-        'First completion awards XP and displays "+50 XP EARNED" in dialog',
+        'First completion awards XP and displays "+10 XP EARNED" in dialog',
         (tester) async {
       final localDataSource = LocalStorageDataSource(storageService);
       final profileRepo = ProfileRepositoryImpl(localDataSource);
@@ -91,7 +91,7 @@ void main() {
 
       await tester.pumpWidget(
         createTestWidget(
-          child: const LessonDetailScreen(lessonId: 'lesson_01'),
+          child: const LessonDetailScreen(lessonId: 'l01_01'),
         ),
       );
       await tester.pumpAndSettle();
@@ -104,14 +104,14 @@ void main() {
       }
 
       // Complete Lesson
-      final completeButton = find.text('Complete Lesson (+50 XP)');
+      final completeButton = find.text('Complete Lesson (+10 XP)');
       await tester.ensureVisible(completeButton);
       await tester.tap(completeButton);
       await tester.pumpAndSettle();
 
       // Verify Dialog with XP earned
       expect(find.text('Mission Complete!'), findsOneWidget);
-      expect(find.text('+50 XP EARNED'), findsOneWidget);
+      expect(find.text('+10 XP EARNED'), findsOneWidget);
 
       // Dismiss dialog
       await tester.tap(find.text('Back to Learn Lab'));
@@ -119,8 +119,8 @@ void main() {
 
       // Verify progress persisted in storage
       final progress = localDataSource.getProgress('learner_test_1');
-      expect(progress.totalXp, equals(50));
-      expect(progress.completedLessonIds, contains('lesson_01'));
+      expect(progress.totalXp, equals(10));
+      expect(progress.completedLessonIds, contains('l01_01'));
     });
 
     testWidgets(
@@ -142,14 +142,14 @@ void main() {
       // Pre-complete lesson 1
       var progress = localDataSource.getProgress('learner_test_2');
       progress = progress.copyWith(
-        totalXp: 50,
-        completedLessonIds: {'lesson_01'},
+        totalXp: 10,
+        completedLessonIds: {'l01_01'},
       );
       await localDataSource.saveProgress(progress);
 
       await tester.pumpWidget(
         createTestWidget(
-          child: const LessonDetailScreen(lessonId: 'lesson_01'),
+          child: const LessonDetailScreen(lessonId: 'l01_01'),
         ),
       );
       await tester.pumpAndSettle();
@@ -162,7 +162,7 @@ void main() {
       }
 
       // Complete Lesson replay
-      final replayButton = find.text('Complete Lesson (+50 XP)');
+      final replayButton = find.text('Complete Lesson (+10 XP)');
       await tester.ensureVisible(replayButton);
       await tester.tap(replayButton);
       await tester.pumpAndSettle();
@@ -170,11 +170,11 @@ void main() {
       // Verify Dialog with replay text
       expect(find.text('Mission Complete!'), findsOneWidget);
       expect(find.text('LESSON COMPLETED (XP already earned)'), findsOneWidget);
-      expect(find.text('+50 XP EARNED'), findsNothing);
+      expect(find.text('+10 XP EARNED'), findsNothing);
 
-      // Verify progress XP remains 50
+      // Verify progress XP remains 10
       final updated = localDataSource.getProgress('learner_test_2');
-      expect(updated.totalXp, equals(50));
+      expect(updated.totalXp, equals(10));
     });
 
     testWidgets(
@@ -193,17 +193,17 @@ void main() {
       await profileRepo.saveProfile(testProfile);
       await profileRepo.setActiveProfile(testProfile.id);
 
-      // Pre-complete lesson 3
+      // Pre-complete lesson l03_09
       var progress = localDataSource.getProgress('learner_test_quiz_replay');
       progress = progress.copyWith(
-        totalXp: 60,
-        completedLessonIds: {'lesson_03'},
+        totalXp: 15,
+        completedLessonIds: {'l03_09'},
       );
       await localDataSource.saveProgress(progress);
 
       await tester.pumpWidget(
         createTestWidget(
-          child: const LessonDetailScreen(lessonId: 'lesson_03'),
+          child: const LessonDetailScreen(lessonId: 'l03_09'),
         ),
       );
       await tester.pumpAndSettle();
@@ -231,8 +231,69 @@ void main() {
       // Verify progress XP did not increase on replay
       final currentProgress =
           localDataSource.getProgress('learner_test_quiz_replay');
-      expect(currentProgress.totalXp, equals(60),
+      expect(currentProgress.totalXp, equals(15),
           reason: 'Quiz checkpoint must not award XP on replay');
+    });
+
+    testWidgets(
+        'Completing final sub-lesson of a course auto-completes the course and awards course XP',
+        (tester) async {
+      final localDataSource = LocalStorageDataSource(storageService);
+      final profileRepo = ProfileRepositoryImpl(localDataSource);
+      final testProfile = LearnerProfileModel(
+        id: 'learner_course_completion',
+        nickname: 'CircuitBuilder',
+        ageBracket: AgeBracket.ages10_12,
+        avatarId: 'avatar_1',
+        createdAt: DateTime.now(),
+        lastActiveAt: DateTime.now(),
+      );
+      await profileRepo.saveProfile(testProfile);
+      await profileRepo.setActiveProfile(testProfile.id);
+
+      // Pre-complete 11 out of 12 sub-lessons of Lesson 1
+      final preCompleted = {
+        for (int i = 1; i <= 11; i++) 'l01_${i.toString().padLeft(2, '0')}'
+      };
+
+      var progress = localDataSource.getProgress('learner_course_completion');
+      progress = progress.copyWith(
+        totalXp: 110,
+        completedLessonIds: preCompleted,
+      );
+      await localDataSource.saveProgress(progress);
+
+      await tester.pumpWidget(
+        createTestWidget(
+          child: const LessonDetailScreen(lessonId: 'l01_12'),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Advance through steps of l01_12
+      while (find.text('Next Step').evaluate().isNotEmpty) {
+        await tester.ensureVisible(find.text('Next Step'));
+        await tester.tap(find.text('Next Step'));
+        await tester.pumpAndSettle();
+      }
+
+      // Complete last sub-lesson (l01_12 has 15 XP reward)
+      final completeButton = find.text('Complete Lesson (+15 XP)');
+      await tester.ensureVisible(completeButton);
+      await tester.tap(completeButton);
+      await tester.pumpAndSettle();
+
+      // Dismiss dialog
+      expect(find.text('Mission Complete!'), findsOneWidget);
+      await tester.tap(find.text('Back to Learn Lab'));
+      await tester.pumpAndSettle();
+
+      // Verify that course 'lesson_01' was completed and awarded +100 XP
+      // Total XP should be 110 (pre) + 15 (lesson) + 100 (course) = 225
+      final updated = localDataSource.getProgress('learner_course_completion');
+      expect(updated.completedLessonIds, contains('l01_12'));
+      expect(updated.completedCourseIds, contains('lesson_01'));
+      expect(updated.totalXp, equals(225));
     });
   });
 }

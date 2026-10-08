@@ -1,0 +1,52 @@
+{
+  "id": "l08_01",
+  "title": "Why Do Devices Need to Talk?",
+  "summary": "In earlier missions, you connected one component per pin: an LED to Pin 9, a pushbutton to Pin 2, and a potentiometer to A0.",
+  "tier": "engineer",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_08",
+  "sortOrder": 1,
+  "isOptional": false,
+  "prerequisites": [
+    "l07_11"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_07"
+  ],
+  "steps": [
+    {
+      "stepId": "l08_s01",
+      "title": "Why Do Devices Need to Talk?",
+      "type": "story",
+      "markdownContent": "### The Pin Starvation Bottleneck\nIn earlier missions, you connected one component per pin: an LED to Pin 9, a pushbutton to Pin 2, and a potentiometer to A0. But imagine engineering an advanced exploration robot with a character display, an environmental temperature sensor, a precision real-time clock, a 3-axis accelerometer, and a compass!\n\nIf every peripheral required 4 to 8 dedicated pins, the Arduino Uno (which has only 14 digital and 6 analog pins) would run out of pins almost immediately. A standard 16x2 character display wired directly in parallel mode requires up to 6 to 10 pins alone!\n\n```\nIndividual Wiring: 5 Peripherals \u00d7 4 Pins = 20 Pins (Arduino Exhausted!)\nShared I2C Bus:    5 Peripherals over 2 Pins = 2 Pins (18 Pins Free!)\n```\n\n### The Communication Solution: A Shared Highway\nInstead of running private point-to-point wires to every device, smart electronics share a single two-lane communication highway called a **bus**.\n\nThink of a classroom hallway: students don't build separate private tunnels to every desk. Instead, everyone steps into the same hallway, and messages are addressed to specific individuals. In robotics, devices \"talk\" by sending serialized digital packets across shared wires.\n\n### Smart Peripherals vs. Raw Voltages\nUnlike simple analog sensors that merely output a variable voltage between 0V and 5V, smart digital devices contain their own internal microchips. They measure physical phenomena, process calculations internally, and transmit structured data packets\u2014including text strings, time stamps, degrees Celsius, and 3D coordinates!",
+      "quickCheck": [
+        {
+          "questionId": "q_l08_s01_1",
+          "question": "Why can an Arduino Uno run out of pins quickly if every sensor and display uses dedicated GPIO lines?",
+          "options": [
+            "The Arduino Uno has a limited number of GPIO pins (14 digital and 6 analog pins), so point-to-point connections exhaust available pins rapidly.",
+            "Microcontrollers can only electrically drive a single peripheral before shutting down.",
+            "Input pins lose their conductivity after three jumper wires are attached."
+          ],
+          "correctIndex": 0,
+          "explanation": "The Uno has only 14 digital and 6 analog I/O pins. A robot needing displays, clocks, and sensors would quickly exhaust all pins without a shared communication bus.",
+          "warmupExplanation": "Think back to the Uno hardware tour from Lesson 1: the microcontroller board has a limited set of pin headers for external circuits."
+        },
+        {
+          "questionId": "q_l08_s01_2",
+          "question": "How does a smart digital peripheral differ from a simple analog sensor like a potentiometer?",
+          "options": [
+            "A smart digital peripheral has an onboard microchip that formats and transmits structured multi-byte data packets rather than outputting a raw analog voltage.",
+            "A smart digital peripheral operates without ground reference or electrical power.",
+            "A smart digital peripheral only functions when connected directly to a computer monitor."
+          ],
+          "correctIndex": 0,
+          "explanation": "Smart digital peripherals contain their own integrated circuits that calculate measurements and communicate structured information over digital protocols.",
+          "warmupExplanation": "In Lesson 6 and Lesson 7, simple components like potentiometers and LEDs handled variable voltages directly, whereas smart devices exchange digital data."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

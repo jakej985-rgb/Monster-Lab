@@ -1,0 +1,53 @@
+{
+  "id": "l07_01",
+  "title": "What Is a Sensor?",
+  "summary": "Just like humans and friendly lab monsters use eyes to see, ears to hear, and skin to feel warmth, your Arduino needs electronic senses to understa...",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_07",
+  "sortOrder": 1,
+  "isOptional": false,
+  "prerequisites": [
+    "l06_11"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_01",
+    "comp_19"
+  ],
+  "steps": [
+    {
+      "stepId": "l07_s01",
+      "title": "What Is a Sensor?",
+      "type": "story",
+      "markdownContent": "Welcome to the sensory world of robotics! Just like humans and friendly lab monsters use eyes to see, ears to hear, and skin to feel warmth, your Arduino needs electronic senses to understand what is happening around it.\n\nWithout sensors, a microcontroller is completely blind and deaf\u2014it can only run pre-programmed timers over and over. A **sensor** is an electronic component that detects a physical condition in the real world (such as light brightness, acoustic sound waves, warmth, proximity, or motion) and transforms it into an electrical signal that your Arduino can measure.\n\n### The Robot Perception Loop:\n```\nReal-World Event (Hand getting close) \u2794 Sensor (Echolocation ping) \u2794 Electrical Signal (Voltage / Pulse) \u2794 Arduino Brain (Decision Logic) \u2794 Output Action (Alarm LED glows!)\n```\n\nIn this mission, you will unlock the superpower of robotic perception using both digital and analog sensors, learn how to calibrate smart decision thresholds, and connect real-world data directly to monster actions!",
+      "quickCheck": [
+        {
+          "questionId": "l07_s01_q1",
+          "question": "What is the primary role of a sensor in an electronics system?",
+          "options": [
+            "It measures physical events in the real world and turns them into electrical signals",
+            "It provides battery power to the entire circuit",
+            "It spins motors to move a robot across the room"
+          ],
+          "correctIndex": 0,
+          "explanation": "Sensors detect physical conditions like light, sound, or distance and convert them into electrical data that the Arduino can read.",
+          "warmupExplanation": "Think of your own senses: your eyes detect light and your ears detect sound. Electronic sensors do the exact same thing for robots!"
+        },
+        {
+          "questionId": "l07_s01_q2",
+          "question": "Which of the following is an example of an electronic sensor detecting the environment?",
+          "options": [
+            "A photoresistor detecting that the room lights were turned off",
+            "An LED emitting red light to signal an alert",
+            "A speaker playing a warning alarm beep"
+          ],
+          "correctIndex": 0,
+          "explanation": "A photoresistor detects changes in ambient light levels, making it an input sensor. LEDs and speakers are output devices.",
+          "warmupExplanation": "Sensors are inputs that listen to the world, while lights, speakers, and motors are outputs that take action."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

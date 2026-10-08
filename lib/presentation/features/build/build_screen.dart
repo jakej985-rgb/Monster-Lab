@@ -55,6 +55,8 @@ class _BuildScreenState extends ConsumerState<BuildScreen> {
     final activeProgress = ref.watch(activeProgressProvider);
     final completedLessonIds =
         activeProgress?.completedLessonIds.toSet() ?? <String>{};
+    final completedCourseIds =
+        activeProgress?.completedCourseIds.toSet() ?? <String>{};
     final completedProjectIds =
         activeProgress?.completedProjectIds.toSet() ?? <String>{};
 
@@ -143,10 +145,11 @@ class _BuildScreenState extends ConsumerState<BuildScreen> {
                     final isCompleted =
                         completedProjectIds.contains(project.id);
 
-                    // Prerequisite check: all prerequisite lessons must be completed
+                    // Prerequisite check: all prerequisite lessons or courses must be completed
                     final missingPrereqs = project.prerequisiteLessons
                         .where((lessonId) =>
-                            !completedLessonIds.contains(lessonId))
+                            !completedLessonIds.contains(lessonId) &&
+                            !completedCourseIds.contains(lessonId))
                         .toList();
                     final isLocked = missingPrereqs.isNotEmpty;
 

@@ -1,0 +1,52 @@
+{
+  "id": "l01_08",
+  "title": "How Arduino Makes Decisions",
+  "summary": "How does the Arduino brain make smart choices?",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_01",
+  "sortOrder": 8,
+  "isOptional": false,
+  "prerequisites": [
+    "l01_07"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l01_s08",
+      "title": "How Arduino Makes Decisions",
+      "type": "story",
+      "interactiveWidgetType": "decisionSimulator",
+      "markdownContent": "How does the Arduino brain make smart choices? It uses a 3-step decision pipeline:\n\n```\n1. SENSE (Input) \u2794 2. DECIDE (Code) \u2794 3. ACT (Output)\n```\n\n### The Robot Rule: IF / THEN\nRobots don't guess or daydream. They follow clear rules called **conditions**:\n- **IF** the pushbutton is pressed (Input is HIGH)...\n- **THEN** turn the flashlight ON (Output is HIGH)!\n- **OTHERWISE** (if the button is released)...\n- **THEN** turn the flashlight OFF (Output is LOW)!\n\nThe microcontroller checks these rules thousands of times every single second without ever getting tired!\n\nPress and hold the virtual button below to watch the decision pipeline evaluate live!",
+      "quickCheck": [
+        {
+          "questionId": "l01_s08_q1",
+          "question": "If you give a robot the rule: 'IF you see a red light, THEN stop,' what will it do when it sees red?",
+          "options": [
+            "Stop right away",
+            "Speed up as fast as possible",
+            "Spin in circles and laugh"
+          ],
+          "correctIndex": 0,
+          "explanation": "Robots strictly follow rules! When the condition happens (red light), it executes the action (stop).",
+          "warmupExplanation": "Robots follow simple 'IF this happens, THEN do that' rules. They do exactly what the rule says."
+        },
+        {
+          "questionId": "l01_s08_q2",
+          "question": "Can an Arduino guess what you want if you don't give it any code instructions?",
+          "options": [
+            "No, it can only follow instructions we give it",
+            "Yes, it reads human minds",
+            "Yes, it dreams on its own"
+          ],
+          "correctIndex": 0,
+          "explanation": "Computers do not guess or read minds. They need clear instructions from us to know what to do!",
+          "warmupExplanation": "Microcontrollers are loyal helpers, but they only do what our program code tells them to do."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

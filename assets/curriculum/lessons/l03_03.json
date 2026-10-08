@@ -1,0 +1,53 @@
+{
+  "id": "l03_03",
+  "title": "Your First Library",
+  "summary": "Now let's see how your sketch invites a library to join the party!",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_03",
+  "sortOrder": 3,
+  "isOptional": false,
+  "prerequisites": [
+    "l03_02"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_07"
+  ],
+  "steps": [
+    {
+      "stepId": "l03_s03",
+      "title": "Your First Library",
+      "type": "story",
+      "interactiveWidgetType": "includeSyntaxDeconstruction",
+      "markdownContent": "Now let's see how your sketch invites a library to join the party!\n\nAt the very top of your Arduino code, before `setup()` and before `loop()`, you write a special line called an **`#include` directive**:\n\n```cpp\n#include <LiquidCrystal_I2C.h>\n```\n\nLet's break down this secret handshake:\n- **`#` (Pound / Hash)**: Tells the preprocessor that this is a special instruction before normal compilation starts.\n- **`include`**: The magic word that says, *\"Please bring in all the tools from this package!\"*\n- **`< >` (Angle Brackets)**: Tells the computer to search your installed library collection for this name.\n- **`.h` (Header File)**: A file ending in `.h` is the table of contents of the library, listing all the available commands and features.\n\n> \u26a0\ufe0f **Watch Out**: Preprocessor lines like `#include` do **NOT** use a semicolon (`;`) at the end! Adding one is a classic beginner typo.",
+      "quickCheck": [
+        {
+          "questionId": "qc_l03_s03_q1",
+          "question": "Where in your Arduino sketch should you place an #include statement?",
+          "options": [
+            "At the very top of the file, before setup()",
+            "Inside the loop() function between curly braces",
+            "At the very bottom after the sketch ends"
+          ],
+          "correctIndex": 0,
+          "explanation": "#include directives belong at the very top of the sketch so the compiler knows about the library tools before any functions use them.",
+          "warmupExplanation": "Always invite your tools first! Include libraries at the very top of your sketch."
+        },
+        {
+          "questionId": "qc_l03_s03_q2",
+          "question": "Does an #include directive end with a semicolon (;)?",
+          "options": [
+            "No, preprocessor directives like #include do not use a semicolon",
+            "Yes, every single line in C++ must always end with a semicolon",
+            "Yes, but only on Mondays"
+          ],
+          "correctIndex": 0,
+          "explanation": "#include is a preprocessor command, so adding a semicolon produces a compiler syntax error.",
+          "warmupExplanation": "Remember the special rule for #include: no semicolon at the end of the line!"
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

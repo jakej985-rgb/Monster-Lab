@@ -134,7 +134,7 @@ final GoRouter appRouter = GoRouter(
       name: RouteNames.lessonDetail,
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) {
-        final lessonId = state.pathParameters['lessonId'] ?? 'lesson_01';
+        final lessonId = state.pathParameters['lessonId'] ?? 'l01_01';
         return LessonDetailScreen(lessonId: lessonId);
       },
     ),

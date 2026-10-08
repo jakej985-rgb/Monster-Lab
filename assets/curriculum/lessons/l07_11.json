@@ -1,0 +1,145 @@
+{
+  "id": "l07_11",
+  "title": "Sensor Challenge",
+  "summary": "Outstanding work, junior roboticist!",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_07",
+  "sortOrder": 11,
+  "isOptional": false,
+  "prerequisites": [
+    "l07_10"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_01",
+    "comp_19"
+  ],
+  "steps": [
+    {
+      "stepId": "l07_s11",
+      "title": "Sensor Challenge",
+      "type": "quizCheckpoint",
+      "markdownContent": "Outstanding work, junior roboticist! You have bridged the gap between pure electrical circuits and intelligent perception of the real world:\n\n- You differentiated discrete **Digital sensors** from continuous **Analog sensors**.\n- You harnessed acoustic echolocation with the **HC-SR04 Ultrasonic Distance Sensor**.\n- You wired a photoresistor **voltage divider** to give your monster the gift of light perception.\n- You streamed live data streams over **Serial telemetry**.\n- You calibrated **decision thresholds** to transform raw measurements into responsive behaviors.\n- You combined multiple sensor inputs using **boolean logic** (`&&` and `||`).\n- You mastered the art of diagnosing **swapped pins**, **floating inputs**, and **acoustic absorption**.\n\nDemonstrate your complete sensor mastery in the Comprehensive Knowledge Check below to earn your XP and level up!",
+      "quickCheck": [
+        {
+          "questionId": "l07_s11_q1",
+          "question": "Which type of sensor would you choose to measure the exact distance in centimeters between a monster robot and a wall?",
+          "options": [
+            "An ultrasonic distance sensor (HC-SR04)",
+            "A digital momentary push button",
+            "A single-color red LED"
+          ],
+          "correctIndex": 0,
+          "explanation": "The ultrasonic distance sensor measures precise transit times of sound echoes to calculate distance in centimeters.",
+          "warmupExplanation": "Buttons only tell you if you bumped a wall, but ultrasonic echolocation tells you how many centimeters away the wall is before you hit it!"
+        },
+        {
+          "questionId": "l07_s11_q2",
+          "question": "How does an Arduino convert real-world analog voltage into a digital number that software can process?",
+          "options": [
+            "Using its on-chip Analog-to-Digital Converter (ADC)",
+            "Using a mechanical relay switch",
+            "Using a step-up power transformer"
+          ],
+          "correctIndex": 0,
+          "explanation": "The Arduino ATmega328P uses a 10-bit Analog-to-Digital Converter (ADC) to translate continuous analog voltages into integer values from 0 to 1023.",
+          "warmupExplanation": "The ADC is the bridge between the analog physical world and digital computer code!"
+        }
+      ],
+      "interactiveConfig": {
+        "question": "What is the primary difference between a digital sensor and an analog sensor?",
+        "options": [
+          "Digital sensors produce binary states (HIGH/LOW), while analog sensors provide continuous changing measurements",
+          "Digital sensors work without power, while analog sensors require high-voltage wall outlets",
+          "Digital sensors can only detect sound, while analog sensors only detect light"
+        ],
+        "correctIndex": 0,
+        "explanation": "Correct: Digital sensors produce binary states (HIGH/LOW), while analog sensors provide continuous changing measurements across a spectrum.",
+        "questions": [
+          {
+            "question": "What is the primary difference between a digital sensor and an analog sensor?",
+            "options": [
+              "Digital sensors produce binary states (HIGH/LOW), while analog sensors provide continuous changing measurements",
+              "Digital sensors work without power, while analog sensors require high-voltage wall outlets",
+              "Digital sensors can only detect sound, while analog sensors only detect light"
+            ],
+            "correctIndex": 0,
+            "explanation": "Correct: Digital sensors produce binary states (HIGH/LOW), while analog sensors provide continuous changing measurements across a spectrum."
+          },
+          {
+            "question": "What integer range does `analogRead()` return when sampling an analog pin on the Arduino Uno?",
+            "options": [
+              "0 to 1023 (10-bit resolution)",
+              "0 to 255 (8-bit resolution)",
+              "0 to 100 (percentage)"
+            ],
+            "correctIndex": 0,
+            "explanation": "Correct: 0 to 1023 (10-bit resolution). The Uno ADC quantizes 0V to 5V into 1024 discrete integer levels."
+          },
+          {
+            "question": "How does an HC-SR04 ultrasonic sensor determine the distance to an obstacle?",
+            "options": [
+              "By timing how long high-frequency sound chirps take to echo back from the object",
+              "By measuring the ambient magnetic field distortion",
+              "By detecting heat radiated by the obstacle"
+            ],
+            "correctIndex": 0,
+            "explanation": "Correct: By timing how long high-frequency sound chirps take to echo back from the object (echolocation)."
+          },
+          {
+            "question": "Why does the ultrasonic distance calculation formula divide the measured echo duration by 2?",
+            "options": [
+              "Because the sound wave makes a round trip out to the obstacle and back to the receiver",
+              "Because the Arduino operates with two timers",
+              "Because sound moves twice as fast backwards"
+            ],
+            "correctIndex": 0,
+            "explanation": "Correct: Because the sound wave makes a round trip out to the obstacle and back to the receiver, doubling the travel distance."
+          },
+          {
+            "question": "What happens to the electrical resistance of an LDR (photoresistor) when bright light shines on its surface?",
+            "options": [
+              "Its resistance decreases, allowing more electric current to flow",
+              "Its resistance increases to infinity, stopping all current",
+              "Its resistance never changes under any lighting condition"
+            ],
+            "correctIndex": 0,
+            "explanation": "Correct: Its resistance decreases, allowing more electric current to flow through the sensor."
+          },
+          {
+            "question": "What is a 'threshold' in sensor programming?",
+            "options": [
+              "A defined boundary value used in decision statements to trigger specific actions",
+              "The physical length of a breadboard jumper wire",
+              "The maximum temperature of a soldering iron"
+            ],
+            "correctIndex": 0,
+            "explanation": "Correct: A defined boundary value used in decision statements to trigger specific actions."
+          },
+          {
+            "question": "Which C++ logical operator requires BOTH conditions to evaluate to true for an action to execute?",
+            "options": [
+              "&& (Logical AND)",
+              "|| (Logical OR)",
+              "!= (Not Equal)"
+            ],
+            "correctIndex": 0,
+            "explanation": "Correct: && (Logical AND). Both sensor conditions must be met simultaneously."
+          },
+          {
+            "question": "What tool in the Arduino IDE should you open first to inspect real-time sensor measurements?",
+            "options": [
+              "Serial Monitor (at matching baud rate)",
+              "Library Manager",
+              "Board Firmware Burner"
+            ],
+            "correctIndex": 0,
+            "explanation": "Correct: Serial Monitor (at matching baud rate). Live telemetry lets you observe exact sensor values for debugging and calibration."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 15
+}

@@ -1,0 +1,53 @@
+{
+  "id": "l05_10",
+  "title": "Voltage Divider",
+  "summary": "The carbon track inside comp20 has a total resistance of 10,000  (10 k) from Pin 1 to Pin 3.",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_05",
+  "sortOrder": 10,
+  "isOptional": false,
+  "prerequisites": [
+    "l05_09"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_20"
+  ],
+  "steps": [
+    {
+      "stepId": "l05_s10",
+      "title": "Voltage Divider",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "voltageDividerCutaway",
+      "markdownContent": "### How Resistance Becomes Voltage\nThe carbon track inside `comp_20` has a total resistance of **10,000 \u03a9 (10 k\u03a9)** from Pin 1 to Pin 3. How does turning the knob produce a variable voltage signal?\n\nThrough the universal electrical principle of the **Voltage Divider**!\n\nAs the center wiper moves along the track, it splits that 10k total resistance into two separate series resistors:\n- $R_1$: The resistance between Pin 1 (+5V) and the wiper.\n- $R_2$: The resistance between the wiper and Pin 3 (GND).\n\n```\n       +5V\n        |\n      [ R1 ]  <--- Resistance from 5V to Wiper\n        |\n        +---------> Wiper Output Voltage (Vout)\n        |\n      [ R2 ]  <--- Resistance from Wiper to GND\n        |\n       GND\n```\n\n### The Voltage Divider Formula:\n$$V_{out} = V_{in} \\times \\frac{R_2}{R_1 + R_2} = 5.0\\text{V} \\times \\frac{R_2}{10{,}000\\Omega}$$\n\n### Three Key Rotary Positions:\n1. **Turned Fully Counter-Clockwise (Wiper at GND)**:\n   $R_2 = 0\\Omega \\implies V_{out} = 5.0\\text{V} \\times \\frac{0}{10{,}000} = \\mathbf{0.00\\text{V}}$\n2. **Centered Exactly in the Middle**:\n   $R_1 = 5\\text{k}\\Omega, R_2 = 5\\text{k}\\Omega \\implies V_{out} = 5.0\\text{V} \\times \\frac{5{,}000}{10{,}000} = \\mathbf{2.50\\text{V}}$\n3. **Turned Fully Clockwise (Wiper at 5V)**:\n   $R_2 = 10\\text{k}\\Omega \\implies V_{out} = 5.0\\text{V} \\times \\frac{10{,}000}{10{,}000} = \\mathbf{5.00\\text{V}}$\n\nBy simply turning the knob, you smoothly command any analog voltage between 0.0V and 5.0V!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s10_q1",
+          "question": "If a 10k potentiometer has its outer pins wired to 5V and GND, what voltage appears on the wiper when centered halfway?",
+          "options": [
+            "2.5 Volts (exactly half of the 5.0V supply)",
+            "0.0 Volts",
+            "10.0 Volts"
+          ],
+          "correctIndex": 0,
+          "explanation": "At the midpoint, resistance splits equally (5k\u03a9 and 5k\u03a9), dividing the 5V supply exactly in half to 2.5V.",
+          "warmupExplanation": "A voltage divider with equal resistors splits the applied voltage equally in half."
+        },
+        {
+          "questionId": "l05_s10_q2",
+          "question": "What happens to the wiper voltage as you rotate the potentiometer shaft closer to the GND terminal?",
+          "options": [
+            "The voltage steadily decreases toward 0.0 Volts",
+            "The voltage surges to 50 Volts",
+            "The resistance between the outer terminals drops to zero"
+          ],
+          "correctIndex": 0,
+          "explanation": "Moving the wiper closer to the ground terminal decreases R2, dropping the output voltage toward 0.0V.",
+          "warmupExplanation": "Approaching the ground terminal pulls the wiper voltage down toward 0V reference."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

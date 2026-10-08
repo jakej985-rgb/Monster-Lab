@@ -1,0 +1,55 @@
+{
+  "id": "l06_03",
+  "title": "Breadboard Rows and Rails",
+  "summary": "To wire like a master roboticist, you must visualize what is happening beneath the plastic faceplate!",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_06",
+  "sortOrder": 3,
+  "isOptional": false,
+  "prerequisites": [
+    "l06_02"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_breadboard",
+    "comp_01"
+  ],
+  "steps": [
+    {
+      "stepId": "l06_s03",
+      "title": "Breadboard Rows and Rails",
+      "type": "visualExplanation",
+      "markdownContent": "# Breadboard Rows and Rails\n\nTo wire like a master roboticist, you must visualize what is happening beneath the plastic faceplate!\n\n### 1. Terminal Rows (Short Horizontal Bridges)\nLook at the numbered rows in the center (Row 1, Row 2, Row 3...):\n- On the left side, the five holes marked **a, b, c, d, e** are connected together by a single horizontal metal clip.\n- On the right side, the five holes marked **f, g, h, i, j** share another separate metal clip.\n- **The Rule**: Any two wires plugged into the same 5-hole group (for example, `10a` and `10c`) are touching each other electrically!\n\n### 2. The Center Ravine (Trough)\nNotice the deep plastic trench running right down the middle of the board:\n- It electrically isolates group `a\u2013e` from group `f\u2013j`.\n- Hole `10e` does **NOT** connect to hole `10f`! This lets integrated circuits (chips) straddle the trench without shorting their opposite pins together.\n\n### 3. Power Rails (Long Vertical Highways)\n- **Red Rail (+)**: Runs vertically along the edge to distribute positive voltage (+5V) across your entire board.\n- **Blue/Black Rail (-)**: Runs vertically along the edge to deliver Ground (0V / GND) everywhere.\n\n### Common Beginner Traps:\n- **Trap A (Shorting out a part)**: Plugging both legs of a resistor or LED into the *same* 5-hole row! That connects both legs together, completely bypassing the component!\n- **Trap B (Unconnected row leap)**: Plugging a wire into `10e` and expecting it to connect to `10f` across the trench without a jumper wire bridge.",
+      "quickCheck": [
+        {
+          "questionId": "q_l06_s03_01",
+          "question": "If you plug one wire into hole 12a and another wire into hole 12d on the same breadboard half, what happens?",
+          "options": [
+            "The two wires are completely isolated from each other",
+            "The two wires are electrically joined by an internal metal spring clip",
+            "A circuit breaker will trip immediately",
+            "Hole 12d converts the signal into high-voltage AC"
+          ],
+          "correctIndex": 1,
+          "explanation": "Holes in the same numbered group (columns a through e in row 12) share an internal metal spring strip, connecting them together.",
+          "warmupExplanation": "Remember: Within columns a to e of any row, all five holes share the same internal metal connector."
+        },
+        {
+          "questionId": "q_l06_s03_02",
+          "question": "Does an internal metal connection link Row 15 column 'e' across the center ravine to Row 15 column 'f'?",
+          "options": [
+            "No, the center ravine separates the left and right halves into two distinct electrical areas",
+            "Yes, all ten holes in a row are always joined straight across the ravine",
+            "Yes, but only if the Arduino is connected to a computer",
+            "No, because the center ravine is filled with copper wire"
+          ],
+          "correctIndex": 0,
+          "explanation": "The center ravine splits the row into two separate halves (a-e and f-j), allowing multi-pin chips to sit across the gap without shorting.",
+          "warmupExplanation": "Think of the center trench as a river: left bank (a-e) and right bank (f-j) are separate unless you build a wire bridge across it."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

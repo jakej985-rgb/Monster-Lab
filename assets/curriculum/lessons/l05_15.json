@@ -1,0 +1,53 @@
+{
+  "id": "l05_15",
+  "title": "Potentiometer -> RGB Color",
+  "summary": "In Lesson 4, you discovered that an RGB LED contains three microscopic diodes (Red, Green, Blue) packaged inside a single lens.",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_05",
+  "sortOrder": 15,
+  "isOptional": false,
+  "prerequisites": [
+    "l05_14"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_20"
+  ],
+  "steps": [
+    {
+      "stepId": "l05_s15",
+      "title": "Potentiometer -> RGB Color",
+      "type": "physicalTask",
+      "interactiveWidgetType": "rgbColorSynthesizer",
+      "markdownContent": "### The Rainbow Dial: Multi-Channel Control\nIn Lesson 4, you discovered that an RGB LED contains three microscopic diodes (Red, Green, Blue) packaged inside a single lens. By mixing different brightness levels on PWM pins ~9, ~10, and ~11, you can produce any color in the rainbow!\n\nNow, let's use a single rotary potentiometer knob to steer your monster robot through the entire color spectrum!\n\n### Zone-Based Color Selector\nDivide the potentiometer's 0 to 1023 range into four equal color zones:\n- **Zone 1 (0 to 255)**: Pure Ruby Red\n- **Zone 2 (256 to 511)**: Amber Yellow (Red + Green)\n- **Zone 3 (512 to 767)**: Emerald Green\n- **Zone 4 (768 to 1023)**: Electric Monster Blue\n\n```cpp\nconst int potPin = A0;\nconst int redPin = 9;\nconst int greenPin = 10;\nconst int bluePin = 11;\n\nvoid setup() {\n  pinMode(redPin, OUTPUT);\n  pinMode(greenPin, OUTPUT);\n  pinMode(bluePin, OUTPUT);\n}\n\nvoid setColor(int r, int g, int b) {\n  analogWrite(redPin, r);\n  analogWrite(greenPin, g);\n  analogWrite(bluePin, b);\n}\n\nvoid loop() {\n  int val = analogRead(potPin);\n\n  if (val < 256) {\n    setColor(255, 0, 0);     // Red\n  } else if (val < 512) {\n    setColor(255, 200, 0);   // Yellow\n  } else if (val < 768) {\n    setColor(0, 255, 0);     // Green\n  } else {\n    setColor(0, 0, 255);     // Blue\n  }\n  delay(20);\n}\n```\n\n### Advanced Monster Lab Challenge:\nAdd a pushbutton on Pin 2! When the button is unpressed, turning the knob changes the **Color**. When the button is pressed down, turning the knob adjusts the overall **Brightness**! You have built a multi-function menu controller!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s15_q1",
+          "question": "What type of Arduino pins must you connect to an RGB LED's color channels to mix custom colors?",
+          "options": [
+            "PWM pins designated with a tilde ~ (such as 9, 10, 11)",
+            "Analog input pins A0 through A5 only",
+            "Only the 5V power and Reset pins"
+          ],
+          "correctIndex": 0,
+          "explanation": "PWM pins provide variable duty cycles via `analogWrite()`, enabling color mixing on RGB LEDs.",
+          "warmupExplanation": "RGB color mixing requires PWM output pins to adjust the individual brightness of each color channel."
+        },
+        {
+          "questionId": "l05_s15_q2",
+          "question": "How can a continuous potentiometer reading (0 to 1023) select between four distinct robot modes?",
+          "options": [
+            "By dividing the 0-1023 range into four numeric threshold zones in code",
+            "By rotating the knob faster than 500 RPM",
+            "By toggling the computer's USB port"
+          ],
+          "correctIndex": 0,
+          "explanation": "Threshold intervals in code allow a continuous analog signal to select discrete operating states or colors.",
+          "warmupExplanation": "Code can divide numeric ranges into discrete buckets using `if-else` threshold comparisons."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

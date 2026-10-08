@@ -1,0 +1,52 @@
+{
+  "id": "l03_06",
+  "title": "Change the Example",
+  "summary": "The fun of engineering begins when you change someone else's example!",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_03",
+  "sortOrder": 6,
+  "isOptional": false,
+  "prerequisites": [
+    "l03_05"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_07"
+  ],
+  "steps": [
+    {
+      "stepId": "l03_s06",
+      "title": "Change the Example",
+      "type": "codeExperiment",
+      "markdownContent": "The fun of engineering begins when you change someone else's example! \ud83d\udee0\ufe0f\n\nLet's modify our starter sketch to display a two-line greeting for your robot:\n\n```cpp\nvoid setup() {\n  lcd.init();\n  lcd.backlight();\n\n  // Line 1 (Top row)\n  lcd.setCursor(0, 0);\n  lcd.print(\"Monster: Sparky\");\n\n  // Line 2 (Bottom row)\n  lcd.setCursor(0, 1);\n  lcd.print(\"Status: ONLINE\");\n}\n```\n\n### Making Predictions\nNotice the cursor coordinates: `lcd.setCursor(col, row)`. In computer programming, rows and columns start counting from **0**, not 1!\n- `(0, 0)` is the very first character of the **top row**.\n- `(0, 1)` is the very first character of the **bottom row**.\n\nWhat happens if you change `\"ONLINE\"` to `\"SLEEPING\"`? The screen updates with your new word when you re-upload! By changing one line at a time, you learn how the library controls the physical world.",
+      "quickCheck": [
+        {
+          "questionId": "qc_l03_s06_q1",
+          "question": "In lcd.setCursor(0, 1), which row of a 16x2 display does the cursor move to?",
+          "options": [
+            "The second row (bottom row)",
+            "The first row (top row)",
+            "Off the screen completely"
+          ],
+          "correctIndex": 0,
+          "explanation": "Because coordinates are zero-indexed, row 0 is the top row and row 1 is the bottom row.",
+          "warmupExplanation": "Remember that computers start counting at 0! Row 0 is the top, row 1 is the bottom."
+        },
+        {
+          "questionId": "qc_l03_s06_q2",
+          "question": "When you want to display your robot's name instead of 'Monster Lab!', what should you modify in the sketch?",
+          "options": [
+            "The text inside the quotation marks in lcd.print(\"...\")",
+            "The #include line at the top",
+            "The name of the Arduino board in the Tools menu"
+          ],
+          "correctIndex": 0,
+          "explanation": "The characters inside the quotation marks in lcd.print(...) determine the exact message printed on the screen.",
+          "warmupExplanation": "Change the text inside the quotes to print whatever message your monster wants to say!"
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

@@ -1,0 +1,54 @@
+{
+  "id": "l05_14",
+  "title": "Potentiometer -> LED Brightness",
+  "summary": "Now let's connect an analog input directly to an analog output: a rotary dimmer switch!",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_05",
+  "sortOrder": 14,
+  "isOptional": false,
+  "prerequisites": [
+    "l05_13"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_20"
+  ],
+  "steps": [
+    {
+      "stepId": "l05_s14",
+      "title": "Potentiometer -> LED Brightness",
+      "type": "physicalTask",
+      "interactiveWidgetType": "potentiometerSimulator",
+      "markdownContent": "### The Range Mismatch Problem\nNow let's connect an analog input directly to an analog output: a **rotary dimmer switch**!\n\nWhen we wire our potentiometer to Pin A0 and our LED to PWM Pin 9, we run directly into the most famous mathematical puzzle in rookie robotics:\n- **`analogRead()`** returns a **10-bit** number from **0 to 1023**.\n- **`analogWrite()`** (PWM duty cycle) only accepts an **8-bit** number from **0 to 255**!\n\nIf you pass `1023` directly into `analogWrite()`, the 8-bit timer register overflows, causing the LED to flash wildly and reset its brightness four times across the knob's rotation!\n\n```\nAnalog Input Range:   0 ======================================> 1023  (10-bit)\n                                        |\n                                [ Scaled by / 4 ]\n                                        v\nPWM Output Range:     0 ====================> 255                     (8-bit)\n```\n\n### Two Ways to Solve the Mismatch in Code:\n1. **Integer Division**: Since $1023 / 4 \\approx 255$, simply divide by 4:\n   ```cpp\n   int brightness = analogRead(A0) / 4;\n   ```\n2. **The map() Function**: Arduino includes a handy linear mapping utility:\n   ```cpp\n   int brightness = map(analogRead(A0), 0, 1023, 0, 255);\n   ```\n\n### The Complete Dimmer Sketch:\n```cpp\nconst int potPin = A0;\nconst int ledPin = 9; // Must be a PWM pin (~)\n\nvoid setup() {\n  pinMode(ledPin, OUTPUT);\n}\n\nvoid loop() {\n  int sensorVal = analogRead(potPin);\n  int brightness = map(sensorVal, 0, 1023, 0, 255);\n  analogWrite(ledPin, brightness); // Modulate PWM duty cycle\n  delay(15);\n}\n```\n\nTurn the dial and marvel at the silky smooth brightness transition from total dark to blinding brilliance!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s14_q1",
+          "question": "What numeric range does analogWrite() accept on an Arduino Uno PWM pin?",
+          "options": [
+            "0 to 255 (8-bit resolution)",
+            "0 to 1023",
+            "HIGH or LOW only",
+            "-100 to +100"
+          ],
+          "correctIndex": 0,
+          "explanation": "`analogWrite()` modulates PWM duty cycle using an 8-bit value from 0 (0% duty cycle) to 255 (100% duty cycle).",
+          "warmupExplanation": "PWM outputs in Arduino use 8-bit resolution, which spans from 0 to 255."
+        },
+        {
+          "questionId": "l05_s14_q2",
+          "question": "Why must you divide analogRead() by 4 or use map() before sending the value to analogWrite()?",
+          "options": [
+            "Because analogRead is 10-bit (0-1023) while analogWrite only takes 8-bit (0-255)",
+            "Because analogWrite requires negative numbers",
+            "Because the potentiometer will overheat otherwise"
+          ],
+          "correctIndex": 0,
+          "explanation": "Passing values greater than 255 into `analogWrite()` causes register overflow and erratic brightness jumps.",
+          "warmupExplanation": "10-bit input (0-1023) is 4 times larger than 8-bit output (0-255), requiring scaling."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

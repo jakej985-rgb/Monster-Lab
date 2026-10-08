@@ -1,0 +1,52 @@
+{
+  "id": "l01_10",
+  "title": "Your First Engineering Experiment",
+  "summary": "Great engineers don't just guess what happensthey use the Scientific Engineering Method:",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_01",
+  "sortOrder": 10,
+  "isOptional": false,
+  "prerequisites": [
+    "l01_09"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l01_s10",
+      "title": "Your First Engineering Experiment",
+      "type": "physicalTask",
+      "interactiveWidgetType": "engineeringPrediction",
+      "markdownContent": "Great engineers don't just guess what happens\u2014they use the **Scientific Engineering Method**:\n\n```\n1. Read Code \u2794 2. Predict Outcome \u2794 3. Upload & Test \u2794 4. Observe \u2794 5. Verify\n```\n\n### The Prediction Challenge:\nLook at your Arduino Uno. There is a tiny amber LED labeled **'L'** connected directly to **Pin 13**.\n\nImagine our code changes from `HIGH` to `LOW`:\n```cpp\ndigitalWrite(13, LOW);\n```\n\nBefore testing, ask yourself:\n- What pin is being commanded? (Pin 13!)\n- What state is being sent? (`LOW` means 0 Volts / power OFF!)\n- What do you predict the LED will do?\n\nTest your prediction in the interactive experiment below!",
+      "quickCheck": [
+        {
+          "questionId": "l01_s10_q1",
+          "question": "What should an engineer do BEFORE running a test or experiment?",
+          "options": [
+            "Predict what they expect will happen",
+            "Close their eyes and hope for the best",
+            "Toss the board across the room"
+          ],
+          "correctIndex": 0,
+          "explanation": "Making a thoughtful prediction helps you see if your experiment worked the way you expected!",
+          "warmupExplanation": "Predicting means thinking ahead about what should happen before you run a test."
+        },
+        {
+          "questionId": "l01_s10_q2",
+          "question": "Where is the built-in test LED located on your Arduino Uno board?",
+          "options": [
+            "Connected to Pin 13, labeled with the letter 'L'",
+            "Hidden inside the USB plug",
+            "Underneath the wooden table"
+          ],
+          "correctIndex": 0,
+          "explanation": "The built-in LED is right on the board next to Pin 13 and labeled 'L'!",
+          "warmupExplanation": "The Arduino has a tiny light on the board labeled 'L' so you can test code without extra wires."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

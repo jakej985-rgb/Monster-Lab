@@ -1,0 +1,52 @@
+{
+  "id": "l08_06",
+  "title": "I2C LCD",
+  "summary": "In Lesson 3, you learned that libraries supercharge code by bundling complex hardware protocols into friendly functions.",
+  "tier": "engineer",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_08",
+  "sortOrder": 6,
+  "isOptional": false,
+  "prerequisites": [
+    "l08_05"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_07"
+  ],
+  "steps": [
+    {
+      "stepId": "l08_s06",
+      "title": "I2C LCD",
+      "type": "codeExperiment",
+      "markdownContent": "### The Library Connection\nIn Lesson 3, you learned that **libraries** supercharge code by bundling complex hardware protocols into friendly functions. To command our I2C LCD, we use two cooperating libraries:\n1. `<Wire.h>`: Built into the Arduino Core, it directly commands the ATmega328P Two-Wire Interface hardware.\n2. `<LiquidCrystal_I2C.h>`: Translates characters and cursor positions into PCF8574 register bytes.\n\n### The Complete LCD Firmware:\n```cpp\n#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n\n// Create LCD object: address 0x27, 16 columns, 2 rows\nLiquidCrystal_I2C lcd(0x27, 16, 2);\n\nvoid setup() {\n  lcd.init();          // Join I2C bus and wake up display controller\n  lcd.backlight();     // Turn on backlight LED\n\n  lcd.setCursor(0, 0); // Column 0, Row 0 (top line)\n  lcd.print(\"Monster Lab!\");\n\n  lcd.setCursor(0, 1); // Column 0, Row 1 (bottom line)\n  lcd.print(\"I2C Bus: 0x27\");\n}\n\nvoid loop() {\n  // Static display: nothing needed in loop!\n}\n```\n\n### Code Deconstruction:\n- `LiquidCrystal_I2C lcd(0x27, 16, 2);`: Creates an instance targeting device address `0x27` with a 16x2 character grid.\n- `lcd.init()`: Transmits initialization byte sequences over SDA/SCL to configure font size, display mode, and memory registers.\n- `lcd.backlight()`: Commands the backpack transistor to illuminate the LED backlight.\n- `lcd.setCursor(col, row)`: Places the writing cursor using 0-indexed coordinates (row 0 is the top line, row 1 is the bottom line).\n- `lcd.print(\"...\")`: Streams ASCII character data across the I2C bus onto the glass.\n\n### Hands-On Modification:\nUpload the sketch to your board. Then customize line 2 to print your monster's name and re-upload!",
+      "quickCheck": [
+        {
+          "questionId": "q_l08_s06_1",
+          "question": "Which standard library header file must be included in your Arduino sketch to provide I2C communication functions?",
+          "options": [
+            "<Wire.h>",
+            "<Servo.h>",
+            "<EEPROM.h>"
+          ],
+          "correctIndex": 0,
+          "explanation": "<Wire.h> is the built-in Arduino library that manages the ATmega328P Two-Wire Interface (I2C) hardware.",
+          "warmupExplanation": "Recall Lesson 3: libraries provide pre-written driver code, and <Wire.h> is the universal Arduino library for I2C."
+        },
+        {
+          "questionId": "q_l08_s06_2",
+          "question": "In the declaration LiquidCrystal_I2C lcd(0x27, 16, 2);, what information does the first argument 0x27 provide?",
+          "options": [
+            "The 7-bit I2C bus hardware address of the display backpack.",
+            "The refresh rate of the LCD in frames per second.",
+            "The pin number where the contrast knob is connected."
+          ],
+          "correctIndex": 0,
+          "explanation": "The first parameter defines the I2C hardware address (0x27) so the library communicates with the correct physical backpack on the bus.",
+          "warmupExplanation": "In Step 4, we saw that every I2C device requires its specific 7-bit address to respond to incoming bus packets."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

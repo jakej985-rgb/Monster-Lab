@@ -1,0 +1,53 @@
+{
+  "id": "l07_06",
+  "title": "Reading Sensor Data",
+  "summary": "Let's stream live sensor telemetry straight into your computer's screen using the Arduino IDE Serial Monitor!",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_07",
+  "sortOrder": 6,
+  "isOptional": false,
+  "prerequisites": [
+    "l07_05"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_01",
+    "comp_19"
+  ],
+  "steps": [
+    {
+      "stepId": "l07_s06",
+      "title": "Reading Sensor Data",
+      "type": "codeExperiment",
+      "markdownContent": "Let's stream live sensor telemetry straight into your computer's screen using the Arduino IDE **Serial Monitor**!\n\n### The Sensor Reader Sketch:\nUpload the following sketch to read both the LDR on `A0` and the Ultrasonic distance sensor on pins `9` & `10`:\n\n```cpp\nconst int trigPin = 9;   // HC-SR04 Trigger pin\nconst int echoPin = 10;  // HC-SR04 Echo pin\nconst int ldrPin = A0;   // Photoresistor analog pin\n\nvoid setup() {\n  Serial.begin(9600);     // Open serial channel at 9600 baud\n  pinMode(trigPin, OUTPUT); \n  pinMode(echoPin, INPUT);  \n}\n\nvoid loop() {\n  // 1. Trigger ultrasonic acoustic chirp\n  digitalWrite(trigPin, LOW);\n  delayMicroseconds(2);\n  digitalWrite(trigPin, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(trigPin, LOW);\n\n  // 2. Measure pulse duration in microseconds\n  long duration = pulseIn(echoPin, HIGH);\n  int distanceCm = duration * 0.034 / 2;\n\n  // 3. Read analog light level\n  int lightLevel = analogRead(ldrPin);\n\n  // 4. Stream telemetry to Serial Monitor\n  Serial.print(\"Light Level: \");\n  Serial.print(lightLevel);\n  Serial.print(\" | Distance: \");\n  Serial.print(distanceCm);\n  Serial.println(\" cm\");\n\n  delay(200); // 5 Hz telemetry cadence for easy reading\n}\n```\n\n### Experiment With Telemetry:\nOpen the Serial Monitor (Ctrl+Shift+M / Cmd+Shift+M) and ensure the baud rate dropdown is set to **9600 baud**. Move your hand toward the ultrasonic sensor and watch the distance count drop smoothly. Cover the LDR with your thumb and watch the light level drop!",
+      "quickCheck": [
+        {
+          "questionId": "l07_s06_q1",
+          "question": "Which command in `setup()` opens the serial data channel so your computer can display sensor telemetry?",
+          "options": [
+            "Serial.begin(9600);",
+            "pinMode(SERIAL, INPUT);",
+            "analogRead(SERIAL_PORT);"
+          ],
+          "correctIndex": 0,
+          "explanation": "Serial.begin(9600) sets the communication speed (baud rate) and opens the serial channel between the Arduino and computer.",
+          "warmupExplanation": "From Lesson 4 & 6: Serial.begin(9600) is the handshake that lets your Arduino talk to the Serial Monitor at 9600 bits per second."
+        },
+        {
+          "questionId": "l07_s06_q2",
+          "question": "What happens if the baud rate selected in the Arduino IDE Serial Monitor does not match `Serial.begin()` in your code?",
+          "options": [
+            "The telemetry will appear as garbled symbols, gibberish, or blank lines",
+            "The Arduino microcontroller chip will be permanently damaged",
+            "The sensor will stop measuring physical values"
+          ],
+          "correctIndex": 0,
+          "explanation": "When baud rates mismatch, the computer and Arduino sample bits at different speeds, resulting in garbled characters or blank text.",
+          "warmupExplanation": "Both sides must agree on the exact same speed (like 9600 baud) to understand each other's data signals."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

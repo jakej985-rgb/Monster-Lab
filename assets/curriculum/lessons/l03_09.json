@@ -1,0 +1,144 @@
+{
+  "id": "l03_09",
+  "title": "Library Challenge",
+  "summary": "You have unlocked the superpower of libraries!",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_03",
+  "sortOrder": 9,
+  "isOptional": false,
+  "prerequisites": [
+    "l03_08"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_07"
+  ],
+  "steps": [
+    {
+      "stepId": "l03_s09",
+      "title": "Library Challenge",
+      "type": "quizCheckpoint",
+      "markdownContent": "You have unlocked the superpower of libraries! Test your skills on finding, installing, including, and modifying library code to earn your Builder XP.",
+      "interactiveConfig": {
+        "question": "What is the primary purpose of an Arduino library?",
+        "options": [
+          "They speed up code by writing complex hardware protocols for you",
+          "They double the CPU clock speed of the Arduino",
+          "They convert AC electricity into DC electricity"
+        ],
+        "correctIndex": 0,
+        "explanation": "They speed up code by writing complex hardware protocols for you. Understanding this principle ensures proper circuit function and reliability.",
+        "questions": [
+          {
+            "question": "What is the primary purpose of an Arduino library?",
+            "options": [
+              "They speed up code by writing complex hardware protocols for you",
+              "They double the CPU clock speed of the Arduino",
+              "They convert AC electricity into DC electricity"
+            ],
+            "correctIndex": 0,
+            "explanation": "They speed up code by writing complex hardware protocols for you. Understanding this principle ensures proper circuit function and reliability."
+          },
+          {
+            "question": "Which preprocessor command is used to add a library to a sketch?",
+            "options": [
+              "#include <LibraryName.h>",
+              "import LibraryName;",
+              "using namespace LibraryName;"
+            ],
+            "correctIndex": 0,
+            "explanation": "#include <LibraryName.h> is the standard preprocessor directive that imports a library into an Arduino sketch."
+          },
+          {
+            "question": "Where inside the Arduino IDE can you search for and install community libraries?",
+            "options": [
+              "Tools > Manage Libraries (or the Library Manager tab)",
+              "File > Preferences > Upload",
+              "Help > Drivers"
+            ],
+            "correctIndex": 0,
+            "explanation": "Tools > Manage Libraries opens the Library Manager, allowing you to search and install verified libraries."
+          },
+          {
+            "question": "What does a library's 'API' represent?",
+            "options": [
+              "The list of functions and commands exposed for you to control the device",
+              "The physical size of the circuit board in millimeters",
+              "The price of the component in the store"
+            ],
+            "correctIndex": 0,
+            "explanation": "An API (Application Programming Interface) is the collection of functions and commands the library provides."
+          },
+          {
+            "question": "Where can you find pre-tested example sketches showing how to use an installed library?",
+            "options": [
+              "File > Examples in the Arduino IDE",
+              "Tools > Auto Format",
+              "Sketch > Export compiled Binary"
+            ],
+            "correctIndex": 0,
+            "explanation": "Installed libraries bundle working sample programs under the File > Examples menu in the IDE."
+          },
+          {
+            "question": "If your compiler shows 'fatal error: Servo.h: No such file or directory', what should you do?",
+            "options": [
+              "Install the missing Servo library using the Library Manager",
+              "Buy a new computer",
+              "Add five semicolons to the #include line"
+            ],
+            "correctIndex": 0,
+            "explanation": "'No such file or directory' means the library header isn't installed in your libraries folder yet."
+          },
+          {
+            "question": "Why shouldn't you use an external library to read a simple pushbutton?",
+            "options": [
+              "Arduino already has built-in digitalRead() commands for simple buttons",
+              "Pushbuttons do not work with electricity",
+              "External libraries are illegal to use with buttons"
+            ],
+            "correctIndex": 0,
+            "explanation": "Simple tasks like reading a digital button are already supported natively by Arduino's core functions."
+          },
+          {
+            "question": "What file extension designates C++ header files in libraries?",
+            "options": [
+              ".h",
+              ".ino",
+              ".hex"
+            ],
+            "correctIndex": 0,
+            "explanation": "Header files use the .h extension and contain the declarations exposed by a C++ library."
+          }
+        ]
+      },
+      "quickCheck": [
+        {
+          "questionId": "qc_l03_s09_q1",
+          "question": "What happens when you install a library from the Library Manager?",
+          "options": [
+            "Its code and example sketches are downloaded to your computer for your sketches to use",
+            "It permanently erases all previous sketches",
+            "It changes the language of your computer"
+          ],
+          "correctIndex": 0,
+          "explanation": "The Library Manager downloads the library's header, source files, and examples into your local libraries folder.",
+          "warmupExplanation": "Installing adds the library to your computer's toolkit so any sketch can include it."
+        },
+        {
+          "questionId": "qc_l03_s09_q2",
+          "question": "Can you inspect and modify the example code provided by an installed library?",
+          "options": [
+            "Yes, you can edit example code, customize values, and save it as your own sketch",
+            "No, example code is locked and will break your computer if edited",
+            "No, you can only look at it through a magnifying glass"
+          ],
+          "correctIndex": 0,
+          "explanation": "Examples are meant to be explored, adapted, and saved into your own custom robot sketches!",
+          "warmupExplanation": "Modifying example code is one of the best ways to learn and build custom robot features."
+        }
+      ]
+    }
+  ],
+  "xpReward": 15
+}

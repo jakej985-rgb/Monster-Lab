@@ -1,0 +1,53 @@
+{
+  "id": "l05_08",
+  "title": "Button Debouncing",
+  "summary": "Imagine you write a sketch that increments a counter every time you press a button:",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_05",
+  "sortOrder": 8,
+  "isOptional": false,
+  "prerequisites": [
+    "l05_07"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_20"
+  ],
+  "steps": [
+    {
+      "stepId": "l05_s08",
+      "title": "Button Debouncing",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "switchBounceVisualizer",
+      "markdownContent": "### The Microsecond Bounce: Why One Click Becomes Five\nImagine you write a sketch that increments a counter every time you press a button:\n```cpp\nint score = 0;\nvoid loop() {\n  if (digitalRead(buttonPin) == LOW) {\n    score++;\n    Serial.println(score);\n  }\n}\n```\nYou tap the button once quickly. You expect `score` to become `1`. Instead, the Serial Monitor prints:\n`1, 2, 3, 4, 7, 8!` Why did one gentle tap count as 8 presses?\n\n### The Physics of Contact Chatter\nTo human fingers, pressing a tactile button feels like a single instantaneous click. But microcontrollers run at **16,000,000 clock cycles per second**!\n\nInside the switch, two microscopic metal plates collide. Like dropping a bouncy rubber ball onto a hardwood floor, the metal contacts **bounce and vibrate against each other** for 1 to 10 milliseconds before settling into solid contact!\n\n```\nIdeal Human View:   HIGH -----------------\\__________________ LOW (Clean Step)\n\nSilicon Reality:    HIGH -------\\ | | | \\/\\/\\/\\______________ LOW (Contact Bounce!)\n                                  ^ ^ ^\n                          Rapid microsecond spikes!\n```\n\n### How to Debounce in Software:\n1. **Software Debounce Delay**: When you detect the initial `LOW` edge, wait a tiny duration (such as `delay(20)`) to let the mechanical vibrations settle before reading again.\n2. **State Change Tracking**: Store the `lastButtonState` and only increment the score when the button transitions from `HIGH` to `LOW` (the falling edge).\n3. **Hardware Debouncing**: Placing a small 100nF capacitor across the switch contacts absorbs the high-frequency voltage chatter physically!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s08_q1",
+          "question": "Why does a mechanical pushbutton often register multiple button presses from a single finger tap?",
+          "options": [
+            "Mechanical metal contacts bounce against each other for several milliseconds upon colliding",
+            "The Arduino Uno serial baud rate is too slow",
+            "The microcontroller flash memory is running out of space"
+          ],
+          "correctIndex": 0,
+          "explanation": "Microscopic contact bounce produces rapid voltage spikes that high-speed microcontrollers interpret as multiple presses.",
+          "warmupExplanation": "Switch contacts vibrate mechanically when slamming shut; the fast microcontroller sees every vibration."
+        },
+        {
+          "questionId": "l05_s08_q2",
+          "question": "About how long does typical mechanical contact bounce last in tactile buttons?",
+          "options": [
+            "Between 1 and 20 milliseconds",
+            "Several full minutes",
+            "One hour"
+          ],
+          "correctIndex": 0,
+          "explanation": "Contact bounce typically lasts between 1 and 20 milliseconds before the contacts settle firmly.",
+          "warmupExplanation": "Switch bounce is very brief (a few milliseconds), but easily detectable at 16 MHz CPU speeds."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

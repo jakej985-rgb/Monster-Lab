@@ -1,0 +1,52 @@
+{
+  "id": "l03_02",
+  "title": "Libraries in the Real World",
+  "summary": "Where do you see libraries in real robotics and everyday gadgets?",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_03",
+  "sortOrder": 2,
+  "isOptional": false,
+  "prerequisites": [
+    "l03_01"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_07"
+  ],
+  "steps": [
+    {
+      "stepId": "l03_s02",
+      "title": "Libraries in the Real World",
+      "type": "visualExplanation",
+      "markdownContent": "Where do you see libraries in real robotics and everyday gadgets? Almost everywhere!\n\nEvery cool gadget around you uses specialized libraries to talk to different components:\n\n1. **Character Displays (LCDs)**: An LCD library lets a smart microwave or 3D printer print text without worrying about how liquid crystals twist and turn.\n2. **Servo Motors**: A servo library lets an animatronic dinosaur or robot arm turn to an exact angle like 45\u00b0 or 90\u00b0 with a single command.\n3. **Sensors (Temperature & Distance)**: Sensor libraries turn electrical voltages into readable numbers like `22\u00b0C` or `15 cm`.\n4. **Motor Drivers**: Motor libraries control robot wheels going forward, backward, or spinning on a dime.\n5. **Sound & Buzzers**: Tone libraries create music notes and sound effects for games.\n6. **Communication Modules**: Radio and Bluetooth libraries let robots send secret messages to each other wirelessly!\n\nJust like a carpenter brings different specialized tools\u2014a hammer, a saw, and a ruler\u2014your robot program brings in different libraries for each cool part it controls.",
+      "quickCheck": [
+        {
+          "questionId": "qc_l03_s02_q1",
+          "question": "Which type of library would you choose if your monster needs to steer a robot arm to an angle?",
+          "options": [
+            "A servo motor library",
+            "A sound playback library",
+            "A weather forecast library"
+          ],
+          "correctIndex": 0,
+          "explanation": "Servo motors specialize in moving arms and wheels to precise angles, so a servo library provides the right angle commands.",
+          "warmupExplanation": "Look at the hardware you want to control: arms and steering mechanisms use servo motors!"
+        },
+        {
+          "questionId": "qc_l03_s02_q2",
+          "question": "Can a single robot sketch use more than one library at the same time?",
+          "options": [
+            "Yes, you can use multiple libraries together for different parts",
+            "No, an Arduino can only load one single library per sketch",
+            "No, using two libraries causes the board to catch fire"
+          ],
+          "correctIndex": 0,
+          "explanation": "Robots routinely combine multiple libraries\u2014for example, one library for a screen and another library for a distance sensor!",
+          "warmupExplanation": "Just like a carpenter uses both a hammer and a tape measure, a sketch can include multiple libraries."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

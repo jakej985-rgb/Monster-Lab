@@ -1,0 +1,52 @@
+{
+  "id": "l05_02",
+  "title": "Pushbuttons",
+  "summary": "Grab a 4-pin momentary tactile pushbutton from your kit.",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_05",
+  "sortOrder": 2,
+  "isOptional": false,
+  "prerequisites": [
+    "l05_01"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_20"
+  ],
+  "steps": [
+    {
+      "stepId": "l05_s02",
+      "title": "Pushbuttons",
+      "type": "physicalTask",
+      "markdownContent": "### Anatomical Tour of the Tactile Pushbutton\nGrab a 4-pin momentary tactile pushbutton from your kit. These tiny buttons are built into robots, game controllers, and appliances worldwide.\n\n### The 4-Pin Mystery: Why Four Legs for Two Contacts?\nWhen you look at the bottom of the button, you notice **4 metal legs**, but a simple switch only needs 2 wires to connect. Why are there 4?\n\nInside the plastic housing:\n- The two legs on the **same long side** are permanently joined together by an internal metal bar!\n- Leg A and Leg B are connected to each other inside.\n- Leg C and Leg D are connected to each other inside.\n- The push action connects the AB pair to the CD pair!\n\n```\nTop View of 4-Pin Tactile Button:\n\n   Pin 1 [=== Internal Bar ===] Pin 2\n                |  |\n             [ Switch ]\n                |  |\n   Pin 3 [=== Internal Bar ===] Pin 4\n```\n\n### Breadboard Insertion Technique\nTo prevent shorting the switch out before you even push it, always insert the button so its body **straddles the center divider trench (ravine)** of your solderless breadboard:\n1. Place Pins 1 and 2 on Row 15, Column D and E (left side of ravine).\n2. Place Pins 3 and 4 on Row 15, Column F and G (right side of ravine).\n3. Press firmly until all four legs seat cleanly into the breadboard spring clips.\n4. Press down with your index finger: feel the crisp tactile snap as the miniature metal dome clicks inside!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s02_q1",
+          "question": "Why do solderless breadboards feature a center divider trench (ravine)?",
+          "options": [
+            "To electrically isolate opposing rows so dual-pin parts do not short together",
+            "To store extra jumper wires during assembly",
+            "To act as a heat sink for the power supply"
+          ],
+          "correctIndex": 0,
+          "explanation": "The center trench separates columns a-e from f-j, allowing DIP chips and buttons to straddle across without shorting.",
+          "warmupExplanation": "Breadboard rows are connected across columns a-e and f-j, but separated by the center ravine."
+        },
+        {
+          "questionId": "l05_s02_q2",
+          "question": "What happens when you release your finger from a momentary pushbutton?",
+          "options": [
+            "An internal flexible spring snaps the contacts apart, opening the circuit",
+            "The switch remains locked closed permanently",
+            "The polarity of the connected battery reverses"
+          ],
+          "correctIndex": 0,
+          "explanation": "Momentary switches only maintain contact while external force is applied; releasing them opens the circuit.",
+          "warmupExplanation": "Momentary pushbuttons return to their open state as soon as pressure is released."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

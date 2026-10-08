@@ -2,6 +2,7 @@ import '../../domain/models/lesson_model.dart';
 import '../../domain/models/component_model.dart';
 import '../../domain/models/project_model.dart';
 import '../../domain/models/challenge_model.dart';
+import '../../domain/models/course_model.dart';
 import '../../domain/repositories/curriculum_repository.dart';
 import '../datasources/curriculum_data_engine.dart';
 
@@ -9,6 +10,21 @@ class CurriculumRepositoryImpl implements CurriculumRepository {
   final CurriculumDataEngine _engine;
 
   CurriculumRepositoryImpl(this._engine);
+
+  @override
+  Future<List<CourseModel>> getCourses() {
+    return _engine.getCourses();
+  }
+
+  @override
+  Future<CourseModel> getCourseById(String id) {
+    return _engine.getCourseById(id);
+  }
+
+  @override
+  Future<List<Lesson>> getCourseLessons(String courseId) {
+    return _engine.getCourseLessons(courseId);
+  }
 
   @override
   Future<List<Lesson>> getLessons({DifficultyTier? tier}) {

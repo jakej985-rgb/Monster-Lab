@@ -1,0 +1,53 @@
+{
+  "id": "l07_04",
+  "title": "Distance Sensors",
+  "summary": "Time to inspect your first superpower sensor: the HC-SR04 Ultrasonic Distance Sensor (comp01)!",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_07",
+  "sortOrder": 4,
+  "isOptional": false,
+  "prerequisites": [
+    "l07_03"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_01",
+    "comp_19"
+  ],
+  "steps": [
+    {
+      "stepId": "l07_s04",
+      "title": "Distance Sensors",
+      "type": "physicalTask",
+      "markdownContent": "Time to inspect your first superpower sensor: the **HC-SR04 Ultrasonic Distance Sensor (`comp_01`)**!\n\n### Nature's Echolocation:\nJust like a bat navigating a dark cave or a submarine pinging the ocean depths, the HC-SR04 uses sound waves to calculate distance:\n1. **The 'Eyes' of the Sensor**: Notice the two metallic cylinders on the front. One is labeled **T** (Transmitter/Speaker) and the other **R** (Receiver/Microphone).\n2. **The Ping**: The Arduino triggers the **TRIG** pin to emit a burst of ultrasonic sound at 40,000 Hz (far above human hearing).\n3. **The Echo**: The sound bounces off an obstacle in front of the sensor. The **ECHO** pin goes `HIGH` for the exact amount of time the sound took to make the round trip!\n\n### Distance Formula Math:\nSound travels through room-temperature air at approximately 340 meters per second ($0.034\\text{ cm/\\mu s}$):\n$$\\text{Distance (cm)} = \\frac{\\text{Echo Time (microseconds)} \\times 0.034}{2}$$\n*(We divide by 2 because the sound traveled out to the object and all the way back!)*\n\n### Breadboard Wiring Tour:\n- **VCC**: Connect to Uno **5V** power rail.\n- **GND**: Connect to Uno **GND** ground rail.\n- **TRIG**: Connect to Uno Digital Pin **9**.\n- **ECHO**: Connect to Uno Digital Pin **10**.",
+      "quickCheck": [
+        {
+          "questionId": "l07_s04_q1",
+          "question": "How does an ultrasonic distance sensor (HC-SR04) calculate the distance to an obstacle?",
+          "options": [
+            "By timing how long high-frequency sound pulses take to echo back from the object",
+            "By shining an invisible laser beam and measuring its brightness",
+            "By sensing the magnetic field produced by nearby objects"
+          ],
+          "correctIndex": 0,
+          "explanation": "The ultrasonic sensor emits high-frequency sound waves from its trigger cylinder and measures the travel time of the echo bouncing back.",
+          "warmupExplanation": "Think of a bat shouting in a dark cave: it listens for how long the echo takes to return to know how far away the cave wall is!"
+        },
+        {
+          "questionId": "l07_s04_q2",
+          "question": "Why do we divide the echo travel time by 2 when calculating distance in centimeters?",
+          "options": [
+            "Because the sound pulse travels out to the object and then all the way back, covering twice the distance",
+            "Because the Arduino processor runs twice as fast as sound",
+            "Because the sensor has two metal cylinders"
+          ],
+          "correctIndex": 0,
+          "explanation": "The sound wave makes a round trip: from the sensor to the obstacle, and back to the sensor. Dividing by 2 gives the one-way distance.",
+          "warmupExplanation": "If you walk to a tree and walk back home, you walked double the distance to the tree. Divide by 2 to get the distance from home to tree!"
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

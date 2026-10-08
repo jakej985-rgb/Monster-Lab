@@ -1,0 +1,51 @@
+{
+  "id": "l01_06",
+  "title": "Meet the Pins",
+  "summary": "Look along the top and bottom edges of your Arduino Uno.",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_01",
+  "sortOrder": 6,
+  "isOptional": false,
+  "prerequisites": [
+    "l01_05"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l01_s06",
+      "title": "Meet the Pins",
+      "type": "physicalTask",
+      "markdownContent": "Look along the top and bottom edges of your Arduino Uno. You will see long black rows with little square sockets called **Pin Headers**!\n\nPins are like hands and ears for the Arduino. They let you plug in jumper wires to connect sensors, buttons, and lights.\n\n### 1. Top Header: Digital Pins (0 to 13)\nLook at the numbers printed along the top row: **0, 1, 2, ... all the way to 13**.\n- These pins can be digital inputs or digital outputs.\n- Notice Pin 13: It is wired to the built-in amber light on the board!\n\n### 2. Bottom Right Header: Analog In (A0 to A5)\nLook at the bottom right row labeled **ANALOG IN**:\n- The letter **'A'** stands for **Analog**!\n- Pins **A0, A1, A2, A3, A4, A5** read smooth sensor values from knobs and sensors.\n\n### 3. Bottom Left Header: Power Pins\nLook at the bottom left row labeled **POWER**:\n- Find **5V** and **3.3V** (power supplies).\n- Find **GND** (Ground).\n\nTouch each header gently with your finger to find Digital Pin 13, Analog Pin A0, and GND!",
+      "quickCheck": [
+        {
+          "questionId": "l01_s06_q1",
+          "question": "Why does an Arduino have little pin holes along its edges?",
+          "options": [
+            "To plug in jumper wires to connect circuits",
+            "To let cool air blow through",
+            "To hold colored crayons"
+          ],
+          "correctIndex": 0,
+          "explanation": "Pin headers let you plug jumper wires in so the Arduino can communicate with your circuits!",
+          "warmupExplanation": "Pins are tiny sockets where wires plug in, connecting the Arduino brain to lights and sensors."
+        },
+        {
+          "questionId": "l01_s06_q2",
+          "question": "What does the letter 'A' stand for on pins labeled A0 through A5?",
+          "options": [
+            "Analog",
+            "Airplane",
+            "Action"
+          ],
+          "correctIndex": 0,
+          "explanation": "The 'A' stands for Analog! Pins A0 to A5 read smooth, continuous signals from sensors.",
+          "warmupExplanation": "Labels give us helpful clues. 'A' stands for Analog, designed for reading smooth ranges."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

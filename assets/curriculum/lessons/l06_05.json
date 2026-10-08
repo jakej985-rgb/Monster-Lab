@@ -1,0 +1,55 @@
+{
+  "id": "l06_05",
+  "title": "First Breadboard Circuit",
+  "summary": "Before wiring sensors and monster alarms, every professional robotics engineer sets up their Power Bus Highways!",
+  "tier": "builder",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_06",
+  "sortOrder": 5,
+  "isOptional": false,
+  "prerequisites": [
+    "l06_04"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_breadboard",
+    "comp_01"
+  ],
+  "steps": [
+    {
+      "stepId": "l06_s05",
+      "title": "First Breadboard Circuit",
+      "type": "physicalTask",
+      "markdownContent": "# First Breadboard Circuit: Power Distribution\n\nBefore wiring sensors and monster alarms, every professional robotics engineer sets up their **Power Bus Highways**!\n\n### The Mission Checklist:\n1. **Unplug USB**: Ensure your Arduino Uno (`comp_uno`) is disconnected from your computer.\n2. **Run +5V Power Wire**:\n   - Take a **Red jumper wire**.\n   - Plug one end into the Arduino **5V** pin socket.\n   - Plug the other end into the **Red `+` power rail** on the breadboard.\n3. **Run Ground Return Wire**:\n   - Take a **Black (or Blue) jumper wire**.\n   - Plug one end into any **GND** pin socket on the Arduino.\n   - Plug the other end into the **Blue/Black `-` power rail** on the breadboard.\n4. **Inspect Connections**: You now have regulated +5V and 0V Ground running along the entire edge of your breadboard, ready for any component!\n\n### Maker Wiring Conventions:\n- **Red**: Positive supply (+5V or +3.3V).\n- **Black or Blue**: 0V Ground (GND).\n- **Yellow, Green, White**: Signal and data lines.\n\nFollowing color conventions prevents costly wiring errors as your robot builds grow in complexity!",
+      "quickCheck": [
+        {
+          "questionId": "q_l06_s05_01",
+          "question": "Which Arduino Uno pin should you connect to the red `+` power rail of your breadboard?",
+          "options": [
+            "The RESET pin header",
+            "The regulated 5V power pin",
+            "Analog input pin A0",
+            "The AREF pin header"
+          ],
+          "correctIndex": 1,
+          "explanation": "The Arduino 5V pin provides steady +5V DC power, which is connected to the breadboard's red `+` rail.",
+          "warmupExplanation": "The red `+` rail on a breadboard is reserved for the positive power supply (+5V from your Arduino)."
+        },
+        {
+          "questionId": "q_l06_s05_02",
+          "question": "By standard maker convention, which wire color should you connect to GND (Ground)?",
+          "options": [
+            "Bright yellow",
+            "Neon orange",
+            "Black (or dark blue)",
+            "Glitter red"
+          ],
+          "correctIndex": 2,
+          "explanation": "Black (or blue) is universally used for Ground (0V reference), while red is reserved for positive power (+5V).",
+          "warmupExplanation": "Consistent color coding keeps circuits safe: Red for positive power (+5V) and Black/Blue for Ground (GND)."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

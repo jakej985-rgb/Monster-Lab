@@ -1,0 +1,51 @@
+{
+  "id": "l04_04",
+  "title": "LED Brightness",
+  "summary": "Let's wire an LED circuit and examine how hardware components protect your circuit!",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_04",
+  "sortOrder": 4,
+  "isOptional": false,
+  "prerequisites": [
+    "l04_03"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l04_s04",
+      "title": "LED Brightness",
+      "type": "physicalTask",
+      "markdownContent": "Let's wire an LED circuit and examine how hardware components protect your circuit!\n\n### Circuit Building Steps:\n1. **Identify LED Polarity**:\n   - The **Anode** (positive) is the **longer leg**.\n   - The **Cathode** (negative) is the **shorter leg** (and has a flat edge on the plastic collar).\n2. **Add a Current-Limiting Resistor**:\n   - Connect a **220\u03a9 resistor** (color bands: red-red-brown-gold) in series with the LED.\n   - *Why?* LEDs have almost no electrical resistance once illuminated! Without a resistor, excessive current rushes through the delicate semiconductor, overheating and damaging it. The resistor keeps current safely below 20 mA.\n3. **Connect to Arduino**:\n   - Connect the resistor to **Digital Pin ~9** (a PWM pin marked with a tilde `~`).\n   - Connect the short leg (Cathode) to **GND** (Ground).\n\n```\nPin ~9 \u2500\u2500[ 220\u03a9 Resistor ]\u2500\u2500( Anode + ) LED ( - Cathode )\u2500\u2500 GND\n```\n\nWhen testing brightness, remember: changing pulse width changes perceived brightness, while the resistor keeps current safe!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l04_s04_q1",
+          "question": "Why is a current-limiting resistor required in series with an LED?",
+          "options": [
+            "To limit electrical current and protect the LED from burning out",
+            "To change the color of the emitted light",
+            "To increase the microcontroller clock speed"
+          ],
+          "correctIndex": 0,
+          "explanation": "Without a resistor, excessive current flows through the LED diode junction, causing overheating and permanent damage.",
+          "warmupExplanation": "LEDs need a resistor to restrict current flow and keep components safe."
+        },
+        {
+          "questionId": "qc_l04_s04_q2",
+          "question": "When inspecting a standard LED, which lead connects toward Ground (0V)?",
+          "options": [
+            "The shorter leg (cathode)",
+            "The longer leg (anode)",
+            "Either leg\u2014LEDs work in both directions"
+          ],
+          "correctIndex": 0,
+          "explanation": "The shorter leg with the flat notch is the cathode (negative terminal) and connects toward Ground.",
+          "warmupExplanation": "Diodes only allow current to flow in one direction! Long leg is positive (anode), short leg is negative (cathode)."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

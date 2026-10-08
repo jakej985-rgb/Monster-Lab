@@ -1,0 +1,53 @@
+{
+  "id": "l05_06",
+  "title": "Pull-Up Resistors",
+  "summary": "How do engineers prevent floating pins?",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_05",
+  "sortOrder": 6,
+  "isOptional": false,
+  "prerequisites": [
+    "l05_05"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_20"
+  ],
+  "steps": [
+    {
+      "stepId": "l05_s06",
+      "title": "Pull-Up Resistors",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "internalPullupCircuitDiagram",
+      "markdownContent": "### Anchoring the Voltage: The Pull-Up Solution\nHow do engineers prevent floating pins? We anchor the pin to a known voltage using a **pull-up resistor**!\n\nA pull-up resistor connects the input pin to **+5V**. When the switch is open, the resistor gently \"pulls\" the pin up to 5V, guaranteeing a stable, rock-solid `HIGH`.\n\n```\nButton OPEN (Idle):\n  +5V ---[ 10k Resistor ]---> Pin 2 (Reads HIGH, 5.0V)\n                                |\n                           [ Switch: OPEN ]\n                                |\n                               GND\n```\n\n### Why a Resistor Instead of a Plain Wire?\nWhy not connect Pin 2 directly to +5V with a solid wire? Consider what happens when someone presses the button to GND:\n- If you used a plain wire from 5V to the pin, pressing the button would connect **+5V directly to GND with ZERO resistance**!\n- This creates a **dead short circuit**, drawing massive current, heating the wires, and triggering USB shutdown protection!\n\n### Ohm's Law to the Rescue:\nWith a 10,000\u03a9 (10k\u03a9) pull-up resistor in place:\n$$I = \\frac{V}{R} = \\frac{5.0\\text{V}}{10{,}000\\Omega} = 0.0005\\text{ A} = 0.5\\text{ mA}$$\nWhen the button is pressed, only half a milliamp of current flows safely to GND, pulling Pin 2 all the way to **0.0V (LOW)** with zero danger!\n\n### Active-Low Logic:\nNotice the logic pattern in this circuit:\n- **Button Released (Idle)**: Pin 2 reads **`HIGH`** (+5V).\n- **Button Pressed (Active)**: Pin 2 reads **`LOW`** (0V).\nBecause the active state is `LOW`, this is called **active-low logic**!",
+      "quickCheck": [
+        {
+          "questionId": "l05_s06_q1",
+          "question": "What hazardous condition occurs if you connect +5V directly to Ground with a plain wire and no resistance?",
+          "options": [
+            "A dead short circuit that draws extreme current and can damage hardware",
+            "The microcontroller automatically increases its clock speed",
+            "The breadboard changes color to blue"
+          ],
+          "correctIndex": 0,
+          "explanation": "Joining power and ground with negligible resistance causes a dead short circuit, risking silicon damage.",
+          "warmupExplanation": "Current equals voltage divided by resistance (I = V/R). Zero resistance leads to dangerous overcurrent."
+        },
+        {
+          "questionId": "l05_s06_q2",
+          "question": "In an active-low circuit with a pull-up resistor, what voltage level does the pin read when the button is pressed to GND?",
+          "options": [
+            "LOW (0.0 Volts / Ground)",
+            "HIGH (+5.0 Volts)",
+            "1023 Volts"
+          ],
+          "correctIndex": 0,
+          "explanation": "Pressing the button connects the input directly to GND, pulling the pin voltage down to 0V (LOW).",
+          "warmupExplanation": "Active-low circuits connect the input to ground when pressed, registering as LOW (0V)."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}

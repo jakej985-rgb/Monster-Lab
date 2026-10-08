@@ -1,0 +1,51 @@
+{
+  "id": "l04_06",
+  "title": "Meet the RGB LED",
+  "summary": "Single-color LEDs are great, but monster robots love rich, vibrant color!",
+  "tier": "rookie",
+  "estimatedMinutes": 5,
+  "courseId": "lesson_04",
+  "sortOrder": 6,
+  "isOptional": false,
+  "prerequisites": [
+    "l04_05"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l04_s06",
+      "title": "Meet the RGB LED",
+      "type": "physicalTask",
+      "markdownContent": "Single-color LEDs are great, but monster robots love rich, vibrant color! Meet the **RGB LED**.\n\n### Three Lights in One Package\nAn RGB LED looks like a single frosted bulb, but inside the lens are **three separate semiconductor dies**:\n- One **Red** LED\n- One **Green** LED\n- One **Blue** LED\n\n### The 4-Leg Tour:\nBecause there are three LEDs inside, how many wire legs does the component have? **Four legs!**\nEach color has its own control leg, and all three share one common pin:\n\n1. **Leg 1 (Outer Left)**: Red Anode\n2. **Leg 2 (Longest Leg)**: Common Pin (Cathode / GND on Common Cathode LEDs)\n3. **Leg 3**: Green Anode\n4. **Leg 4 (Outer Right)**: Blue Anode\n\n```\n   [Frosted 5mm Lens]\n        \u2502 \u2502 \u2502 \u2502\n        \u2502 \u2502 \u2502 \u2514\u2500\u2500 Leg 4: Blue\n        \u2502 \u2502 \u2514\u2500\u2500\u2500\u2500 Leg 3: Green\n        \u2502 \u2514\u2500\u2500\u2500\u2500\u2500\u2500 Leg 2: Common (Longest!)\n        \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Leg 1: Red\n```\n\n### Three Dedicated Resistors!\n**Golden Rule**: Always connect a separate 220\u03a9 resistor to EACH color leg (Leg 1, Leg 3, and Leg 4)!\n*Why not share one resistor on the common leg?*\nRed LEDs operate around ~2.0V, while Green and Blue operate around ~3.2V. If you share one resistor, the lower-voltage Red channel draws all the current, causing Green and Blue to dim or turn off!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l04_s06_q1",
+          "question": "How many physical wire legs does a standard single-package RGB LED have?",
+          "options": [
+            "4 legs (Red, Common, Green, Blue)",
+            "2 legs",
+            "8 legs"
+          ],
+          "correctIndex": 0,
+          "explanation": "An RGB LED has 4 legs: one control leg for each of the 3 colors, plus one shared common leg.",
+          "warmupExplanation": "Three color channels plus one common shared pin equals 4 legs total on an RGB LED."
+        },
+        {
+          "questionId": "qc_l04_s06_q2",
+          "question": "Why should each color channel of an RGB LED have its own dedicated series resistor?",
+          "options": [
+            "Because Red, Green, and Blue have different operating voltages and need independent current regulation",
+            "To convert the LED into a sensor",
+            "Because resistors make light brighter"
+          ],
+          "correctIndex": 0,
+          "explanation": "Dedicated resistors ensure each color channel receives balanced current without stealing power from adjacent channels.",
+          "warmupExplanation": "Red, green, and blue LEDs use different forward voltages. A resistor for each color keeps all three balanced and protected."
+        }
+      ]
+    }
+  ],
+  "xpReward": 10
+}
