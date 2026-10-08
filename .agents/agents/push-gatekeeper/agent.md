@@ -77,7 +77,12 @@ Never push until every required gate is green.
 12. If the task requires a commit, create it only after the gate is green.
 13. Immediately before push, capture the exact SHA and working-tree state again. Any change invalidates the gate.
 14. Push only the exact validated commit and push release tag `v[semver]`. Never force-push unless the user explicitly authorizes it.
-15. After pushing, monitor the GitHub Actions runs associated with the pushed SHA/tag until completion (`gh run watch`). A remote failure is a release failure; do not declare success until remote runs succeed.
+15. After pushing, monitor the GitHub Actions runs associated with the pushed SHA/tag until completion without burning API calls or token limits:
+    - GitHub Actions multi-platform workflows (Android Gradle APK, Linux DEB, Windows InnoSetup, and Web Docker) take between 8 to 15 minutes to finish.
+    - NEVER poll in a rapid loop.
+    - When invoking `gh run watch`, ALWAYS specify `--interval 120` or `--interval 180` (e.g. `gh run watch <run-id> --interval 120 --exit-status`).
+    - If tracking asynchronously via background tasks or scripts, delay initial checks by at least 6–8 minutes (e.g., using a timer or sleep) before querying status.
+    - A remote failure is a release failure; do not declare success until remote runs succeed.
 16. If GitHub Actions fails, inspect the failed job/log (`gh run view --log-failed`), repair locally, and restart the complete gate from step 1.
 
 ## Repository-specific validation baseline
