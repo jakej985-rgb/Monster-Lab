@@ -6,14 +6,137 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.1.8+18] - 2026-10-08
+- Automated push release build bump to v0.1.8.
+
 ## [0.1.7+17] - 2026-10-08
-- Automated push release build bump to v0.1.7.
+
+### Overview & Release Highlights
+Release **0.1.7** is a landmark architectural and educational milestone for Monster Lab. It completes the full modular decomposition of the curriculum by converting Lessons 1 and 3–8 into structured **Course Folders** (`assets/curriculum/courses/*.json`) housing **107 modular sub-lessons** (`l01_01.json` through `l08_10.json`), standardizing the bite-sized learning model introduced with Coding Foundations.
+
+On the presentation layer, the **Learn Lab** (`LearnScreen`) has been revamped to render all 10 courses as interactive, collapsible Lesson Folders with single-folder accordion expansion, eliminating visual overwhelm. Crucial progression loops—such as automated course completion upon finishing final sub-lessons and course-aware prerequisite unlocking across `nextLessonProvider` and `BuildScreen`—are now fully wired. Finally, Linux Debian distribution packaging is unified under our canonical 50-year GPG archive signing key with detached `.deb.asc` signatures.
+
+---
+
+### 🚀 New Features & Capabilities
+- **Modular Course Architecture (10 Courses & 107 Sub-Lessons)**:
+  - *What Changed*: Converted monolithic lesson files into 7 course container JSON definitions and 79 newly decomposed standalone sub-lesson files, unifying the curriculum into 10 full courses comprising 107 modular sub-lessons:
+    - **Course 1 (`lesson_01`)**: Arduino Fundamentals (12 sub-lessons, `l01_01`–`l01_12`)
+    - **Coding Foundations (`coding_foundations`)**: Software Basics (8 sub-lessons, `cf_01`–`cf_08`)
+    - **Course 2A (`lesson_2a`)**: Meet Monster Lab (8 sub-lessons, `l2a_01`–`l2a_08`)
+    - **Course 2B (`lesson_2b`)**: Arduino IDE Walkthrough (8 sub-lessons, `l2b_01`–`l2b_08`)
+    - **Course 3 (`lesson_03`)**: Libraries & Reusable Code (9 sub-lessons, `l03_01`–`l03_09`)
+    - **Course 4 (`lesson_04`)**: PWM & RGB LEDs (10 sub-lessons, `l04_01`–`l04_10`)
+    - **Course 5 (`lesson_05`)**: Switches, Buttons & Potentiometers (16 sub-lessons, `l05_01`–`l05_16`)
+    - **Course 6 (`lesson_06`)**: Circuits, Breadboards & First Builds (11 sub-lessons, `l06_01`–`l06_11`)
+    - **Course 7 (`lesson_07`)**: Sensors & Reading the Real World (11 sub-lessons, `l07_01`–`l07_11`)
+    - **Course 8 (`lesson_08`)**: I2C & Connected Devices (10 sub-lessons, `l08_01`–`l08_10`)
+    - *Plus 4 standalone advanced hardware protocol lessons* (`lesson_09`–`lesson_12`)
+  - *Why*: Monolithic multi-topic lessons created lengthy cognitive hurdles for children and complicated state serialization. Decomposed sub-lessons offer focused 5–10 minute learning increments with granular progress milestones.
+  - *User Impact*: Learners experience steady achievement badges and clear checkpoints instead of wading through lengthy single-file modules.
+- **Automated Course Completion & Progression Wiring**:
+  - *What Changed*: In `LessonDetailScreen`, finishing the concluding sub-lesson of any course automatically evaluates course-level completion and marks the course finished via `progressRepositoryProvider.completeCourse(courseId)`.
+  - *Why*: Ensures a seamless learning path without requiring manual intervention or navigation back to folder headers to claim course completion.
+  - *User Impact*: Instant reward feedback, automatic unlocking of subsequent courses, and streamlined progress tracking.
+- **Course-Aware Prerequisite Resolution**:
+  - *What Changed*: Updated `nextLessonProvider` and `BuildScreen` prerequisite resolution logic to verify `completedCourseIds` alongside individual lesson completion IDs.
+  - *Why*: Hardware missions in Build Lab often depend on holistic completion of a course (e.g. Breadboarding Basics or Sensors) rather than just an isolated sub-lesson.
+  - *User Impact*: Build Lab hardware projects unlock automatically as soon as the corresponding course folder is completed.
+
+---
+
+### 🎨 User Experience & Design System
+- **Single-Folder Accordion on Learn Lab**:
+  - *What Changed*: Refactored `LearnScreen` (`lib/presentation/features/learn/learn_screen.dart`) to render all 10 courses as collapsible Lesson Folders with single-folder expansion (`_expandedCourseId`).
+  - *Why*: Displaying 107 lessons in an unorganized list created endless scrolling and cognitive overload. Single-folder accordion behavior keeps the interface tidy and focused on the student's active area of study.
+  - *User Impact*: Children can quickly scan through the 10 course tracks, open their current focus, view sub-lesson completion badges, and jump directly into the next challenge.
+
+---
+
+### 🏗️ Architecture & Data Layer
+- **Decoupled Curriculum Engine & Storage**:
+  - *What Changed*: Extended `CurriculumDataEngine`, `AssetCurriculumDatasource`, and `CurriculumRepository` with modular course loading, caching, and manifest resolution. Updated `LearnerProgressModel` and `ParentInsightsModel` to manage `completedCourseIds`.
+  - *Why*: Decouples curriculum definitions from monolithic files, reducing memory footprints during asset deserialization and preparing the engine for extensible external lesson modules.
+- **Curriculum Validation Pipeline Hardening**:
+  - *What Changed*: Updated `CurriculumValidator` (`lib/core/curriculum/curriculum_validator.dart`) and `scripts/validate_curriculum.py` to validate course schemas, sub-lesson links, prerequisite integrity, and quiz bindings across all 10 courses and 107 sub-lessons. Added `scripts/decompose_lessons.py` for automated asset transformation.
+  - *Why*: Enforces strict CI-validated pedagogical safety and prevents broken lesson links or missing prerequisites across releases.
+
+---
+
+### 🛠️ Developer Toolchains & Packaging
+- **Canonical 50-Year GPG Signing & Keyring Unification**:
+  - *What Changed*: Standardized Linux Debian release packaging and signing under canonical 50-year GPG key (`5F84FE50A40111C981410E11775AD1473BF25102`). Synchronized `linux/keyring/m3tal-archive-keyring.asc`, removed deprecated `monster-lab-archive-keyring.*` assets, added `--sign` detached signature generation in `scripts/package_linux_deb.py`, and updated `.github/workflows/release.yml` to publish `.deb.asc` signatures.
+  - *Why*: Unifies repository infrastructure across m3tal tools and prevents annual keyring expiration failures.
+  - *User / Developer Impact*: Linux users installing Monster Lab via APT receive reliable, cryptographically verified packages with a long-lived trust anchor.
+
+---
+
+### 📚 Documentation & Specifications
+- **APT Repository & Verification Documentation**:
+  - *What Changed*: Updated `README.md` and Linux setup instructions to reference canonical keyring location `/etc/apt/keyrings/m3tal-archive-keyring.gpg` and provide verification commands for `.deb.asc` detached GPG signatures.
+
+---
 
 ## [0.1.6+16] - 2026-10-08
-- Automated push release build bump to v0.1.6.
+
+### Overview & Release Highlights
+Release **0.1.6** modernizes Monster Lab's core Markdown rendering toolchain by migrating from the discontinued upstream `flutter_markdown` package to the active, community-maintained superseding package `flutter_markdown_plus: ^1.0.12`. This update refactors `MonsterMarkdown` and restores a completely clean dependency tree with zero deprecation warnings.
+
+---
+
+### 🏗️ Architecture & Dependencies
+- **Superseded Markdown Engine Migration**:
+  - *What Changed*: Replaced `flutter_markdown: ^0.7.7+1` with `flutter_markdown_plus: ^1.0.12` in `pubspec.yaml` and `pubspec.lock`. Refactored `lib/presentation/shared/widgets/monster_markdown.dart` to import `package:flutter_markdown_plus/flutter_markdown_plus.dart`.
+  - *Why*: The Flutter team officially marked `flutter_markdown` as discontinued on pub.dev. Moving to `flutter_markdown_plus` ensures ongoing bug fixes, compatibility with modern Flutter rendering pipelines, and seamless support for future Flutter SDK releases.
+  - *User Impact*: Lesson guides, circuit schematics, hardware tutorials, and embedded code blocks render with crisp fidelity, consistent styling, and improved layout responsiveness.
+  - *Developer Impact*: Eliminates pub dependency deprecation warnings and keeps the codebase fully compliant with strict static analysis.
+
+---
 
 ## [0.1.5+15] - 2026-10-08
-- Automated push release build bump to v0.1.5.
+
+### Overview & Release Highlights
+Release **0.1.5** introduces the **Phase 26 Quick Check Pre-Test Diagnostic Engine**, a formative assessment framework integrated across Lessons 1 and 3–8. Featuring 158 curated diagnostic questions spanning 79 submodules, Quick Check provides non-punitive, warm-up diagnostics designed to prime young builders for upcoming lessons without grade anxiety.
+
+This release also incorporates full governance approval from the **Curriculum Guardian** audit (Phase 25/26), validating learning sequences and hardware concept dependencies. In addition, Linux packaging infrastructure begins initial alignment with the central `m3tal-apt-key` archive keyring.
+
+---
+
+### 🚀 New Features & Capabilities
+- **Quick Check Pre-Test Diagnostic Engine**:
+  - *What Changed*: Introduced `QuickCheckQuestion`, `QuickCheckResult`, and `QuickCheckReadiness` models alongside an interactive modal dialog `QuickCheckModal` (`lib/presentation/features/learn/widgets/quick_check_modal.dart`), surfaced directly within `LessonDetailScreen`.
+  - *Why*: Formative pre-tests allow learners to reflect on prerequisite knowledge before tackling technical content. To foster an encouraging, growth-oriented environment for kids, Quick Checks have **zero XP penalty**, offer warm-up explanations upon incorrect choices, and can be skipped at will.
+  - *User Impact*: Learners can take a quick 2-question warm-up before entering a submodule, receive instant encouraging feedback and conceptual refreshers, and proceed into the lesson with confidence.
+- **Curriculum-Wide Diagnostic Content (158 Questions / 79 Submodules)**:
+  - *What Changed*: Authored and embedded 2 diagnostic warm-up questions for every submodule across Lessons 1 and 3–8 (79 submodules, 158 questions in total).
+  - *Why*: Targets common electronics and coding misconceptions identified in the curriculum audit—such as polarity, pin modes, current loops, pullup resistors, and serial communication baud rates.
+  - *User Impact*: Bridges foundational knowledge gaps directly in the flow of learning.
+
+---
+
+### 🏗️ Architecture & Data Layer
+- **Diagnostic Progress Persistence**:
+  - *What Changed*: Added `recordQuickCheckResult` to `ProgressRepository` and implemented local JSON persistence in `ProgressRepositoryImpl` (`lib/data/repositories/progress_repository_impl.dart`).
+  - *Why*: Persists assessment readiness states (`ready`, `warmUp`, `notAssessed`) and bypass status per submodule to support parent/educator dashboard insights without penalizing learner scores.
+- **Curriculum Schema & Validation Rules**:
+  - *What Changed*: Extended `CurriculumValidator` and `scripts/validate_curriculum.py` to enforce structural validation on `quickCheck` JSON arrays, verifying valid option ranges, answer indices, and required non-empty explanations.
+  - *Why*: Guarantees lesson content validity and prevents runtime parsing errors on malformed diagnostic blocks.
+
+---
+
+### 📚 Curriculum Governance & Documentation
+- **Curriculum Guardian Audit & Governance Approval**:
+  - *What Changed*: Formally approved and integrated Phase 25 and Phase 26 audit artifacts, including the `25 Master Curriculum Report`, `25 Conflict Register`, `25 Gap Register`, `25 Approval Matrix`, and multi-agent implementation plans (`plan/26a` through `plan/26g`, `plan/99a`, `plan/99b`). Added `.agents/agents/curriculum-guardian/agent.md`.
+  - *Why*: Establishes formal governance ensuring lessons adhere to strict didactic sequencing, clear component requirements, and age-appropriate technical explanations.
+
+---
+
+### 🛠️ Developer Toolchains & CI/CD
+- **Debian APT Repository Alignment**:
+  - *What Changed*: Aligned Linux packaging scripts (`scripts/generate_deb_keyring.py`, `scripts/package_linux_deb.py`) and workflow `.github/workflows/dispatch-apt.yml` with the central `m3tal-apt-key` repository and keyring infrastructure, preparing for 50-year archive signing keys.
+  - *Why*: Streamlines cross-repo APT repository publishing and ensures consistency across distribution pipelines.
+
+---
 
 ## [0.1.4+14] - 2026-10-07
 
