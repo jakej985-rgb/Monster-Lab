@@ -95,17 +95,38 @@ The package automatically sets up:
 - Executable binary in `/usr/lib/monster-lab/` and launcher at `/usr/bin/monster-lab`.
 - Desktop menu item in `/usr/share/applications/monster-lab.desktop`.
 - High-resolution application icons in `/usr/share/icons/hicolor/256x256/apps/`.
-- Official OpenPGP archive signing keyring at `/etc/apt/keyrings/monster-lab-archive-keyring.gpg` and `/usr/share/keyrings/`.
-- Repository configuration at `/etc/apt/sources.list.d/monster-lab.list`.
+- Official 50-year OpenPGP archive signing keyring at `/etc/apt/keyrings/m3tal-archive-keyring.gpg` and `/usr/share/keyrings/`.
+- Central APT repository configuration at `/etc/apt/sources.list.d/m3tal.list`.
 
-### Manual GPG Keyring Setup (For APT Verification)
+### Central APT Repository & Keyring Setup
 
-If configuring APT repository verification manually:
-```bash
-sudo install -d -m 0755 /etc/apt/keyrings
-curl -fsSL https://github.com/jakej985-rgb/Monster-Lab/releases/latest/download/monster-lab-keyring.gpg \
-  | sudo tee /etc/apt/keyrings/monster-lab-archive-keyring.gpg > /dev/null
-```
+To install or receive automatic updates from the central M3tal APT repository:
+
+1. **Install Prerequisites**:
+   ```bash
+   sudo apt-get update && sudo apt-get install -y curl gnupg
+   ```
+
+2. **Install the Canonical 50-Year Keyring**:
+   ```bash
+   sudo install -d -m 0755 /etc/apt/keyrings
+   curl -fsSL https://jakej985-rgb.github.io/m3tal-apt-key/public.key | sudo gpg --dearmor -o /etc/apt/keyrings/m3tal-archive-keyring.gpg
+   sudo chmod 0644 /etc/apt/keyrings/m3tal-archive-keyring.gpg
+   ```
+
+3. **Verify Key Fingerprint**:
+   ```bash
+   gpg --dry-run --show-keys /etc/apt/keyrings/m3tal-archive-keyring.gpg
+   # Expected Fingerprint: 5F84 FE50 A401 11C9 8141  0E11 775A D147 3BF2 5102
+   # Lifespan: 50 years (Expires 2076-09-25)
+   ```
+
+4. **Configure Repository Source & Install**:
+   ```bash
+   echo "deb [signed-by=/etc/apt/keyrings/m3tal-archive-keyring.gpg] https://jakej985-rgb.github.io/m3tal-apt-key stable main" | sudo tee /etc/apt/sources.list.d/m3tal.list > /dev/null
+   sudo apt-get update
+   sudo apt-get install -y monster-lab
+   ```
 
 ### Running the Portable Tarball
 
@@ -157,9 +178,10 @@ Each official GitHub Release provides both **semantic versioned packages** (e.g.
 | :--- | :--- | :--- | :--- |
 | **Android** | `monster-lab-v<version>-android.apk` | `monster-lab-android.apk` | Sideload APK |
 | **Android** | `monster-lab-v<version>-android.aab` | `monster-lab-android.aab` | Google Play Store Bundle |
-| **Linux** | `monster-lab-v<version>-linux.deb` | `monster-lab-linux.deb` | Debian Package with GPG Keyring |
+| **Linux** | `monster-lab-v<version>-linux.deb` | `monster-lab-linux.deb` | Debian Package with Embedded Keyring |
+| **Linux** | `monster-lab-v<version>-linux.deb.asc` | `monster-lab-linux.deb.asc` | Detached OpenPGP Signature (50-Yr Key) |
 | **Linux** | `monster-lab-v<version>-linux-portable.tar.gz` | `monster-lab-linux-portable.tar.gz` | Standalone Portable Archive |
-| **Linux** | — | `monster-lab-keyring.gpg` | OpenPGP 4096-bit Public Keyring |
+| **Linux** | — | `m3tal-archive-keyring.gpg` | Canonical 50-Year OpenPGP Public Keyring |
 | **Windows** | `monster-lab-v<version>-windows.exe` | `monster-lab-windows.exe` | Graphical Setup Wizard Installer |
 | **Windows** | `monster-lab-v<version>-windows-portable.zip` | `monster-lab-windows-portable.zip` | Standalone Portable ZIP |
 | **Web** | — | `docker-compose.yml` | Pre-configured GHCR Compose File |

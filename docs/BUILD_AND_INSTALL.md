@@ -161,17 +161,22 @@ For automated GitHub Releases, the keystore is injected securely via GitHub Repo
    ```
    Compiled binary and shared libraries are created in `build/linux/x64/release/bundle/`.
 
-2. **Generate GPG Archive Keyring** (if not already generated):
+2. **Synchronize Canonical GPG Keyring**:
    ```bash
    python3 scripts/generate_deb_keyring.py
    ```
-   Outputs public keyrings to `linux/keyring/monster-lab-archive-keyring.gpg`.
+   Synchronizes the official 50-year ecosystem keyring (`5F84FE50A40111C981410E11775AD1473BF25102`) to `linux/keyring/m3tal-archive-keyring.gpg`.
 
-3. **Build Debian Package (`.deb`)**:
+3. **Build and Sign Debian Package (`.deb`)**:
    ```bash
-   python3 scripts/package_linux_deb.py --bundle-dir build/linux/x64/release/bundle --output monster-lab-linux.deb
+   python3 scripts/package_linux_deb.py --bundle-dir build/linux/x64/release/bundle --output monster-lab-linux.deb --sign
    ```
-   This automatically embeds the binary, desktop launcher, icons, GPG archive keyring, and APT sources configuration.
+   This automatically embeds the binary, desktop launcher, icons, canonical `m3tal-archive-keyring.gpg`, configures `/etc/apt/sources.list.d/m3tal.list`, and creates a detached signature (`monster-lab-linux.deb.asc`).
+   
+   To automatically ingest and sign into the central APT repository:
+   ```bash
+   python3 scripts/package_linux_deb.py --bundle-dir build/linux/x64/release/bundle --output monster-lab-linux.deb --sign --push-to-apt-repo
+   ```
 
 4. **Package Portable Tarball**:
    ```bash

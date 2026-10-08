@@ -209,9 +209,10 @@ Monster Lab officially targets Android, Linux, Windows, and Web (Docker):
   - `monster-lab-android.apk`: Direct sideloading APK with USB OTG serial hardware companion.
   - `monster-lab-android.aab`: Google Play Store release bundle.
 - **Linux Desktop**:
-  - `monster-lab-linux.deb`: Standard Debian package with desktop launcher, high-res icons, embedded GPG keyring, and dependency resolution.
+  - `monster-lab-linux.deb`: Standard Debian package with desktop launcher, high-res icons, embedded canonical GPG keyring, and dependency resolution.
+  - `monster-lab-linux.deb.asc`: Detached OpenPGP signature verified with the 50-year canonical M3tal key.
   - `monster-lab-linux-portable.tar.gz`: Portable tarball for any x86_64 Linux distribution.
-  - `monster-lab-keyring.gpg`: Official OpenPGP release keyring for APT verification.
+  - `m3tal-archive-keyring.gpg`: Official 50-year OpenPGP release keyring (`5F84FE50A40111C981410E11775AD1473BF25102`, expires 2076) for APT repository verification.
 - **Windows Desktop**:
   - `monster-lab-windows.exe`: Graphical setup installer wizard with Start Menu and Desktop shortcuts.
   - `monster-lab-windows-portable.zip`: Portable standalone bundle.
@@ -240,9 +241,9 @@ flutter build appbundle --release && cp build/app/outputs/bundle/release/app-rel
 
 # Linux Debian (.deb) Package, Keyring & Portable Tarball
 flutter build linux --release
-python3 scripts/package_linux_deb.py --output monster-lab-linux.deb
+python3 scripts/package_linux_deb.py --output monster-lab-linux.deb --sign
 tar -czf monster-lab-linux-portable.tar.gz -C build/linux/x64/release/bundle .
-cp linux/keyring/monster-lab-archive-keyring.gpg monster-lab-keyring.gpg
+cp linux/keyring/m3tal-archive-keyring.gpg m3tal-archive-keyring.gpg
 
 # Windows Setup Installer (.exe) & Portable Zip
 flutter build windows --release
