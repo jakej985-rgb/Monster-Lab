@@ -43,3 +43,24 @@ Low-voltage hardware only; correct resistor usage; no power shorts; teach wiring
 
 ## Validation
 Digital and analog concepts must connect naturally; active-low must be clear; activities must provide immediate feedback; sensor readiness must be established.
+
+
+## Pre-Test / Readiness Check
+
+Every Lesson 5 submodule gets **2 prerequisite questions**.
+
+Questions should diagnose the knowledge needed for:
+- circuits
+- pins
+- digital outputs
+- simple voltage/electrical ideas
+- breadboard/component recognition where required
+- reading simple input/output examples
+
+Questions must distinguish what the learner already understands from what the submodule will teach.
+
+### Readiness
+- 2/2 = 🟢 Green — Ready
+- 0–1/2 = 🟡 Yellow — Warm Up
+
+Yellow learners get a short targeted review. No red state and no blocking.
