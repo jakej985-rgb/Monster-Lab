@@ -42,3 +42,24 @@ Low-voltage classroom hardware only. Never introduce mains electricity or unsafe
 
 ## Validation
 This must teach physical circuit skills, not become another programming lesson.
+
+
+## Pre-Test / Readiness Check
+
+Every Lesson 6 submodule gets **2 prerequisite questions**.
+
+Questions should diagnose:
+- Arduino pins
+- power and GND
+- basic circuit concepts
+- LED behavior
+- resistor purpose where previously introduced
+- safe low-voltage hardware habits
+
+Do not assume prior breadboard knowledge before the breadboard submodule.
+
+### Readiness
+- 2/2 = 🟢 Green — Ready
+- 0–1/2 = 🟡 Yellow — Warm Up
+
+Yellow learners receive a visual wiring warm-up. No red state and no blocking.
