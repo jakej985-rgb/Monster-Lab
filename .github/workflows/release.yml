@@ -213,25 +213,34 @@ jobs:
       - name: Build Linux Desktop Release
         run: flutter build linux --release
 
-      - name: Package Linux Debian Installer
-        run: python3 scripts/package_linux_deb.py --bundle-dir build/linux/x64/release/bundle --output "monster-lab-${PACKAGE_VERSION}-linux.deb"
+      - name: Package Linux Debian Installer (Signed with Canonical Key)
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.APT_GPG_PRIVATE_KEY || secrets.GPG_PRIVATE_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.APT_GPG_PASSPHRASE || secrets.GPG_PASSPHRASE }}
+          GPG_KEY_ID: ${{ secrets.APT_GPG_KEY_ID || secrets.GPG_KEY_ID || '5F84FE50A40111C981410E11775AD1473BF25102' }}
+        run: |
+          if [ -n "$GPG_PRIVATE_KEY" ]; then
+            echo "Importing canonical 50-year GPG key for Debian release signing..."
+            echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+            python3 scripts/package_linux_deb.py --bundle-dir build/linux/x64/release/bundle --output "monster-lab-${PACKAGE_VERSION}-linux.deb" --sign --key-id "$GPG_KEY_ID" --passphrase "$GPG_PASSPHRASE"
+          else
+            python3 scripts/package_linux_deb.py --bundle-dir build/linux/x64/release/bundle --output "monster-lab-${PACKAGE_VERSION}-linux.deb"
+          fi
 
       - name: Package Linux Portable Bundle
         run: tar -czf "monster-lab-${PACKAGE_VERSION}-linux-portable.tar.gz" -C build/linux/x64/release/bundle .
 
       - name: Prepare Linux GPG Keyring Asset
         run: |
-          if [ -f linux/keyring/m3tal-archive-keyring.gpg ]; then
-            cp linux/keyring/m3tal-archive-keyring.gpg monster-lab-keyring.gpg
-          else
-            cp linux/keyring/monster-lab-archive-keyring.gpg monster-lab-keyring.gpg
-          fi
+          cp linux/keyring/m3tal-archive-keyring.gpg m3tal-archive-keyring.gpg
+          # Provide backward-compatibility copy
+          cp linux/keyring/m3tal-archive-keyring.gpg monster-lab-keyring.gpg
 
       - name: Verify Linux release asset naming format
         run: |
           test -f "monster-lab-${PACKAGE_VERSION}-linux.deb"
           test -f "monster-lab-${PACKAGE_VERSION}-linux-portable.tar.gz"
-          test -f monster-lab-keyring.gpg
+          test -f m3tal-archive-keyring.gpg
           echo "Linux assets verified!"
 
       - name: Publish Linux Assets to GitHub Release
@@ -240,7 +249,9 @@ jobs:
         with:
           files: |
             monster-lab-*-linux.deb
+            monster-lab-*-linux.deb.asc
             monster-lab-*-linux-portable.tar.gz
+            m3tal-archive-keyring.gpg
             monster-lab-keyring.gpg
           draft: false
           prerelease: false

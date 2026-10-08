@@ -10,6 +10,7 @@ import sys
 import shutil
 import subprocess
 import argparse
+from typing import Optional
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_APT_REPO = os.path.expanduser("~/apps/m3tal-apt-key")
@@ -24,7 +25,31 @@ def parse_pubspec_version():
                     return raw.split("+")[0]
     return "0.1.4"
 
-def create_deb_package(bundle_dir: str, output_deb: str, push_to_apt_repo: str = None):
+def sign_deb_package(output_deb: str, key_id: Optional[str] = None, passphrase: Optional[str] = None) -> Optional[str]:
+    """Generate detached GPG signature (.deb.asc) using canonical 50-year key."""
+    gpg_bin = shutil.which("gpg")
+    if not gpg_bin:
+        print("Warning: gpg not found, skipping detached signature.", file=sys.stderr)
+        return None
+
+    asc_path = f"{output_deb}.asc"
+    cmd = [gpg_bin, "--batch", "--yes"]
+    if key_id:
+        cmd.extend(["--default-key", key_id])
+    if passphrase:
+        cmd.extend(["--pinentry-mode", "loopback", "--passphrase", passphrase])
+    cmd.extend(["--detach-sign", "--armor", "--output", asc_path, output_deb])
+
+    res = subprocess.run(cmd, capture_output=True, text=True)
+    if res.returncode == 0:
+        print(f"[SUCCESS] Detached GPG signature created with canonical key: {asc_path}")
+        return asc_path
+    else:
+        print(f"Warning: Failed to sign deb package: {res.stderr}", file=sys.stderr)
+        return None
+
+
+def create_deb_package(bundle_dir: str, output_deb: str, push_to_apt_repo: str = None, sign: bool = False, key_id: Optional[str] = None, passphrase: Optional[str] = None):
     if not os.path.exists(bundle_dir):
         print(f"Error: Bundle directory not found: {bundle_dir}", file=sys.stderr)
         print("Please build the Linux release first: flutter build linux --release", file=sys.stderr)
@@ -173,7 +198,11 @@ def create_deb_package(bundle_dir: str, output_deb: str, push_to_apt_repo: str =
     print("\n--- Package Control Info ---")
     print(info_res.stdout.strip())
 
-    # 9. Optionally push to central apt repository
+    # 9. Optionally sign debian package with detached GPG signature
+    if sign:
+        sign_deb_package(output_deb, key_id=key_id, passphrase=passphrase)
+
+    # 10. Optionally push to central apt repository
     if push_to_apt_repo:
         apt_ingest_script = os.path.join(push_to_apt_repo, "scripts", "ingest_deb.py")
         if os.path.exists(apt_ingest_script):
@@ -192,6 +221,27 @@ if __name__ == "__main__":
                         help="Path to output .deb package")
     parser.add_argument("--push-to-apt-repo", nargs="?", const=DEFAULT_APT_REPO, default=None,
                         help="Path to central m3tal-apt-key repo to push package to (defaults to ~/apps/m3tal-apt-key if flag passed without value)")
+    parser.add_argument("--sign", action="store_true",
+                        help="Generate detached GPG signature (.asc) for the debian package")
+    parser.add_argument("--key-id", default=os.environ.get("APT_GPG_KEY_ID") or os.environ.get("GPG_KEY_ID") or "5F84FE50A40111C981410E11775AD1473BF25102",
+                        help="GPG key ID/fingerprint to sign with")
+
+    default_pass = os.environ.get("APT_GPG_PASSPHRASE") or os.environ.get("GPG_PASSPHRASE")
+    if not default_pass and os.path.exists(os.path.expanduser("~/.config/m3tal/apt_gpg_passphrase")):
+        try:
+            with open(os.path.expanduser("~/.config/m3tal/apt_gpg_passphrase")) as pf:
+                default_pass = pf.read().strip()
+        except Exception:
+            pass
+    parser.add_argument("--passphrase", default=default_pass, help="GPG key passphrase")
+
     args = parser.parse_args()
 
-    create_deb_package(args.bundle_dir, args.output, args.push_to_apt_repo)
+    create_deb_package(
+        bundle_dir=args.bundle_dir,
+        output_deb=args.output,
+        push_to_apt_repo=args.push_to_apt_repo,
+        sign=args.sign,
+        key_id=args.key_id,
+        passphrase=args.passphrase,
+    )

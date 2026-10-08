@@ -49,13 +49,6 @@ def sync_central_keyring():
         except Exception as e:
             print(f"Warning: Failed to download central key: {e}", file=sys.stderr)
 
-    # 3. Maintain compatibility alias for legacy scripts
-    compat_alias = os.path.join(KEYRING_DIR, "monster-lab-archive-keyring.gpg")
-    if os.path.exists(target_gpg):
-        shutil.copy2(target_gpg, compat_alias)
-        compat_root = os.path.join(KEYRING_DIR, "monster-lab-keyring.gpg")
-        shutil.copy2(target_gpg, compat_root)
-
     print(f"Central keyring synchronized: {target_gpg}")
     print(f"Expected Fingerprint: {CENTRAL_KEY_FINGERPRINT}")
 
