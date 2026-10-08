@@ -51,3 +51,24 @@ Learner can explain a sensor, distinguish digital/analog sensing, read a sensor 
 
 ## Validation
 Lesson 5 teaches input components. Lesson 6 teaches physical building. Lesson 7 teaches interpreting real-world measurements.
+
+
+## Pre-Test / Readiness Check
+
+Every Lesson 7 submodule gets **2 prerequisite questions**.
+
+Questions should diagnose:
+- digital vs analog understanding
+- basic inputs
+- potentiometer/analog reading concepts
+- breadboard and wiring readiness
+- reading Serial Monitor output
+- simple output control
+
+The distance-sensor modules should use Lesson 6 knowledge as their prerequisite foundation.
+
+### Readiness
+- 2/2 = 🟢 Green — Ready
+- 0–1/2 = 🟡 Yellow — Warm Up
+
+Yellow learners receive a targeted review. No red state and no blocking.
