@@ -15,7 +15,7 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 KEYRING_DIR = os.path.join(ROOT_DIR, "linux", "keyring")
 
 CENTRAL_KEY_URL = "https://jakej985-rgb.github.io/m3tal-apt-key/public.key"
-CENTRAL_KEY_FINGERPRINT = "B95A45C647577DEBCC877C49AF6190B0C01346DD"
+CENTRAL_KEY_FINGERPRINT = "9DFED0A19DF5351298FE812AED1DAE1980AD1550"
 LOCAL_CENTRAL_REPO = os.path.expanduser("~/apps/m3tal-apt-key")
 
 
