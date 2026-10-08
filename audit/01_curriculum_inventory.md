@@ -13,12 +13,17 @@ The archive contains 7 foundational lesson documents located in `Tutorials/`. Th
 | Lesson | Title | Core Concepts | Hardware / Software Used | Learning Outcome |
 |---|---|---|---|---|
 | **Lesson 1** | What is Arduino and how does it work | Microcontrollers vs computers, inputs/processing/outputs, USB interface, power pins | Arduino Uno / Nano / Mega | Understand board structure, power sources, and the role of the ATmega microcontroller. |
-| **Lesson 2** | Installing the Arduino IDE | IDE installation, CH340 USB drivers, port configuration | Arduino IDE 1.x/2.x, CH340G Driver | Install development tools, detect COM/Serial ports, and establish computer-to-board link. |
+| **Coding Foundations** | Coding Foundations Course (cf_01–cf_08) | Statements, variables, conditional logic, loops, functions, and prediction | Software / App Simulators | Build programming fundamentals before touching C++ code; supports placement skip (`cf_08`). |
+| **Lesson 2A** | Meet Monster Lab (l2a_01–l2a_08) | Monster Lab features: Learn, Parts, Build, Code, Challenges, and safe workflow | Monster Lab Application | Orient learner in the app's physical computing and simulation toolset. |
+| **Lesson 2B** | Arduino IDE Walkthrough (l2b_01–l2b_08) | IDE installation, board/port detection, compile & upload pipeline, serial debugging | Arduino IDE 2.x, Uno R3 | Install tools, verify COM port links, flash first sketch, and inspect terminal output. |
 | **Lesson 3** | Installing Libraries | Software modularity, Library Manager, `.zip` library imports, `#include` statements | Arduino IDE, LiquidCrystal_I2C, NewPing, Servo | Learn how open-source libraries simplify complex communication protocols. |
-| **Lesson 4** | Basics of the Arduino IDE | Sketch anatomy (`setup()` and `loop()`), Verify (Compile), Upload, Serial Monitor baud rates | Arduino IDE, Serial Monitor | Understand execution flow, syntax error checking, and real-time serial debugging. |
+| **Lesson 4** | Basics of the Arduino IDE | Sketch anatomy (`setup()` and `loop()`), 16 MHz clock, syntax error checking, serial telemetry | Arduino IDE, Serial Monitor | Understand execution flow, syntax error checking, and real-time serial debugging. |
 | **Lesson 5** | Blink (Building Your First Project) | Digital outputs, logic HIGH/LOW (5V/0V), clock timing with `delay()`, pin 13 built-in LED | Arduino Uno, Onboard LED | Write, compile, and upload first sketch. Observe immediate physical feedback. |
 | **Lesson 6** | Potentiometer Readings | Analog signals vs digital signals, voltage divider principle, 10-bit ADC (0 to 1023), `analogRead()` | Potentiometer, Breadboard, Jumper wires | Convert variable physical resistance into numeric digital values. Print values to Serial Monitor. |
 | **Lesson 7** | Simple RGB LEDs | Additive color theory (RGB), Pulse Width Modulation (PWM), 8-bit duty cycle (0 to 255), `analogWrite()` | RGB LED (Common Cathode), Current-limiting Resistors (220Ω), Breadboard | Control LED brightness and mix primary colors to generate custom hues. |
+
+> **Curriculum Architecture Note (Phases 23–25 Reconciliation)**:
+> In earlier drafts, Lesson 2 was framed as a single monolithic station setup lesson. To prevent cognitive overload for 6+ beginners, the beginning of the curriculum was modularized into **Coding Foundations** (optional/placement-based), **Course 2A** (Monster Lab app walkthrough), and **Course 2B** (Arduino IDE walkthrough). Legacy progress entries for `lesson_02` automatically map to `l2b_01`..`l2b_08` via `LearnerProgressModel.migrateFromOldFormat`.
 
 ---
 

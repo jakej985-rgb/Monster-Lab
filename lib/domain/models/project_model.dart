@@ -20,6 +20,7 @@ class BuildPhase {
   final String? inoSketchPath;
   final String? codeSnippet;
   final String? codeExplanation;
+  final String? safetyCallout;
   final List<Map<String, String>> wiringConnections;
   final List<String> verificationCheckpoints;
 
@@ -32,6 +33,7 @@ class BuildPhase {
     this.inoSketchPath,
     this.codeSnippet,
     this.codeExplanation,
+    this.safetyCallout,
     this.wiringConnections = const [],
     this.verificationCheckpoints = const [],
   });
@@ -46,6 +48,7 @@ class BuildPhase {
       inoSketchPath: json['inoSketchPath'] as String?,
       codeSnippet: json['codeSnippet'] as String?,
       codeExplanation: json['codeExplanation'] as String?,
+      safetyCallout: json['safetyCallout'] as String?,
       wiringConnections: json['wiringConnections'] != null
           ? (json['wiringConnections'] as List)
               .map((c) => Map<String, String>.from(c as Map))
@@ -66,6 +69,7 @@ class BuildPhase {
         'inoSketchPath': inoSketchPath,
         if (codeSnippet != null) 'codeSnippet': codeSnippet,
         if (codeExplanation != null) 'codeExplanation': codeExplanation,
+        if (safetyCallout != null) 'safetyCallout': safetyCallout,
         if (wiringConnections.isNotEmpty)
           'wiringConnections': wiringConnections,
         'verificationCheckpoints': verificationCheckpoints,

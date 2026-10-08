@@ -99,6 +99,7 @@
       "phaseTitle": "Pre-Flight Laser Safety Briefing",
       "type": "wiringCheck",
       "instructions": "CRITICAL LASER SAFETY: Never point the laser into anyone's eyes or look directly into the beam aperture. Test only against a non-reflective wall or paper target.",
+      "safetyCallout": "OPTICAL EYE SAFETY: Class 2 laser. Never aim at people, pets, or shiny glass/mirror surfaces. You can substitute a 5mm red LED for 100% child-safe testing.",
       "verificationCheckpoints": [
         "Turret pointed toward empty wall target area",
         "Mechanical brackets tightly screwed"

@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 Monster Lab - Debian Package (.deb) Generator
-Builds a standard Linux .deb package from the Flutter Linux release bundle.
+Builds a standard Linux .deb package from the Flutter Linux release bundle,
+integrating with the central M3tal APT repository & keyring.
 """
 
 import os
@@ -11,6 +12,7 @@ import subprocess
 import argparse
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DEFAULT_APT_REPO = os.path.expanduser("~/apps/m3tal-apt-key")
 
 def parse_pubspec_version():
     pubspec_path = os.path.join(ROOT_DIR, "pubspec.yaml")
@@ -20,9 +22,9 @@ def parse_pubspec_version():
                 if line.startswith("version:"):
                     raw = line.split(":", 1)[1].strip()
                     return raw.split("+")[0]
-    return "1.0.0"
+    return "0.1.4"
 
-def create_deb_package(bundle_dir: str, output_deb: str):
+def create_deb_package(bundle_dir: str, output_deb: str, push_to_apt_repo: str = None):
     if not os.path.exists(bundle_dir):
         print(f"Error: Bundle directory not found: {bundle_dir}", file=sys.stderr)
         print("Please build the Linux release first: flutter build linux --release", file=sys.stderr)
@@ -93,7 +95,6 @@ def create_deb_package(bundle_dir: str, output_deb: str):
     # 5. Copy desktop icons
     icon_source = os.path.join(ROOT_DIR, "assets", "icons", "linux", "monster_lab_256x256.png")
     if not os.path.exists(icon_source):
-        # Fallback to master icon
         icon_source = os.path.join(ROOT_DIR, "assets", "images", "app_icon.png")
 
     if os.path.exists(icon_source):
@@ -102,28 +103,28 @@ def create_deb_package(bundle_dir: str, output_deb: str):
         os.chmod(os.path.join(pixmaps_dir, f"{package_name}.png"), 0o644)
         os.chmod(os.path.join(icons_dir, f"{package_name}.png"), 0o644)
 
-    # 6. Copy Debian GPG Keyring & APT sources entry
-    keyring_source = os.path.join(ROOT_DIR, "linux", "keyring", "monster-lab-archive-keyring.gpg")
+    # 6. Copy Central M3tal GPG Keyring & APT sources entry
+    keyring_source = os.path.join(ROOT_DIR, "linux", "keyring", "m3tal-archive-keyring.gpg")
     if not os.path.exists(keyring_source):
-        # Auto-generate keyring if not present
+        # Sync central keyring
         keyring_gen_script = os.path.join(ROOT_DIR, "scripts", "generate_deb_keyring.py")
         if os.path.exists(keyring_gen_script):
             subprocess.run([sys.executable, keyring_gen_script], check=True)
 
     if os.path.exists(keyring_source):
-        usr_keyring_dest = os.path.join(usr_keyrings_dir, "monster-lab-archive-keyring.gpg")
-        etc_keyring_dest = os.path.join(etc_keyrings_dir, "monster-lab-archive-keyring.gpg")
+        usr_keyring_dest = os.path.join(usr_keyrings_dir, "m3tal-archive-keyring.gpg")
+        etc_keyring_dest = os.path.join(etc_keyrings_dir, "m3tal-archive-keyring.gpg")
         shutil.copy2(keyring_source, usr_keyring_dest)
         shutil.copy2(keyring_source, etc_keyring_dest)
         os.chmod(usr_keyring_dest, 0o644)
         os.chmod(etc_keyring_dest, 0o644)
 
-        # Also provide /etc/apt/sources.list.d/monster-lab.list
-        sources_list_path = os.path.join(apt_sources_dir, f"{package_name}.list")
+        # Also provide /etc/apt/sources.list.d/m3tal.list
+        sources_list_path = os.path.join(apt_sources_dir, "m3tal.list")
         with open(sources_list_path, "w", encoding="utf-8") as f:
-            f.write("# Monster Lab Official Debian Repository\n")
-            f.write("# Verification Key: /etc/apt/keyrings/monster-lab-archive-keyring.gpg\n")
-            f.write("deb [signed-by=/etc/apt/keyrings/monster-lab-archive-keyring.gpg] https://github.com/jakej985-rgb/Monster-Lab/releases/latest/download/ ./\n")
+            f.write("# M3tal Official Debian APT Repository\n")
+            f.write("# Verification Key: /etc/apt/keyrings/m3tal-archive-keyring.gpg\n")
+            f.write("deb [signed-by=/etc/apt/keyrings/m3tal-archive-keyring.gpg] https://jakej985-rgb.github.io/m3tal-apt-key stable main\n")
         os.chmod(sources_list_path, 0o644)
 
     # Calculate installed size in KB
@@ -134,7 +135,7 @@ def create_deb_package(bundle_dir: str, output_deb: str):
             total_size += os.path.getsize(fp)
     installed_size_kb = (total_size + 1023) // 1024
 
-    # 6. Create DEBIAN/control file
+    # 7. Create DEBIAN/control file
     control_path = os.path.join(debian_dir, "control")
     with open(control_path, "w", encoding="utf-8") as f:
         f.write(f"Package: {package_name}\n")
@@ -143,16 +144,16 @@ def create_deb_package(bundle_dir: str, output_deb: str):
         f.write("Priority: optional\n")
         f.write("Architecture: amd64\n")
         f.write(f"Installed-Size: {installed_size_kb}\n")
-        f.write("Depends: libc6 (>= 2.31), libgtk-3-0 (>= 3.24), libglib2.0-0\n")
+        f.write("Depends: libc6 (>= 2.31), libgtk-3-0 (>= 3.24), libglib2.0-0, libserialport0\n")
         f.write("Maintainer: Monster Lab Team <support@monsterlab.org>\n")
-        f.write("Homepage: https://github.com/monsterlab/monster_lab\n")
+        f.write("Homepage: https://jakej985-rgb.github.io/M3tal-Hub/Monster-Lab/\n")
         f.write("Description: Monster Lab - Educational Arduino & Electronics Studio\n")
         f.write(" Hands-on offline STEM robotics learning studio for kids.\n")
         f.write(" Features 12 guided lessons, 38 sensor components, 20 build projects,\n")
         f.write(" 24 troubleshooting challenges, and physical serial hardware companion.\n")
     os.chmod(control_path, 0o644)
 
-    # 7. Build DEB package using dpkg-deb
+    # 8. Build DEB package using dpkg-deb
     output_dir = os.path.dirname(os.path.abspath(output_deb))
     os.makedirs(output_dir, exist_ok=True)
 
@@ -172,12 +173,25 @@ def create_deb_package(bundle_dir: str, output_deb: str):
     print("\n--- Package Control Info ---")
     print(info_res.stdout.strip())
 
+    # 9. Optionally push to central apt repository
+    if push_to_apt_repo:
+        apt_ingest_script = os.path.join(push_to_apt_repo, "scripts", "ingest_deb.py")
+        if os.path.exists(apt_ingest_script):
+            print(f"\n--> Pushing package to central repository at {push_to_apt_repo}...")
+            push_res = subprocess.run([sys.executable, apt_ingest_script, output_deb, "--repo-dir", push_to_apt_repo, "--allow-replace"])
+            if push_res.returncode != 0:
+                print(f"Warning: Failed to push to central repository.", file=sys.stderr)
+            else:
+                print(f"[SUCCESS] Successfully published to central repository!")
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Package Monster Lab Linux build into a .deb archive.")
     parser.add_argument("--bundle-dir", default=os.path.join(ROOT_DIR, "build", "linux", "x64", "release", "bundle"),
                         help="Path to compiled Flutter Linux bundle directory")
     parser.add_argument("--output", default=os.path.join(ROOT_DIR, "monster-lab-linux.deb"),
                         help="Path to output .deb package")
+    parser.add_argument("--push-to-apt-repo", nargs="?", const=DEFAULT_APT_REPO, default=None,
+                        help="Path to central m3tal-apt-key repo to push package to (defaults to ~/apps/m3tal-apt-key if flag passed without value)")
     args = parser.parse_args()
 
-    create_deb_package(args.bundle_dir, args.output)
+    create_deb_package(args.bundle_dir, args.output, args.push_to_apt_repo)

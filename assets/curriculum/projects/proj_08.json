@@ -98,6 +98,7 @@
       "phaseTitle": "Pre-Flight Motor Power Isolation",
       "type": "wiringCheck",
       "instructions": "Check that the DC motor has a flyback suppression capacitor or diode across its terminals to prevent inductive voltage spikes from damaging the Arduino.",
+      "safetyCallout": "SAFETY RULE: Never power high-torque motors directly from the Arduino 5V rail. Keep fingers and loose hair clear of spinning motor shafts.",
       "verificationCheckpoints": [
         "Motor wiring clear of breadboard shorts",
         "Motor shafts free to spin without obstruction"

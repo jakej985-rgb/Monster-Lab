@@ -1,96 +1,64 @@
 #!/usr/bin/env python3
 """
-Monster Lab - Debian GPG Keyring Generator
-Generates the official OpenPGP signing key and exports public keyrings
-for Debian/Ubuntu package verification and APT repository integration.
+Monster Lab - Debian GPG Keyring Synchronizer
+Synchronizes and configures the canonical M3tal ecosystem signing keyring
+(m3tal-archive-keyring.gpg) for Debian/Ubuntu package verification.
 """
 
 import os
 import sys
-import tempfile
-import subprocess
 import shutil
+import urllib.request
+import subprocess
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 KEYRING_DIR = os.path.join(ROOT_DIR, "linux", "keyring")
 
-def generate_keyring():
+CENTRAL_KEY_URL = "https://jakej985-rgb.github.io/m3tal-apt-key/public.key"
+CENTRAL_KEY_FINGERPRINT = "B95A45C647577DEBCC877C49AF6190B0C01346DD"
+LOCAL_CENTRAL_REPO = os.path.expanduser("~/apps/m3tal-apt-key")
+
+
+def sync_central_keyring():
     os.makedirs(KEYRING_DIR, exist_ok=True)
+    target_gpg = os.path.join(KEYRING_DIR, "m3tal-archive-keyring.gpg")
+    target_asc = os.path.join(KEYRING_DIR, "m3tal-archive-keyring.asc")
 
-    gpg_binary = shutil.which("gpg")
-    if not gpg_binary:
-        print("Error: gpg executable not found on PATH.", file=sys.stderr)
-        sys.exit(1)
+    # 1. Check local m3tal-apt-key repo first
+    local_gpg = os.path.join(LOCAL_CENTRAL_REPO, "keyrings", "m3tal-archive-keyring.gpg")
+    local_asc = os.path.join(LOCAL_CENTRAL_REPO, "keyrings", "m3tal-archive-keyring.asc")
 
-    temp_gnupg = tempfile.mkdtemp(prefix="monster_lab_gpg_")
-    try:
-        # Generate batch key configuration
-        batch_config = """Key-Type: RSA
-Key-Length: 4096
-Subkey-Type: RSA
-Subkey-Length: 4096
-Name-Real: Monster Lab Archive Automatic Signing Key
-Name-Email: release@monsterlab.org
-Expire-Date: 0
-%no-protection
-%commit
-"""
-        print("Generating Monster Lab OpenPGP 4096-bit release key...")
-        gen_res = subprocess.run(
-            [gpg_binary, "--homedir", temp_gnupg, "--batch", "--gen-key"],
-            input=batch_config,
-            text=True,
-            capture_output=True
-        )
-        if gen_res.returncode != 0:
-            print(f"Error generating GPG key:\n{gen_res.stderr}", file=sys.stderr)
-            sys.exit(gen_res.returncode)
+    if os.path.exists(local_gpg):
+        print(f"Syncing central keyring from local repo: {local_gpg}")
+        shutil.copy2(local_gpg, target_gpg)
+        if os.path.exists(local_asc):
+            shutil.copy2(local_asc, target_asc)
+    else:
+        # 2. Download from official public key URL
+        print(f"Fetching canonical M3tal public key from {CENTRAL_KEY_URL}...")
+        try:
+            req = urllib.request.Request(CENTRAL_KEY_URL, headers={"User-Agent": "MonsterLab-KeySync/1.0"})
+            with urllib.request.urlopen(req) as resp, open(target_asc, "wb") as f:
+                content = resp.read()
+                f.write(content)
 
-        # 1. Export binary keyring (OpenPGP dearmored format)
-        binary_keyring_path = os.path.join(KEYRING_DIR, "monster-lab-archive-keyring.gpg")
-        export_bin = subprocess.run(
-            [gpg_binary, "--homedir", temp_gnupg, "--export"],
-            capture_output=True
-        )
-        if export_bin.returncode != 0:
-            print(f"Error exporting binary keyring:\n{export_bin.stderr}", file=sys.stderr)
-            sys.exit(export_bin.returncode)
+            # Dearmor to binary keyring
+            gpg_bin = shutil.which("gpg")
+            if gpg_bin:
+                subprocess.run([gpg_bin, "--dearmor", "--output", target_gpg, target_asc], check=True)
+        except Exception as e:
+            print(f"Warning: Failed to download central key: {e}", file=sys.stderr)
 
-        with open(binary_keyring_path, "wb") as f:
-            f.write(export_bin.stdout)
-        print(f"Exported binary keyring -> {binary_keyring_path} ({len(export_bin.stdout)} bytes)")
+    # 3. Maintain compatibility alias for legacy scripts
+    compat_alias = os.path.join(KEYRING_DIR, "monster-lab-archive-keyring.gpg")
+    if os.path.exists(target_gpg):
+        shutil.copy2(target_gpg, compat_alias)
+        compat_root = os.path.join(KEYRING_DIR, "monster-lab-keyring.gpg")
+        shutil.copy2(target_gpg, compat_root)
 
-        # 2. Export ASCII-armored public key (.asc)
-        armor_keyring_path = os.path.join(KEYRING_DIR, "monster-lab-archive-keyring.asc")
-        export_armor = subprocess.run(
-            [gpg_binary, "--homedir", temp_gnupg, "--armor", "--export"],
-            capture_output=True,
-            text=True
-        )
-        if export_armor.returncode != 0:
-            print(f"Error exporting armored keyring:\n{export_armor.stderr}", file=sys.stderr)
-            sys.exit(export_armor.returncode)
+    print(f"Central keyring synchronized: {target_gpg}")
+    print(f"Expected Fingerprint: {CENTRAL_KEY_FINGERPRINT}")
 
-        with open(armor_keyring_path, "w", encoding="utf-8") as f:
-            f.write(export_armor.stdout)
-        print(f"Exported ASCII-armored key -> {armor_keyring_path}")
-
-        # 3. Create convenient root/release alias monster-lab-keyring.gpg
-        root_alias_path = os.path.join(KEYRING_DIR, "monster-lab-keyring.gpg")
-        shutil.copy2(binary_keyring_path, root_alias_path)
-        print(f"Created release asset alias -> {root_alias_path}")
-
-        # Print Key Fingerprint
-        fp_res = subprocess.run(
-            [gpg_binary, "--homedir", temp_gnupg, "--list-keys", "--fingerprint"],
-            capture_output=True,
-            text=True
-        )
-        print("\n--- Keyring Fingerprint & Details ---")
-        print(fp_res.stdout.strip())
-
-    finally:
-        shutil.rmtree(temp_gnupg, ignore_errors=True)
 
 if __name__ == "__main__":
-    generate_keyring()
+    sync_central_keyring()

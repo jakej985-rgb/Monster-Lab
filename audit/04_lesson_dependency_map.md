@@ -11,8 +11,11 @@ This document defines the conceptual prerequisites, progression trees, and unloc
 ```mermaid
 flowchart TD
     subgraph Rookie ["Tier 1: Rookie (Fundamentals)"]
-        L1["L1: What is Arduino"] --> L2["L2: Install IDE"]
-        L2 --> L4["L4: IDE Basics"]
+        L1["L1: What is Arduino"] --> CF["Coding Foundations (cf_01-08)"]
+        L1 -. "Placement Skip" .-> L2A["L2A: Meet Monster Lab"]
+        CF --> L2A
+        L2A --> L2B["L2B: Arduino IDE"]
+        L2B --> L4["L4: IDE Basics (Setup/Loop)"]
         L4 --> L5["L5: First Blink"]
         L5 --> L6["L6: Potentiometer (ADC)"]
         L5 --> L7["L7: RGB LED (PWM)"]
