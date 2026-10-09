@@ -1,4 +1,8 @@
-# Phase 27 — Curriculum Sequence and Prerequisite Audit
+# Phase 27 — Curriculum Sequence and Prerequisite Audit Report
+
+**Audit status: REVISION REQUIRED before Phase 26 implementation.**
+
+This report compares the current Phase 26 target lesson outlines with the existing course manifest, Phase 21 legacy lesson blueprints, Phase 23 course/prerequisite plans, and Phase 25 master curriculum report. Findings below are confirmed plan-level conflicts; this does not claim every individual JSON activity has been exhaustively reviewed yet.
 
 ## Goal
 
