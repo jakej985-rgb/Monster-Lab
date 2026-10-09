@@ -30,6 +30,19 @@ Coding Foundations — keep separate and own general programming fundamentals.
 7. Sensors & Reading the Real World — new bridge lesson.
 8. I2C & Connected Devices — old I2C content rebuilt around the new foundation.
 
+## Sequence Gate — Phase 27 Must Be Resolved First
+
+The target sequence above is **provisional** because the Phase 27 audit found forward dependencies: PWM/RGB expects circuit and resistor knowledge that Lesson 6 currently introduces later; Lesson 5 includes PWM-dependent projects; and Lesson 6's sensor activities risk teaching sensor interpretation before Lesson 7.
+
+Before lesson specialists implement or reorder content:
+1. Complete `plan/27 - Curriculum Sequence and Prerequisite Audit.md`.
+2. Approve a dependency-safe course order.
+3. Decide whether to change learner-facing lesson numbering or keep stable IDs with an explicit display-order field.
+4. Update course manifests, prerequisites, next/previous references, and roadmap docs as one coordinated integration change.
+5. Keep stable IDs and learner progress safe; do not silently rename IDs.
+
+Do not treat the historical lesson numbers as more important than prerequisite correctness. A lesson must not depend on a concept first taught later.
+
 ## Multi-Agent Team
 ### Curriculum Architect
 Own sequence, prerequisites, concept ownership, lesson boundaries, repetition rules, and dependency graph. Read Phases 21, 23, 25 and all current curriculum. Produce an authoritative target map before destructive edits.
