@@ -19,7 +19,33 @@
       "title": "Workshop Safety: Electrostatic Discharge (ESD)",
       "type": "story",
       "interactiveWidgetType": "esdSafetyCheck",
-      "markdownContent": "Microcontrollers are sensitive CMOS semiconductor devices. A spark of static electricity under 3,000 volts\u2014too faint for human fingers to feel\u2014can permanently destroy internal silicon transistor gate oxide layers!\n\n### The 3 Golden Rules of ESD Defense:\n1. **Touch Grounded Metal**: Touch a metal desk frame or radiator before handling boards to discharge accumulated static charge to 0V.\n2. **Avoid Static Generators**: Never assemble circuits directly on synthetic carpet or wool blankets.\n3. **Grip PCB Edges**: Always pick up boards by the outer fiberglass edges. Never touch exposed IC pins or header pins directly with your fingers.\n\nPractice proper ESD grounding in the interactive lab below to bring your static voltage potential down to a safe 0 Volts!"
+      "markdownContent": "Microcontrollers are sensitive CMOS semiconductor devices. A spark of static electricity under 3,000 volts\u2014too faint for human fingers to feel\u2014can permanently destroy internal silicon transistor gate oxide layers!\n\n### The 3 Golden Rules of ESD Defense:\n1. **Touch Grounded Metal**: Touch a metal desk frame or radiator before handling boards to discharge accumulated static charge to 0V.\n2. **Avoid Static Generators**: Never assemble circuits directly on synthetic carpet or wool blankets.\n3. **Grip PCB Edges**: Always pick up boards by the outer fiberglass edges. Never touch exposed IC pins or header pins directly with your fingers.\n\nPractice proper ESD grounding in the interactive lab below to bring your static voltage potential down to a safe 0 Volts!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l2b_07_s01_q1",
+          "question": "Why should you avoid touching conductive circuit pins when walking across carpet on dry days?",
+          "options": [
+            "Electrostatic shocks can damage sensitive silicon microchips inside the components",
+            "Carpet causes fires",
+            "Pins will get cold"
+          ],
+          "correctIndex": 0,
+          "explanation": "Electrostatic discharge (ESD) can zap microscopic transistors inside chips before you even notice!",
+          "warmupExplanation": "Static zaps tickle your fingers, but to a tiny chip, they feel like lightning bolts."
+        },
+        {
+          "questionId": "qc_l2b_07_s01_q2",
+          "question": "What is a simple, safe habit before handling bare circuit boards?",
+          "options": [
+            "Touch a grounded metal surface or hold boards by their outer edges",
+            "Dip fingers in juice",
+            "Rub your feet fast on a rug"
+          ],
+          "correctIndex": 0,
+          "explanation": "Discharging static safely and holding boards by their edges protects delicate circuitry!",
+          "warmupExplanation": "Hold boards gently by the corners, like a prized photo or trading card."
+        }
+      ]
     },
     {
       "stepId": "l2b_07_s02",

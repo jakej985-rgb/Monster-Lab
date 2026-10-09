@@ -3,7 +3,7 @@
   "title": "First Breadboard Circuit",
   "summary": "Before wiring sensors and monster alarms, every professional robotics engineer sets up their Power Bus Highways!",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_06",
   "sortOrder": 5,
   "isOptional": false,
@@ -17,9 +17,9 @@
   ],
   "steps": [
     {
-      "stepId": "l06_s05",
+      "stepId": "l06_05_s01",
       "title": "First Breadboard Circuit",
-      "type": "physicalTask",
+      "type": "story",
       "markdownContent": "# First Breadboard Circuit: Power Distribution\n\nBefore wiring sensors and monster alarms, every professional robotics engineer sets up their **Power Bus Highways**!\n\n### The Mission Checklist:\n1. **Unplug USB**: Ensure your Arduino Uno (`comp_uno`) is disconnected from your computer.\n2. **Run +5V Power Wire**:\n   - Take a **Red jumper wire**.\n   - Plug one end into the Arduino **5V** pin socket.\n   - Plug the other end into the **Red `+` power rail** on the breadboard.\n3. **Run Ground Return Wire**:\n   - Take a **Black (or Blue) jumper wire**.\n   - Plug one end into any **GND** pin socket on the Arduino.\n   - Plug the other end into the **Blue/Black `-` power rail** on the breadboard.\n4. **Inspect Connections**: You now have regulated +5V and 0V Ground running along the entire edge of your breadboard, ready for any component!\n\n### Maker Wiring Conventions:\n- **Red**: Positive supply (+5V or +3.3V).\n- **Black or Blue**: 0V Ground (GND).\n- **Yellow, Green, White**: Signal and data lines.\n\nFollowing color conventions prevents costly wiring errors as your robot builds grow in complexity!",
       "quickCheck": [
         {
@@ -49,6 +49,68 @@
           "warmupExplanation": "Consistent color coding keeps circuits safe: Red for positive power (+5V) and Black/Blue for Ground (GND)."
         }
       ]
+    },
+    {
+      "stepId": "l06_05_s02",
+      "title": "Power Bus Distribution Architecture",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "breadboardInternalBusInspector",
+      "markdownContent": "### Power Distribution Architecture\n\nIn complex robots with multiple sensors, motors, and displays, you cannot plug every component directly into the Arduino's single 5V and GND sockets. Instead, engineers distribute power using **Power Bus Highways**:\n\n```\nArduino Uno: [ 5V Pin ] ──────(Red Wire)──────> Breadboard Red (+) Rail\nArduino Uno: [ GND Pin ] ─────(Black Wire)─────> Breadboard Blue (-) Rail\n```\n\n### The Golden Rules of Power Distribution:\n1. **Always Use Standard Colors**:\n   - **Red**: Regulated positive supply (+5V or +3.3V).\n   - **Black or Blue**: System common Ground (0V GND).\n   - Never use Red for Ground or Black for 5V!\n2. **Isolate Power from Ground**:\n   - Check that no jumper wire or component lead bridges directly between the Red (+) rail and the Blue (-) rail.\n3. **Global Accessibility**:\n   - With the power rails energized, any component on any row can tap into power and ground with a short, neat 1-inch jumper wire.\n\nInspect power rail continuity with the bus inspector below!"
+    },
+    {
+      "stepId": "l06_05_s03",
+      "title": "Wire and Verify Power Rails",
+      "type": "physicalTask",
+      "interactiveWidgetType": "groundTroubleshooting",
+      "markdownContent": "### Hands-On Power Rail Wiring\n\nFollow these systematic steps on your physical workbench:\n\n1. **Unplug USB**: Disconnect the USB cable from your computer. Never wire live circuits!\n2. **Run +5V Power Wire**:\n   - Take a Red male-to-male jumper wire.\n   - Plug one pin into the Arduino Uno **5V** socket.\n   - Plug the other pin into the breadboard **Red `+` rail**.\n3. **Run Ground Return Wire**:\n   - Take a Black (or dark blue) male-to-male jumper wire.\n   - Plug one pin into any Arduino Uno **GND** socket.\n   - Plug the other pin into the breadboard **Blue/Black `-` rail**.\n4. **Pre-Power Sanity Inspection**:\n   - Visually check that the Red and Black wires do not touch or enter the same row.\n   - Verify both pins are seated firmly into the breadboard clips.\n5. **Energize and Verify**:\n   - Plug the USB cable in. The Arduino's green `ON` LED should light steadily. If it dims or flashes off, immediately unplug USB—that indicates a short circuit!"
+    },
+    {
+      "stepId": "l06_05_s04",
+      "title": "Power Bus Mastery Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Confirm your understanding of breadboard power rails, wiring color codes, and power pre-checks.",
+      "interactiveConfig": {
+        "question": "Why do engineers connect Arduino 5V and GND to the breadboard side rails before wiring components?",
+        "options": [
+          "To create shared power and ground buses so multiple components can easily access power anywhere on the board",
+          "To speed up USB code compilation",
+          "Because breadboards cannot hold wires without power"
+        ],
+        "correctIndex": 0,
+        "explanation": "Power rails distribute 5V and Ground down the entire board, allowing multiple components to share power without crowding the Arduino pins.",
+        "questions": [
+          {
+            "question": "Why do engineers connect Arduino 5V and GND to the breadboard side rails before wiring components?",
+            "options": [
+              "To create shared power and ground buses so multiple components can easily access power anywhere on the board",
+              "To speed up USB code compilation",
+              "Because breadboards cannot hold wires without power"
+            ],
+            "correctIndex": 0,
+            "explanation": "Power rails distribute 5V and Ground down the entire board, allowing multiple components to share power without crowding the Arduino pins."
+          },
+          {
+            "question": "What color jumper wire is universally reserved for Ground (0V reference potential)?",
+            "options": [
+              "Black (or dark blue)",
+              "Bright orange",
+              "Solid red"
+            ],
+            "correctIndex": 0,
+            "explanation": "Black (or blue) is universally used for Ground, while Red is reserved for positive power supplies."
+          },
+          {
+            "question": "What should you do immediately if the Arduino green 'ON' LED turns off or dims when you plug in USB?",
+            "options": [
+              "Unplug USB immediately and check your breadboard for an accidental power-to-ground short circuit",
+              "Leave it plugged in for 20 minutes to see if it heats up",
+              "Spray water on the breadboard"
+            ],
+            "correctIndex": 0,
+            "explanation": "A dimming or extinguishing ON LED indicates an overcurrent or short circuit tripping USB power protection; disconnect immediately!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

@@ -139,6 +139,50 @@
           "warmupExplanation": "`INPUT_PULLUP` engages the internal resistor so the input pin stays stable at 5V when the switch is open."
         }
       ]
+    },
+    {
+      "stepId": "l05_16_s02",
+      "title": "The Physical Controls Capstone",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "Interactive Console Capstone\nCombine two pushbuttons and one potentiometer to build a full robotic cockpit control console!"
+    },
+    {
+      "stepId": "l05_16_s03",
+      "title": "Hands-On: Input Challenge",
+      "type": "physicalTask",
+      "interactiveWidgetType": "interactiveTroubleshooting",
+      "markdownContent": "### Interactive Bench Activity\nUse the simulated tool to test and observe how input challenge operates in a circuit."
+    },
+    {
+      "stepId": "l05_16_s04",
+      "title": "Controls Capstone Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of physical inputs and circuit mechanics.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What is the golden rule of electrical workbench wiring?",
+            "options": [
+              "Always disconnect power before placing or rearranging wires",
+              "Wire everything as fast as possible",
+              "Never use resistors"
+            ],
+            "correctIndex": 0,
+            "explanation": "Unplugging power protects delicate chips and prevents accidental short circuits!"
+          },
+          {
+            "question": "What makes physical inputs so exciting in robotics engineering?",
+            "options": [
+              "They allow human operators and the physical environment to guide robot behavior",
+              "They use up spare pins",
+              "They require no code"
+            ],
+            "correctIndex": 0,
+            "explanation": "Physical inputs bridge the gap between people and machines, turning static circuits into interactive robots!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 15

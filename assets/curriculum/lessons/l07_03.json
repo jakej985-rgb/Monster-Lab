@@ -3,7 +3,7 @@
   "title": "Analog Sensors",
   "summary": "The physical universe does not always flip between pure black and white!",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_07",
   "sortOrder": 3,
   "isOptional": false,
@@ -47,6 +47,58 @@
           "warmupExplanation": "Digital sensors can only answer 'Is it hot: YES/NO?'. An analog sensor can report the exact continuous temperature value."
         }
       ]
+    },
+    {
+      "stepId": "l07_03_s02",
+      "title": "The 10-Bit ADC Architecture",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### The Analog-to-Digital Converter (ADC)\n\nReal-world phenomena\u2014such as fading sunlight, room temperature, and potentiometer angles\u2014change smoothly across infinite gradients. Microcontrollers, however, only process numbers!\n\nThe Arduino Uno ATmega328P contains an internal **10-bit Successive Approximation ADC**:\n\n```\nContinuous Voltage Input (0.00V to 5.00V)\n                  \u2502\n                  \u25bc\n+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500+\n|          10-Bit Successive Approximation ADC         |\n|  2^10 = 1024 Discrete Quantization Levels (0 to 1023)|\n+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500+\n                  \u2502\n                  \u25bc\n       Resolution = 5.0V / 1024 = 4.88 mV per step\n\n0.00V \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba ADC Reading = 0\n1.25V \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba ADC Reading = 256\n2.50V \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba ADC Reading = 512\n3.75V \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba ADC Reading = 768\n5.00V \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba ADC Reading = 1023\n```\n\nWhen you call `analogRead(A0)`, the ADC samples the voltage on pin A0 and returns an integer from 0 to 1023."
+    },
+    {
+      "stepId": "l07_03_s03",
+      "title": "Analog Jitter & Software Filtering",
+      "type": "physicalTask",
+      "interactiveWidgetType": "analogReadNoiseFilter",
+      "markdownContent": "### Measuring and Smoothing Analog Signals\n\nBecause ADC conversions measure tiny voltage steps (4.88 mV), small thermal ripples and supply fluctuations produce slight reading jitter (e.g. 511, 513, 512, 514).\n\n```cpp\n// Moving Average of 8 consecutive readings\nint readSmoothedAnalog(int pin) {\n  long sum = 0;\n  for (int i = 0; i < 8; i++) {\n    sum += analogRead(pin);\n    delay(2);\n  }\n  return sum / 8;\n}\n```\n\n**Bench Experiment:**\nUse the noise filter simulator below to explore how raw analog sensor jitter is smoothed using software averaging before being passed to robot motor and alarm logic!"
+    },
+    {
+      "stepId": "l07_03_s04",
+      "title": "Analog Sensors Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your grasp of analog voltages and 10-bit ADC resolution.",
+      "interactiveConfig": {
+        "question": "What integer value does analogRead() return when an analog pin receives exactly 2.50V on a 5V Arduino Uno?",
+        "options": [
+          "Approximately 512",
+          "Exactly 2.5",
+          "1023"
+        ],
+        "correctIndex": 0,
+        "explanation": "2.5V is half of the 5.0V reference range. Halfway through the 10-bit range (0 to 1023) is approximately 512 counts.",
+        "questions": [
+          {
+            "question": "What integer value does analogRead() return when an analog pin receives exactly 2.50V on a 5V Arduino Uno?",
+            "options": [
+              "Approximately 512",
+              "Exactly 2.5",
+              "1023"
+            ],
+            "correctIndex": 0,
+            "explanation": "2.5V is half of the 5.0V reference range. Halfway through the 10-bit range (0 to 1023) is approximately 512 counts."
+          },
+          {
+            "question": "What is the resolution of the built-in ADC on an Arduino Uno R3?",
+            "options": [
+              "10-bit (1024 discrete quantization steps)",
+              "8-bit (256 discrete quantization steps)",
+              "1-bit (HIGH or LOW only)"
+            ],
+            "correctIndex": 0,
+            "explanation": "The ATmega328P microcontroller has a 10-bit ADC, which divides the 0V-5V input voltage into 2^10 = 1024 integer steps (0 to 1023)."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

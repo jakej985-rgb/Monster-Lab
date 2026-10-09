@@ -18,7 +18,33 @@
       "stepId": "l2b_03_s01",
       "title": "Connecting the USB Cable Safely",
       "type": "physicalTask",
-      "markdownContent": "Connect your Arduino Uno development board to your computer using the standard USB Type-B cable.\n\n### Step-by-Step Connection Procedure:\n1. **Inspect Your Workspace**: Ensure your table is completely dry, clean, and free of loose conductive metal clippings or staples.\n2. **Plug Board End**: Firmly insert the square **USB Type-B** plug into the silver receptacle on your Arduino Uno until it clicks.\n3. **Plug Computer End**: Insert the flat rectangular **USB Type-A** plug into a powered USB port on your PC or laptop.\n4. **Verify Power Beacon**: Look at the Arduino Uno. The green surface-mount LED labeled **ON** should glow solid green, indicating regulated 5V power!"
+      "markdownContent": "Connect your Arduino Uno development board to your computer using the standard USB Type-B cable.\n\n### Step-by-Step Connection Procedure:\n1. **Inspect Your Workspace**: Ensure your table is completely dry, clean, and free of loose conductive metal clippings or staples.\n2. **Plug Board End**: Firmly insert the square **USB Type-B** plug into the silver receptacle on your Arduino Uno until it clicks.\n3. **Plug Computer End**: Insert the flat rectangular **USB Type-A** plug into a powered USB port on your PC or laptop.\n4. **Verify Power Beacon**: Look at the Arduino Uno. The green surface-mount LED labeled **ON** should glow solid green, indicating regulated 5V power!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l2b_03_s01_q1",
+          "question": "Why must you select the correct Board (e.g. Arduino Uno) in the Arduino IDE Tools menu?",
+          "options": [
+            "So the compiler generates machine instructions tailored to that exact chip hardware",
+            "It changes the color of the IDE",
+            "It is purely cosmetic"
+          ],
+          "correctIndex": 0,
+          "explanation": "Different boards have different chips, memory sizes, and pin configurations. The IDE must know which one you are using!",
+          "warmupExplanation": "Different game consoles need different game discs. The IDE needs to know which board is plugged in."
+        },
+        {
+          "questionId": "qc_l2b_03_s01_q2",
+          "question": "What does the \"Port\" (COM port on Windows or /dev/tty on Linux/macOS) represent?",
+          "options": [
+            "The virtual communication channel through which your computer talks to the USB-connected board",
+            "A sea port where ships dock",
+            "An audio headphone jack"
+          ],
+          "correctIndex": 0,
+          "explanation": "The serial port is the designated USB channel connecting your computer's operating system to the Arduino!",
+          "warmupExplanation": "Think of the Port as a dedicated telephone line between your computer and the Arduino."
+        }
+      ]
     },
     {
       "stepId": "l2b_03_s02",

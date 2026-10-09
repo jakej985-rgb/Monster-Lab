@@ -16,7 +16,33 @@
       "stepId": "l2a_01_s01",
       "title": "Your Robot Mentor",
       "type": "story",
-      "markdownContent": "Welcome to **Monster Lab**!\n\nMonster Lab is an interactive app that replaces a traditional teacher. It acts as your personal robot mentor, teaching you how to build real Arduino circuits and code them from scratch.\n\nEverything you need to know is right here in the app. Let's explore how it works!"
+      "markdownContent": "Welcome to **Monster Lab**!\n\nMonster Lab is an interactive app that replaces a traditional teacher. It acts as your personal robot mentor, teaching you how to build real Arduino circuits and code them from scratch.\n\nEverything you need to know is right here in the app. Let's explore how it works!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l2a_01_s01_q1",
+          "question": "What does Monster Lab help you build?",
+          "options": [
+            "Real Arduino circuits and interactive robotics projects",
+            "Cardboard dollhouses",
+            "Paper airplanes"
+          ],
+          "correctIndex": 0,
+          "explanation": "Monster Lab is your mentor that guides you through building real hardware electronics and writing code!",
+          "warmupExplanation": "Monster Lab turns your computer into a high-tech workshop for robotics and inventing."
+        },
+        {
+          "questionId": "qc_l2a_01_s01_q2",
+          "question": "How does software code connect with physical hardware?",
+          "options": [
+            "Software instructions tell the hardware when to glow, move, or beep",
+            "They are completely unrelated",
+            "Hardware operates without any rules"
+          ],
+          "correctIndex": 0,
+          "explanation": "Software is the thought/plan and hardware is the body/action!",
+          "warmupExplanation": "Your brain thinks to wave a hand, and your arm moves. Software directs hardware!"
+        }
+      ]
     },
     {
       "stepId": "l2a_01_s02",

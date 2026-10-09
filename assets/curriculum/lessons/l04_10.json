@@ -137,6 +137,50 @@
           "warmupExplanation": "Red + Blue = Magenta! Set Red to 255, Blue to 255, and Green to 0."
         }
       ]
+    },
+    {
+      "stepId": "l04_10_s02",
+      "title": "The Mood Lamp Architecture",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### The Monster Mood Lamp Capstone\nIn this challenge, you combine loops, variables, and PWM to create a breathing mood light!\n\nThe sketch smoothly transitions from Ruby Red \u2192 Emerald Green \u2192 Sapphire Blue and back without abrupt jumps."
+    },
+    {
+      "stepId": "l04_10_s03",
+      "title": "Deconstruct the Color Transition Code",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "codeDeconstruction",
+      "markdownContent": "### Code Walkthrough\nInspect how three analogWrite() statements work inside a for loop to blend colors smoothly."
+    },
+    {
+      "stepId": "l04_10_s04",
+      "title": "PWM Mastery Challenge Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of the concepts covered in this module.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "How do you create a smooth breathing fade effect in code?",
+            "options": [
+              "Gradually increase and decrease the PWM value using a loop with small delay pauses",
+              "Turn power switch on and off with your hand",
+              "Shake the board gently"
+            ],
+            "correctIndex": 0,
+            "explanation": "Incrementing analogWrite() values in a loop creates silky smooth pulsing animations!"
+          },
+          {
+            "question": "What hardware capability makes PWM so versatile for robotics?",
+            "options": [
+              "It can control LED brightness, motor speed, and servo positioning without complex analog circuitry",
+              "It makes sound without a buzzer",
+              "It stores extra memory"
+            ],
+            "correctIndex": 0,
+            "explanation": "PWM is the universal digital technique for variable power, motor speed, and robot actuators!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 15

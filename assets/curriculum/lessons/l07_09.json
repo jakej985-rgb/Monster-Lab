@@ -3,7 +3,7 @@
   "title": "Multiple Sensors",
   "summary": "Living creatures do not rely on just one sense.",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_07",
   "sortOrder": 9,
   "isOptional": false,
@@ -47,6 +47,58 @@
           "warmupExplanation": "Use || when either warning signal is enough to trigger the protective response!"
         }
       ]
+    },
+    {
+      "stepId": "l07_09_s02",
+      "title": "Multi-Sensor Fusion Architecture",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### Multi-Sensor Fusion\n\nLiving creatures don't navigate with only one sense. A friendly lab monster combines sight, sound, and touch simultaneously!\n\nIn robotics, **sensor fusion** combines data from multiple sensors to make reliable, intelligent decisions using Boolean logic:\n\n```\n[ Light Sensor (LDR) ] \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba isDark = (ldr < 400)\n                                        \u2502\n                                        \u25bc\n                                [ Boolean Logic ] \u2500\u2500\u25ba TRIGGER SENTRY ALARM?\n                                        \u25b2\n[ Ultrasonic Distance ] \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba isClose = (dist < 15)\n```\n\n- **Logical AND (`&&`)**: BOTH conditions must be true simultaneously!\n  ```cpp\n  if (isDark && isClose) {\n    // Only alarm if it is night AND an intruder is close!\n  }\n  ```\n- **Logical OR (`||`)**: EITHER condition triggers the action!\n  ```cpp\n  if (bumpSwitchPressed || distanceCm < 5) {\n    // Emergency stop if bumped OR wall too close!\n  }\n  ```"
+    },
+    {
+      "stepId": "l07_09_s03",
+      "title": "Evaluating Multi-Sensor Decision Matrices",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "interactiveTroubleshooting",
+      "markdownContent": "### Hands-On: Sentry Guard Logic Matrix\n\nReview this truth table for the Night Sentry Robot:\n\n| Light Level (`isDark`) | Distance (`isClose`) | `isDark && isClose` | Monster Action |\n|:---:|:---:|:---:|:---|\n| Bright (False) | Far (False) | **FALSE** | Sleeping (Standby) |\n| Bright (False) | Near (True) | **FALSE** | Ignoring (Daytime visitor) |\n| Dark (True) | Far (False) | **FALSE** | Patrolling quietly |\n| Dark (True) | Near (True) | **TRUE** | **ALARM TRIGGERED!** |\n\n**Troubleshooting Lab:**\nPractice testing multi-condition `if` statements and identifying logic bugs in the interactive simulator below!"
+    },
+    {
+      "stepId": "l07_09_s04",
+      "title": "Multi-Sensor Fusion Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your mastery of multi-sensor fusion and C++ Boolean operators.",
+      "interactiveConfig": {
+        "question": "Which C++ Boolean operator requires BOTH sensor conditions to be true before executing an action?",
+        "options": [
+          "&& (Logical AND)",
+          "|| (Logical OR)",
+          "! (Logical NOT)"
+        ],
+        "correctIndex": 0,
+        "explanation": "The logical AND operator (&&) evaluates to true only if both expressions on its left and right sides are true.",
+        "questions": [
+          {
+            "question": "Which C++ Boolean operator requires BOTH sensor conditions to be true before executing an action?",
+            "options": [
+              "&& (Logical AND)",
+              "|| (Logical OR)",
+              "! (Logical NOT)"
+            ],
+            "correctIndex": 0,
+            "explanation": "The logical AND operator (&&) evaluates to true only if both expressions on its left and right sides are true."
+          },
+          {
+            "question": "If an autonomous robot should halt whenever a bumper switch is pressed OR an ultrasonic rangefinder detects an obstacle, which operator connects the checks?",
+            "options": [
+              "|| (Logical OR)",
+              "&& (Logical AND)",
+              "== (Equality)"
+            ],
+            "correctIndex": 0,
+            "explanation": "The logical OR operator (||) evaluates to true if either condition (or both) is true, making it ideal for safety triggers."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

@@ -16,7 +16,33 @@
       "stepId": "l2a_07_s01",
       "title": "Safety First!",
       "type": "story",
-      "markdownContent": "Unlike software, hardware can be permanently broken if you make a mistake.\n\nPlugging a wire into the wrong place can cause a **short circuit**, instantly destroying an LED or even your Arduino board. You must learn the Safe Hardware Workflow."
+      "markdownContent": "Unlike software, hardware can be permanently broken if you make a mistake.\n\nPlugging a wire into the wrong place can cause a **short circuit**, instantly destroying an LED or even your Arduino board. You must learn the Safe Hardware Workflow.",
+      "quickCheck": [
+        {
+          "questionId": "qc_l2a_07_s01_q1",
+          "question": "What is electrostatic discharge (ESD) and why should we be aware of it?",
+          "options": [
+            "A tiny spark of static electricity that can damage microchips without you even feeling it",
+            "A magical energy beam",
+            "A special battery boost"
+          ],
+          "correctIndex": 0,
+          "explanation": "Static electricity built up on fingers can shock delicate microchips. Touching grounded surfaces discharges static safely!",
+          "warmupExplanation": "Ever gotten a tiny shock after walking on a carpet? Electronics feel that shock much harder than you do."
+        },
+        {
+          "questionId": "qc_l2a_07_s01_q2",
+          "question": "How should you organize your workbench before starting a build?",
+          "options": [
+            "Keep tools, wires, and parts clean, dry, and organized in trays",
+            "Pile everything in a messy heap with drinks nearby",
+            "Cover the desk with conductive foil"
+          ],
+          "correctIndex": 0,
+          "explanation": "A clean, dry workbench prevents accidental short circuits and keeps components easy to find!",
+          "warmupExplanation": "Keep liquids far away from electronics and give yourself plenty of space to work."
+        }
+      ]
     },
     {
       "stepId": "l2a_07_s02",

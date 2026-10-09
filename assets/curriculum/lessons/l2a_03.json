@@ -16,7 +16,33 @@
       "stepId": "l2a_03_s01",
       "title": "Welcome to the Parts Lab",
       "type": "story",
-      "markdownContent": "The **Parts Lab** is your digital hardware encyclopedia.\n\nIt lists every single component, wire, sensor, and board you'll use in Monster Lab. It's the perfect place to go when you encounter a new part and want to know how it works."
+      "markdownContent": "The **Parts Lab** is your digital hardware encyclopedia.\n\nIt lists every single component, wire, sensor, and board you'll use in Monster Lab. It's the perfect place to go when you encounter a new part and want to know how it works.",
+      "quickCheck": [
+        {
+          "questionId": "qc_l2a_03_s01_q1",
+          "question": "Where do you go in Monster Lab to inspect electronic components, pinouts, and safety specs?",
+          "options": [
+            "The Parts Lab",
+            "The trash bin",
+            "The settings menu"
+          ],
+          "correctIndex": 0,
+          "explanation": "The Parts Lab is an encyclopedia of every sensor, motor, IC, and resistor in your Monster Lab kit!",
+          "warmupExplanation": "Before cooking, chefs check their ingredients. In the Parts Lab, you discover all your robot pieces."
+        },
+        {
+          "questionId": "qc_l2a_03_s01_q2",
+          "question": "Why is knowing a component's pinout and voltage rating important before building?",
+          "options": [
+            "Connecting wrong voltages or pins backwards can damage delicate electronics",
+            "Colors look prettier",
+            "To make the board heavier"
+          ],
+          "correctIndex": 0,
+          "explanation": "Electronics are designed for specific voltages (like 5V or 3.3V). Checking pinouts keeps components safe!",
+          "warmupExplanation": "Plugging a toy into the wrong battery could hurt it. Inspecting pinouts keeps hardware healthy."
+        }
+      ]
     },
     {
       "stepId": "l2a_03_s02",

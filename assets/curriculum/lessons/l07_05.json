@@ -3,7 +3,7 @@
   "title": "Light Sensors",
   "summary": "Now let's give our monster the sense of sight using the Light Dependent Resistor (LDR / Photoresistor, comp19)!",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_07",
   "sortOrder": 5,
   "isOptional": false,
@@ -47,6 +47,58 @@
           "warmupExplanation": "Recall Lesson 6: Arduino's ADC pin measures voltage! Pairing the LDR with a fixed resistor creates a voltage divider that splits the 5V supply."
         }
       ]
+    },
+    {
+      "stepId": "l07_05_s02",
+      "title": "Light-Dependent Resistor & Voltage Divider",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### The Science of Photoresistance\n\nThe **Light-Dependent Resistor (LDR / Photoresistor, `comp_19`)** contains a cadmium sulfide semiconductor track:\n- **Total Darkness**: Photons are absent, electrons are trapped -> Resistance soars over **1,000,000 \u03a9 (1 M\u03a9)**.\n- **Bright Sunshine**: Photons strike the semiconductor, freeing electrons -> Resistance plummets to **few hundred \u03a9**.\n\n```\n         +5V Power Rail\n              \u2502\n             \u250c\u2534\u2510\n             \u2502 \u2502  Photoresistor (LDR)\n             \u2514\u252c\u2518  (Variable Resistance R1)\n              \u2502\n              \u251c\u2500\u2500\u2500\u25ba Analog Pin A0  (Vout = 5V * R2 / (R1 + R2))\n              \u2502\n             \u250c\u2534\u2510\n             \u2502 \u2502  Fixed Resistor (10 k\u03a9)\n             \u2514\u252c\u2518  (Reference Resistance R2)\n              \u2502\n         GND Ground Rail\n```\n\nBecause the Arduino ADC only measures voltage (not raw resistance), pairing the LDR with a fixed 10k\u03a9 resistor in a **voltage divider** converts changing resistance into a varying 0V to 5V voltage signal!"
+    },
+    {
+      "stepId": "l07_05_s03",
+      "title": "Calibrating Ambient Light Telemetry",
+      "type": "physicalTask",
+      "interactiveWidgetType": "analogReadNoiseFilter",
+      "markdownContent": "### Bench Experiment: Light vs Shadow\n\nWhen wiring your LDR circuit:\n1. Connect one leg of the LDR to +5V.\n2. Connect the other leg to analog pin **A0**, AND connect a 10k\u03a9 resistor from that same A0 junction to **GND**.\n\n```cpp\nvoid setup() {\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int lightLevel = analogRead(A0);\n  Serial.print(\"Raw Light Level (0-1023): \");\n  Serial.println(lightLevel);\n  delay(100);\n}\n```\n\n**Laboratory Task:**\nObserve the live readings in the simulator. Cover the sensor with your thumb to observe darkness drop, then shine a light to observe the voltage rise!"
+    },
+    {
+      "stepId": "l07_05_s04",
+      "title": "Light Sensor Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your mastery of photoresistors and voltage divider principles.",
+      "interactiveConfig": {
+        "question": "What happens to the internal electrical resistance of an LDR when bright light strikes its surface?",
+        "options": [
+          "Its electrical resistance decreases sharply",
+          "Its electrical resistance increases to infinity",
+          "Its electrical resistance stays permanently at 10,000 ohms"
+        ],
+        "correctIndex": 0,
+        "explanation": "Incoming light photons energize electrons in the semiconductor material, dramatically reducing electrical resistance.",
+        "questions": [
+          {
+            "question": "What happens to the internal electrical resistance of an LDR when bright light strikes its surface?",
+            "options": [
+              "Its electrical resistance decreases sharply",
+              "Its electrical resistance increases to infinity",
+              "Its electrical resistance stays permanently at 10,000 ohms"
+            ],
+            "correctIndex": 0,
+            "explanation": "Incoming light photons energize electrons in the semiconductor material, dramatically reducing electrical resistance."
+          },
+          {
+            "question": "Why must an LDR be paired with a fixed resistor in a voltage divider circuit to be read by an Arduino?",
+            "options": [
+              "Because the Arduino ADC measures voltage, not raw resistance; the divider translates resistance shifts into voltage changes",
+              "Because the LDR would otherwise explode from high battery voltage",
+              "Because the Arduino can only run code when resistors are present"
+            ],
+            "correctIndex": 0,
+            "explanation": "The Arduino's analog inputs only measure electrical potential (voltage from 0V to 5V). A voltage divider circuit transforms variable resistance into proportional voltage."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

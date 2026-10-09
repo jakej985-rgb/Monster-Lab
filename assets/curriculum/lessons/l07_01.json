@@ -3,7 +3,7 @@
   "title": "What Is a Sensor?",
   "summary": "Just like humans and friendly lab monsters use eyes to see, ears to hear, and skin to feel warmth, your Arduino needs electronic senses to understa...",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_07",
   "sortOrder": 1,
   "isOptional": false,
@@ -47,6 +47,58 @@
           "warmupExplanation": "Sensors are inputs that listen to the world, while lights, speakers, and motors are outputs that take action."
         }
       ]
+    },
+    {
+      "stepId": "l07_01_s02",
+      "title": "The Sensory Perception Pipeline",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### How Robots Perceive Reality\n\nIn electronics, sensors act as **transducers**\u2014devices that convert one form of energy into electrical energy.\n\n```\n+--------------------------------------------------------------------------+\n|                       ROBOT PERCEPTION PIPELINE                          |\n|                                                                          |\n|  [Physical World]      Photons, Sound Waves, Temperature, Proximity      |\n|         \u2502                                                                |\n|         \u25bc                                                                |\n|  [Transducer Element]  Material reacts (resistance shifts, piezo charges)|\n|         \u2502                                                                |\n|         \u25bc                                                                |\n|  [Conditioning Circuit]Voltage divider or amplifier converts to 0V\u20135V    |\n|         \u2502                                                                |\n|         \u25bc                                                                |\n|  [Arduino Input Pin]   Digital GPIO (HIGH/LOW) or Analog ADC (0\u20131023)    |\n|         \u2502                                                                |\n|         \u25bc                                                                |\n|  [Microcontroller CPU] Firmware evaluates conditional thresholds         |\n|         \u2502                                                                |\n|         \u25bc                                                                |\n|  [Actuator Action]     LED illuminates, buzzer chimes, motor spins       |\n+--------------------------------------------------------------------------+\n```\n\nEvery sensory decision follows this strict chain. If any link is broken\u2014whether a loose ground wire or a software logic error\u2014perception fails!"
+    },
+    {
+      "stepId": "l07_01_s03",
+      "title": "Filtering Real-World Noise",
+      "type": "physicalTask",
+      "interactiveWidgetType": "analogReadNoiseFilter",
+      "markdownContent": "### The Noisy Physical World\n\nReal environments are filled with invisible electromagnetic interference (EMI)\u2014such as 60Hz hum radiating from room power cords and radio waves.\n\nWhen a sensor wire is unplugged or left **floating**, it acts like an antenna, picking up wild electrical noise that jumps between random values!\n\n```cpp\n// Typical EMA (Exponential Moving Average) filter formula\nsmoothedValue = (alpha * rawReading) + ((1.0 - alpha) * smoothedValue);\n```\n\n**Laboratory Task:**\n1. Inspect the interactive noise filter simulator below.\n2. Observe how a **floating pin** fluctuates erratically due to environmental EMI.\n3. Compare it to a **grounded reference** (solid 0 counts) and a **smoothed filter** that tames raw jitter into smooth, actionable telemetry!"
+    },
+    {
+      "stepId": "l07_01_s04",
+      "title": "Perception Knowledge Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Verify your understanding of robotic perception and electronic transducers before proceeding to digital sensors!",
+      "interactiveConfig": {
+        "question": "What is the primary role of a transducer inside a robotic sensor?",
+        "options": [
+          "It converts real-world physical conditions into measurable electrical signals",
+          "It stores compiled C++ sketches in microcontroller flash memory",
+          "It steps up USB battery voltage to power heavy high-voltage motors"
+        ],
+        "correctIndex": 0,
+        "explanation": "Transducers convert physical phenomena like light, sound, pressure, or heat into electrical signals (voltage, current, or resistance) that microcontrollers can measure.",
+        "questions": [
+          {
+            "question": "What is the primary role of a transducer inside a robotic sensor?",
+            "options": [
+              "It converts real-world physical conditions into measurable electrical signals",
+              "It stores compiled C++ sketches in microcontroller flash memory",
+              "It steps up USB battery voltage to power heavy high-voltage motors"
+            ],
+            "correctIndex": 0,
+            "explanation": "Transducers convert physical phenomena like light, sound, pressure, or heat into electrical signals (voltage, current, or resistance) that microcontrollers can measure."
+          },
+          {
+            "question": "Why does an unconnected (floating) analog input pin produce jumpy, erratic numbers in an Arduino sketch?",
+            "options": [
+              "Its high electrical impedance causes the pin wire to act like an antenna picking up electromagnetic noise",
+              "The ATmega328P microcontroller chip has suffered permanent internal damage",
+              "The compiler generated machine opcodes in reverse order"
+            ],
+            "correctIndex": 0,
+            "explanation": "Because high-impedance CMOS inputs draw virtually no current, a disconnected pin picks up stray electromagnetic fields (such as 60Hz mains hum) from surrounding air like an antenna."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

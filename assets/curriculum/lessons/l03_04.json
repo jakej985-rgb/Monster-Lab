@@ -3,7 +3,7 @@
   "title": "Find and Install",
   "summary": "Where do you get libraries?",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 8,
   "courseId": "lesson_03",
   "sortOrder": 4,
   "isOptional": false,
@@ -16,10 +16,9 @@
   ],
   "steps": [
     {
-      "stepId": "l03_s04",
+      "stepId": "l03_04_s01",
       "title": "Find and Install",
-      "type": "physicalTask",
-      "interactiveWidgetType": "libraryManagerSimulator",
+      "type": "story",
       "markdownContent": "Where do you get libraries? Inside the Arduino IDE, there is a built-in search tool called the **Library Manager**!\n\nThink of the Library Manager like an **App Store for code**. Thousands of community engineers publish open-source drivers there for free.\n\n### How to Install in Arduino IDE:\n1. Open the Arduino IDE on your computer.\n2. Click **Tools > Manage Libraries...** (or click the stacked books icon on the left navigation bar).\n3. In the search box, type the name of the library (for example, `LiquidCrystal I2C`).\n4. Find the version by Frank de Brabander and click **INSTALL**.\n5. The IDE downloads the library files into your computer's `libraries` folder automatically!\n\nTry the interactive Library Manager below: search for `LiquidCrystal_I2C` and press Install to watch how packages download and register!",
       "quickCheck": [
         {
@@ -47,6 +46,68 @@
           "warmupExplanation": "If the compiler can't find your tool in the workshop, it stops and tells you the file is missing!"
         }
       ]
+    },
+    {
+      "stepId": "l03_04_s02",
+      "title": "Where Libraries Live on Your Machine",
+      "type": "visualExplanation",
+      "markdownContent": "### Inside Your Computer's Library Vault\n\nWhen you press **INSTALL** in the Library Manager, what actually happens to your computer's filesystem? It downloads and organizes the files into a dedicated directory:\n\n```\nDocuments/\n└── Arduino/\n    └── libraries/\n        └── LiquidCrystal_I2C/\n            ├── library.properties    <-- Metadata (Author, version, dependencies)\n            ├── src/\n            │   ├── LiquidCrystal_I2C.h   <-- The header file (#include)\n            │   └── LiquidCrystal_I2C.cpp <-- The actual C++ implementation\n            └── examples/\n                └── HelloWorld/\n                    └── HelloWorld.ino    <-- Working demonstration sketch!\n```\n\n### The Library Lifecycle\n1. **Search**: The IDE queries the online Arduino library registry index.\n2. **Download**: A ZIP archive containing headers, source, and examples is fetched.\n3. **Extraction**: Files are unpacked into your `Arduino/libraries/` folder.\n4. **Indexing**: The compiler immediately recognizes the new header in your `#include` lines!"
+    },
+    {
+      "stepId": "l03_04_s03",
+      "title": "Library Manager Simulator",
+      "type": "physicalTask",
+      "interactiveWidgetType": "libraryManagerSimulator",
+      "markdownContent": "Practice installing a library using the simulated Arduino Library Manager workbench!\n\n1. Type or verify the library search term `LiquidCrystal_I2C` in the search bar.\n2. Locate the package by **Frank de Brabander**.\n3. Press **INSTALL** and watch the simulator establish connection, download archive files, unpack headers, and index the library.\n4. Confirm the status badges flip to **INSTALLED**!",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "l03_04_s04",
+      "title": "Knowledge Check: Library Manager",
+      "type": "quizCheckpoint",
+      "markdownContent": "Verify your mastery of library discovery and installation mechanics.",
+      "interactiveConfig": {
+        "question": "What subfolder inside an installed library contains sample sketches to test?",
+        "options": [
+          "The examples/ folder",
+          "The trash/ folder",
+          "The temp/ folder"
+        ],
+        "correctIndex": 0,
+        "explanation": "The examples/ directory contains verified working sketches that demonstrate how to use the library.",
+        "questions": [
+          {
+            "question": "What subfolder inside an installed library contains sample sketches to test?",
+            "options": [
+              "The examples/ folder",
+              "The trash/ folder",
+              "The temp/ folder"
+            ],
+            "correctIndex": 0,
+            "explanation": "The examples/ directory contains verified working sketches that demonstrate how to use the library."
+          },
+          {
+            "question": "If you install a library on your computer, do you need to reinstall it for every new sketch you create?",
+            "options": [
+              "No, once installed in your Arduino libraries folder, any sketch on your computer can use it",
+              "Yes, you must download it again every time you save a sketch",
+              "Yes, libraries expire after 10 minutes"
+            ],
+            "correctIndex": 0,
+            "explanation": "Libraries are installed globally in your Arduino libraries folder and remain accessible to all your sketches."
+          },
+          {
+            "question": "What is the purpose of the library.properties file?",
+            "options": [
+              "It holds metadata such as the library version, author, and compatible board architectures",
+              "It contains the Arduino's electrical circuit schematic",
+              "It stores audio files for robot speech"
+            ],
+            "correctIndex": 0,
+            "explanation": "library.properties contains essential metadata like name, author, version, and architecture compatibility."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

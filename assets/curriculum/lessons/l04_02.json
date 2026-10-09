@@ -46,6 +46,50 @@
           "warmupExplanation": "Microcontrollers are digital: they only output 0V (OFF) or 5V (ON). To get medium brightness, they pulse!"
         }
       ]
+    },
+    {
+      "stepId": "l04_02_s02",
+      "title": "The Clock & Frequency of PWM",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### Understanding PWM Signals\nPulse Width Modulation works on a fixed cycle frequency.\n\nOn the Arduino Uno, PWM pins operate around **490 Hz** (or 980 Hz on pins 5 & 6). That means the cycle repeats roughly **500 times every second**!\n\nWithin that single cycle (about 2 milliseconds long):\n- The time the signal stays HIGH is called the **Pulse Width**.\n- The longer the pulse width, the more total electrical energy delivers to the LED or motor."
+    },
+    {
+      "stepId": "l04_02_s03",
+      "title": "Explore the PWM Pin Identifier",
+      "type": "physicalTask",
+      "interactiveWidgetType": "pwmPinIdentifier",
+      "markdownContent": "### Finding the PWM Pins on Uno\nNot every pin can do PWM! Look for the little tilde symbol  next to pin numbers.\n\nInspect the pinout below to identify which pins support hardware PWM."
+    },
+    {
+      "stepId": "l04_02_s04",
+      "title": "PWM Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of the concepts covered in this module.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What symbol on the Arduino Uno marks pins that support PWM?",
+            "options": [
+              "A small squiggly tilde (~)",
+              "An exclamation point (!)",
+              "A dollar sign ($)"
+            ],
+            "correctIndex": 0,
+            "explanation": "Look closely at pins 3, 5, 6, 9, 10, and 11: each has a ~ symbol next to its number!"
+          },
+          {
+            "question": "What happens to the total energy delivered when the pulse width is increased?",
+            "options": [
+              "More energy reaches the component, making it brighter or faster",
+              "Energy drops to zero",
+              "The board resets"
+            ],
+            "correctIndex": 0,
+            "explanation": "Wider pulses mean power is connected for more time during each cycle, delivering more total energy!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

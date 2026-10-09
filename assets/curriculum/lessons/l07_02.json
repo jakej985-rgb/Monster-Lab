@@ -3,7 +3,7 @@
   "title": "Digital Sensors",
   "summary": "Electronic sensors generally fall into two major families: Digital and Analog.",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_07",
   "sortOrder": 2,
   "isOptional": false,
@@ -47,6 +47,58 @@
           "warmupExplanation": "Remember: 'Read' gets information into the Arduino, while 'Write' sends electricity out to an actuator."
         }
       ]
+    },
+    {
+      "stepId": "l07_02_s02",
+      "title": "Binary States and Digital Logic",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### Digital Senses: Two States Only\n\nDigital sensors communicate in crisp, unambiguous binary signals:\n\n```\n+5V \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 [ HIGH / 1 / TRUE ]  \u2500\u2500 Threshold (approx > 3.0V on 5V Uno)\n             \u25b2\n             \u2502 Transition Region (Avoid leaving pins here!)\n             \u25bc\n 0V \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 [ LOW  / 0 / FALSE ] \u2500\u2500 Threshold (approx < 1.5V on 5V Uno)\n```\n\nCommon digital sensors in your lab:\n- **PIR Motion Sensor (`comp_03`)**: Jumps HIGH (+5V) when infrared body warmth shifts; drops LOW (0V) when still.\n- **Impact Collision Switch (`comp_04`)**: Mechanical lever closes contacts to Ground or +5V when bumped.\n- **Photo Interrupter (`comp_05`)**: Infrared beam breaks when an encoder wheel tooth passes through.\n\nBecause digital inputs only distinguish between 0 and 1, they are immune to minor electrical noise!"
+    },
+    {
+      "stepId": "l07_02_s03",
+      "title": "Diagnosing Digital Sensor Logic",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "interactiveTroubleshooting",
+      "markdownContent": "### Hands-On: Reading Digital Inputs\n\nTo read a digital sensor, configure the pin using `pinMode()` and read its state in `loop()`:\n\n```cpp\nconst int sensorPin = 2;\n\nvoid setup() {\n  pinMode(sensorPin, INPUT_PULLUP); // Activates internal 20k\u03a9 pull-up resistor\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  int sensorState = digitalRead(sensorPin);\n  if (sensorState == LOW) {\n    Serial.println(\"ALERT: Sensor Triggered (Connected to Ground)!\");\n  }\n  delay(100);\n}\n```\n\n**Troubleshooting Lab:**\nPractice diagnosing digital input misconfigurations\u2014such as missing pull-up resistors or loose ground connections\u2014in the interactive troubleshooting workbench below!"
+    },
+    {
+      "stepId": "l07_02_s04",
+      "title": "Digital Sensor Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your mastery of digital sensor signals and pin configurations.",
+      "interactiveConfig": {
+        "question": "Which Arduino C++ function reads the binary state of a digital sensor pin?",
+        "options": [
+          "digitalRead(pin)",
+          "analogRead(pin)",
+          "analogWrite(pin, 255)"
+        ],
+        "correctIndex": 0,
+        "explanation": "digitalRead(pin) returns either HIGH (1) or LOW (0) depending on whether the pin voltage is near 5V or near Ground.",
+        "questions": [
+          {
+            "question": "Which Arduino C++ function reads the binary state of a digital sensor pin?",
+            "options": [
+              "digitalRead(pin)",
+              "analogRead(pin)",
+              "analogWrite(pin, 255)"
+            ],
+            "correctIndex": 0,
+            "explanation": "digitalRead(pin) returns either HIGH (1) or LOW (0) depending on whether the pin voltage is near 5V or near Ground."
+          },
+          {
+            "question": "In an active-low sensor circuit configured with pinMode(pin, INPUT_PULLUP), what value does digitalRead() return when the switch contacts close to GND?",
+            "options": [
+              "LOW (0)",
+              "HIGH (1)",
+              "512 counts"
+            ],
+            "correctIndex": 0,
+            "explanation": "With INPUT_PULLUP, the pin is pulled HIGH by default. When the switch closes to Ground, it pulls the pin down to 0V, returning LOW."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

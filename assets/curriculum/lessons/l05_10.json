@@ -47,6 +47,50 @@
           "warmupExplanation": "Approaching the ground terminal pulls the wiper voltage down toward 0V reference."
         }
       ]
+    },
+    {
+      "stepId": "l05_10_s02",
+      "title": "How Division Creates Continuous Voltage",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "The Voltage Divider Equation\nVout = Vin * (R2 / (R1 + R2)). As the wiper turns, Vout varies smoothly between 0.0V and 5.0V!"
+    },
+    {
+      "stepId": "l05_10_s03",
+      "title": "Hands-On: Voltage Divider",
+      "type": "physicalTask",
+      "interactiveWidgetType": "voltageDividerCutaway",
+      "markdownContent": "### Interactive Bench Activity\nUse the simulated tool to test and observe how voltage divider operates in a circuit."
+    },
+    {
+      "stepId": "l05_10_s04",
+      "title": "Voltage Divider Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of physical inputs and circuit mechanics.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What does a voltage divider do to an input voltage?",
+            "options": [
+              "Outputs a proportional fraction of the input voltage based on resistance ratios",
+              "Multiplies voltage by 10",
+              "Turns DC into AC"
+            ],
+            "correctIndex": 0,
+            "explanation": "Voltage dividers scale down voltages smoothly based on resistor ratios!"
+          },
+          {
+            "question": "If a potentiometer is turned exactly to its center midpoint, what voltage appears at the wiper?",
+            "options": [
+              "2.5 Volts (half of 5V)",
+              "0 Volts",
+              "10 Volts"
+            ],
+            "correctIndex": 0,
+            "explanation": "At midpoint, R1 equals R2, dividing 5V evenly to produce 2.5V!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

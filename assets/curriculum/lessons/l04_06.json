@@ -45,6 +45,50 @@
           "warmupExplanation": "Red, green, and blue LEDs use different forward voltages. A resistor for each color keeps all three balanced and protected."
         }
       ]
+    },
+    {
+      "stepId": "l04_06_s02",
+      "title": "Inside the RGB LED Package",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "commonCathodeVsAnodeDiagram",
+      "markdownContent": "### Three LEDs in One Shell!\nAn RGB LED looks like a single clear bulb, but look closely inside: it holds **three microscopic LED chips**:\n- One Red diode\n- One Green diode\n- One Blue diode\n\nIt has **4 legs (pins)**:\n- One leg for Red\n- One leg for Green\n- One leg for Blue\n- One shared common leg (longest pin) for Power or Ground!"
+    },
+    {
+      "stepId": "l04_06_s03",
+      "title": "Identify the Longest Leg",
+      "type": "physicalTask",
+      "interactiveWidgetType": "boardInspector",
+      "markdownContent": "### Pin Identification Challenge\nExamine your RGB LED package and identify which pin is the common return pin."
+    },
+    {
+      "stepId": "l04_06_s04",
+      "title": "RGB LED Pinout Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of the concepts covered in this module.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "How many separate light-emitting diodes are packaged inside an RGB LED?",
+            "options": [
+              "Three (Red, Green, Blue)",
+              "Only one",
+              "Twelve"
+            ],
+            "correctIndex": 0,
+            "explanation": "An RGB LED combines three distinct diodes (Red, Green, Blue) into a single 4-pin case!"
+          },
+          {
+            "question": "How can you physically tell which leg is the common pin on an RGB LED?",
+            "options": [
+              "It is noticeably the longest pin",
+              "It is made of gold",
+              "It has a ribbon tied to it"
+            ],
+            "correctIndex": 0,
+            "explanation": "Manufacturers make the common cathode/anode leg longer than the other three legs for easy identification!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

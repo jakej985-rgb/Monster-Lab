@@ -3,7 +3,7 @@
   "title": "What Is a Microcontroller?",
   "summary": "Look right at the middle of your Arduino board.",
   "tier": "rookie",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_01",
   "sortOrder": 3,
   "isOptional": false,
@@ -45,6 +45,102 @@
           "warmupExplanation": "Just like you use memory to remember a phone number or story, computers use memory to remember code instructions."
         }
       ]
+    },
+    {
+      "stepId": "l01_03_s02",
+      "title": "Inside the Chip: CPU, Flash, and RAM",
+      "type": "visualExplanation",
+      "markdownContent": "### Inside the ATmega328P Silicon Chip 🔬\n\nInside that black plastic casing is a microscopic silicon city! Let's peek under the hood:\n\n```\n┌─────────────────────────────────────────────────────────┐\n│               ATmega328P MICROCONTROLLER                │\n│                                                         │\n│  ┌───────────────────┐        ┌──────────────────────┐  │\n│  │   CPU (The Chef)  │ <----> │ Flash Memory (32 KB) │  │\n│  │   Executes Code   │        │ Permanent Recipe Book│  │\n│  │   Does the Math   │        │ Saves sketch offline │  │\n│  └───────────────────┘        └──────────────────────┘  │\n│           ▲                               ▲             │\n│           │                               │             │\n│  ┌───────────────────┐        ┌──────────────────────┐  │\n│  │   SRAM (2 KB)     │        │ I/O Peripherals      │  │\n│  │   Active Counter  │ <----> │ Controls Pins 0-13,  │  │\n│  │   Temp Variables  │        │ Analog ADC A0-A5     │  │\n│  └───────────────────┘        └──────────────────────┘  │\n└─────────────────────────────────────────────────────────┘\n```\n\n#### How the Parts Work Together:\n1. **CPU (Processor)**: The brain's engine. It fetches instructions and does math at 16 MHz (16 million steps every second!).\n2. **Flash Memory (32 KB)**: Stores your uploaded Arduino sketch safely, even when you unplug all power.\n3. **SRAM (2 KB)**: The fast scratchpad for keeping track of sensor numbers while your robot runs.\n4. **I/O Registers**: Switches that connect the CPU directly to the physical pin headers on the board edges."
+    },
+    {
+      "stepId": "l01_03_s03",
+      "title": "CPU vs Memory Signal Flow",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### Watch Code Flow from Memory to Action! ⚡\n\nExplore how instructions live in memory and travel into the physical pins of your robot:\n- **Flash Memory**: Holds your recipe of instructions.\n- **CPU Engine**: Reads each instruction and calculates what to do next.\n- **I/O Pins**: Turns physical voltage on or off to move motors and light LEDs!\n\nTap through each stage and test the signal pulse below!",
+      "interactiveConfig": {
+        "nodes": [
+          {
+            "id": "flash",
+            "label": "1. FLASH MEMORY\n(Permanent Storage)",
+            "icon": "program",
+            "role": "Stores your uploaded C++ program safely, keeping code ready even when disconnected from power.",
+            "example": "32 KB Flash holding setup() and loop() instructions",
+            "color": "#FFB300"
+          },
+          {
+            "id": "cpu",
+            "label": "2. CPU PROCESSOR\n(The Thinker)",
+            "icon": "memory",
+            "role": "Fetches code instructions at 16 million clock cycles per second and calculates logic decisions.",
+            "example": "ATmega328P 8-bit RISC core evaluating conditions",
+            "color": "#00E5FF"
+          },
+          {
+            "id": "sram",
+            "label": "3. SRAM SCRATCHPAD\n(Active Memory)",
+            "role": "Holds temporary numbers and sensor readings while the sketch is actively running.",
+            "example": "2 KB RAM tracking timer counts and light levels",
+            "color": "#76FF03"
+          },
+          {
+            "id": "pins",
+            "label": "4. I/O PINS\n(Hardware Bridge)",
+            "icon": "output",
+            "role": "Translates internal CPU bits into physical electrical voltages on the Uno pin headers.",
+            "example": "Pin 13 sending 5V to the built-in amber LED",
+            "color": "#E040FB"
+          }
+        ]
+      }
+    },
+    {
+      "stepId": "l01_03_s04",
+      "title": "Microcontroller Knowledge Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Prove your understanding of what makes a microcontroller tick!",
+      "interactiveConfig": {
+        "question": "What is the primary difference between a microcontroller and a desktop computer?",
+        "options": [
+          "A microcontroller is built to control physical hardware and live inside devices without a monitor",
+          "A microcontroller has a 50-inch display screen built in",
+          "A microcontroller can only be used to bake cookies"
+        ],
+        "correctIndex": 0,
+        "explanation": "Microcontrollers are self-contained computer chips specialized for interacting with physical sensors and circuits.",
+        "questions": [
+          {
+            "question": "What is the primary difference between a microcontroller and a desktop computer?",
+            "options": [
+              "A microcontroller is built to control physical hardware and live inside devices without a monitor",
+              "A microcontroller has a 50-inch display screen built in",
+              "A microcontroller can only be used to bake cookies"
+            ],
+            "correctIndex": 0,
+            "explanation": "Microcontrollers are self-contained computer chips specialized for interacting with physical sensors and circuits."
+          },
+          {
+            "question": "Where does the Arduino store your code so it doesn't vanish when power is disconnected?",
+            "options": [
+              "Non-volatile Flash Memory",
+              "In the USB cable",
+              "In the cardboard packaging box"
+            ],
+            "correctIndex": 0,
+            "explanation": "Flash Memory stores your sketch permanently until you overwrite it with a new program."
+          },
+          {
+            "question": "What is the role of the CPU inside the chip?",
+            "options": [
+              "It executes code instructions and performs logical decisions",
+              "It cools down the board with a miniature fan",
+              "It changes the color of the green circuit board"
+            ],
+            "correctIndex": 0,
+            "explanation": "The CPU (Central Processing Unit) is the engine that executes your program commands step-by-step."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

@@ -45,6 +45,50 @@
           "warmupExplanation": "In digital electronics, LOW means 0 Volts, which turns off power to components."
         }
       ]
+    },
+    {
+      "stepId": "l04_01_s02",
+      "title": "The Illusion of Smooth Brightness",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### The Fast Flashing Illusion\nHow can your Arduino simulate a dim glow if pins only output 0V or 5V?\n\nImagine flipping a light switch on and off with your finger as fast as you can. If you flip it once per second, your eyes see obvious blinking. But what if you could flip that switch **500 times every single second**?\n\nAt 500 times per second, your human eyes cannot keep up! Instead of seeing flashes, your brain blends the light and dark periods together into a steady, soft glow.\n\n- Spend 50% of the time ON and 50% OFF -> Your eyes see **half brightness**!\n- Spend 10% of the time ON and 90% OFF -> Your eyes see a **dim glow**!\n- Spend 90% of the time ON and 10% OFF -> Your eyes see **bright light**!\n\nThis technique is called **Pulse Width Modulation (PWM)**."
+    },
+    {
+      "stepId": "l04_01_s03",
+      "title": "Interactive Duty Cycle Test",
+      "type": "physicalTask",
+      "interactiveWidgetType": "pwmDutyCycleVisualizer",
+      "markdownContent": "### Experiment with the Duty Cycle Visualizer\nUse the interactive tool below to adjust the ratio of ON time vs. OFF time.\n\nObserve how the simulated LED reacts as you change the percentage of time power is active during each wave cycle."
+    },
+    {
+      "stepId": "l04_01_s04",
+      "title": "Knowledge Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Review what you learned about digital output limitations and variable control.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "Can a standard digital Arduino pin output an actual analog voltage of 2.5V on its own?",
+            "options": [
+              "No, digital pins can only output 0V or 5V",
+              "Yes, pins can output any voltage directly",
+              "Only on Tuesdays"
+            ],
+            "correctIndex": 0,
+            "explanation": "Digital pins are binary: they only output 0V or 5V. Variable effects are created with rapid switching (PWM)!"
+          },
+          {
+            "question": "Why do our eyes see a steady dim glow instead of rapid flashing when PWM is used?",
+            "options": [
+              "The switching happens hundreds of times per second, faster than our eyes can detect",
+              "The LED turns into a candle",
+              "The wires store daylight"
+            ],
+            "correctIndex": 0,
+            "explanation": "Persistence of vision blends the high-speed flashes into an apparent steady brightness level!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

@@ -47,6 +47,50 @@
           "warmupExplanation": "Switch bounce is very brief (a few milliseconds), but easily detectable at 16 MHz CPU speeds."
         }
       ]
+    },
+    {
+      "stepId": "l05_08_s02",
+      "title": "Filtering Mechanical Contact Bounce",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "Contact Bounce Waveforms\nMetal switch contacts bounce microscopically for 5-10 milliseconds when pressed, causing dozens of false triggers."
+    },
+    {
+      "stepId": "l05_08_s03",
+      "title": "Hands-On: Button Debouncing",
+      "type": "physicalTask",
+      "interactiveWidgetType": "switchBounceVisualizer",
+      "markdownContent": "### Interactive Bench Activity\nUse the simulated tool to test and observe how button debouncing operates in a circuit."
+    },
+    {
+      "stepId": "l05_08_s04",
+      "title": "Debounce Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of physical inputs and circuit mechanics.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What is switch contact bounce?",
+            "options": [
+              "Rapid microscopic mechanical bouncing of contacts creating multiple false pulses",
+              "The button jumping off the desk",
+              "A rubber coating on the switch"
+            ],
+            "correctIndex": 0,
+            "explanation": "Mechanical contacts bounce like a basketball, triggering multiple edges within milliseconds!"
+          },
+          {
+            "question": "How can code filter out switch bounce?",
+            "options": [
+              "By waiting a small delay (10-20ms) before re-checking button state",
+              "By pressing harder",
+              "By turning off the Arduino"
+            ],
+            "correctIndex": 0,
+            "explanation": "Software debouncing checks that the signal remains steady for a few milliseconds!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

@@ -3,7 +3,7 @@
   "title": "Your First I2C Device",
   "summary": "A standard 16-character by 2-line liquid crystal display has 16 raw header pins.",
   "tier": "engineer",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_08",
   "sortOrder": 5,
   "isOptional": false,
@@ -46,6 +46,58 @@
           "warmupExplanation": "In Lesson 6, you learned that potentiometers act as adjustable voltage dividers; the LCD backpack uses a tiny trimpot to tune display contrast."
         }
       ]
+    },
+    {
+      "stepId": "l08_05_s02",
+      "title": "The 16x2 I2C Backpack Architecture",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### Anatomical Tour of the I2C LCD (`comp_07`)\n\nA standard 16x2 LCD display can show 16 characters across 2 rows. On its back sits a black daughterboard: the **PCF8574 I2C Backpack**:\n\n```\n+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500+\n|            REAR VIEW: 16x2 CHARACTER LCD BACKPACK        |\n|                                                          |\n|   [ 16-Pin Header to HD44780 LCD Controller Glass ]      |\n|                                                          |\n|        [ PCF8574 ]           [ Blue Contrast Pot ]       |\n|    8-Bit I2C I/O Expander     Rotate with screwdriver!   |\n|                                                          |\n|        [ A0 A1 A2 ]          [ 4-Pin Bus Header ]        |\n|      Address Jumper Pads       GND  VCC  SDA  SCL        |\n+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500+\n```\n\n- **PCF8574 Chip**: An 8-bit remote I/O expander that receives serial commands over I2C and toggles the 16 LCD pins in parallel.\n- **Blue Contrast Potentiometer**: Controls liquid crystal alignment voltage. If text is invisible or all white boxes, this pot needs adjusting!\n- **Backlight Jumper**: A physical jumper shunt that powers the LED backlight."
+    },
+    {
+      "stepId": "l08_05_s03",
+      "title": "Wiring & Contrast Potentiometer Adjustment",
+      "type": "physicalTask",
+      "interactiveWidgetType": "interactiveTroubleshooting",
+      "markdownContent": "### Hardware Mission: Wiring the 16x2 LCD\n\n**Golden Rule:** Always unplug your Arduino USB cable before connecting wires!\n\nConnect the 4 wires from the backpack header:\n1. **GND** -> Arduino Uno **GND** (Black wire)\n2. **VCC** -> Arduino Uno **5V** (Red wire)\n3. **SDA** -> Arduino Uno **A4** (or dedicated SDA pin)\n4. **SCL** -> Arduino Uno **A5** (or dedicated SCL pin)\n\n**The Contrast Potentiometer Trap:**\nWhen first powered, the screen may look blank or show a row of solid rectangles! Use a small Phillips screwdriver to gently rotate the blue contrast pot on the backpack until crisp, clear letters appear.\n\n**Workbench Task:**\nPractice diagnosing LCD wiring and contrast issues in the interactive troubleshooting bench below!"
+    },
+    {
+      "stepId": "l08_05_s04",
+      "title": "First I2C Device Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your understanding of I2C LCD backpack hardware and wiring.",
+      "interactiveConfig": {
+        "question": "How many total wires are needed to interface a 16x2 LCD backpack with an Arduino Uno?",
+        "options": [
+          "4 wires (VCC, GND, SDA, and SCL)",
+          "16 wires",
+          "1 wire"
+        ],
+        "correctIndex": 0,
+        "explanation": "The I2C backpack collapses the 16 parallel pins down to just 4 wires: power (VCC), ground (GND), serial data (SDA), and serial clock (SCL).",
+        "questions": [
+          {
+            "question": "How many total wires are needed to interface a 16x2 LCD backpack with an Arduino Uno?",
+            "options": [
+              "4 wires (VCC, GND, SDA, and SCL)",
+              "16 wires",
+              "1 wire"
+            ],
+            "correctIndex": 0,
+            "explanation": "The I2C backpack collapses the 16 parallel pins down to just 4 wires: power (VCC), ground (GND), serial data (SDA), and serial clock (SCL)."
+          },
+          {
+            "question": "If the LCD backlight turns on but no text characters appear on the screen, what is the first hardware adjustment you should check?",
+            "options": [
+              "Gently turn the blue contrast potentiometer on the back of the I2C backpack",
+              "Replace the Arduino board with a different model",
+              "Replace the USB cable"
+            ],
+            "correctIndex": 0,
+            "explanation": "If the contrast potentiometer is turned too far in either direction, characters will either be completely washed out or hidden under solid black blocks."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

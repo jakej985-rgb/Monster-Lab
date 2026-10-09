@@ -46,6 +46,50 @@
           "warmupExplanation": "An open circuit breaks the loop, preventing electrons from traveling through the circuit."
         }
       ]
+    },
+    {
+      "stepId": "l05_01_s02",
+      "title": "Switch Electrical Mechanics",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "How Contacts Close the Circuit\nA switch is a mechanical bridge that makes or breaks an electrical circuit when actuated."
+    },
+    {
+      "stepId": "l05_01_s03",
+      "title": "Hands-On: What Is a Switch?",
+      "type": "physicalTask",
+      "interactiveWidgetType": "floatingPinSimulator",
+      "markdownContent": "### Interactive Bench Activity\nUse the simulated tool to test and observe how what is a switch? operates in a circuit."
+    },
+    {
+      "stepId": "l05_01_s04",
+      "title": "Switch Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of physical inputs and circuit mechanics.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What does a closed switch do in an electrical circuit?",
+            "options": [
+              "Allows current to flow across its contacts",
+              "Stops current immediately",
+              "Reverses battery polarity"
+            ],
+            "correctIndex": 0,
+            "explanation": "Closing a switch completes the circuit loop!"
+          },
+          {
+            "question": "What happens when a switch is opened?",
+            "options": [
+              "It creates an air gap that halts current flow",
+              "It doubles voltage",
+              "It catches fire"
+            ],
+            "correctIndex": 0,
+            "explanation": "Opening contacts introduces an open circuit gap, dropping current to zero!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

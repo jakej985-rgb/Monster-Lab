@@ -19,7 +19,33 @@
       "title": "What is a Library?",
       "type": "story",
       "interactiveWidgetType": "libraryConceptDiagram",
-      "markdownContent": "A **library** is pre-written code that someone else created to make your life easier.\n\nInstead of writing 500 lines of complex math to talk to a temperature sensor, you can use a library that reduces it to one line: `sensor.readTemp();`.\n\nLibraries exist so engineers don't have to reinvent the wheel for every common component!"
+      "markdownContent": "A **library** is pre-written code that someone else created to make your life easier.\n\nInstead of writing 500 lines of complex math to talk to a temperature sensor, you can use a library that reduces it to one line: `sensor.readTemp();`.\n\nLibraries exist so engineers don't have to reinvent the wheel for every common component!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l2b_06_s01_q1",
+          "question": "What is an Arduino library?",
+          "options": [
+            "A collection of pre-written functions that make it easy to control complex hardware like screens or servos",
+            "A shelf of paper books",
+            "A bundle of wires"
+          ],
+          "correctIndex": 0,
+          "explanation": "Libraries provide high-level commands so you don't have to write tricky timing code from scratch!",
+          "warmupExplanation": "Libraries are cheat sheets written by other engineers to make complex hardware easy."
+        },
+        {
+          "questionId": "qc_l2b_06_s01_q2",
+          "question": "How do you include a library at the top of your Arduino sketch?",
+          "options": [
+            "With an #include directive like #include <Servo.h>",
+            "By typing \"PLEASE ADD LIBRARY\"",
+            "With an emoji"
+          ],
+          "correctIndex": 0,
+          "explanation": "#include <HeaderName.h> tells the compiler to import that library's tools into your program!",
+          "warmupExplanation": "#include tells the computer: Bring in my favorite toolbox for this sketch!"
+        }
+      ]
     },
     {
       "stepId": "l2b_06_s02",

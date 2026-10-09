@@ -45,6 +45,50 @@
           "warmupExplanation": "Diodes only allow current to flow in one direction! Long leg is positive (anode), short leg is negative (cathode)."
         }
       ]
+    },
+    {
+      "stepId": "l04_04_s02",
+      "title": "Controlling Brightness without Heat",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### Why PWM is Super Efficient\nOld-fashioned analog dimmers used variable resistors that turned excess electricity into wasteful heat.\n\nBecause PWM switches transistors completely ON (almost zero resistance) and completely OFF (zero current), it generates virtually **zero wasted heat**! This is why PWM is used in smartphones, electric cars, and industrial robotics."
+    },
+    {
+      "stepId": "l04_04_s03",
+      "title": "Fading an LED on the Workbench",
+      "type": "physicalTask",
+      "interactiveWidgetType": "blinkSimulator",
+      "markdownContent": "### Observe Smooth Fading\nWatch the simulated LED fade smoothly from 0% to 100% brightness as the duty cycle ramps up."
+    },
+    {
+      "stepId": "l04_04_s04",
+      "title": "LED Brightness Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of the concepts covered in this module.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "Why is PWM switching preferred over using variable resistors to dim lights?",
+            "options": [
+              "PWM produces almost no wasted heat and saves energy",
+              "Resistors are too heavy",
+              "PWM makes lights purple"
+            ],
+            "correctIndex": 0,
+            "explanation": "Transistors are most efficient when fully on or fully off. PWM prevents wasting power as heat!"
+          },
+          {
+            "question": "Can PWM make an LED brighter than its 100% maximum rating?",
+            "options": [
+              "No, 100% is full power (+5V)",
+              "Yes, it gives 1000V",
+              "Only if unplugged"
+            ],
+            "correctIndex": 0,
+            "explanation": "PWM can only vary the average output between 0V and the maximum +5V supply rail."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

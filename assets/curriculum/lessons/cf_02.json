@@ -16,7 +16,33 @@
       "stepId": "cf_02_s01",
       "title": "What is a Variable?",
       "type": "story",
-      "markdownContent": "A variable is like a named box that holds a value. You can read what's in the box, or change it."
+      "markdownContent": "A variable is like a named box that holds a value. You can read what's in the box, or change it.",
+      "quickCheck": [
+        {
+          "questionId": "qc_cf_02_s01_q1",
+          "question": "If you need to keep track of a robot's score or speed, where can your program store it?",
+          "options": [
+            "In a named memory container called a variable",
+            "In a cardboard shipping box",
+            "On the floor"
+          ],
+          "correctIndex": 0,
+          "explanation": "Variables are named storage containers in memory that hold numbers, words, or true/false values!",
+          "warmupExplanation": "Think of a variable as a labeled storage box where you keep a number until you need to change or read it."
+        },
+        {
+          "questionId": "qc_cf_02_s01_q2",
+          "question": "Can the value stored inside a variable change while a program is running?",
+          "options": [
+            "Yes, variables can be updated whenever needed",
+            "No, variables are permanently carved into stone",
+            "Only if the computer is turned off"
+          ],
+          "correctIndex": 0,
+          "explanation": "Variables are variable\u2014they can be updated, counted up, or replaced with new values whenever needed!",
+          "warmupExplanation": "The word variable comes from vary, which means change! A score can go from 0 to 10 as you play."
+        }
+      ]
     },
     {
       "stepId": "cf_02_s02",

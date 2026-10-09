@@ -3,7 +3,7 @@
   "title": "Meet the Breadboard",
   "summary": "Take your solderless breadboard (compbreadboard) out of your kit.",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_06",
   "sortOrder": 2,
   "isOptional": false,
@@ -17,10 +17,10 @@
   ],
   "steps": [
     {
-      "stepId": "l06_s02",
+      "stepId": "l06_02_s01",
       "title": "Meet the Breadboard",
-      "type": "physicalTask",
-      "markdownContent": "# Meet the Breadboard\n\nTake your solderless breadboard (`comp_breadboard`) out of your kit. This is your electronic sandbox where circuits come alive!\n\n### Why Is It Called a 'Breadboard'?\nIn the 1920s, early radio tinkerers literally grabbed wooden bread-cutting boards from their family kitchens and hammered metal nails into the wood to mount radio tubes and coils without permanent soldering. Today's modern breadboard has hundreds of reusable spring clips hidden underneath smooth plastic!\n\n### Anatomy of the Breadboard\n- **Tie-Points (Holes)**: Grid holes spaced exactly 0.1 inches (2.54 mm) apart\u2014the international standard for electronic pins.\n- **Internal Spring Clips**: Inside every tiny hole is a bronze spring clip that grips your wire pins and bonds them together electrically.\n- **Power Rails (Outer Edges)**: Two long columns running down each side, clearly painted with red `+` and blue/black `-` lines.\n- **Terminal Columns & Numbered Rows**: Numbered horizontal strips (1 to 30 or 1 to 60) divided by a central canyon.\n\n### Hands-On Exploration:\n1. Unplug the Arduino from USB.\n2. Pick up a male-to-male jumper wire.\n3. Gently push one metal pin into any breadboard hole.\n4. Notice the firm mechanical grip of the internal spring clip holding your wire securely!\n5. Pull it out gently\u2014no solder, no glue, 100% reusable!",
+      "type": "story",
+      "markdownContent": "# Meet the Breadboard\n\nTake your solderless breadboard (`comp_breadboard`) out of your kit. This is your electronic sandbox where circuits come alive!\n\n### Why Is It Called a 'Breadboard'?\nIn the 1920s, early radio tinkerers literally grabbed wooden bread-cutting boards from their family kitchens and hammered metal nails into the wood to mount radio tubes and coils without permanent soldering. Today's modern breadboard has hundreds of reusable spring clips hidden underneath smooth plastic!\n\n### Anatomy of the Breadboard\n- **Tie-Points (Holes)**: Grid holes spaced exactly 0.1 inches (2.54 mm) apart—the international standard for electronic pins.\n- **Internal Spring Clips**: Inside every tiny hole is a bronze spring clip that grips your wire pins and bonds them together electrically.\n- **Power Rails (Outer Edges)**: Two long columns running down each side, clearly painted with red `+` and blue/black `-` lines.\n- **Terminal Columns & Numbered Rows**: Numbered horizontal strips (1 to 30 or 1 to 60) divided by a central canyon.\n\n### Hands-On Exploration:\n1. Unplug the Arduino from USB.\n2. Pick up a male-to-male jumper wire.\n3. Gently push one metal pin into any breadboard hole.\n4. Notice the firm mechanical grip of the internal spring clip holding your wire securely!\n5. Pull it out gently—no solder, no glue, 100% reusable!",
       "quickCheck": [
         {
           "questionId": "q_l06_s02_01",
@@ -49,6 +49,68 @@
           "warmupExplanation": "A breadboard is like reusable building blocks: you can push pins in, test your circuit, and pull them out freely."
         }
       ]
+    },
+    {
+      "stepId": "l06_02_s02",
+      "title": "Inside the Solderless Breadboard",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "breadboardInternalBusInspector",
+      "markdownContent": "### Beneath the Plastic Shell\n\nHow does a solderless breadboard connect wires without solder or screws? Let's take an X-ray look inside!\n\nBeneath the molded plastic faceplate are rows of stamped **phosphor bronze leaf spring clips**:\n- **Tension Grips**: When you push a jumper wire pin into a hole, the two spring leaves spread apart and clamp firmly onto the pin with continuous spring tension.\n- **Shared Strips**: Each spring clip extends underneath five adjacent holes. Any wires pushed into those five holes press against the exact same metal strip!\n- **Standard 0.1-Inch (2.54 mm) Pitch**: The spacing between holes matches the worldwide standard pin spacing for microcontrollers, chips, and sensors.\n\nExplore the internal bus inspector below to see how spring clips join holes together!"
+    },
+    {
+      "stepId": "l06_02_s03",
+      "title": "Test Internal Bus Continuity",
+      "type": "physicalTask",
+      "interactiveWidgetType": "breadboardInternalBusInspector",
+      "markdownContent": "### Hands-On Bus Continuity Testing\n\nLet's test the breadboard's internal connections using the virtual probe tool:\n\n1. **Probe Same Row Group**: Place probes into two holes within the same 5-hole group (e.g. `10a` and `10c`). Notice the meter reads **0.00 Ω (Continuous)**—the internal clip connects them together!\n2. **Probe Across the Center Divider**: Place one probe in `10e` and the other in `10f`. Notice the meter reads **∞ MΩ (Open Circuit)**—the central trench completely isolates the two sides!\n3. **Probe Outer Power Rails**: Place probes into two holes along the red power rail. The long vertical clip provides continuous power all the way down the board!\n4. **Probe Different Rows**: Place one probe in Row 10 and another in Row 12. They are separate electrical rows with infinite resistance between them."
+    },
+    {
+      "stepId": "l06_02_s04",
+      "title": "Breadboard Mechanics Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Verify your understanding of breadboard internal clips, spacing, and prototyping mechanics.",
+      "interactiveConfig": {
+        "question": "What holds component pins securely inside each breadboard hole and connects them electrically?",
+        "options": [
+          "Phosphor bronze internal spring clips that clamp onto the pins",
+          "Permanent melted solder glue",
+          "Tiny magnetic suction cups"
+        ],
+        "correctIndex": 0,
+        "explanation": "Internal bronze spring clips provide mechanical grip and electrical continuity without soldering.",
+        "questions": [
+          {
+            "question": "What holds component pins securely inside each breadboard hole and connects them electrically?",
+            "options": [
+              "Phosphor bronze internal spring clips that clamp onto the pins",
+              "Permanent melted solder glue",
+              "Tiny magnetic suction cups"
+            ],
+            "correctIndex": 0,
+            "explanation": "Internal bronze spring clips provide mechanical grip and electrical continuity without soldering."
+          },
+          {
+            "question": "What is the standard spacing (pitch) between holes on a standard solderless breadboard?",
+            "options": [
+              "0.1 inches (2.54 mm)",
+              "1.0 inch (25.4 mm)",
+              "0.01 inches (0.254 mm)"
+            ],
+            "correctIndex": 0,
+            "explanation": "The worldwide standard pitch for electronic breadboards and IC pins is 0.1 inches (2.54 mm)."
+          },
+          {
+            "question": "Why are solderless breadboards ideal for prototyping robot circuits?",
+            "options": [
+              "They allow components and wires to be plugged in, tested, rearranged, and reused with zero permanent alteration",
+              "They generate free electrical energy without a power supply",
+              "They permanently lock pins so they can never be removed"
+            ],
+            "correctIndex": 0,
+            "explanation": "Solderless breadboards are 100% reusable, making it fast and safe to experiment, iterate, and correct mistakes."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

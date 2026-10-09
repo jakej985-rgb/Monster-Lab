@@ -3,7 +3,7 @@
   "title": "Your First Library",
   "summary": "Now let's see how your sketch invites a library to join the party!",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 8,
   "courseId": "lesson_03",
   "sortOrder": 3,
   "isOptional": false,
@@ -16,11 +16,10 @@
   ],
   "steps": [
     {
-      "stepId": "l03_s03",
+      "stepId": "l03_03_s01",
       "title": "Your First Library",
       "type": "story",
-      "interactiveWidgetType": "includeSyntaxDeconstruction",
-      "markdownContent": "Now let's see how your sketch invites a library to join the party!\n\nAt the very top of your Arduino code, before `setup()` and before `loop()`, you write a special line called an **`#include` directive**:\n\n```cpp\n#include <LiquidCrystal_I2C.h>\n```\n\nLet's break down this secret handshake:\n- **`#` (Pound / Hash)**: Tells the preprocessor that this is a special instruction before normal compilation starts.\n- **`include`**: The magic word that says, *\"Please bring in all the tools from this package!\"*\n- **`< >` (Angle Brackets)**: Tells the computer to search your installed library collection for this name.\n- **`.h` (Header File)**: A file ending in `.h` is the table of contents of the library, listing all the available commands and features.\n\n> \u26a0\ufe0f **Watch Out**: Preprocessor lines like `#include` do **NOT** use a semicolon (`;`) at the end! Adding one is a classic beginner typo.",
+      "markdownContent": "Now let's see how your sketch invites a library to join the party!\n\nAt the very top of your Arduino code, before `setup()` and before `loop()`, you write a special line called an **`#include` directive**:\n\n```cpp\n#include <LiquidCrystal_I2C.h>\n```\n\nLet's break down this secret handshake:\n- **`#` (Pound / Hash)**: Tells the preprocessor that this is a special instruction before normal compilation starts.\n- **`include`**: The magic word that says, *\"Please bring in all the tools from this package!\"*\n- **`< >` (Angle Brackets)**: Tells the computer to search your installed library collection for this name.\n- **`.h` (Header File)**: A file ending in `.h` is the table of contents of the library, listing all the available commands and features.\n\n> ⚠️ **Watch Out**: Preprocessor lines like `#include` do **NOT** use a semicolon (`;`) at the end! Adding one is a classic beginner typo.",
       "quickCheck": [
         {
           "questionId": "qc_l03_s03_q1",
@@ -47,6 +46,68 @@
           "warmupExplanation": "Remember the special rule for #include: no semicolon at the end of the line!"
         }
       ]
+    },
+    {
+      "stepId": "l03_03_s02",
+      "title": "The Preprocessor Pipeline: Behind #include",
+      "type": "visualExplanation",
+      "markdownContent": "### What Really Happens During `#include`?\n\nBefore the C++ compiler translates your code into machine instructions (binary 0s and 1s), a special tool called the **C++ Preprocessor** scans your sketch.\n\n```\n+-----------------------+\n|  Your Sketch (.ino)   |\n|  #include <Servo.h>   | ────┐\n|  void setup() {...}   |     │\n+-----------------------+     │\n                              ▼\n+-----------------------+   [PREPROCESSOR STEP]\n|  Servo.h Header File  | ──► Replaces #include line with\n|  class Servo {...};   |     the actual header declarations\n+-----------------------+     │\n                              ▼\n                    +-------------------+\n                    |  Full Translation |\n                    |  Ready to Compile!|\n                    +-------------------+\n```\n\n### The Rules of `#include`\n1. **Placement**: Always place `#include` directives at the very top of your sketch file.\n2. **Angle Brackets (`< >`) vs Quotes (`\" \"`)**:\n   - `<LibraryName.h>` searches system and installed library folders.\n   - `\"MyFile.h\"` searches your local sketch folder first.\n3. **No Semicolon**: Preprocessor directives are NOT C++ statements; ending them with `;` triggers a compile error!"
+    },
+    {
+      "stepId": "l03_03_s03",
+      "title": "Deconstructing the #include Directive",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "includeSyntaxDeconstruction",
+      "markdownContent": "Let's inspect every single character of the `#include` directive under our code microscope!\n\nTap each token in the interactive deconstruction tool below:\n- Examine the `#` preprocessor flag\n- Explore the `include` directive keyword\n- Inspect the `< >` angle brackets and the `.h` header filename\n\nPay close attention to the common mistakes for each token so you avoid rookie compilation traps!",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "l03_03_s04",
+      "title": "Knowledge Check: Syntax & Preprocessor",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of preprocessor headers and `#include` syntax.",
+      "interactiveConfig": {
+        "question": "What does the .h file extension in <LiquidCrystal_I2C.h> stand for?",
+        "options": [
+          "Header file",
+          "Hardware file",
+          "Help file"
+        ],
+        "correctIndex": 0,
+        "explanation": ".h stands for Header file. It contains the class declarations, constants, and function prototypes of the library.",
+        "questions": [
+          {
+            "question": "What does the .h file extension in <LiquidCrystal_I2C.h> stand for?",
+            "options": [
+              "Header file",
+              "Hardware file",
+              "Help file"
+            ],
+            "correctIndex": 0,
+            "explanation": ".h stands for Header file. It contains the class declarations, constants, and function prototypes of the library."
+          },
+          {
+            "question": "What happens if you type '#include <Servo.h>;' with a semicolon at the end?",
+            "options": [
+              "The preprocessor/compiler flags a syntax error because preprocessor directives do not use semicolons",
+              "The servo turns clockwise automatically",
+              "The sketch uploads twice as fast"
+            ],
+            "correctIndex": 0,
+            "explanation": "Preprocessor commands are not regular C++ statements and do not use semicolons. Adding one causes compilation errors."
+          },
+          {
+            "question": "What do the angle brackets < > indicate around a library name?",
+            "options": [
+              "They tell the preprocessor to look in the installed library search paths",
+              "They mark the text as an emoji",
+              "They tell the Arduino to erase the chip"
+            ],
+            "correctIndex": 0,
+            "explanation": "Angle brackets instruct the preprocessor to search standard library installation directories for the header file."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

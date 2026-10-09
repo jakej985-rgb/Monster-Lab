@@ -47,6 +47,50 @@
           "warmupExplanation": "A potentiometer has an internal wiper contact that slides across a resistive strip."
         }
       ]
+    },
+    {
+      "stepId": "l05_09_s02",
+      "title": "The 3-Pin Rotary Resistor",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "Potentiometer Anatomy\nA resistive carbon strip with two outer power/GND legs and a center wiper leg that slides along the track."
+    },
+    {
+      "stepId": "l05_09_s03",
+      "title": "Hands-On: Meet the Potentiometer",
+      "type": "physicalTask",
+      "interactiveWidgetType": "wiperPinoutChecker",
+      "markdownContent": "### Interactive Bench Activity\nUse the simulated tool to test and observe how meet the potentiometer operates in a circuit."
+    },
+    {
+      "stepId": "l05_09_s04",
+      "title": "Potentiometer Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of physical inputs and circuit mechanics.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "Which pin on a 3-pin potentiometer is the moving wiper contact?",
+            "options": [
+              "The middle pin",
+              "The left outer pin",
+              "The mounting bracket"
+            ],
+            "correctIndex": 0,
+            "explanation": "The center pin connects to the movable wiper that slides along the resistive track!"
+          },
+          {
+            "question": "What happens across the two outer pins of a 10k potentiometer?",
+            "options": [
+              "A constant total resistance of 10,000 Ohms",
+              "Zero resistance",
+              "Infinite resistance"
+            ],
+            "correctIndex": 0,
+            "explanation": "The outer pins connect to the ends of the fixed 10k resistive strip!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

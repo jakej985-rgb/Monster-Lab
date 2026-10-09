@@ -3,7 +3,7 @@
   "title": "How Arduino Makes Decisions",
   "summary": "How does the Arduino brain make smart choices?",
   "tier": "rookie",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_01",
   "sortOrder": 8,
   "isOptional": false,
@@ -18,8 +18,7 @@
       "stepId": "l01_s08",
       "title": "How Arduino Makes Decisions",
       "type": "story",
-      "interactiveWidgetType": "decisionSimulator",
-      "markdownContent": "How does the Arduino brain make smart choices? It uses a 3-step decision pipeline:\n\n```\n1. SENSE (Input) \u2794 2. DECIDE (Code) \u2794 3. ACT (Output)\n```\n\n### The Robot Rule: IF / THEN\nRobots don't guess or daydream. They follow clear rules called **conditions**:\n- **IF** the pushbutton is pressed (Input is HIGH)...\n- **THEN** turn the flashlight ON (Output is HIGH)!\n- **OTHERWISE** (if the button is released)...\n- **THEN** turn the flashlight OFF (Output is LOW)!\n\nThe microcontroller checks these rules thousands of times every single second without ever getting tired!\n\nPress and hold the virtual button below to watch the decision pipeline evaluate live!",
+      "markdownContent": "How does the Arduino brain make smart choices? It uses a 3-step decision pipeline:\n\n```\n1. SENSE (Input) ➔ 2. DECIDE (Code) ➔ 3. ACT (Output)\n```\n\n### The Robot Rule: IF / THEN\nRobots don't guess or daydream. They follow clear rules called **conditions**:\n- **IF** the pushbutton is pressed (Input is HIGH)...\n- **THEN** turn the flashlight ON (Output is HIGH)!\n- **OTHERWISE** (if the button is released)...\n- **THEN** turn the flashlight OFF (Output is LOW)!\n\nThe microcontroller checks these rules thousands of times every single second without ever getting tired!\n\nLet's see how conditional decision logic turns raw sensor numbers into smart robot behaviors!",
       "quickCheck": [
         {
           "questionId": "l01_s08_q1",
@@ -46,6 +45,67 @@
           "warmupExplanation": "Microcontrollers are loyal helpers, but they only do what our program code tells them to do."
         }
       ]
+    },
+    {
+      "stepId": "l01_08_s02",
+      "title": "Condition Logic: IF, THEN, ELSE",
+      "type": "visualExplanation",
+      "markdownContent": "### The Logic Flowchart: Diamond of Decision 💎\n\nIn robotics programming, decisions look like diamond forks in a road:\n\n```\n                  ┌───────────────────────────────┐\n                  │ 1. Read Sensor: digitalRead(2)│\n                  └──────────────┬────────────────┘\n                                 │\n                                 ▼\n                     /───────────────────────\\\n                    /   IS BUTTON PRESSED?    \\\n                   <    (pinState == HIGH)     >\n                    \\                         /\n                     \\───────────────────────/\n                             /       \\\n                       YES  /         \\  NO\n                           v           v\n            ┌──────────────────┐    ┌──────────────────┐\n            │ 2. THEN:         │    │ 2. ELSE:         │\n            │ digitalWrite(13, │    │ digitalWrite(13, │\n            │   HIGH); (LED ON)│    │   LOW); (LED OFF)│\n            └──────────────────┘    └──────────────────┘\n                           \\           /\n                            \\         /\n                             ▼       ▼\n                  ┌───────────────────────────────┐\n                  │ 3. REPEAT LOOP: Thousands of  │\n                  │ times every single second!    │\n                  └───────────────────────────────┘\n```\n\n#### Boolean Truth:\n- When a condition is true, the Arduino evaluates it as `1` or `true`.\n- When false, it evaluates it as `0` or `false`.\n- Computers never hesitate or get confused—they follow exact logic trees!"
+    },
+    {
+      "stepId": "l01_08_s03",
+      "title": "Interactive Decision Simulator",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "decisionSimulator",
+      "markdownContent": "### Test Live Decision Evaluation! 🧠\n\nStep into the shoes of the Arduino CPU! Press and hold the virtual button below to change the condition state:\n- When button is pressed: `Condition (Pin 2 == HIGH) ➔ TRUE ➔ Action: LED ON`\n- When button is released: `Condition (Pin 2 == LOW) ➔ FALSE ➔ Action: LED OFF`\n\nObserve how instantly the software decision connects to the hardware output!"
+    },
+    {
+      "stepId": "l01_08_s04",
+      "title": "Decision Logic Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your understanding of robot decisions and IF/THEN logic!",
+      "interactiveConfig": {
+        "question": "In an IF/ELSE block, what code runs if the condition is FALSE?",
+        "options": [
+          "The code inside the ELSE branch",
+          "The Arduino shuts down permanently",
+          "All code runs backwards"
+        ],
+        "correctIndex": 0,
+        "explanation": "When an IF condition evaluates to FALSE, execution branches into the ELSE statement.",
+        "questions": [
+          {
+            "question": "In an IF/ELSE block, what code runs if the condition is FALSE?",
+            "options": [
+              "The code inside the ELSE branch",
+              "The Arduino shuts down permanently",
+              "All code runs backwards"
+            ],
+            "correctIndex": 0,
+            "explanation": "When an IF condition evaluates to FALSE, execution branches into the ELSE statement."
+          },
+          {
+            "question": "Why does Arduino run code inside the loop() function over and over again?",
+            "options": [
+              "So it can continuously monitor sensors and react without missing changes",
+              "Because it forgets what it did every second",
+              "To make a loud buzzing sound"
+            ],
+            "correctIndex": 0,
+            "explanation": "The loop() function repeats endlessly so the robot continuously senses, decides, and acts in real time."
+          },
+          {
+            "question": "A robot program says: IF (distance < 10) THEN stopMotors();. What happens when distance is 4 cm?",
+            "options": [
+              "The condition is true (4 is less than 10), so it stops motors",
+              "It goes full speed ahead",
+              "It ignores the distance sensor"
+            ],
+            "correctIndex": 0,
+            "explanation": "Because 4 is less than 10, the condition is TRUE, triggering the stopMotors() action!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

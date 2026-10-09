@@ -3,7 +3,7 @@
   "title": "I2C Challenge",
   "summary": "You have mastered the fundamentals of serial bus communication, open-drain pull-up physics, SDA/SCL pinouts, 7-bit hardware addressing, multi-devic...",
   "tier": "engineer",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_08",
   "sortOrder": 10,
   "isOptional": false,
@@ -138,6 +138,68 @@
           "warmupExplanation": "In Step 6 and Lesson 3, you saw how hardware bus libraries partner with device drivers to control complex peripherals."
         }
       ]
+    },
+    {
+      "stepId": "l08_10_s02",
+      "title": "Complete Connected Monster Bus Architecture",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "i2cDaisyChainSimulator",
+      "markdownContent": "### The Capstone: Connected Monster Lab System\n\nYou have reached the final milestone of Course 8! In this capstone project, you integrate multiple smart devices onto a single 2-wire serial bus:\n\n```\n[ Arduino Uno R3 Brain ]\n   \u2502          \u2502\n   \u2502 SDA (A4) \u251c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba\n   \u2502 SCL (A5) \u2514\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba\n                  \u25bc              \u25bc               \u25bc\n             [ I2C LCD ]    [ I2C RTC ]     [ I2C Sensor ]\n              Addr: 0x27     Addr: 0x68      Addr: 0x76\n             Status Display Real-Time Clock  Telemetry Stream\n```\n\nCapstone System Specifications:\n1. All devices share common +5V and GND power rails.\n2. All devices communicate over the shared A4/A5 bus highway.\n3. Address scanner verifies zero address collisions.\n4. Firmware coordinates real-time telemetry updates cleanly without bus lockups!"
+    },
+    {
+      "stepId": "l08_10_s03",
+      "title": "Final Multi-Device Bus Verification",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "i2cAddressScanner",
+      "markdownContent": "### Final Lab: Multi-Peripheral Bus Commissioning\n\nBefore uploading your master firmware, commission the bus:\n1. Verify solid power rail connections (+5V and GND).\n2. Wire LCD backpack (SDA -> A4, SCL -> A5).\n3. Wire environmental sensor in parallel to the same bus rails.\n4. Run the interactive I2C Address Scanner below to verify conflict-free detection of all peripheral addresses!"
+    },
+    {
+      "stepId": "l08_10_s04",
+      "title": "Master I2C Challenge Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Prove your complete mastery of 2-wire I2C communication, bus topologies, and device addressing to earn your certification XP!",
+      "interactiveConfig": {
+        "question": "What are the two dedicated communication lines used in the I2C protocol?",
+        "options": [
+          "SDA (Serial Data) and SCL (Serial Clock)",
+          "TX (Transmit) and RX (Receive)",
+          "MOSI (Master Out) and MISO (Master In)"
+        ],
+        "correctIndex": 0,
+        "explanation": "I2C uses SDA to transport bidirectional serial data bits and SCL to synchronize clock pulses.",
+        "questions": [
+          {
+            "question": "What are the two dedicated communication lines used in the I2C protocol?",
+            "options": [
+              "SDA (Serial Data) and SCL (Serial Clock)",
+              "TX (Transmit) and RX (Receive)",
+              "MOSI (Master Out) and MISO (Master In)"
+            ],
+            "correctIndex": 0,
+            "explanation": "I2C uses SDA to transport bidirectional serial data bits and SCL to synchronize clock pulses."
+          },
+          {
+            "question": "Why is I2C referred to as an 'open-drain' bus with pull-up resistors?",
+            "options": [
+              "Devices only pull lines down to Ground; pull-up resistors return lines to +5V when idle",
+              "Water drains out of the microchips to keep them cool",
+              "The pins drain the battery even when the board is unplugged"
+            ],
+            "correctIndex": 0,
+            "explanation": "Open-drain transistors can only pull signals LOW to GND. Passive pull-up resistors pull lines HIGH to +5V when released, preventing short circuits."
+          },
+          {
+            "question": "In Arduino C++, which core library provides hardware support for I2C bus communication?",
+            "options": [
+              "Wire.h",
+              "LiquidCrystal.h",
+              "EEPROM.h"
+            ],
+            "correctIndex": 0,
+            "explanation": "The Wire library is the official Arduino library for I2C (Two-Wire Interface) communication."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 15

@@ -3,7 +3,7 @@
   "title": "Distance Sensor Experiment",
   "summary": "Meet Component comp01: The HC-SR04 Ultrasonic Distance Sensor!",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_06",
   "sortOrder": 9,
   "isOptional": false,
@@ -17,10 +17,10 @@
   ],
   "steps": [
     {
-      "stepId": "l06_s09",
+      "stepId": "l06_09_s01",
       "title": "Distance Sensor Experiment",
-      "type": "physicalTask",
-      "markdownContent": "# Distance Sensor Experiment: Echolocation in Code\n\nMeet Component `comp_01`: The **HC-SR04 Ultrasonic Distance Sensor**! This sensor gives your robot creature the sense of spatial awareness.\n\n### How Bats and Robots See with Sound:\nThe sensor features two metal cylinders that look like robot eyes:\n- **Transmitter (Trig)**: Emits a sharp ultrasonic burst at **40,000 Hz** (40 kHz)\u2014far too high for human ears to detect.\n- **Receiver (Echo)**: Listens for the reflected sound echo bouncing off nearby surfaces.\n- Because the speed of sound through room air is roughly **340 meters/second (0.034 cm/microsecond)**, the Arduino measures time ($t$) and calculates distance:\n\n$$\\text{Distance (cm)} = \\frac{\\text{Echo Time (microseconds)} \\times 0.034}{2}$$\n\n### Wiring the 4-Pin Sensor:\n1. Unplug USB.\n2. Gently press the HC-SR04 pins into 4 adjacent breadboard rows (e.g. Rows 1, 2, 3, 4 across the center):\n   - **VCC Pin** \u2794 Red `+` Power Rail (+5V)\n   - **Trig Pin** \u2794 Arduino **Digital Pin 12**\n   - **Echo Pin** \u2794 Arduino **Digital Pin 11**\n   - **GND Pin** \u2794 Blue `-` Ground Rail (GND)\n\n### The Distance Telemetry Sketch:\n```cpp\nconst int trigPin = 12;\nconst int echoPin = 11;\n\nvoid setup() {\n  Serial.begin(9600); // 9600 baud communication\n  pinMode(trigPin, OUTPUT);\n  pinMode(echoPin, INPUT);\n}\n\nvoid loop() {\n  digitalWrite(trigPin, LOW);\n  delayMicroseconds(2);\n  digitalWrite(trigPin, HIGH);\n  delayMicroseconds(10); // 10-microsecond trigger pulse\n  digitalWrite(trigPin, LOW);\n\n  long duration = pulseIn(echoPin, HIGH); // Measure echo pulse length\n  int distanceCm = duration * 0.034 / 2;  // Convert echo time to cm\n\n  Serial.print(\"Measured Distance: \");\n  Serial.print(distanceCm);\n  Serial.println(\" cm\");\n\n  delay(200); // Sample 5 times per second\n}\n```\n\n### Hands-On Observation:\nOpen the **Serial Monitor** at 9600 baud. Move your palm toward and away from the sensor cylinders. Watch the distance readings update live! A physical sensor converts physical reality into digital numbers in memory!",
+      "type": "story",
+      "markdownContent": "# Distance Sensor Experiment: Echolocation in Code\n\nMeet Component `comp_01`: The **HC-SR04 Ultrasonic Distance Sensor**! This sensor gives your robot creature the sense of spatial awareness.\n\n### How Bats and Robots See with Sound:\nThe sensor features two metal cylinders that look like robot eyes:\n- **Transmitter (Trig)**: Emits a sharp ultrasonic burst at **40,000 Hz** (40 kHz)—far too high for human ears to detect.\n- **Receiver (Echo)**: Listens for the reflected sound echo bouncing off nearby surfaces.\n- Because the speed of sound through room air is roughly **340 meters/second (0.034 cm/microsecond)**, the Arduino measures time ($t$) and calculates distance:\n\n$$\\text{Distance (cm)} = \\frac{\\text{Echo Time (microseconds)} \\times 0.034}{2}$$\n\n### Wiring the 4-Pin Sensor:\n1. Unplug USB.\n2. Gently press the HC-SR04 pins into 4 adjacent breadboard rows (e.g. Rows 1, 2, 3, 4 across the center):\n   - **VCC Pin** ➔ Red `+` Power Rail (+5V)\n   - **Trig Pin** ➔ Arduino **Digital Pin 12**\n   - **Echo Pin** ➔ Arduino **Digital Pin 11**\n   - **GND Pin** ➔ Blue `-` Ground Rail (GND)\n\n### The Distance Telemetry Sketch:\n```cpp\nconst int trigPin = 12;\nconst int echoPin = 11;\n\nvoid setup() {\n  Serial.begin(9600); // 9600 baud communication\n  pinMode(trigPin, OUTPUT);\n  pinMode(echoPin, INPUT);\n}\n\nvoid loop() {\n  digitalWrite(trigPin, LOW);\n  delayMicroseconds(2);\n  digitalWrite(trigPin, HIGH);\n  delayMicroseconds(10); // 10-microsecond trigger pulse\n  digitalWrite(trigPin, LOW);\n\n  long duration = pulseIn(echoPin, HIGH); // Measure echo pulse length\n  int distanceCm = duration * 0.034 / 2;  // Convert echo time to cm\n\n  Serial.print(\"Measured Distance: \");\n  Serial.print(distanceCm);\n  Serial.println(\" cm\");\n\n  delay(200); // Sample 5 times per second\n}\n```\n\n### Hands-On Observation:\nOpen the **Serial Monitor** at 9600 baud. Move your palm toward and away from the sensor cylinders. Watch the distance readings update live! A physical sensor converts physical reality into digital numbers in memory!",
       "quickCheck": [
         {
           "questionId": "q_l06_s09_01",
@@ -49,6 +49,71 @@
           "warmupExplanation": "Trig triggers the sound pulse out; Echo listens for the reflected sound wave coming back."
         }
       ]
+    },
+    {
+      "stepId": "l06_09_s02",
+      "title": "Ultrasonic Echolocation Physics & Timing",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "realWorldSystemDiagram",
+      "markdownContent": "### How the HC-SR04 Senses Distance\n\nThe **HC-SR04 Ultrasonic Distance Sensor** (`comp_01`) brings animal echolocation (like bats and dolphins) into robotics!\n\n### The 4-Pin Interface:\n- **VCC Pin**: +5V DC power supply.\n- **GND Pin**: 0V Ground return.\n- **Trig (Trigger) Pin**: Input to the sensor. A 10-microsecond HIGH pulse tells the sensor to emit sound.\n- **Echo Pin**: Output from the sensor. Goes HIGH for the exact duration it takes the sound to bounce off an obstacle and return!\n\n### The Acoustic Timeline:\n1. Arduino drives `Trig` HIGH for $10\\,\\mu\\text{s}$.\n2. The transmitter ultrasonic speaker emits an 8-cycle sonic burst at **40,000 Hz** (40 kHz).\n3. The `Echo` pin goes HIGH the instant the burst leaves.\n4. Sound travels through air at roughly **340 meters/second** ($0.034\\text{ cm/}\\mu\\text{s}$).\n5. When the reflected sound wave hits the receiver microphone, the `Echo` pin drops LOW.\n6. The duration in microseconds represents the round-trip journey:\n\n$$\\text{Distance (cm)} = \\frac{\\text{Echo Duration (}\\mu\\text{s)} \\times 0.034}{2}$$\n\nExplore the interactive system diagram below to see the sound wave ping and return!"
+    },
+    {
+      "stepId": "l06_09_s03",
+      "title": "Deconstruct the Distance Telemetry Code",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "codeDeconstruction",
+      "markdownContent": "### Deconstructing the Ultrasonic Sketch\n\nLet's analyze the code that drives the ultrasonic sensor step-by-step:\n\n1. **Clear and Trigger Pulse**:\n   ```cpp\n   digitalWrite(trigPin, LOW);\n   delayMicroseconds(2);\n   digitalWrite(trigPin, HIGH);\n   delayMicroseconds(10); // 10 microsecond trigger pulse\n   digitalWrite(trigPin, LOW);\n   ```\n2. **Measure the Echo Return Pulse**:\n   ```cpp\n   long duration = pulseIn(echoPin, HIGH);\n   ```\n   `pulseIn()` waits for `echoPin` to go HIGH, starts timing, stops timing when it drops LOW, and returns duration in microseconds.\n3. **Compute Real-World Distance in Centimeters**:\n   ```cpp\n   int distanceCm = duration * 0.034 / 2;\n   ```\n4. **Stream Telemetry to Serial Monitor**:\n   ```cpp\n   Serial.print(\"Measured Distance: \");\n   Serial.print(distanceCm);\n   Serial.println(\" cm\");\n   ```\n\nInteract with the code deconstruction tool below to inspect each line of code!",
+      "interactiveConfig": {
+        "codeSnippet": "digitalWrite(trigPin, HIGH);\ndelayMicroseconds(10);\ndigitalWrite(trigPin, LOW);\nlong duration = pulseIn(echoPin, HIGH);\nint distanceCm = duration * 0.034 / 2;\nSerial.println(distanceCm);"
+      }
+    },
+    {
+      "stepId": "l06_09_s04",
+      "title": "Distance Sensor Mastery Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Confirm your understanding of ultrasonic physics, pulseIn timing, and distance calculation math.",
+      "interactiveConfig": {
+        "question": "Why must the echo duration be divided by 2 when calculating distance to an object?",
+        "options": [
+          "Because sound travels out to the obstacle and bounces all the way back, doubling the one-way distance",
+          "Because the sensor has two metal cylinders",
+          "Because Arduino pins only read half of the incoming voltage"
+        ],
+        "correctIndex": 0,
+        "explanation": "The measured time is for the round trip (there and back); dividing by 2 gives the one-way distance to the object.",
+        "questions": [
+          {
+            "question": "Why must the echo duration be divided by 2 when calculating distance to an object?",
+            "options": [
+              "Because sound travels out to the obstacle and bounces all the way back, doubling the one-way distance",
+              "Because the sensor has two metal cylinders",
+              "Because Arduino pins only read half of the incoming voltage"
+            ],
+            "correctIndex": 0,
+            "explanation": "The measured time is for the round trip (there and back); dividing by 2 gives the one-way distance to the object."
+          },
+          {
+            "question": "What does the Arduino built-in function `pulseIn(pin, HIGH)` return?",
+            "options": [
+              "The duration of time in microseconds that the specified pin stayed HIGH",
+              "The current temperature of the room",
+              "The total number of code lines in the sketch"
+            ],
+            "correctIndex": 0,
+            "explanation": "pulseIn measures the pulse length in microseconds from the pin's transition to HIGH until it returns to LOW."
+          },
+          {
+            "question": "What sound frequency does the HC-SR04 distance sensor transmit?",
+            "options": [
+              "40 kHz (40,000 Hz) ultrasound, beyond human hearing",
+              "440 Hz concert pitch A",
+              "1 Hz sub-bass vibrations"
+            ],
+            "correctIndex": 0,
+            "explanation": "The sensor emits 40 kHz acoustic ultrasound, inaudible to human ears but perfect for high-speed acoustic reflection."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

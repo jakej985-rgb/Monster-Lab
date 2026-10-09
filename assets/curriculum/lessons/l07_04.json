@@ -3,7 +3,7 @@
   "title": "Distance Sensors",
   "summary": "Time to inspect your first superpower sensor: the HC-SR04 Ultrasonic Distance Sensor (comp01)!",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_07",
   "sortOrder": 4,
   "isOptional": false,
@@ -47,6 +47,58 @@
           "warmupExplanation": "If you walk to a tree and walk back home, you walked double the distance to the tree. Divide by 2 to get the distance from home to tree!"
         }
       ]
+    },
+    {
+      "stepId": "l07_04_s02",
+      "title": "Ultrasonic Echolocation Architecture",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### How the HC-SR04 Uses Sound Waves\n\nThe **HC-SR04 Ultrasonic Distance Sensor (`comp_01`)** gives your monster robot bats' superpower of echolocation:\n\n```\n[ Arduino ] \u2500\u2500 Trigger (10 \u00b5s HIGH) \u2500\u2500\u25ba [ Transmitter (T) ]\n                                                \u2502\n                                                \u25bc  Sound Burst (40 kHz ultrasonic wave)\n                                            ) ) ) ) ) ) )\n                                                          \u2502\n                                                    [ Obstacle Wall ]\n                                                          \u2502\n                                            ( ( ( ( ( ( (\n                                                \u25b2  Echo Reflection\n                                                \u2502\n[ Arduino ] \u25c4\u2500\u2500 Echo Pin (HIGH pulse) \u2500\u2500 [ Receiver (R) ]\n```\n\n1. **Trigger Pin**: The Arduino sends a 10-microsecond HIGH pulse to start the measurement.\n2. **Sonic Burst**: The sensor's transmitter cylinder emits eight ultrasonic sound pulses at 40,000 Hz.\n3. **Echo Pin**: The sensor holds its Echo pin HIGH for the exact duration it takes for the sound wave to travel to the obstacle and bounce back!"
+    },
+    {
+      "stepId": "l07_04_s03",
+      "title": "Echo Pulse Timing and Speed of Sound Math",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "interactiveTroubleshooting",
+      "markdownContent": "### Calculating Distance from Microseconds\n\nSound travels through room-temperature air at approximately **343 meters per second**, which equals **0.0343 centimeters per microsecond**:\n\n```cpp\nconst int trigPin = 9;\nconst int echoPin = 10;\n\nvoid setup() {\n  pinMode(trigPin, OUTPUT);\n  pinMode(echoPin, INPUT);\n  Serial.begin(9600);\n}\n\nvoid loop() {\n  // 1. Send 10\u00b5s trigger pulse\n  digitalWrite(trigPin, LOW);\n  delayMicroseconds(2);\n  digitalWrite(trigPin, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(trigPin, LOW);\n\n  // 2. Measure round-trip echo pulse duration\n  long duration = pulseIn(echoPin, HIGH);\n\n  // 3. Distance formula: divide by 2 for one-way distance!\n  float distanceCm = (duration * 0.0343) / 2.0;\n\n  Serial.print(\"Distance: \");\n  Serial.print(distanceCm);\n  Serial.println(\" cm\");\n  delay(200);\n}\n```\n\n**Troubleshooting Workbench:**\nUse the diagnostic simulator below to identify what happens when trigger and echo jumper wires are accidentally reversed or disconnected!"
+    },
+    {
+      "stepId": "l07_04_s04",
+      "title": "Distance Sensor Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your understanding of ultrasonic sound wave transmission and round-trip distance math.",
+      "interactiveConfig": {
+        "question": "Why do we divide the pulse duration by 2 in the HC-SR04 distance formula?",
+        "options": [
+          "Because the sound wave travels out to the obstacle and bounces back, covering double the distance",
+          "Because the Arduino clock runs at half speed when measuring sound",
+          "Because ultrasonic sound waves travel at half the speed of light"
+        ],
+        "correctIndex": 0,
+        "explanation": "The measured echo pulse duration represents the entire round trip (to the target and back). To calculate the distance to the obstacle, we divide by 2.",
+        "questions": [
+          {
+            "question": "Why do we divide the pulse duration by 2 in the HC-SR04 distance formula?",
+            "options": [
+              "Because the sound wave travels out to the obstacle and bounces back, covering double the distance",
+              "Because the Arduino clock runs at half speed when measuring sound",
+              "Because ultrasonic sound waves travel at half the speed of light"
+            ],
+            "correctIndex": 0,
+            "explanation": "The measured echo pulse duration represents the entire round trip (to the target and back). To calculate the distance to the obstacle, we divide by 2."
+          },
+          {
+            "question": "Which HC-SR04 pin produces a HIGH pulse whose duration matches the sound wave travel time?",
+            "options": [
+              "Echo pin",
+              "Trigger pin",
+              "VCC pin"
+            ],
+            "correctIndex": 0,
+            "explanation": "The Trigger pin receives a start command from the Arduino, while the Echo pin outputs a HIGH signal whose width matches the travel time of the sound pulse."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

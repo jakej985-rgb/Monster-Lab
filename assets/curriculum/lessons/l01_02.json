@@ -3,7 +3,7 @@
   "title": "Meet the Arduino Uno",
   "summary": "Pick up your Arduino Uno board and hold it gently by its edges, just like holding a tasty cracker!",
   "tier": "rookie",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_01",
   "sortOrder": 2,
   "isOptional": false,
@@ -18,8 +18,7 @@
       "stepId": "l01_s02",
       "title": "Meet the Arduino Uno",
       "type": "physicalTask",
-      "interactiveWidgetType": "boardLabelDragDrop",
-      "markdownContent": "Pick up your **Arduino Uno** board and hold it gently by its edges, just like holding a tasty cracker! \ud83c\udf6a\n\nLook closely at the board. Notice these important landmarks:\n1. **USB Port**: The shiny silver metal box. This is where you plug in the cable to send code and power from your computer!\n2. **Power Jack**: The round black socket. You can plug in a battery pack here when your robot is on the move.\n3. **Reset Button**: The small push button in the corner. Pressing it restarts your program from the very beginning.\n4. **Built-in LED**: A tiny light labeled **'L'** right on the board next to Pin 13.\n5. **Pin Headers**: The long rows of black plastic sockets with little holes along the edges.\n\nTry the matching challenge below to drag each label badge to its matching landmark!",
+      "markdownContent": "Pick up your **Arduino Uno** board and hold it gently by its edges, just like holding a tasty cracker! 🍪\n\nLook closely at the board. Notice these important landmarks:\n1. **USB Port**: The shiny silver metal box. This is where you plug in the cable to send code and power from your computer!\n2. **Power Jack**: The round black socket. You can plug in a battery pack here when your robot is on the move.\n3. **Reset Button**: The small push button in the corner. Pressing it restarts your program from the very beginning.\n4. **Built-in LED**: A tiny light labeled **'L'** right on the board next to Pin 13.\n5. **Pin Headers**: The long rows of black plastic sockets with little holes along the edges.",
       "quickCheck": [
         {
           "questionId": "l01_s02_q1",
@@ -46,6 +45,67 @@
           "warmupExplanation": "Computers use USB cables to talk to printers, game controllers, and Arduino boards."
         }
       ]
+    },
+    {
+      "stepId": "l01_02_s02",
+      "title": "Board Architecture & Key Landmarks",
+      "type": "visualExplanation",
+      "markdownContent": "### Exploring the Arduino Uno Hardware Map 🗺️\n\nTake a close look at your board. Every component has an important job:\n\n```\n┌────────────────────────────────────────────────────────┐\n│ [USB Port]                [Digital Pins 0 - 13]        │\n│  Silver Box               Header along the top edge    │\n│                                                        │\n│ [Reset Btn]   [ATmega328P Chip]           ['L' LED]    │\n│  Tiny button   Big black rectangle         On Pin 13   │\n│                                                        │\n│ [DC Jack]     [Power Header]    [Analog Pins A0 - A5]  │\n│  Round socket  5V, 3.3V, GND     Smooth sensor inputs  │\n└────────────────────────────────────────────────────────┘\n```\n\n#### Why Are These Landmarks Special?\n- **USB Port (Silver Box)**: Delivers 5V electricity and sends compiled code into the board's flash memory.\n- **DC Barrel Jack (Black Socket)**: Allows untethered battery power (7V–12V) so your robot can zoom around without a computer cable.\n- **ATmega328P Microcontroller**: The big rectangular black chip with metal legs. This is the master processor holding your program!\n- **Pin Headers**: The socket rows where jumper wires connect your external buttons, buzzers, and LEDs."
+    },
+    {
+      "stepId": "l01_02_s03",
+      "title": "Drag & Match Board Landmarks",
+      "type": "physicalTask",
+      "interactiveWidgetType": "boardLabelDragDrop",
+      "markdownContent": "### Put Your Board Knowledge to the Test! 🎯\n\nInspect your physical Arduino Uno board, then match each label badge to its corresponding landmark below:\n- **USB Connection**: Silver port that links to PC for flashing code & 5V power.\n- **DC Power Barrel Jack**: Black round port for external 9V battery or wall adapter.\n- **Digital Pins (0–13)**: Top header pins sending & receiving binary HIGH/LOW.\n- **Analog Pins (A0–A5)**: Bottom right pins reading smooth variable voltages.\n\nDrag each badge into its slot to complete the hardware inspection!"
+    },
+    {
+      "stepId": "l01_02_s04",
+      "title": "Board Landmarks Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check how well you know the physical parts of the Arduino Uno board!",
+      "interactiveConfig": {
+        "question": "Which part of the Arduino connects to your computer for uploading code?",
+        "options": [
+          "The silver USB port",
+          "The plastic battery snap",
+          "The reset push button"
+        ],
+        "correctIndex": 0,
+        "explanation": "The silver USB port connects to your computer to transfer program code and supply 5V power.",
+        "questions": [
+          {
+            "question": "Which part of the Arduino connects to your computer for uploading code?",
+            "options": [
+              "The silver USB port",
+              "The plastic battery snap",
+              "The reset push button"
+            ],
+            "correctIndex": 0,
+            "explanation": "The silver USB port connects to your computer to transfer program code and supply 5V power."
+          },
+          {
+            "question": "What happens when you press the small Reset button?",
+            "options": [
+              "It restarts your program from the very beginning",
+              "It permanently deletes your code forever",
+              "It turns the board into an ice cube"
+            ],
+            "correctIndex": 0,
+            "explanation": "The Reset button reboots the microcontroller chip, restarting your sketch from line 1."
+          },
+          {
+            "question": "Which digital pin is directly connected to the built-in test LED labeled 'L'?",
+            "options": [
+              "Digital Pin 13",
+              "Digital Pin 0",
+              "Analog Pin A5"
+            ],
+            "correctIndex": 0,
+            "explanation": "Digital Pin 13 is wired directly to the on-board amber test LED labeled 'L'!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

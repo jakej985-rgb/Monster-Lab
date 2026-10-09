@@ -16,7 +16,33 @@
       "stepId": "l2a_04_s01",
       "title": "Welcome to the Build Lab",
       "type": "story",
-      "markdownContent": "The **Build Lab** is where the magic happens. This is where you get your hands dirty and wire up real circuits.\n\nEvery project has a Build Lab section showing you exactly where to plug in every wire and component."
+      "markdownContent": "The **Build Lab** is where the magic happens. This is where you get your hands dirty and wire up real circuits.\n\nEvery project has a Build Lab section showing you exactly where to plug in every wire and component.",
+      "quickCheck": [
+        {
+          "questionId": "qc_l2a_04_s01_q1",
+          "question": "What is the main mission of the Build Lab?",
+          "options": [
+            "To guide you through physical breadboard circuit wiring step-by-step",
+            "To play background music",
+            "To draw cartoon pictures"
+          ],
+          "correctIndex": 0,
+          "explanation": "The Build Lab provides interactive wiring diagrams to guide your hands on the physical workbench!",
+          "warmupExplanation": "Building real circuits is the fun part! The Build Lab shows exactly where each jumper wire plugs in."
+        },
+        {
+          "questionId": "qc_l2a_04_s01_q2",
+          "question": "What safety step should you ALWAYS take before changing wiring on your breadboard?",
+          "options": [
+            "Unplug USB power from your Arduino so current cannot flow during wiring",
+            "Pour water on the board",
+            "Wear sunglasses indoors"
+          ],
+          "correctIndex": 0,
+          "explanation": "Always disconnect power before placing or moving wires to protect both yourself and the components!",
+          "warmupExplanation": "Power off before you touch! It is rule #1 of electrical engineering."
+        }
+      ]
     },
     {
       "stepId": "l2a_04_s02",

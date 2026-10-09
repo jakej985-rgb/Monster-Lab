@@ -3,7 +3,7 @@
   "title": "Resistors",
   "summary": "Why does almost every LED circuit need a resistor?",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_06",
   "sortOrder": 4,
   "isOptional": false,
@@ -17,10 +17,10 @@
   ],
   "steps": [
     {
-      "stepId": "l06_s04",
+      "stepId": "l06_04_s01",
       "title": "Resistors",
-      "type": "visualExplanation",
-      "markdownContent": "# Resistors: The Guardians of Your Circuit\n\nWhy does almost every LED circuit need a resistor? Let's uncover the guardian of your electronic parts!\n\n### The Water Hose Analogy\nImagine a giant fire hose hooked to high water pressure. If you attach a fragile paper balloon directly to the wide open nozzle, the immense rush of water bursts the balloon in a fraction of a second!\n\nA **resistor** acts like an adjustable pinch-valve or narrow nozzle. It restricts the volume of electric current flowing through the wire, keeping it at a safe, controlled trickle.\n\n### Why LEDs Need Current Protection\n- A Light Emitting Diode (LED) is a specialized semiconductor crystal. Once it turns ON, it has almost zero internal electrical resistance.\n- If you connect an LED straight across 5V and GND without a resistor, immense current surges through the tiny crystal. The LED will flash blindingly for a split second, turn brown, smell like burnt plastic, and die forever!\n- Drawing too much current (> 20\u201340 mA) can also permanently damage the Arduino microcontroller pin driver.\n\n### Meet the 220\u03a9 Resistor\n- Locate a small striped cylinder with two bendable metal legs in your kit.\n- Look at its color stripes: **Red \u2013 Red \u2013 Brown \u2013 Gold** = **220 Ohms (220\u03a9)**.\n- A 220\u03a9 resistor limits the current from a 5V supply to approximately **15 to 20 milliamps (mA)**\u2014plenty bright for your eyes and 100% safe for both LED and Arduino!\n\n### Fun Fact: Zero Polarity!\nResistors are completely symmetrical. It does not matter which way you plug them into the breadboard\u2014electricity flows through them identically in both directions!",
+      "type": "story",
+      "markdownContent": "# Resistors: The Guardians of Your Circuit\n\nWhy does almost every LED circuit need a resistor? Let's uncover the guardian of your electronic parts!\n\n### The Water Hose Analogy\nImagine a giant fire hose hooked to high water pressure. If you attach a fragile paper balloon directly to the wide open nozzle, the immense rush of water bursts the balloon in a fraction of a second!\n\nA **resistor** acts like an adjustable pinch-valve or narrow nozzle. It restricts the volume of electric current flowing through the wire, keeping it at a safe, controlled trickle.\n\n### Why LEDs Need Current Protection\n- A Light Emitting Diode (LED) is a specialized semiconductor crystal. Once it turns ON, it has almost zero internal electrical resistance.\n- If you connect an LED straight across 5V and GND without a resistor, immense current surges through the tiny crystal. The LED will flash blindingly for a split second, turn brown, smell like burnt plastic, and die forever!\n- Drawing too much current (> 20–40 mA) can also permanently damage the Arduino microcontroller pin driver.\n\n### Meet the 220Ω Resistor\n- Locate a small striped cylinder with two bendable metal legs in your kit.\n- Look at its color stripes: **Red – Red – Brown – Gold** = **220 Ohms (220Ω)**.\n- A 220Ω resistor limits the current from a 5V supply to approximately **15 to 20 milliamps (mA)**—plenty bright for your eyes and 100% safe for both LED and Arduino!\n\n### Fun Fact: Zero Polarity!\nResistors are completely symmetrical. It does not matter which way you plug them into the breadboard—electricity flows through them identically in both directions!",
       "quickCheck": [
         {
           "questionId": "q_l06_s04_01",
@@ -49,6 +49,68 @@
           "warmupExplanation": "Unlike LEDs which only let current flow one way, resistors are symmetrical. Either leg can connect to power or ground."
         }
       ]
+    },
+    {
+      "stepId": "l06_04_s02",
+      "title": "Ohm's Law & Current-Limiting Physics",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "resistorOhmLawSimulator",
+      "markdownContent": "### The Mathematics of Circuit Protection: Ohm's Law\n\nIn 1827, physicist Georg Ohm discovered the fundamental law of electronics:\n\n$$V = I \\times R \\quad \\iff \\quad I = \\frac{V}{R}$$\n\n- **$V$ (Voltage in Volts)**: The electrical push from the power supply.\n- **$I$ (Current in Amperes / Milliamperes)**: The rate of electron flow.\n- **$R$ (Resistance in Ohms $\\Omega$)**: The restriction holding current back.\n\n### The LED Calculation:\n1. A standard red LED drops about **2.0 Volts** across its crystal.\n2. In a 5.0V circuit, the remaining voltage across the series resistor is:\n   $$V_{\\text{resistor}} = 5.0\\text{V} - 2.0\\text{V} = 3.0\\text{V}$$\n3. With a **220$\\Omega$** resistor in series, the current is:\n   $$I = \\frac{3.0\\text{V}}{220\\,\\Omega} \\approx 0.0136\\text{ A} = 13.6\\text{ mA}$$\n4. **13.6 mA** is in the optimal sweet spot: bright illumination, well below the LED's 20-30 mA limit, and safely below the Arduino pin driver maximum of 40 mA!\n\n### What Happens at 0 Ohms?\nIf $R = 0\\,\\Omega$, then $I = \\frac{3.0\\text{V}}{0\\,\\Omega} \\to \\infty$. Current spikes to hundreds of milliamps, instantly destroying the LED and burning the microcontroller driver transistor!\n\nUse the Ohm's Law simulator below to see safe current vs burnout hazards!"
+    },
+    {
+      "stepId": "l06_04_s03",
+      "title": "Resistor Ohm's Law Simulator Lab",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "resistorOhmLawSimulator",
+      "markdownContent": "### Interactive Resistor Experiment\n\nTest different resistor values to see how current and brightness respond:\n\n1. **Select 220 Ω Preset**: Notice current is around **13.6 mA**. The status displays **OPTIMAL CURRENT**—safe and brightly lit.\n2. **Select 10k Ω Preset**: Notice current drops to **0.3 mA**. The status displays **LOW CURRENT (DIM)**—safe, but barely visible.\n3. **Select 0 Ω Preset**: Current exceeds 100 mA! The status triggers **BURNOUT BLOWOUT!** with a warning that Arduino pins are rated for maximum 20–40 mA.\n4. **Read Resistor Color Bands**: Find a 220Ω resistor in your kit and confirm the color bands: **Red (2) – Red (2) – Brown (×10) – Gold (±5%)**."
+    },
+    {
+      "stepId": "l06_04_s04",
+      "title": "Resistor Mastery Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Confirm your understanding of Ohm's Law, current limits, and resistor color bands.",
+      "interactiveConfig": {
+        "question": "According to Ohm's Law ($I = V / R$), what happens to current if circuit resistance increases while voltage stays constant?",
+        "options": [
+          "Current decreases",
+          "Current increases dramatically",
+          "Current becomes negative"
+        ],
+        "correctIndex": 0,
+        "explanation": "Resistance opposes current flow: higher resistance reduces current, while lower resistance increases current.",
+        "questions": [
+          {
+            "question": "According to Ohm's Law ($I = V / R$), what happens to current if circuit resistance increases while voltage stays constant?",
+            "options": [
+              "Current decreases",
+              "Current increases dramatically",
+              "Current becomes negative"
+            ],
+            "correctIndex": 0,
+            "explanation": "Resistance opposes current flow: higher resistance reduces current, while lower resistance increases current."
+          },
+          {
+            "question": "What color stripes identify a standard 220Ω 5% tolerance resistor?",
+            "options": [
+              "Red – Red – Brown – Gold",
+              "Brown – Black – Red – Gold",
+              "Yellow – Violet – Orange – Gold"
+            ],
+            "correctIndex": 0,
+            "explanation": "Red = 2, Red = 2, Brown = 10^1 (x10), Gold = 5% tolerance, giving 22 x 10 = 220 Ohms."
+          },
+          {
+            "question": "What is the primary danger of operating an LED without a series current-limiting resistor on an Arduino pin?",
+            "options": [
+              "Excessive current spikes beyond 20-40 mA, overheating and destroying the LED and microcontroller pin driver",
+              "The LED emits radio signals that erase your computer",
+              "The breadboard plastic turns into copper"
+            ],
+            "correctIndex": 0,
+            "explanation": "Without resistance, current surges unchecked, leading to thermal breakdown of the LED crystal and pin transistor damage."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

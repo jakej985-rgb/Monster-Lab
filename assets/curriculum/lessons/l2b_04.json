@@ -19,7 +19,33 @@
       "title": "First Look at Arduino Code: setup() and loop() Structure",
       "type": "codeExperiment",
       "interactiveWidgetType": "ideLifecycleSimulator",
-      "markdownContent": "Every Arduino sketch is built around two fundamental functions:\n\n```cpp\nvoid setup() {\n  // Hardware configuration \u2014 runs ONCE at boot or reset\n  pinMode(13, OUTPUT);\n}\n\nvoid loop() {\n  // Perpetual cycle \u2014 runs REPEATEDLY forever\n  digitalWrite(13, HIGH);\n  delay(1000);\n  digitalWrite(13, LOW);\n  delay(1000);\n}\n```\n\n- `setup()`: Initializes GPIO pin directions and communications. It runs exactly once when power is applied.\n- `loop()`: The infinite heartbeat of your robot. Once `setup()` finishes, the microcontroller jumps into `loop()` and orbits perpetually.\n\nRun the interactive lifecycle simulator below to watch `setup()` illuminate its beacon once, followed by the continuous orbit of `loop()`!"
+      "markdownContent": "Every Arduino sketch is built around two fundamental functions:\n\n```cpp\nvoid setup() {\n  // Hardware configuration \u2014 runs ONCE at boot or reset\n  pinMode(13, OUTPUT);\n}\n\nvoid loop() {\n  // Perpetual cycle \u2014 runs REPEATEDLY forever\n  digitalWrite(13, HIGH);\n  delay(1000);\n  digitalWrite(13, LOW);\n  delay(1000);\n}\n```\n\n- `setup()`: Initializes GPIO pin directions and communications. It runs exactly once when power is applied.\n- `loop()`: The infinite heartbeat of your robot. Once `setup()` finishes, the microcontroller jumps into `loop()` and orbits perpetually.\n\nRun the interactive lifecycle simulator below to watch `setup()` illuminate its beacon once, followed by the continuous orbit of `loop()`!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l2b_04_s01_q1",
+          "question": "How many times does the code inside void setup() execute when an Arduino powers up?",
+          "options": [
+            "Exactly once at startup or after reset",
+            "100 times per second",
+            "Never"
+          ],
+          "correctIndex": 0,
+          "explanation": "setup() runs once at the very beginning to configure pin modes and initialize hardware!",
+          "warmupExplanation": "Setup is morning prep: you brush your teeth once before starting your day."
+        },
+        {
+          "questionId": "qc_l2b_04_s01_q2",
+          "question": "What happens when execution reaches the bottom of void loop()?",
+          "options": [
+            "It immediately jumps back to the top of loop() and runs again forever",
+            "The Arduino turns off",
+            "The code erases itself"
+          ],
+          "correctIndex": 0,
+          "explanation": "loop() repeats continuously as long as the Arduino has power!",
+          "warmupExplanation": "A loop goes round and round: sensing, thinking, and acting over and over again."
+        }
+      ]
     },
     {
       "stepId": "l2b_04_s02",

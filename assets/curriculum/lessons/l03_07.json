@@ -3,7 +3,7 @@
   "title": "Meet the Library API",
   "summary": "You might hear programmers talk about a library's API.",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 8,
   "courseId": "lesson_03",
   "sortOrder": 7,
   "isOptional": false,
@@ -16,10 +16,10 @@
   ],
   "steps": [
     {
-      "stepId": "l03_s07",
+      "stepId": "l03_07_s01",
       "title": "Meet the Library API",
-      "type": "visualExplanation",
-      "markdownContent": "You might hear programmers talk about a library's **API**.\n\nAPI stands for **Application Programming Interface**. That sounds super fancy, but it just means:\n> **The list of commands a library gives you to talk to it!**\n\nThink of an API like the menu at an ice cream shop \ud83c\udf66. The menu tells you all the flavors you can order. If you ask for something that isn't on the menu, the shopkeeper looks confused!\n\nHere is a quick look at the `LiquidCrystal_I2C` library menu (its API):\n- `lcd.init()`: Wakes up and configures the screen.\n- `lcd.backlight()`: Turns on the blue LED light behind the screen.\n- `lcd.noBacklight()`: Turns off the light to save power.\n- `lcd.clear()`: Erases everything on the screen.\n- `lcd.setCursor(col, row)`: Jumps the writing pen to a grid position.\n- `lcd.print(message)`: Writes text or numbers on the display.\n\nWhenever you use a new library, checking its documentation or README gives you its complete menu of commands!",
+      "type": "story",
+      "markdownContent": "You might hear programmers talk about a library's **API**.\n\nAPI stands for **Application Programming Interface**. That sounds super fancy, but it just means:\n> **The list of commands a library gives you to talk to it!**\n\nThink of an API like the menu at an ice cream shop 🍦. The menu tells you all the flavors you can order. If you ask for something that isn't on the menu, the shopkeeper looks confused!\n\nHere is a quick look at the `LiquidCrystal_I2C` library menu (its API):\n- `lcd.init()`: Wakes up and configures the screen.\n- `lcd.backlight()`: Turns on the blue LED light behind the screen.\n- `lcd.noBacklight()`: Turns off the light to save power.\n- `lcd.clear()`: Erases everything on the screen.\n- `lcd.setCursor(col, row)`: Jumps the writing pen to a grid position.\n- `lcd.print(message)`: Writes text or numbers on the display.\n\nWhenever you use a new library, checking its documentation or README gives you its complete menu of commands!",
       "quickCheck": [
         {
           "questionId": "qc_l03_s07_q1",
@@ -46,6 +46,70 @@
           "warmupExplanation": "Most display libraries provide a clear() command to wipe the display clean."
         }
       ]
+    },
+    {
+      "stepId": "l03_07_s02",
+      "title": "Object-Oriented Syntax: Dot Notation",
+      "type": "visualExplanation",
+      "markdownContent": "### Understanding Dot Notation: `object.method()`\n\nNotice how every command in our LCD library uses a dot (`.`):\n\n```cpp\n  lcd.clear();\n// ^   ^\n// │   └── METHOD (The action to perform)\n// └────── OBJECT (The specific hardware device instance)\n```\n\nIn C++, this is called **Object-Oriented Programming (OOP)**:\n1. **The Object (`lcd`)**: Represents your physical hardware device in code.\n2. **The Dot (`.`)**: Tells the compiler, *\"Reach inside this object and run this specific tool!\"*\n3. **The Method (`print`, `clear`, `setCursor`)**: The pre-written function that carries out the task.\n4. **Parameters (`\"Hello\"`, `0, 1`)**: The specific details passed between parentheses.\n\n### The Common LiquidCrystal_I2C API Roster\n- `lcd.init()`: Prepares the hardware registers.\n- `lcd.clear()`: Blanks all 32 character locations.\n- `lcd.home()`: Returns cursor to (0, 0) without erasing text.\n- `lcd.backlight()` / `lcd.noBacklight()`: Controls the blue LED backlight.\n- `lcd.cursor()` / `lcd.noCursor()`: Shows or hides the blinking underline."
+    },
+    {
+      "stepId": "l03_07_s03",
+      "title": "Exploring the API Surface",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "libraryConceptDiagram",
+      "markdownContent": "Let's review the API command surface! Check out how the library cleanly bundles dozens of hardware actions behind simple method names.\n\nUse the diagram to inspect how calling simple methods like `init()`, `backlight()`, and `print()` cleanly replaces hundreds of lines of cryptic bit-shifting and register writes.",
+      "interactiveConfig": {
+        "title": "API Command Surface: Exploring Methods and Abstraction"
+      }
+    },
+    {
+      "stepId": "l03_07_s04",
+      "title": "Knowledge Check: Library APIs & Methods",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your knowledge of library APIs, dot notation, and common display methods.",
+      "interactiveConfig": {
+        "question": "In the statement 'lcd.backlight();', what does the dot '.' do?",
+        "options": [
+          "It calls the backlight() method on the lcd object",
+          "It creates a new integer variable",
+          "It ends the program execution"
+        ],
+        "correctIndex": 0,
+        "explanation": "Dot notation calls a method (function) belonging to an object instance in object-oriented C++.",
+        "questions": [
+          {
+            "question": "In the statement 'lcd.backlight();', what does the dot '.' do?",
+            "options": [
+              "It calls the backlight() method on the lcd object",
+              "It creates a new integer variable",
+              "It ends the program execution"
+            ],
+            "correctIndex": 0,
+            "explanation": "Dot notation calls a method (function) belonging to an object instance in object-oriented C++."
+          },
+          {
+            "question": "Which API method turns off the blue LCD backlight to save battery power?",
+            "options": [
+              "lcd.noBacklight()",
+              "lcd.shutdown()",
+              "lcd.sleepMode()"
+            ],
+            "correctIndex": 0,
+            "explanation": "lcd.noBacklight() disables the transistor controlling the backlight LED on the I2C backpack."
+          },
+          {
+            "question": "What is the difference between lcd.clear() and lcd.home()?",
+            "options": [
+              "lcd.clear() erases all characters, while lcd.home() only moves the cursor to (0, 0) without erasing",
+              "lcd.home() shuts down the Arduino, while lcd.clear() plays music",
+              "There is no difference; they are identical functions"
+            ],
+            "correctIndex": 0,
+            "explanation": "lcd.clear() wipes character display RAM; lcd.home() simply resets the cursor to the top-left cell without erasing text."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

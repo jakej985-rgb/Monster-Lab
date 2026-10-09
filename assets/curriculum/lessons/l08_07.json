@@ -3,7 +3,7 @@
   "title": "I2C Sensor",
   "summary": "Now let's add a smart I2C sensorsuch as a digital temperature sensor, a barometric pressure altimeter, or a real-time clock.",
   "tier": "engineer",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_08",
   "sortOrder": 7,
   "isOptional": false,
@@ -46,6 +46,58 @@
           "warmupExplanation": "In Lesson 6, you learned how breadboard power buses distribute 5V and GND across dozens of connection points."
         }
       ]
+    },
+    {
+      "stepId": "l08_07_s02",
+      "title": "Smart Sensors with On-Board Microchips",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### Raw Analog Sensors vs. Smart I2C Sensors\n\nIn Lesson 7, you used raw analog sensors (like an LDR) that required voltage dividers and microcontroller ADC conversions.\n\n**Smart I2C Sensors** take things to a whole new level:\n\n```\n[ Raw Analog Sensor ] \u2500\u2500\u25ba [ Voltage Divider ] \u2500\u2500\u25ba [ Arduino 10-bit ADC ] \u2500\u2500\u25ba [ Code Math ]\n\n[ Smart I2C Sensor ]\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502  Transducer \u2500\u2500\u25ba Internal 24-bit ADC \u2500\u2500\u25ba DSP Filter    \u2502\n\u2502                       \u2502                                \u2502\n\u2502                       \u25bc                                \u2502\n\u2502             Internal Register Map                      \u2502\n\u2502     (0x00: Status, 0x01: Temp MSB, 0x02: Temp LSB)     \u2502\n\u2502                       \u2502                                \u2502\n\u2502                       \u25bc                                \u2502\n\u2502              I2C Bus Engine (0x68)                     \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n                        \u2502 (SDA & SCL Clean Digital Bytes)\n                        \u25bc\n                [ Arduino Uno ]\n```\n\nSmart sensors perform internal signal conditioning and store calibrated values in internal registers. The Arduino simply asks for the number over I2C!"
+    },
+    {
+      "stepId": "l08_07_s03",
+      "title": "Parallel Bus Expansion with I2C Sensors",
+      "type": "physicalTask",
+      "interactiveWidgetType": "i2cAddressScanner",
+      "markdownContent": "### Adding a Smart Sensor Alongside Your LCD\n\nTo connect an I2C sensor (such as a BMP280 barometer or DS3231 RTC clock) to your Arduino while the LCD is already connected:\n1. Connect the sensor's **VCC** to the +5V breadboard power rail.\n2. Connect the sensor's **GND** to the GND breadboard power rail.\n3. Connect the sensor's **SDA** in parallel with the LCD's SDA line (Pin A4).\n4. Connect the sensor's **SCL** in parallel with the LCD's SCL line (Pin A5).\n\n**Zero Extra Pins Used!** Both devices share the exact same 2 pins!\n\n**Laboratory Task:**\nRun the interactive I2C Address Scanner below to confirm that both the LCD (`0x27`) and smart sensor (`0x68`) respond cleanly on the bus!"
+    },
+    {
+      "stepId": "l08_07_s04",
+      "title": "I2C Sensor Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your understanding of smart digital sensors and bus sharing.",
+      "interactiveConfig": {
+        "question": "Where do you connect the SDA and SCL pins of a new I2C sensor when an I2C LCD is already attached?",
+        "options": [
+          "To the exact same SDA (A4) and SCL (A5) pins in parallel",
+          "To digital pins 2 and 3",
+          "To the 3.3V and AREF pins"
+        ],
+        "correctIndex": 0,
+        "explanation": "Because I2C is a shared bus, all peripherals connect in parallel to the exact same SDA (A4) and SCL (A5) lines.",
+        "questions": [
+          {
+            "question": "Where do you connect the SDA and SCL pins of a new I2C sensor when an I2C LCD is already attached?",
+            "options": [
+              "To the exact same SDA (A4) and SCL (A5) pins in parallel",
+              "To digital pins 2 and 3",
+              "To the 3.3V and AREF pins"
+            ],
+            "correctIndex": 0,
+            "explanation": "Because I2C is a shared bus, all peripherals connect in parallel to the exact same SDA (A4) and SCL (A5) lines."
+          },
+          {
+            "question": "What is a key advantage of smart digital I2C sensors over raw analog sensors?",
+            "options": [
+              "They perform internal high-resolution analog-to-digital conversion and transmit clean, noise-free digital data",
+              "They never require power or ground connections",
+              "They do not require any software code"
+            ],
+            "correctIndex": 0,
+            "explanation": "Smart I2C sensors contain built-in precision digitizers and DSP filters, sending ready-to-use digital values over the bus without susceptibility to analog noise."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

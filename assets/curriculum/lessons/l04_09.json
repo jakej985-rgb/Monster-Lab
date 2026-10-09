@@ -45,6 +45,50 @@
           "warmupExplanation": "To create yellow light, turn ON Red (255) and Green (255), and set Blue to 0."
         }
       ]
+    },
+    {
+      "stepId": "l04_09_s02",
+      "title": "Wiring 3 Current-Limiting Resistors",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### Bench Rule: Three Separate Resistors!\nNever share a single resistor on the common leg! If you do, turning on Red will steal current from Green, changing their brightness unevenly.\n\n**Always put one 220\u03a9 resistor on each individual color leg (R, G, and B)!**\n\n"
+    },
+    {
+      "stepId": "l04_09_s03",
+      "title": "Build the RGB Mini Project Circuit",
+      "type": "physicalTask",
+      "interactiveWidgetType": "rgbMixer",
+      "markdownContent": "### Wire and Test\nWire pins 9, 10, and 11 to your RGB LED through 220\u03a9 resistors and observe the color cycle."
+    },
+    {
+      "stepId": "l04_09_s04",
+      "title": "Mini Project Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of the concepts covered in this module.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "Why should each color channel have its own separate 220\u03a9 protective resistor?",
+            "options": [
+              "Different color diodes have different forward voltages and need independent current limits",
+              "To use up spare parts",
+              "Because resistors get lonely"
+            ],
+            "correctIndex": 0,
+            "explanation": "Red, green, and blue diodes have different forward voltages. Individual resistors prevent brightness interference!"
+          },
+          {
+            "question": "Which three Uno pins are commonly used for RGB PWM control?",
+            "options": [
+              "Pins 9, 10, and 11",
+              "Pins 0, 1, and 2",
+              "Pins A0, A1, and A2"
+            ],
+            "correctIndex": 0,
+            "explanation": "Pins 9, 10, and 11 are adjacent hardware PWM pins on the Uno header!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

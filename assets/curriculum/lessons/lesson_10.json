@@ -17,7 +17,33 @@
       "stepId": "l10_s01",
       "title": "Mission Introduction",
       "type": "story",
-      "markdownContent": "### Blazing Fast Bitstreams: When Milliseconds Matter\nWhile I2C is great for slow environmental sensors, streaming graphics to a color TFT display, reading megabytes from an SD card flight recorder, or interrogating a 13.56 MHz RFID badge demands raw speed. I2C caps out at 100 kHz or 400 kHz, but the SPI protocol runs at up to 8 MHz on the Arduino Uno\u2014twenty times faster!\n\nIn this lesson, you will master the 4-wire synchronous protocol used for high-speed robotic telemetry and graphics.\n\n```\nMaster (Uno) \u2500\u2500\u2500\u2500 MOSI (Pin 11: Data Out) \u2500\u2500\u2500\u25ba Target (RFID / Matrix)\n             \u25c4\u2500\u2500\u2500 MISO (Pin 12: Data In)  \u2500\u2500\u2500\u2500\n             \u2500\u2500\u2500\u2500 SCK  (Pin 13: Clock)    \u2500\u2500\u2500\u25ba\n             \u2500\u2500\u2500\u2500 CS   (Pin 10: Select)   \u2500\u2500\u2500\u25ba\n```"
+      "markdownContent": "### Blazing Fast Bitstreams: When Milliseconds Matter\nWhile I2C is great for slow environmental sensors, streaming graphics to a color TFT display, reading megabytes from an SD card flight recorder, or interrogating a 13.56 MHz RFID badge demands raw speed. I2C caps out at 100 kHz or 400 kHz, but the SPI protocol runs at up to 8 MHz on the Arduino Uno\u2014twenty times faster!\n\nIn this lesson, you will master the 4-wire synchronous protocol used for high-speed robotic telemetry and graphics.\n\n```\nMaster (Uno) \u2500\u2500\u2500\u2500 MOSI (Pin 11: Data Out) \u2500\u2500\u2500\u25ba Target (RFID / Matrix)\n             \u25c4\u2500\u2500\u2500 MISO (Pin 12: Data In)  \u2500\u2500\u2500\u2500\n             \u2500\u2500\u2500\u2500 SCK  (Pin 13: Clock)    \u2500\u2500\u2500\u25ba\n             \u2500\u2500\u2500\u2500 CS   (Pin 10: Select)   \u2500\u2500\u2500\u25ba\n```",
+      "quickCheck": [
+        {
+          "questionId": "qc_l10_s01_q1",
+          "question": "When a robot needs to send visual graphics or audio data at ultra-high speed, which protocol is preferred?",
+          "options": [
+            "The high-speed synchronous SPI bus",
+            "A slow tin-can telephone",
+            "Sending letters by snail mail"
+          ],
+          "correctIndex": 0,
+          "explanation": "SPI (Serial Peripheral Interface) offers dedicated clock and data lines reaching speeds up to tens of megahertz!",
+          "warmupExplanation": "SPI is like an express bullet train for data: clock, transmit, and receive lines run at top speed simultaneously."
+        },
+        {
+          "questionId": "qc_l10_s01_q2",
+          "question": "In an SPI circuit, how does the Arduino select which peripheral device is active?",
+          "options": [
+            "By pulling that device's Chip Select (CS) pin LOW",
+            "By flashing an LED",
+            "By turning the power off"
+          ],
+          "correctIndex": 0,
+          "explanation": "Each SPI device has a dedicated Chip Select (CS) line. Pulling CS LOW wakes the chip up to communicate!",
+          "warmupExplanation": "Think of CS like tapping a friend on the shoulder: Hey, I am talking to you now!"
+        }
+      ]
     },
     {
       "stepId": "l10_s02",

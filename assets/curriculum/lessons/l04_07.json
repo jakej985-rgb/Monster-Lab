@@ -46,6 +46,50 @@
           "warmupExplanation": "When all three light channels are turned on at full power, their wavelengths blend to form White light."
         }
       ]
+    },
+    {
+      "stepId": "l04_07_s02",
+      "title": "Additive Color Theory: Red + Green + Blue",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### Painting with Photons!\nUnlike mixing paint where adding colors makes brown/black (subtractive), light is **additive**:\n- **Red + Green** = **Yellow** \ud83d\udfe8\n- **Red + Blue** = **Magenta / Purple** \ud83d\udfea\n- **Green + Blue** = **Cyan / Aqua** \ud83d\udfe6\n- **Red + Green + Blue** = **White Light** \u2b1c\n\nBy adjusting the PWM brightness of each color between 0 and 255, you can create over **16 million colors**!"
+    },
+    {
+      "stepId": "l04_07_s03",
+      "title": "Interactive RGB Color Synthesizer",
+      "type": "physicalTask",
+      "interactiveWidgetType": "rgbColorSynthesizer",
+      "markdownContent": "### Mix Custom Colors\nSlide the Red, Green, and Blue sliders to blend any hue on your robot."
+    },
+    {
+      "stepId": "l04_07_s04",
+      "title": "Color Mixing Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of the concepts covered in this module.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What color of light do you see when Red and Green beams shine together equally?",
+            "options": [
+              "Yellow",
+              "Purple",
+              "Black"
+            ],
+            "correctIndex": 0,
+            "explanation": "In additive light theory, combining pure Red and pure Green produces bright Yellow light!"
+          },
+          {
+            "question": "What happens when Red, Green, and Blue all shine at full 100% power simultaneously?",
+            "options": [
+              "You get crisp White light",
+              "The room turns pitch black",
+              "The bulb shatters"
+            ],
+            "correctIndex": 0,
+            "explanation": "All visible primary light wavelengths combined together produce White light!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

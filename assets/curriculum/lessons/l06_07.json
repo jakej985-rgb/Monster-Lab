@@ -3,7 +3,7 @@
   "title": "Blink on a Real Circuit",
   "summary": "In Step 6, your LED was tied directly to the constant 5V power rail, so it stayed on continuously.",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_06",
   "sortOrder": 7,
   "isOptional": false,
@@ -17,9 +17,9 @@
   ],
   "steps": [
     {
-      "stepId": "l06_s07",
+      "stepId": "l06_07_s01",
       "title": "Blink on a Real Circuit",
-      "type": "codeExperiment",
+      "type": "story",
       "markdownContent": "# Blink on a Real Circuit\n\nIn Step 6, your LED was tied directly to the constant 5V power rail, so it stayed on continuously. Now, let's put the Arduino microcontroller in command!\n\n### Hardware Transition:\n1. Unplug the USB cable.\n2. Gently unplug the resistor leg from the `+` rail.\n3. Move that resistor leg into **Row 10, column a**.\n4. Take a jumper wire: connect Arduino **Digital Pin 9** to **Row 10, column b**.\n5. Leave the LED short leg connected through Row 16 to Ground.\n\nNow, Digital Pin 9 controls whether 5V is supplied to the circuit!\n\n### Upload the External Blink Sketch:\n```cpp\nconst int ledPin = 9; // External circuit wired to Digital Pin 9\n\nvoid setup() {\n  pinMode(ledPin, OUTPUT); // Configure Pin 9 as an active driver\n}\n\nvoid loop() {\n  digitalWrite(ledPin, HIGH); // Supply +5V: Circuit closes, LED lights up!\n  delay(1000);                // Wait 1000 ms (1 second)\n  digitalWrite(ledPin, LOW);  // Drive to 0V: Circuit off, LED dark!\n  delay(1000);                // Wait 1000 ms (1 second)\n}\n```\n\n### The Hardware-Software Bridge:\n- When code calls `digitalWrite(9, HIGH)`, an internal transistor inside the ATmega328P connects Pin 9 to the internal 5V supply, sourcing electric current.\n- When code calls `digitalWrite(9, LOW)`, the transistor connects Pin 9 to Ground (0V), collapsing the voltage across the LED so current ceases.",
       "quickCheck": [
         {
@@ -49,6 +49,68 @@
           "warmupExplanation": "One second is 1000 milliseconds. 250 ms ON plus 250 ms OFF creates two swift blink pulses per second."
         }
       ]
+    },
+    {
+      "stepId": "l06_07_s02",
+      "title": "Microcontroller Digital Output Switching",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "blinkSimulator",
+      "markdownContent": "### The Microcontroller as an Electronic Switch\n\nIn your previous build, the resistor was plugged directly into the constant +5V rail, so the LED shone permanently. Now, we connect the resistor to **Digital Pin 9**.\n\n### How the ATmega328P Drives Pins:\nInside the microcontroller chip, each digital pin is connected to a pair of internal complementary MOSFET transistors (a totem-pole driver):\n- **`digitalWrite(9, HIGH)`**: The top transistor closes, linking Pin 9 directly to the internal 5V supply rail. Pin 9 outputs +5.0V, driving current through the resistor and LED to Ground.\n- **`digitalWrite(9, LOW)`**: The top transistor opens and the bottom transistor closes, linking Pin 9 directly to 0V (Ground). The voltage across your LED drops to 0V, current ceases, and the LED turns off instantly.\n\n### The Software Command Chain:\n```cpp\nvoid setup() {\n  pinMode(9, OUTPUT); // Enables the pin's internal push-pull output driver\n}\nvoid loop() {\n  digitalWrite(9, HIGH); // +5V ON\n  delay(1000);           // Hold state for 1 second\n  digitalWrite(9, LOW);  // 0V OFF\n  delay(1000);           // Hold state for 1 second\n}\n```\n\nExplore the interactive blink simulator below to see digital pin switching in action!"
+    },
+    {
+      "stepId": "l06_07_s03",
+      "title": "Blink Timing Lab & Persistence of Vision",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "blinkTimingLab",
+      "markdownContent": "### The Blink Timing & Persistence of Vision (POV) Lab\n\nHuman eyes can only distinguish discrete flashes up to about 25–30 Hz (flashes per second). Above that rate, a biological phenomenon called **Persistence of Vision (POV)** causes rapid pulses to blend into continuous light!\n\n### Hands-On Timing Experiments:\n1. **Standard Blink (1000 ms ON / 1000 ms OFF)**: 0.5 Hz frequency. The LED flashes clearly like a lighthouse beacon.\n2. **Alert Strobe (250 ms ON / 250 ms OFF)**: 2 Hz frequency. Two rapid warning pulses every second.\n3. **Emergency Flash (50 ms ON / 50 ms OFF)**: 10 Hz frequency. A frantic strobe effect.\n4. **POV Fusion Preset (20 ms ON / 20 ms OFF)**: 25–30 Hz. The human eye cannot separate individual blinks; the LED appears solidly lit at approximately half brightness!\n\nUse the Blink Timing Lab widget below to test discrete blinks versus POV fusion!"
+    },
+    {
+      "stepId": "l06_07_s04",
+      "title": "Digital Output Control Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Confirm your understanding of microcontroller pin drivers, digital HIGH/LOW states, and timing.",
+      "interactiveConfig": {
+        "question": "What internal action occurs inside the microcontroller when code runs `digitalWrite(9, HIGH)`?",
+        "options": [
+          "An internal transistor connects Digital Pin 9 to the internal +5V supply rail, driving current to the circuit",
+          "The microcontroller resets and starts over",
+          "Pin 9 connects directly to household 120V AC"
+        ],
+        "correctIndex": 0,
+        "explanation": "The pin driver transistor connects Pin 9 to the +5V DC rail, sourcing current through the external circuit.",
+        "questions": [
+          {
+            "question": "What internal action occurs inside the microcontroller when code runs `digitalWrite(9, HIGH)`?",
+            "options": [
+              "An internal transistor connects Digital Pin 9 to the internal +5V supply rail, driving current to the circuit",
+              "The microcontroller resets and starts over",
+              "Pin 9 connects directly to household 120V AC"
+            ],
+            "correctIndex": 0,
+            "explanation": "The pin driver transistor connects Pin 9 to the +5V DC rail, sourcing current through the external circuit."
+          },
+          {
+            "question": "What happens when an LED blinks on and off with delays under 20 milliseconds (frequencies above 30 Hz)?",
+            "options": [
+              "Persistence of vision (POV) causes individual flashes to fuse into a steady, solid illumination",
+              "The LED explodes with a loud pop",
+              "The code automatically crashes"
+            ],
+            "correctIndex": 0,
+            "explanation": "At high frequencies (>30 Hz), human retinal response fuses pulses together into steady light (Persistence of Vision)."
+          },
+          {
+            "question": "Why must `pinMode(pin, OUTPUT)` be called in `setup()` before driving an LED?",
+            "options": [
+              "It configures the microcontroller pin hardware into low-impedance output driver mode",
+              "It uploads firmware from the internet",
+              "It connects the Arduino to Bluetooth"
+            ],
+            "correctIndex": 0,
+            "explanation": "pinMode sets the pin's internal register to enable the output driver transistors needed to power circuits."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

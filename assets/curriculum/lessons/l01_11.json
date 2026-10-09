@@ -3,7 +3,7 @@
   "title": "Basic Troubleshooting",
   "summary": "What happens when your circuit doesn't work?",
   "tier": "rookie",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_01",
   "sortOrder": 11,
   "isOptional": false,
@@ -18,8 +18,7 @@
       "stepId": "l01_s11",
       "title": "Basic Troubleshooting",
       "type": "story",
-      "interactiveWidgetType": "interactiveTroubleshooting",
-      "markdownContent": "What happens when your circuit doesn't work? Don't worry\u2014every engineer runs into bugs! You just need to become an **Engineering Detective**! \ud83d\udd75\ufe0f\n\n### The 3 Clues to Check:\n1. **Check Power**: Is the little green light labeled **'ON'** lit on the Arduino? If not, check if the USB cable is firmly plugged in.\n2. **Check the Pin Match**: Look at your code. Did the code command **Pin 13**, but the wire is plugged into **Pin 12**? If the pins don't match, the signal won't reach your part!\n3. **Check Ground (GND)**: Is the ground wire securely plugged in? Remember, electricity can't flow without a complete return path.\n\nTake on the troubleshooting mission below: find the mismatched pin and fix the circuit!",
+      "markdownContent": "What happens when your circuit doesn't work? Don't worry—every engineer runs into bugs! You just need to become an **Engineering Detective**! 🕵️\n\n### The 3 Clues to Check:\n1. **Check Power**: Is the little green light labeled **'ON'** lit on the Arduino? If not, check if the USB cable is firmly plugged in.\n2. **Check the Pin Match**: Look at your code. Did the code command **Pin 13**, but the wire is plugged into **Pin 12**? If the pins don't match, the signal won't reach your part!\n3. **Check Ground (GND)**: Is the ground wire securely plugged in? Remember, electricity can't flow without a complete return path.\n\nLet's learn the detective strategies used by master engineers to solve any hardware bug!",
       "quickCheck": [
         {
           "questionId": "l01_s11_q1",
@@ -46,6 +45,67 @@
           "warmupExplanation": "Code and wires must match! If code commands Pin 13, the wire must be connected to Pin 13."
         }
       ]
+    },
+    {
+      "stepId": "l01_11_s02",
+      "title": "The Hardware Detective's Playbook",
+      "type": "visualExplanation",
+      "markdownContent": "### The Top 4 Rookie Hardware Traps 🛠️\n\nWhen a circuit goes silent, run through this 4-step diagnostic checklist:\n\n```\n┌─────────────────────────────────────────────────────────┐\n│              TROUBLESHOOTING CHECKLIST                  │\n├─────────────────────────────────────────────────────────┤\n│ 1. THE POWER CHECK (Green 'ON' LED)                     │\n│    Is board powered? USB cable seated firmly?           │\n│                                                         │\n│ 2. THE PIN MISMATCH (Code vs Wire)                      │\n│    Code: digitalWrite(13, HIGH);                        │\n│    Wire: Plugged into Pin 12 by accident! (Mismatch!)   │\n│                                                         │\n│ 3. THE MISSING GROUND (Open Circuit)                    │\n│    Is GND plugged in? Electrons must return home!       │\n│                                                         │\n│ 4. REVERSED POLARITY (Directional Components)           │\n│    LED long leg (Anode +) vs short leg (Cathode - GND)  │\n└─────────────────────────────────────────────────────────┘\n```\n\n#### Diagnostic Strategy:\n- **Rule of One Change**: Only change ONE wire or ONE line of code at a time! If you change 5 things at once, you won't know which fix actually worked.\n- **Physical Feel**: Gently wiggle jumper wires—loose breadboard spring clips cause 80% of intermittent bugs."
+    },
+    {
+      "stepId": "l01_11_s03",
+      "title": "Interactive Troubleshooting Bench",
+      "type": "physicalTask",
+      "interactiveWidgetType": "interactiveTroubleshooting",
+      "markdownContent": "### Mission: The Silent LED Mystery! 🔍\n\nA fellow monster engineer built a circuit, but the test LED refuses to light up!\n1. Inspect the code: The sketch commands `digitalWrite(13, HIGH);`\n2. Inspect the board: Where is the red jumper wire currently plugged in?\n3. Select your diagnosis from the choices.\n4. Move the wire to the correct pin to repair the circuit and verify operation!"
+    },
+    {
+      "stepId": "l01_11_s04",
+      "title": "Troubleshooting Master Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your hardware troubleshooting instincts and detective skills!",
+      "interactiveConfig": {
+        "question": "Why should an engineer change only ONE thing at a time when debugging a circuit?",
+        "options": [
+          "So you know exactly which change solved the problem or caused a new issue",
+          "Because changing two wires makes the board explode",
+          "To make the troubleshooting take longer"
+        ],
+        "correctIndex": 0,
+        "explanation": "Changing one variable at a time isolate causes, ensuring clear and repeatable engineering solutions.",
+        "questions": [
+          {
+            "question": "Why should an engineer change only ONE thing at a time when debugging a circuit?",
+            "options": [
+              "So you know exactly which change solved the problem or caused a new issue",
+              "Because changing two wires makes the board explode",
+              "To make the troubleshooting take longer"
+            ],
+            "correctIndex": 0,
+            "explanation": "Changing one variable at a time isolate causes, ensuring clear and repeatable engineering solutions."
+          },
+          {
+            "question": "What is the very first clue to check if an Arduino project does nothing at all?",
+            "options": [
+              "Check if the green 'ON' power LED on the board is illuminated",
+              "Throw away the computer",
+              "Unscrew all screws on the table"
+            ],
+            "correctIndex": 0,
+            "explanation": "If the green 'ON' LED is unlit, the Arduino has no electrical power, so no code can run."
+          },
+          {
+            "question": "If your code commands Pin 9 to turn HIGH, but your wire is in Pin 8, what happens?",
+            "options": [
+              "The component on Pin 8 receives nothing because the commanded pin does not match",
+              "The Arduino moves the wire automatically",
+              "Pin 8 turns ON anyway"
+            ],
+            "correctIndex": 0,
+            "explanation": "Software commands specific physical pins. If code and wiring mismatch, signals cannot reach their target."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

@@ -3,7 +3,7 @@
   "title": "Sensor -> Output",
   "summary": "Now let's complete the loop by connecting a sensor input directly to a physical output actuator!",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_07",
   "sortOrder": 8,
   "isOptional": false,
@@ -47,6 +47,58 @@
           "warmupExplanation": "From Lesson 5: digitalWrite(pin, HIGH) applies full 5V power to make an LED illuminate."
         }
       ]
+    },
+    {
+      "stepId": "l07_08_s02",
+      "title": "The Closed-Loop Perception-Action Architecture",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### The Complete Cybernetic Feedback Loop\n\nRobots don't just sense the world\u2014they react to it! This is called the **Perception-Action Loop**:\n\n```\n+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500+\n|                    CLOSED-LOOP ROBOT CONTROLLER                          |\n|                                                                          |\n|   1. SENSE:  Read hardware input (analogRead(A0) or pulseIn(echoPin))    |\n|        \u2502                                                                 |\n|        \u25bc                                                                 |\n|   2. THINK:  Compare value against threshold in conditional if/else      |\n|        \u2502                                                                 |\n|        \u25bc                                                                 |\n|   3. ACT:    Drive actuator pin (digitalWrite(13, HIGH) or tone())       |\n|        \u2502                                                                 |\n|        \u25bc                                                                 |\n|   4. REPEAT: Loop immediately to maintain real-time responsiveness       |\n+\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500+\n```\n\nEvery autonomous system\u2014from automatic room nightlights to self-driving cars\u2014runs this loop continuously."
+    },
+    {
+      "stepId": "l07_08_s03",
+      "title": "Proximity Alert Circuit Diagnosis",
+      "type": "physicalTask",
+      "interactiveWidgetType": "interactiveTroubleshooting",
+      "markdownContent": "### Hardware Build: Ultrasonic Intruder Sentry\n\nConnect your HC-SR04 distance sensor and an alert LED:\n- Trig -> Pin 9, Echo -> Pin 10\n- LED Anode -> Pin 13 through a 220\u03a9 resistor, Cathode -> GND\n\n```cpp\nconst int trigPin = 9;\nconst int echoPin = 10;\nconst int ledPin = 13;\nconst int alertThresholdCm = 15; // 15 cm threshold\n\nvoid setup() {\n  pinMode(trigPin, OUTPUT);\n  pinMode(echoPin, INPUT);\n  pinMode(ledPin, OUTPUT);\n}\n\nvoid loop() {\n  digitalWrite(trigPin, LOW);\n  delayMicroseconds(2);\n  digitalWrite(trigPin, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(trigPin, LOW);\n\n  long duration = pulseIn(echoPin, HIGH);\n  float distanceCm = (duration * 0.0343) / 2.0;\n\n  if (distanceCm > 0 && distanceCm < alertThresholdCm) {\n    digitalWrite(ledPin, HIGH); // Intruder detected!\n  } else {\n    digitalWrite(ledPin, LOW);  // All clear\n  }\n  delay(100);\n}\n```\n\n**Troubleshooting Lab:**\nPractice resolving common wiring traps (swapped pins, reverse LED polarity) in the workbench below!"
+    },
+    {
+      "stepId": "l07_08_s04",
+      "title": "Perception-Action Loop Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Verify your understanding of closed-loop robotic control architectures.",
+      "interactiveConfig": {
+        "question": "What is the correct execution sequence inside loop() for an autonomous sensor-driven alarm?",
+        "options": [
+          "Read sensor input -> Evaluate threshold condition -> Command output actuator",
+          "Command output actuator -> Compile C++ sketch -> Read sensor input",
+          "Unplug USB cable -> Set pin modes -> Measure circuit voltage"
+        ],
+        "correctIndex": 0,
+        "explanation": "A closed-loop control system must always gather current telemetry (Sense), make logical decisions (Think), and then command physical actions (Act).",
+        "questions": [
+          {
+            "question": "What is the correct execution sequence inside loop() for an autonomous sensor-driven alarm?",
+            "options": [
+              "Read sensor input -> Evaluate threshold condition -> Command output actuator",
+              "Command output actuator -> Compile C++ sketch -> Read sensor input",
+              "Unplug USB cable -> Set pin modes -> Measure circuit voltage"
+            ],
+            "correctIndex": 0,
+            "explanation": "A closed-loop control system must always gather current telemetry (Sense), make logical decisions (Think), and then command physical actions (Act)."
+          },
+          {
+            "question": "What happens if you command digitalWrite(13, HIGH) in code without first calling pinMode(13, OUTPUT) in setup()?",
+            "options": [
+              "The pin remains in high-impedance INPUT mode and an attached LED will only glow very faintly or not at all",
+              "The microcontroller chip will burn out immediately",
+              "The LED blinks at 10,000 Hz automatically"
+            ],
+            "correctIndex": 0,
+            "explanation": "Without pinMode(13, OUTPUT), the pin remains in high-impedance input mode; writing HIGH merely enables the internal weak pull-up resistor, providing barely enough current to illuminate an LED faintly."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

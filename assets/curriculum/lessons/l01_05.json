@@ -3,7 +3,7 @@
   "title": "Digital vs Analog",
   "summary": "Electronic signals talk to the Arduino in two different ways:",
   "tier": "rookie",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_01",
   "sortOrder": 5,
   "isOptional": false,
@@ -17,9 +17,8 @@
     {
       "stepId": "l01_s05",
       "title": "Digital vs Analog",
-      "type": "visualExplanation",
-      "interactiveWidgetType": "arduinoBoardInspector",
-      "markdownContent": "Electronic signals talk to the Arduino in two different ways:\n\n### 1. Digital Signals: Two Clear Choices \ud83d\udca1\nDigital is like a standard light switch. It is either completely **ON** or completely **OFF**:\n- **HIGH**: Full power (+5 Volts) \u2794 ON!\n- **LOW**: Zero power (0 Volts) \u2794 OFF!\nThere is no halfway state in digital logic.\n\n### 2. Analog Signals: A Smooth Slide \ud83c\udf9a\ufe0f\nAnalog is like a volume dial or dimmer slider. It can be any smooth value along a range:\n- Whisper quiet, medium sound, or full blast!\n- Nighttime dark, twilight, or blazing sunshine!\n\nOn the Arduino, analog inputs measure voltages smoothly from **0 all the way to 1023**.\n\nUse the interactive inspector below to flip a digital switch and slide an analog voltage knob!",
+      "type": "story",
+      "markdownContent": "Electronic signals talk to the Arduino in two different ways:\n\n### 1. Digital Signals: Two Clear Choices 💡\nDigital is like a standard light switch. It is either completely **ON** or completely **OFF**:\n- **HIGH**: Full power (+5 Volts) ➔ ON!\n- **LOW**: Zero power (0 Volts) ➔ OFF!\nThere is no halfway state in digital logic.\n\n### 2. Analog Signals: A Smooth Slide 🎚️\nAnalog is like a volume dial or dimmer slider. It can be any smooth value along a range:\n- Whisper quiet, medium sound, or full blast!\n- Nighttime dark, twilight, or blazing sunshine!\n\nOn the Arduino, analog inputs measure voltages smoothly from **0 all the way to 1023**.\n\nLet's explore how the Arduino handles these two different types of signals!",
       "quickCheck": [
         {
           "questionId": "l01_s05_q1",
@@ -46,6 +45,67 @@
           "warmupExplanation": "Analog signals can be any level in between, like sliding a volume bar up and down."
         }
       ]
+    },
+    {
+      "stepId": "l01_05_s02",
+      "title": "HIGH/LOW vs. Continuous Waves",
+      "type": "visualExplanation",
+      "markdownContent": "### Visualizing Digital vs. Analog Signals 📈\n\nLook at how these two signals appear on an engineer's oscilloscope screen:\n\n```\nDIGITAL SIGNAL (Square Wave)\n+5V (HIGH) ──┐        ┌────────┐\n             │        │        │\n 0V (LOW)    └────────┘        └────────> Time\n             Only 2 States: ON or OFF!\n\nANALOG SIGNAL (Continuous Wave)\n+5V          /\\        .-.\n            /  \\      /   \\\n           /    \\    /     \\\n 0V ──────'      '--'       '───────────> Time\n     Infinite Smooth Values from 0 to 1023!\n```\n\n#### Why Both Matter in Robotics:\n| Signal Type | Arduino Voltage Range | Numerical Value in Code | Everyday Example |\n| :--- | :--- | :--- | :--- |\n| **Digital** | 0V or 5V | `LOW` (0) or `HIGH` (1) | Light switch, push button, coin slot |\n| **Analog** | 0.0V to 5.0V | `0` to `1023` (10-bit ADC) | Volume knob, thermometer, light sensor |\n\n> **Pro Tip**: The Arduino has a special translator called an **ADC** (Analog-to-Digital Converter) that slices smooth voltages from 0V to 5V into 1,024 tiny stair-steps (0 to 1023)!"
+    },
+    {
+      "stepId": "l01_05_s03",
+      "title": "Interactive Signal Inspector & Prediction",
+      "type": "physicalTask",
+      "interactiveWidgetType": "arduinoBoardInspector",
+      "markdownContent": "### Flip the Switch & Turn the Dial! 🎛️\n\nUse the interactive inspector below to test both signal worlds:\n1. **Digital Switch (Pin 13)**: Flip between `LOW` (0.0V) and `HIGH` (5.0V). Notice there is no middle ground!\n2. **Analog Slider (Pin A0)**: Slide the voltage smoothly from 0.0V up to 5.0V and observe the raw reading change from `0` to `1023`.\n3. **Engineering Prediction**: Predict what happens to the sensor reading as a knob rotates smoothly!"
+    },
+    {
+      "stepId": "l01_05_s04",
+      "title": "Digital vs Analog Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your mastery of digital switches and analog waves!",
+      "interactiveConfig": {
+        "question": "What voltage does HIGH represent on a standard 5V Arduino Uno digital pin?",
+        "options": [
+          "+5 Volts",
+          "0 Volts",
+          "1,000,000 Volts"
+        ],
+        "correctIndex": 0,
+        "explanation": "On a 5V Arduino Uno, HIGH connects the pin to full positive supply voltage (+5V).",
+        "questions": [
+          {
+            "question": "What voltage does HIGH represent on a standard 5V Arduino Uno digital pin?",
+            "options": [
+              "+5 Volts",
+              "0 Volts",
+              "1,000,000 Volts"
+            ],
+            "correctIndex": 0,
+            "explanation": "On a 5V Arduino Uno, HIGH connects the pin to full positive supply voltage (+5V)."
+          },
+          {
+            "question": "What is the numerical range of numbers an Arduino analog input pin reads?",
+            "options": [
+              "0 to 1023",
+              "Only 0 or 1",
+              "-5 to +5"
+            ],
+            "correctIndex": 0,
+            "explanation": "The Uno's 10-bit analog converter divides voltages between 0V and 5V into 1024 discrete steps (0 through 1023)."
+          },
+          {
+            "question": "A light sensor detects daylight gradually changing from morning sunrise to noon. Is this signal digital or analog?",
+            "options": [
+              "Analog (changes smoothly across many levels)",
+              "Digital (only on or off)",
+              "Neither"
+            ],
+            "correctIndex": 0,
+            "explanation": "Because brightness increases smoothly throughout the morning, it is an analog signal!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

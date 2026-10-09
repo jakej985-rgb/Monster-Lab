@@ -3,7 +3,7 @@
   "title": "Library Challenge",
   "summary": "You have unlocked the superpower of libraries!",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_03",
   "sortOrder": 9,
   "isOptional": false,
@@ -16,10 +16,56 @@
   ],
   "steps": [
     {
-      "stepId": "l03_s09",
-      "title": "Library Challenge",
+      "stepId": "l03_09_s01",
+      "title": "The Library Challenge",
+      "type": "story",
+      "markdownContent": "You have unlocked the superpower of libraries! 🚀\n\nIn this course, you traveled from raw register pulses all the way to clean, modular robotics programming:\n1. You discovered why libraries save engineers months of tedious protocol work.\n2. You explored real-world gadgets and saw how multiple libraries cooperate in robots.\n3. You mastered the `#include` secret handshake and preprocessor rules.\n4. You navigated the Arduino Library Manager app store.\n5. You tested official examples and verified LCD hardware contrast.\n6. You altered coordinate grids and personalized your monster's messages.\n7. You toured the library API menu and object-oriented dot notation.\n8. You formulated smart rules for when to use libraries and how to troubleshoot missing dependencies.\n\nNow, prove your mastery in the Course 3 Capstone Challenge to earn your Builder XP and library badge!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l03_s09_q1",
+          "question": "What happens when you install a library from the Library Manager?",
+          "options": [
+            "Its code and example sketches are downloaded to your computer for your sketches to use",
+            "It permanently erases all previous sketches",
+            "It changes the language of your computer"
+          ],
+          "correctIndex": 0,
+          "explanation": "The Library Manager downloads the library's header, source files, and examples into your local libraries folder.",
+          "warmupExplanation": "Installing adds the library to your computer's toolkit so any sketch can include it."
+        },
+        {
+          "questionId": "qc_l03_s09_q2",
+          "question": "Can you inspect and modify the example code provided by an installed library?",
+          "options": [
+            "Yes, you can edit example code, customize values, and save it as your own sketch",
+            "No, example code is locked and will break your computer if edited",
+            "No, you can only look at it through a magnifying glass"
+          ],
+          "correctIndex": 0,
+          "explanation": "Examples are meant to be explored, adapted, and saved into your own custom robot sketches!",
+          "warmupExplanation": "Modifying example code is one of the best ways to learn and build custom robot features."
+        }
+      ]
+    },
+    {
+      "stepId": "l03_09_s02",
+      "title": "The Complete Library Lifecycle Blueprint",
+      "type": "visualExplanation",
+      "markdownContent": "### The Master Blueprint: From Concept to Execution\n\nReview the end-to-end engineering workflow whenever you bring a new hardware part to your robot workbench:\n\n```\n┌────────────────────────────────────────────────────────┐\n│ 1. DISCOVERY & INSTALLATION                            │\n│    Search Library Manager ──► Install verified driver  │\n└───────────────────────────┬────────────────────────────┘\n                            │\n                            ▼\n┌────────────────────────────────────────────────────────┐\n│ 2. PREPROCESSOR DECLARATION                            │\n│    #include <Wire.h>                                   │\n│    #include <LiquidCrystal_I2C.h>                      │\n└───────────────────────────┬────────────────────────────┘\n                            │\n                            ▼\n┌────────────────────────────────────────────────────────┐\n│ 3. OBJECT INSTANTIATION                                │\n│    LiquidCrystal_I2C lcd(0x27, 16, 2);                 │\n└───────────────────────────┬────────────────────────────┘\n                            │\n                            ▼\n┌────────────────────────────────────────────────────────┐\n│ 4. HARDWARE INITIALIZATION (setup)                     │\n│    lcd.init();                                         │\n│    lcd.backlight();                                    │\n└───────────────────────────┬────────────────────────────┘\n                            │\n                            ▼\n┌────────────────────────────────────────────────────────┐\n│ 5. REPEATED CONTROL LOOP (loop)                        │\n│    Read sensors ──► Update display ──► Command motors  │\n└────────────────────────────────────────────────────────┘\n```\n\nKeeping this 5-stage blueprint in mind guarantees you'll never forget an `#include` or an `.init()` call!"
+    },
+    {
+      "stepId": "l03_09_s03",
+      "title": "Capstone Bug Buster Challenge",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "syntaxErrorDebugger",
+      "markdownContent": "Before taking the final quiz, test your code inspection reflexes!\n\nA junior monster engineer wrote a sketch using a library, but the compiler reported multiple syntax and naming errors.\n\nExamine the compiler feedback in the interactive debugger below, repair each syntax issue, and achieve clean compilation!",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "l03_09_s04",
+      "title": "Course 3 Final Knowledge Assessment",
       "type": "quizCheckpoint",
-      "markdownContent": "You have unlocked the superpower of libraries! Test your skills on finding, installing, including, and modifying library code to earn your Builder XP.",
+      "markdownContent": "Put all your library knowledge to the test to conquer Course 3!",
       "interactiveConfig": {
         "question": "What is the primary purpose of an Arduino library?",
         "options": [
@@ -111,33 +157,7 @@
             "explanation": "Header files use the .h extension and contain the declarations exposed by a C++ library."
           }
         ]
-      },
-      "quickCheck": [
-        {
-          "questionId": "qc_l03_s09_q1",
-          "question": "What happens when you install a library from the Library Manager?",
-          "options": [
-            "Its code and example sketches are downloaded to your computer for your sketches to use",
-            "It permanently erases all previous sketches",
-            "It changes the language of your computer"
-          ],
-          "correctIndex": 0,
-          "explanation": "The Library Manager downloads the library's header, source files, and examples into your local libraries folder.",
-          "warmupExplanation": "Installing adds the library to your computer's toolkit so any sketch can include it."
-        },
-        {
-          "questionId": "qc_l03_s09_q2",
-          "question": "Can you inspect and modify the example code provided by an installed library?",
-          "options": [
-            "Yes, you can edit example code, customize values, and save it as your own sketch",
-            "No, example code is locked and will break your computer if edited",
-            "No, you can only look at it through a magnifying glass"
-          ],
-          "correctIndex": 0,
-          "explanation": "Examples are meant to be explored, adapted, and saved into your own custom robot sketches!",
-          "warmupExplanation": "Modifying example code is one of the best ways to learn and build custom robot features."
-        }
-      ]
+      }
     }
   ],
   "xpReward": 15

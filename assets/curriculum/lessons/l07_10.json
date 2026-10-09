@@ -3,7 +3,7 @@
   "title": "Sensor Troubleshooting",
   "summary": "Even experienced lab engineers encounter misbehaving sensors.",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_07",
   "sortOrder": 10,
   "isOptional": false,
@@ -47,6 +47,58 @@
           "warmupExplanation": "Always inspect your data first! The Serial Monitor is your diagnostic window into the Arduino's mind."
         }
       ]
+    },
+    {
+      "stepId": "l07_10_s02",
+      "title": "Sensor Diagnostic Flowchart",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### The Robotics Diagnostic Protocol\n\nWhen a sensor circuit fails, never guess or change random wires! Follow this systematic 4-step engineering protocol:\n\n```\n[ Problem: Sensor Output Dead or Erratic ]\n                   \u2502\n                   \u25bc\n1. CHECK POWER RAILS: Are +5V and GND firmly seated? Does sensor get warm?\n                   \u2502  (If shorted or cold, fix power wiring first!)\n                   \u25bc\n2. CHECK SIGNAL PINS: Does the pin in code match the breadboard wire socket?\n                   \u2502  (Common bug: plugging wire into A1 while code reads A0!)\n                   \u25bc\n3. CHECK TELEMETRY: Open Serial Monitor at 9600 baud. Do numbers respond?\n                   \u2502  (If values are stuck at 0 or 1023, check for floating pins!)\n                   \u25bc\n4. CHECK LOGIC THRESHOLDS: Did you test comparison operators (< vs >)?\n                      (Ensure threshold was calibrated in current room lighting!)\n```"
+    },
+    {
+      "stepId": "l07_10_s03",
+      "title": "Sensor Fault Isolation & Bench Repair",
+      "type": "physicalTask",
+      "interactiveWidgetType": "interactiveTroubleshooting",
+      "markdownContent": "### Hands-On: Repairing Faulty Circuits\n\nCommon hardware failure modes on the sensor bench:\n1. **The Floating Input**: A jumper wire slipped out of its breadboard row. The pin floats as an antenna, producing wildly jumpy values.\n2. **The Bridged Short**: Component legs touch across the center divider, pulling the signal rail directly to Ground.\n3. **Reversed Polarities**: Ultrasonic Trig and Echo lines swapped, causing `pulseIn()` to time out and return 0.\n\n**Workbench Task:**\nUse the interactive troubleshooting bench below to diagnose and repair simulated hardware faults!"
+    },
+    {
+      "stepId": "l07_10_s04",
+      "title": "Sensor Troubleshooting Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your diagnostic instincts and systematic debugging skills.",
+      "interactiveConfig": {
+        "question": "What is the most informative first step when a sensor circuit is not responding as expected?",
+        "options": [
+          "Print the live sensor readings to the Serial Monitor to observe real-time telemetry",
+          "Discard the sensor and purchase a replacement module",
+          "Randomly swap wires around on the breadboard"
+        ],
+        "correctIndex": 0,
+        "explanation": "Serial telemetry reveals whether the sensor is sending valid data, stuck at 0 or 1023, or fluctuating wildly from a floating wire.",
+        "questions": [
+          {
+            "question": "What is the most informative first step when a sensor circuit is not responding as expected?",
+            "options": [
+              "Print the live sensor readings to the Serial Monitor to observe real-time telemetry",
+              "Discard the sensor and purchase a replacement module",
+              "Randomly swap wires around on the breadboard"
+            ],
+            "correctIndex": 0,
+            "explanation": "Serial telemetry reveals whether the sensor is sending valid data, stuck at 0 or 1023, or fluctuating wildly from a floating wire."
+          },
+          {
+            "question": "If an analog sensor pin returns wildly fluctuating values when nothing is touching it, what is the most likely cause?",
+            "options": [
+              "A loose or disconnected wire leaving the analog pin floating without a ground reference",
+              "The serial baud rate was set too high",
+              "The Arduino microcontroller has too much memory"
+            ],
+            "correctIndex": 0,
+            "explanation": "High-impedance analog inputs float and pick up ambient electromagnetic interference like an antenna when disconnected from a reference voltage."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

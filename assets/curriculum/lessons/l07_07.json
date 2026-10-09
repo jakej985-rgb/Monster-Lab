@@ -3,7 +3,7 @@
   "title": "Sensor Thresholds",
   "summary": "Raw data numbers like 642 or 14 cm mean nothing to a monster robot on their own.",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_07",
   "sortOrder": 7,
   "isOptional": false,
@@ -47,6 +47,58 @@
           "warmupExplanation": "Always check raw numbers in the Serial Monitor first so you know what 'normal' looks like in your specific room!"
         }
       ]
+    },
+    {
+      "stepId": "l07_07_s02",
+      "title": "Decision Boundaries and Hysteresis",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### From Raw Numbers to Smart Decisions\n\nA raw reading like `487` doesn't make a robot intelligent. A robot becomes smart when it compares readings against a **decision threshold**:\n\n```\n                       [ RAW SENSOR READING ]\n                                 \u2502\n                 Is reading > Threshold (e.g. 500)?\n                                \u2571 \u2572\n                               \u2571   \u2572\n                           YES\u2571     \u2572NO\n                             \u25bc       \u25bc\n                       [ Daytime ]  [ Nighttime ]\n                       (LED OFF)    (LED ON)\n```\n\n### The Boundary Chatter Problem & Hysteresis\nIf the room light reading hovers right at `500` (oscillating 499, 501, 500, 499), a single threshold makes an LED flicker rapidly!\n\nRobotics engineers solve this with **hysteresis** (dual thresholds):\n- Turn ON only when light drops below **450** (definitely dark).\n- Turn OFF only when light rises above **550** (definitely bright)."
+    },
+    {
+      "stepId": "l07_07_s03",
+      "title": "Calibrating Trigger Thresholds Against Noise",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "analogReadNoiseFilter",
+      "markdownContent": "### Calibration: Measuring the Real World\n\nNever guess threshold numbers in your head! Every room, flashlight, and sensor batch has unique electrical characteristics.\n\n**The Calibration Routine:**\n1. Read the sensor in normal room light (e.g. `reading = 720`).\n2. Cover the sensor completely to simulate darkness (e.g. `reading = 180`).\n3. Calculate the midpoint threshold:\n   ```cpp\n   int threshold = (720 + 180) / 2; // = 450\n   ```\n\n**Laboratory Task:**\nIn the interactive filter below, test how noise filtering stabilizes sensor readings near decision boundaries to eliminate false alarms!"
+    },
+    {
+      "stepId": "l07_07_s04",
+      "title": "Thresholds Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your understanding of sensor calibration and decision thresholds.",
+      "interactiveConfig": {
+        "question": "If an LDR circuit reads 800 in bright room light and 200 in shadow, what is an optimal midpoint threshold to trigger a nightlight?",
+        "options": [
+          "500",
+          "1000",
+          "50"
+        ],
+        "correctIndex": 0,
+        "explanation": "The midpoint is (800 + 200) / 2 = 500. This provides a balanced buffer between both operating states.",
+        "questions": [
+          {
+            "question": "If an LDR circuit reads 800 in bright room light and 200 in shadow, what is an optimal midpoint threshold to trigger a nightlight?",
+            "options": [
+              "500",
+              "1000",
+              "50"
+            ],
+            "correctIndex": 0,
+            "explanation": "The midpoint is (800 + 200) / 2 = 500. This provides a balanced buffer between both operating states."
+          },
+          {
+            "question": "Why do engineers implement hysteresis (separate turn-on and turn-off thresholds) in sensor systems?",
+            "options": [
+              "To stop actuators from rapid, annoying flickering when sensor values fluctuate near the boundary",
+              "To make the microcontroller draw zero electrical current",
+              "To allow the circuit to operate without an Arduino board"
+            ],
+            "correctIndex": 0,
+            "explanation": "Hysteresis introduces a deadband gap between activation and deactivation thresholds, preventing noisy sensor signals from chattering on and off."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

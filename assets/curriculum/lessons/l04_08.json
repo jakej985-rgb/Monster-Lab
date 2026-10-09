@@ -46,6 +46,50 @@
           "warmupExplanation": "Common Anode has inverted logic: pulling a pin to 0V turns it ON, and sending 255 turns it OFF."
         }
       ]
+    },
+    {
+      "stepId": "l04_08_s02",
+      "title": "Common Cathode vs Common Anode",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "commonCathodeVsAnodeDiagram",
+      "markdownContent": "### Cathode (GND) vs Anode (+5V)\nThere are two kinds of RGB LEDs:\n1. **Common Cathode (Most Common)**:\n   - Long pin connects to **Ground (GND)**.\n   - A HIGH (255) signal turns that color ON.\n2. **Common Anode**:\n   - Long pin connects to **+5V**.\n   - Logic is inverted: LOW (0) turns color ON, and 255 turns it OFF!"
+    },
+    {
+      "stepId": "l04_08_s03",
+      "title": "Common Leg Circuit Verification",
+      "type": "physicalTask",
+      "interactiveWidgetType": "ledPolarityInspector",
+      "markdownContent": "### Check Your Kit LED Polarity\nVerify whether your Monster Lab kit contains Common Cathode or Common Anode diodes."
+    },
+    {
+      "stepId": "l04_08_s04",
+      "title": "Cathode vs Anode Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of the concepts covered in this module.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "In a Common Cathode RGB LED, where does the longest shared leg connect?",
+            "options": [
+              "To Ground (GND)",
+              "To +5V power",
+              "To Pin A0"
+            ],
+            "correctIndex": 0,
+            "explanation": "Cathode means negative/ground return! The longest leg connects to GND."
+          },
+          {
+            "question": "If you send analogWrite(pin, 255) to a Common Cathode pin, what happens?",
+            "options": [
+              "That color shines at maximum brightness",
+              "It turns off completely",
+              "Nothing happens"
+            ],
+            "correctIndex": 0,
+            "explanation": "With Common Cathode, higher values provide more forward voltage, maximizing brightness!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

@@ -48,6 +48,50 @@
           "warmupExplanation": "The pins designated with 'A' (A0-A5) are the analog input channels on the Uno."
         }
       ]
+    },
+    {
+      "stepId": "l05_11_s02",
+      "title": "The 10-Bit Analog-to-Digital Converter (ADC)",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "Converting Voltage to Numbers\nThe ATmega328P ADC compares input voltages against 5V, slicing the range into 1024 discrete steps (0 to 1023)."
+    },
+    {
+      "stepId": "l05_11_s03",
+      "title": "Hands-On: Analog Inputs",
+      "type": "physicalTask",
+      "interactiveWidgetType": "adcSamplingVisualizer",
+      "markdownContent": "### Interactive Bench Activity\nUse the simulated tool to test and observe how analog inputs operates in a circuit."
+    },
+    {
+      "stepId": "l05_11_s04",
+      "title": "ADC Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of physical inputs and circuit mechanics.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "How many bits of resolution does the Arduino Uno ADC have?",
+            "options": [
+              "10 bits (0 to 1023 levels)",
+              "2 bits (0 to 3 levels)",
+              "64 bits"
+            ],
+            "correctIndex": 0,
+            "explanation": "The 10-bit converter maps 0V-5V across 1024 steps (0 to 1023)!"
+          },
+          {
+            "question": "What pins on the Arduino Uno can read analog voltages?",
+            "options": [
+              "Pins A0 through A5",
+              "Pins 0 through 13",
+              "The USB jack"
+            ],
+            "correctIndex": 0,
+            "explanation": "Pins labeled A0-A5 are connected to the internal analog multiplexer!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

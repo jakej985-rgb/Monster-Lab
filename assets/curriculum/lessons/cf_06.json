@@ -16,7 +16,33 @@
       "stepId": "cf_06_s01",
       "title": "Arduino Sketch Structure",
       "type": "story",
-      "markdownContent": "An Arduino sketch has a specific structure. It starts with `#include` for libraries, then global variables."
+      "markdownContent": "An Arduino sketch has a specific structure. It starts with `#include` for libraries, then global variables.",
+      "quickCheck": [
+        {
+          "questionId": "qc_cf_06_s01_q1",
+          "question": "What is a function in programming?",
+          "options": [
+            "A named reusable block of code that performs a specific job",
+            "A physical screw on the board",
+            "A broken wire"
+          ],
+          "correctIndex": 0,
+          "explanation": "Functions package instructions under a single name so you can call them whenever needed!",
+          "warmupExplanation": "Think of a function like a spell or recipe named makeToast(). Whenever you say makeToast(), it runs the steps!"
+        },
+        {
+          "questionId": "qc_cf_06_s01_q2",
+          "question": "Why do programmers break large programs into smaller functions?",
+          "options": [
+            "To make code organized, easier to read, and reusable",
+            "To make files heavier",
+            "Because computers dislike short words"
+          ],
+          "correctIndex": 0,
+          "explanation": "Functions keep programs organized and allow code to be reused without duplicating lines!",
+          "warmupExplanation": "Organizing toys into labeled bins makes them easy to find and play with again."
+        }
+      ]
     },
     {
       "stepId": "cf_06_s02",

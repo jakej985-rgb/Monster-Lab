@@ -46,6 +46,50 @@
           "warmupExplanation": "The longer the pulse stays ON during each cycle, the brighter the light appears."
         }
       ]
+    },
+    {
+      "stepId": "l04_03_s02",
+      "title": "Duty Cycle Percentages",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### Measuring the Duty Cycle\nThe ratio of ON time compared to total cycle time is called the **Duty Cycle**:\n\n- **0% Duty Cycle**: Signal is OFF 100% of the time (0V average).\n- **25% Duty Cycle**: ON for 1/4 of the time, OFF for 3/4 (1.25V average).\n- **50% Duty Cycle**: ON for half the time, OFF for half (2.5V average).\n- **75% Duty Cycle**: ON for 3/4 of the time, OFF for 1/4 (3.75V average).\n- **100% Duty Cycle**: Constant HIGH (+5V steady)."
+    },
+    {
+      "stepId": "l04_03_s03",
+      "title": "Simulate Wave Duty Cycles",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "pwmDutyCycleVisualizer",
+      "markdownContent": "### Tune the Duty Cycle Waveform\nAdjust the slider in the simulator to see square waves stretch and shrink in real time."
+    },
+    {
+      "stepId": "l04_03_s04",
+      "title": "Duty Cycle Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of the concepts covered in this module.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What is the duty cycle if an LED signal is ON for 500 microseconds and OFF for 500 microseconds?",
+            "options": [
+              "50%",
+              "100%",
+              "0%"
+            ],
+            "correctIndex": 0,
+            "explanation": "Since it spends equal time ON and OFF, the duty cycle is 50%!"
+          },
+          {
+            "question": "What duty cycle corresponds to maximum full brightness (constant 5V)?",
+            "options": [
+              "100%",
+              "0%",
+              "25%"
+            ],
+            "correctIndex": 0,
+            "explanation": "A 100% duty cycle means the pin remains ON throughout the entire cycle!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

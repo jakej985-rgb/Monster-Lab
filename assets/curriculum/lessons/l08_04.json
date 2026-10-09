@@ -3,7 +3,7 @@
   "title": "I2C Addresses",
   "summary": "When multiple devices share the exact same SDA and SCL wires, how does the Arduino speak to a display without confusing a sensor?",
   "tier": "engineer",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_08",
   "sortOrder": 4,
   "isOptional": false,
@@ -47,6 +47,58 @@
           "warmupExplanation": "In Coding Foundations and Lesson 3, hexadecimal literals were introduced with the '0x' prefix."
         }
       ]
+    },
+    {
+      "stepId": "l08_04_s02",
+      "title": "7-Bit Address Space & Hexadecimal Addressing",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "i2cAddressScanner",
+      "markdownContent": "### The 7-Bit Address Space\n\nHow do multiple devices share the same two wires without talking over each other? Every device has a unique digital **address**:\n\n```\n7-Bit Address Range: 0x00 to 0x7F (0 to 127 in decimal)\n(Reserved addresses: 0x00..0x07 and 0x78..0x7F are reserved by the standard)\nAvailable peripheral addresses: 0x08 through 0x77 (112 possible devices!)\n```\n\n### Hexadecimal (`0x`) Notation\nEngineers write I2C addresses in **hexadecimal** (base 16):\n- `0x27` = Standard 16x2 I2C Character LCD backpack\n- `0x3F` = Alternate 16x2 I2C Character LCD backpack\n- `0x68` = DS3231 Real-Time Clock or MPU-6050 Accelerometer\n- `0x3C` = 0.96-inch OLED Graphic Display\n- `0x76` / `0x77` = BMP280 Barometric Pressure Sensor\n\nWhen the Arduino sends `0x27`, only the LCD backpack responds with an ACK pulse. All other devices remain silent!"
+    },
+    {
+      "stepId": "l08_04_s03",
+      "title": "Scanning the Bus with I2C Address Scanner",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "i2cAddressScanner",
+      "markdownContent": "### How the I2C Scanner Sketch Works\n\nBefore writing code for an unknown I2C breakout board, run an **I2C Scanner sketch**.\n\nThe scanner sends a probe packet to every address from 1 to 127 using the `Wire` library:\n\n```cpp\n#include <Wire.h>\n\nvoid setup() {\n  Wire.begin();\n  Serial.begin(9600);\n  Serial.println(\"\\nI2C Scanner Probing Bus...\");\n}\n\nvoid loop() {\n  byte error, address;\n  int nDevices = 0;\n\n  for (address = 1; address < 127; address++) {\n    Wire.beginTransmission(address);\n    error = Wire.endTransmission();\n\n    if (error == 0) {\n      Serial.print(\"I2C device found at address 0x\");\n      if (address < 16) Serial.print(\"0\");\n      Serial.print(address, HEX);\n      Serial.println(\"  !\");\n      nDevices++;\n    }\n  }\n  delay(5000);\n}\n```\n\n**Laboratory Task:**\nRun the interactive I2C address scanner simulator below to discover connected peripherals!"
+    },
+    {
+      "stepId": "l08_04_s04",
+      "title": "I2C Addresses Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your grasp of I2C addresses and bus scanning methodology.",
+      "interactiveConfig": {
+        "question": "What is the standard address length used by most consumer I2C peripherals?",
+        "options": [
+          "7 bits (allowing up to 128 unique addresses)",
+          "32 bits",
+          "1 bit"
+        ],
+        "correctIndex": 0,
+        "explanation": "Standard I2C uses 7-bit addresses (values 0x00 through 0x7F), allowing up to 128 address slots on a single bus.",
+        "questions": [
+          {
+            "question": "What is the standard address length used by most consumer I2C peripherals?",
+            "options": [
+              "7 bits (allowing up to 128 unique addresses)",
+              "32 bits",
+              "1 bit"
+            ],
+            "correctIndex": 0,
+            "explanation": "Standard I2C uses 7-bit addresses (values 0x00 through 0x7F), allowing up to 128 address slots on a single bus."
+          },
+          {
+            "question": "How does an I2C scanner sketch determine whether a peripheral exists at a specific address?",
+            "options": [
+              "It sends a start transmission to that address and checks if the device returns an ACK signal (code 0)",
+              "It reads the serial barcode printed on the module chip",
+              "It measures the temperature of the microcontroller"
+            ],
+            "correctIndex": 0,
+            "explanation": "Wire.endTransmission() returns 0 when the addressed target pulls SDA LOW during the 9th clock cycle to acknowledge the transmission."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

@@ -16,7 +16,33 @@
       "stepId": "cf_05_s01",
       "title": "Why Loops?",
       "type": "story",
-      "markdownContent": "Loops let you repeat actions without copying code. If you want an LED to blink 10 times, you don't need 10 blink commands."
+      "markdownContent": "Loops let you repeat actions without copying code. If you want an LED to blink 10 times, you don't need 10 blink commands.",
+      "quickCheck": [
+        {
+          "questionId": "qc_cf_05_s01_q1",
+          "question": "If a robot needs to blink a light 100 times, what coding tool avoids writing 100 lines of code?",
+          "options": [
+            "A loop (such as a for or while loop)",
+            "Copying and pasting 1000 pages",
+            "Turning off the robot"
+          ],
+          "correctIndex": 0,
+          "explanation": "Loops repeat blocks of code automatically until a stopping condition is met!",
+          "warmupExplanation": "Instead of saying step, step, step 100 times, you say repeat 100 times: take a step!"
+        },
+        {
+          "questionId": "qc_cf_05_s01_q2",
+          "question": "What happens if a loop has no condition telling it when to stop?",
+          "options": [
+            "It becomes an infinite loop and repeats forever",
+            "The computer turns into wood",
+            "The program runs backwards"
+          ],
+          "correctIndex": 0,
+          "explanation": "A loop without a stopping condition repeats continuously\u2014just like Arduino's loop() function!",
+          "warmupExplanation": "A merry-go-round keeps spinning until someone stops it. Loops without stop conditions run forever."
+        }
+      ]
     },
     {
       "stepId": "cf_05_s02",

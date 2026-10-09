@@ -3,7 +3,7 @@
   "title": "I2C LCD",
   "summary": "In Lesson 3, you learned that libraries supercharge code by bundling complex hardware protocols into friendly functions.",
   "tier": "engineer",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_08",
   "sortOrder": 6,
   "isOptional": false,
@@ -46,6 +46,58 @@
           "warmupExplanation": "In Step 4, we saw that every I2C device requires its specific 7-bit address to respond to incoming bus packets."
         }
       ]
+    },
+    {
+      "stepId": "l08_06_s02",
+      "title": "Software Drivers: Wire.h and LiquidCrystal_I2C",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### Software Driver Architecture\n\nTo control the LCD from C++, two libraries collaborate:\n\n```\n[ Your Monster Sketch: lcd.print(\"ROBOT ACTIVE!\"); ]\n                         \u2502\n                         \u25bc\n[ LiquidCrystal_I2C Library: Translates text into character codes ]\n                         \u2502\n                         \u25bc\n[ Wire.h Library: Manages hardware TWI clock & byte packets ]\n                         \u2502\n                         \u25bc (SDA & SCL Pulses over A4 & A5)\n[ PCF8574 Hardware Backpack ] \u2500\u2500\u25ba [ 16x2 LCD Glass Screen ]\n```\n\n### Essential Driver Methods:\n- `LiquidCrystal_I2C lcd(0x27, 16, 2);`: Constructor setting address (0x27), columns (16), and rows (2).\n- `lcd.init();`: Initializes the PCF8574 and LCD controller chip.\n- `lcd.backlight();`: Powers the LED backlight on.\n- `lcd.setCursor(col, row);`: Positions the text cursor (0-indexed: col 0\u201315, row 0\u20131).\n- `lcd.print(\"Text\");`: Renders characters on screen."
+    },
+    {
+      "stepId": "l08_06_s03",
+      "title": "Debugging LCD Coordinates and Addresses",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "interactiveTroubleshooting",
+      "markdownContent": "### Writing and Debugging LCD Firmware\n\nHere is a complete template sketch for your monster display:\n\n```cpp\n#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n\n// If 0x27 fails, verify with I2C scanner (may be 0x3F)\nLiquidCrystal_I2C lcd(0x27, 16, 2);\n\nvoid setup() {\n  lcd.init();\n  lcd.backlight();\n\n  // Row 0 (Top line, zero-indexed!)\n  lcd.setCursor(0, 0);\n  lcd.print(\"MONSTER LAB OS\");\n\n  // Row 1 (Bottom line)\n  lcd.setCursor(0, 1);\n  lcd.print(\"STATUS: ONLINE!\");\n}\n\nvoid loop() {\n  // Static banner display\n}\n```\n\n**Common Software Bugs:**\n1. Using 1-indexed coordinates: `lcd.setCursor(0, 2)` goes out of bounds on a 2-line display!\n2. Wrong address: Declaring `0x27` when your board is hardwired to `0x3F`.\n\nPractice diagnosing LCD code issues in the interactive workbench below!"
+    },
+    {
+      "stepId": "l08_06_s04",
+      "title": "I2C LCD Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your mastery of LCD library commands, coordinates, and drivers.",
+      "interactiveConfig": {
+        "question": "What do the coordinate arguments (0, 1) specify in lcd.setCursor(0, 1);?",
+        "options": [
+          "Column 0 (far left) on Row 1 (the bottom line), because coordinates are zero-indexed",
+          "Column 1 on Row 0",
+          "The number 01 is printed onto the screen"
+        ],
+        "correctIndex": 0,
+        "explanation": "LCD coordinates are zero-indexed: columns run 0 to 15, and rows run 0 (top line) and 1 (bottom line).",
+        "questions": [
+          {
+            "question": "What do the coordinate arguments (0, 1) specify in lcd.setCursor(0, 1);?",
+            "options": [
+              "Column 0 (far left) on Row 1 (the bottom line), because coordinates are zero-indexed",
+              "Column 1 on Row 0",
+              "The number 01 is printed onto the screen"
+            ],
+            "correctIndex": 0,
+            "explanation": "LCD coordinates are zero-indexed: columns run 0 to 15, and rows run 0 (top line) and 1 (bottom line)."
+          },
+          {
+            "question": "Which C++ standard library must be included to enable I2C hardware bus communication in Arduino sketches?",
+            "options": [
+              "#include <Wire.h>",
+              "#include <SPI.h>",
+              "#include <SoftwareSerial.h>"
+            ],
+            "correctIndex": 0,
+            "explanation": "Wire.h is the standard Arduino library that manages the hardware Two-Wire Interface (TWI/I2C) peripheral."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

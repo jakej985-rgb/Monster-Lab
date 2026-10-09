@@ -47,6 +47,50 @@
           "warmupExplanation": "Output pins drive voltages out; input pins sample incoming voltages from the world."
         }
       ]
+    },
+    {
+      "stepId": "l05_03_s02",
+      "title": "Reading HIGH (+5V) and LOW (0V)",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "Digital Logic Thresholds\nThe ATmega328P interprets voltages above ~3.0V as HIGH and voltages below ~1.5V as LOW."
+    },
+    {
+      "stepId": "l05_03_s03",
+      "title": "Hands-On: Digital Inputs",
+      "type": "physicalTask",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### Interactive Bench Activity\nUse the simulated tool to test and observe how digital inputs operates in a circuit."
+    },
+    {
+      "stepId": "l05_03_s04",
+      "title": "Digital Input Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of physical inputs and circuit mechanics.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "How many distinct logic states can a digital input pin read?",
+            "options": [
+              "Two states: HIGH and LOW",
+              "Infinite analog levels",
+              "Ten different colors"
+            ],
+            "correctIndex": 0,
+            "explanation": "Digital inputs are binary: they detect either HIGH (1) or LOW (0)!"
+          },
+          {
+            "question": "What threshold voltage does the Uno roughly need to register a HIGH signal?",
+            "options": [
+              "Above approximately 3.0 Volts",
+              "Above 1000 Volts",
+              "Exactly 0.1 Volts"
+            ],
+            "correctIndex": 0,
+            "explanation": "CMOS logic requires around 0.6 * VCC (approx 3.0V) for a solid HIGH!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

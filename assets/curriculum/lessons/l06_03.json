@@ -3,7 +3,7 @@
   "title": "Breadboard Rows and Rails",
   "summary": "To wire like a master roboticist, you must visualize what is happening beneath the plastic faceplate!",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_06",
   "sortOrder": 3,
   "isOptional": false,
@@ -17,10 +17,10 @@
   ],
   "steps": [
     {
-      "stepId": "l06_s03",
+      "stepId": "l06_03_s01",
       "title": "Breadboard Rows and Rails",
-      "type": "visualExplanation",
-      "markdownContent": "# Breadboard Rows and Rails\n\nTo wire like a master roboticist, you must visualize what is happening beneath the plastic faceplate!\n\n### 1. Terminal Rows (Short Horizontal Bridges)\nLook at the numbered rows in the center (Row 1, Row 2, Row 3...):\n- On the left side, the five holes marked **a, b, c, d, e** are connected together by a single horizontal metal clip.\n- On the right side, the five holes marked **f, g, h, i, j** share another separate metal clip.\n- **The Rule**: Any two wires plugged into the same 5-hole group (for example, `10a` and `10c`) are touching each other electrically!\n\n### 2. The Center Ravine (Trough)\nNotice the deep plastic trench running right down the middle of the board:\n- It electrically isolates group `a\u2013e` from group `f\u2013j`.\n- Hole `10e` does **NOT** connect to hole `10f`! This lets integrated circuits (chips) straddle the trench without shorting their opposite pins together.\n\n### 3. Power Rails (Long Vertical Highways)\n- **Red Rail (+)**: Runs vertically along the edge to distribute positive voltage (+5V) across your entire board.\n- **Blue/Black Rail (-)**: Runs vertically along the edge to deliver Ground (0V / GND) everywhere.\n\n### Common Beginner Traps:\n- **Trap A (Shorting out a part)**: Plugging both legs of a resistor or LED into the *same* 5-hole row! That connects both legs together, completely bypassing the component!\n- **Trap B (Unconnected row leap)**: Plugging a wire into `10e` and expecting it to connect to `10f` across the trench without a jumper wire bridge.",
+      "type": "story",
+      "markdownContent": "# Breadboard Rows and Rails\n\nTo wire like a master roboticist, you must visualize what is happening beneath the plastic faceplate!\n\n### 1. Terminal Rows (Short Horizontal Bridges)\nLook at the numbered rows in the center (Row 1, Row 2, Row 3...):\n- On the left side, the five holes marked **a, b, c, d, e** are connected together by a single horizontal metal clip.\n- On the right side, the five holes marked **f, g, h, i, j** share another separate metal clip.\n- **The Rule**: Any two wires plugged into the same 5-hole group (for example, `10a` and `10c`) are touching each other electrically!\n\n### 2. The Center Ravine (Trough)\nNotice the deep plastic trench running right down the middle of the board:\n- It electrically isolates group `a–e` from group `f–j`.\n- Hole `10e` does **NOT** connect to hole `10f`! This lets integrated circuits (chips) straddle the trench without shorting their opposite pins together.\n\n### 3. Power Rails (Long Vertical Highways)\n- **Red Rail (+)**: Runs vertically along the edge to distribute positive voltage (+5V) across your entire board.\n- **Blue/Black Rail (-)**: Runs vertically along the edge to deliver Ground (0V / GND) everywhere.\n\n### Common Beginner Traps:\n- **Trap A (Shorting out a part)**: Plugging both legs of a resistor or LED into the *same* 5-hole row! That connects both legs together, completely bypassing the component!\n- **Trap B (Unconnected row leap)**: Plugging a wire into `10e` and expecting it to connect to `10f` across the trench without a jumper wire bridge.",
       "quickCheck": [
         {
           "questionId": "q_l06_s03_01",
@@ -49,6 +49,68 @@
           "warmupExplanation": "Think of the center trench as a river: left bank (a-e) and right bank (f-j) are separate unless you build a wire bridge across it."
         }
       ]
+    },
+    {
+      "stepId": "l06_03_s02",
+      "title": "Terminal Rows vs. Power Rails Architecture",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "breadboardInternalBusInspector",
+      "markdownContent": "### The Two Grid Systems\n\nA breadboard organizes electrical connections into two distinct structural layouts:\n\n### 1. Terminal Rows (Short 5-Hole Groups)\n- Rows are numbered 1 through 30 (or 60 on a full-size board).\n- Columns are lettered **a, b, c, d, e** on the left and **f, g, h, i, j** on the right.\n- Each 5-hole group is a single electrical node. Plugging two wires into `15a` and `15c` joins them just as if you had soldered them together!\n\n### 2. The Center DIP Ravine (Isolation Slot)\n- The deep plastic channel down the middle creates a 0.3-inch electrical isolation gap.\n- Dual In-Line Package (DIP) integrated circuits (like chips and shift registers) straddle this ravine so their left and right pins remain completely independent.\n\n### 3. Power Bus Rails (Long Edge Highways)\n- The vertical columns marked with red `+` and blue `-` lines run down the entire outer length.\n- They deliver power (+5V) and Ground (0V GND) anywhere along the board with short jumper wires.\n\nUse the bus inspector below to explore the difference between horizontal row strips and vertical power rails!"
+    },
+    {
+      "stepId": "l06_03_s03",
+      "title": "Map Nodes & Avoid Common Traps",
+      "type": "physicalTask",
+      "interactiveWidgetType": "breadboardInternalBusInspector",
+      "markdownContent": "### Breadboard Node Mapping Lab\n\nBeginners often stumble into two common wiring traps. Let's inspect and eliminate them:\n\n### Trap 1: The Accidental Resistor Short\n- **The Error**: Inserting both legs of a resistor into the same row (e.g. `20a` and `20d`).\n- **What Happens**: Because `20a` and `20d` share the same metal strip, electricity flows straight through the metal clip under the board, bypassing the resistor completely!\n- **The Fix**: Always plug the two legs into **different numbered rows** (e.g. `20a` and `25a`).\n\n### Trap 2: The Ravine Disconnect\n- **The Error**: Expecting a wire in `14e` to connect to a component in `14f`.\n- **What Happens**: The center trench breaks the circuit—there is no metal under the ravine!\n- **The Fix**: Bridge across the ravine with a jumper wire or straddle a component across the trench.\n\nTest row groups and power rails with the inspector below to confirm continuous vs open nodes!"
+    },
+    {
+      "stepId": "l06_03_s04",
+      "title": "Rows and Rails Mastery Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Confirm your understanding of breadboard rows, columns, and isolation trenches.",
+      "interactiveConfig": {
+        "question": "If you plug one lead of an LED into hole 14b and the other lead into hole 14d, what happens electrically?",
+        "options": [
+          "Both leads connect to the same metal strip, creating a short circuit that bypasses the LED",
+          "The LED lights up with double brightness",
+          "The breadboard changes the LED color to blue"
+        ],
+        "correctIndex": 0,
+        "explanation": "Plugging two leads into the same 5-hole group connects them together, bypassing the component and shorting its terminals.",
+        "questions": [
+          {
+            "question": "If you plug one lead of an LED into hole 14b and the other lead into hole 14d, what happens electrically?",
+            "options": [
+              "Both leads connect to the same metal strip, creating a short circuit that bypasses the LED",
+              "The LED lights up with double brightness",
+              "The breadboard changes the LED color to blue"
+            ],
+            "correctIndex": 0,
+            "explanation": "Plugging two leads into the same 5-hole group connects them together, bypassing the component and shorting its terminals."
+          },
+          {
+            "question": "What is the primary function of the center ravine running down the middle of a solderless breadboard?",
+            "options": [
+              "To electrically isolate columns a-e from columns f-j so multi-pin IC chips can straddle the center without shorting",
+              "To store spare jumper wires",
+              "To channel water away from the circuit"
+            ],
+            "correctIndex": 0,
+            "explanation": "The center ravine splits each numbered row into two isolated 5-hole halves, designed specifically for dual in-line package (DIP) IC chips."
+          },
+          {
+            "question": "How do power rails along the edges of a breadboard differ from terminal rows?",
+            "options": [
+              "Power rails run vertically down the entire length of the board to distribute +5V and GND everywhere",
+              "Power rails run in circles around the center",
+              "Power rails can only be used on weekends"
+            ],
+            "correctIndex": 0,
+            "explanation": "Power rails run along the outer edges to provide continuous voltage and ground distribution along the board."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

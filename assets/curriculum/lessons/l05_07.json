@@ -47,6 +47,50 @@
           "warmupExplanation": "The internal pull-up resistor pulls the pin voltage up to HIGH (+5V) when the switch is open."
         }
       ]
+    },
+    {
+      "stepId": "l05_07_s02",
+      "title": "Using the Built-In Microcontroller Resistors",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "Activating Internal 20k-50k Resistors\nCalling pinMode(pin, INPUT_PULLUP); enables internal silicon resistors inside the chip!"
+    },
+    {
+      "stepId": "l05_07_s03",
+      "title": "Hands-On: INPUT_PULLUP",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "codeDeconstruction",
+      "markdownContent": "### Interactive Bench Activity\nUse the simulated tool to test and observe how input_pullup operates in a circuit."
+    },
+    {
+      "stepId": "l05_07_s04",
+      "title": "INPUT_PULLUP Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of physical inputs and circuit mechanics.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What advantage does pinMode(pin, INPUT_PULLUP) provide?",
+            "options": [
+              "It eliminates the need for external breadboard resistors",
+              "It makes the button click louder",
+              "It powers heavy motors"
+            ],
+            "correctIndex": 0,
+            "explanation": "Internal pull-ups save breadboard space and extra jumper wires!"
+          },
+          {
+            "question": "With INPUT_PULLUP, what does digitalRead() return when the button IS pressed to GND?",
+            "options": [
+              "LOW (0)",
+              "HIGH (1)",
+              "255"
+            ],
+            "correctIndex": 0,
+            "explanation": "Active-low logic: pressing the button connects the pin to Ground, reading LOW!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

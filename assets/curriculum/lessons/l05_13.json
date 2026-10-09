@@ -46,6 +46,50 @@
           "warmupExplanation": "Software logic controls the relationship: flipping your `if-else` branch reverses the action."
         }
       ]
+    },
+    {
+      "stepId": "l05_13_s02",
+      "title": "Combining Inputs and Outputs",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "Physical Interaction\nRead the button state with digitalRead() and command the LED with digitalWrite() in a real-time response loop."
+    },
+    {
+      "stepId": "l05_13_s03",
+      "title": "Hands-On: Button + LED",
+      "type": "physicalTask",
+      "interactiveWidgetType": "blinkSimulator",
+      "markdownContent": "### Interactive Bench Activity\nUse the simulated tool to test and observe how button + led operates in a circuit."
+    },
+    {
+      "stepId": "l05_13_s04",
+      "title": "Button + LED Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of physical inputs and circuit mechanics.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "How can a robot react immediately when a bumper button is pressed?",
+            "options": [
+              "Read the pin inside loop() and update the output state in an IF statement",
+              "Wait 10 minutes",
+              "Unplug the power"
+            ],
+            "correctIndex": 0,
+            "explanation": "Continually polling inputs in loop() allows the robot to respond in microseconds!"
+          },
+          {
+            "question": "What happens if you forget to set the LED pin to OUTPUT in setup()?",
+            "options": [
+              "The LED will be extremely dim or fail to illuminate properly",
+              "The computer reboots",
+              "The LED explodes"
+            ],
+            "correctIndex": 0,
+            "explanation": "Pins default to high-impedance inputs; OUTPUT mode is required to deliver driving current!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

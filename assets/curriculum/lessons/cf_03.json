@@ -16,7 +16,33 @@
       "stepId": "cf_03_s01",
       "title": "Operators",
       "type": "story",
-      "markdownContent": "You can use arithmetic operators like `+`, `-`, `*`, and `/` to calculate values. Comparison operators like `==`, `!=`, `<`, `>`, `<=`, `>=` compare values and result in `true` or `false`."
+      "markdownContent": "You can use arithmetic operators like `+`, `-`, `*`, and `/` to calculate values. Comparison operators like `==`, `!=`, `<`, `>`, `<=`, `>=` compare values and result in `true` or `false`.",
+      "quickCheck": [
+        {
+          "questionId": "qc_cf_03_s01_q1",
+          "question": "What type of variable would you use to store a whole counting number like 5 or 42?",
+          "options": [
+            "An integer (int)",
+            "A picture file",
+            "A musical song"
+          ],
+          "correctIndex": 0,
+          "explanation": "In C++ and Arduino, the int type stores whole integer numbers without decimals!",
+          "warmupExplanation": "Counting fingers or items uses whole numbers: 1, 2, 3... In code, these are called integers (int)."
+        },
+        {
+          "questionId": "qc_cf_03_s01_q2",
+          "question": "What type of variable represents a simple YES/NO or TRUE/FALSE decision?",
+          "options": [
+            "A boolean (bool)",
+            "A decimal float",
+            "A long paragraph"
+          ],
+          "correctIndex": 0,
+          "explanation": "Boolean (bool) variables can only hold two states: true or false!",
+          "warmupExplanation": "Is the light on or off? That is a true/false question. In programming, true/false values are booleans."
+        }
+      ]
     },
     {
       "stepId": "cf_03_s02",

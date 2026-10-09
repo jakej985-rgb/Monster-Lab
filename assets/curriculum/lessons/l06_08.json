@@ -3,7 +3,7 @@
   "title": "Digital Output Experiment",
   "summary": "Engineers master hardware through a disciplined learning loop:",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_06",
   "sortOrder": 8,
   "isOptional": false,
@@ -17,10 +17,10 @@
   ],
   "steps": [
     {
-      "stepId": "l06_s08",
+      "stepId": "l06_08_s01",
       "title": "Digital Output Experiment",
-      "type": "physicalTask",
-      "markdownContent": "# Digital Output Experiment: Change One Thing!\n\nEngineers master hardware through a disciplined learning loop:\n**Wire \u2794 Observe \u2794 Change One Thing \u2794 Predict \u2794 Run \u2794 Explain**\n\n### The Build: Dual Monster Warning Lights\nLet's add a second independent output channel to your breadboard!\n1. Unplug USB.\n2. Grab a second LED (Green or Yellow) and a second 220\u03a9 resistor.\n3. Connect second resistor from **Row 20, column a** to **Row 25, column a**.\n4. Connect Arduino **Digital Pin 8** to **Row 20, column b**.\n5. Insert the second LED: Long leg (Anode +) into **Row 25, column b**, and Short leg (Cathode -) into **Row 26, column b**.\n6. Connect **Row 26, column c** with a jumper wire back to the shared **`-` Ground rail**.\n\n### Upload the Alternating Strobe Sketch:\n```cpp\nconst int redLed = 9;\nconst int greenLed = 8;\n\nvoid setup() {\n  pinMode(redLed, OUTPUT);\n  pinMode(greenLed, OUTPUT);\n}\n\nvoid loop() {\n  // Red ON, Green OFF\n  digitalWrite(redLed, HIGH);\n  digitalWrite(greenLed, LOW);\n  delay(300);\n\n  // Red OFF, Green ON\n  digitalWrite(redLed, LOW);\n  digitalWrite(greenLed, HIGH);\n  delay(300);\n}\n```\n\n### The 'Change One Thing' Challenge:\n- **Predict**: What happens if you unplug the Ground jumper wire from Row 26 while the code runs?\n- **Observe**: The green LED stops completely, while the red LED continues blinking happily! Both circuits share the ground highway, but each circuit loop must be independently complete.",
+      "type": "story",
+      "markdownContent": "# Digital Output Experiment: Change One Thing!\n\nEngineers master hardware through a disciplined learning loop:\n**Wire ➔ Observe ➔ Change One Thing ➔ Predict ➔ Run ➔ Explain**\n\n### The Build: Dual Monster Warning Lights\nLet's add a second independent output channel to your breadboard!\n1. Unplug USB.\n2. Grab a second LED (Green or Yellow) and a second 220Ω resistor.\n3. Connect second resistor from **Row 20, column a** to **Row 25, column a**.\n4. Connect Arduino **Digital Pin 8** to **Row 20, column b**.\n5. Insert the second LED: Long leg (Anode +) into **Row 25, column b**, and Short leg (Cathode -) into **Row 26, column b**.\n6. Connect **Row 26, column c** with a jumper wire back to the shared **`-` Ground rail**.\n\n### Upload the Alternating Strobe Sketch:\n```cpp\nconst int redLed = 9;\nconst int greenLed = 8;\n\nvoid setup() {\n  pinMode(redLed, OUTPUT);\n  pinMode(greenLed, OUTPUT);\n}\n\nvoid loop() {\n  // Red ON, Green OFF\n  digitalWrite(redLed, HIGH);\n  digitalWrite(greenLed, LOW);\n  delay(300);\n\n  // Red OFF, Green ON\n  digitalWrite(redLed, LOW);\n  digitalWrite(greenLed, HIGH);\n  delay(300);\n}\n```\n\n### The 'Change One Thing' Challenge:\n- **Predict**: What happens if you unplug the Ground jumper wire from Row 26 while the code runs?\n- **Observe**: The green LED stops completely, while the red LED continues blinking happily! Both circuits share the ground highway, but each circuit loop must be independently complete.",
       "quickCheck": [
         {
           "questionId": "q_l06_s08_01",
@@ -49,6 +49,68 @@
           "warmupExplanation": "Engineers change one thing at a time so they know exactly what created the fix or triggered the error."
         }
       ]
+    },
+    {
+      "stepId": "l06_08_s02",
+      "title": "Multi-Channel Architecture & Common Ground",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "blinkSimulator",
+      "markdownContent": "### Multi-Channel Output Architecture\n\nWhen your robot expands to feature multiple eyes, warning beacons, and motor channels, each circuit must be electrically independent while sharing a unified electrical reference:\n\n```\nPin 9 ──>[220Ω Resistor A]──>[Red LED Anode]──>[Cathode]──┐\n                                                           ├──>[Breadboard GND Rail]──>[Arduino GND]\nPin 8 ──>[220Ω Resistor B]──>[Green LED Anode]─>[Cathode]─┘\n```\n\n### Why Every LED Needs Its Own Dedicated Resistor:\n- You might wonder: *\"Can two LEDs share a single 220Ω resistor to save parts?\"*\n- **The Answer is NO!** LEDs have slight manufacturing differences in forward voltage. If connected in parallel with one resistor, the LED with the slightly lower forward voltage will hog almost all the current, leaving the other LED dim or unlit.\n- **Golden Rule**: Always provide each LED with its own separate series resistor!\n\n### The Common Ground Principle:\n- While Pin 8 and Pin 9 deliver separate signals, both circuits return current to the same Blue `-` Ground rail. A shared reference potential is essential for all electronic systems.\n\nExplore the dual-channel blink simulator below!"
+    },
+    {
+      "stepId": "l06_08_s03",
+      "title": "Alternating Strobe & Isolation Lab",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "blinkTimingLab",
+      "markdownContent": "### The 'Change One Thing' Scientific Method\n\nProfessional engineers debug systematically by modifying **exactly one variable at a time**:\n\n1. **Build Channel 2**:\n   - Unplug USB.\n   - Wire the second 220Ω resistor from Row 20 to Row 25.\n   - Connect Arduino Pin 8 to Row 20.\n   - Insert Green LED: Anode in Row 25, Cathode in Row 26.\n   - Connect Row 26 to the Ground rail.\n2. **Upload Alternating Strobe Sketch**:\n   - Red ON / Green OFF for 300 ms, then Red OFF / Green ON for 300 ms.\n3. **Test Branch Isolation**:\n   - Gently pull the Ground jumper from Row 26 (Green LED). Notice: The Green LED turns off, but the Red LED on Pin 9 blinks unaffected!\n   - This proves the two channels are independently controlled even though they share the ground bus!\n4. **Change One Variable in Code**:\n   - Change `delay(300)` to `delay(100)` and observe the increased tempo."
+    },
+    {
+      "stepId": "l06_08_s04",
+      "title": "Multi-Output Mastery Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Confirm your understanding of multi-channel circuits, shared ground returns, and systematic debugging.",
+      "interactiveConfig": {
+        "question": "Why must each LED in a multi-LED circuit have its own dedicated series resistor?",
+        "options": [
+          "Because forward voltages vary slightly between LEDs, and sharing one resistor causes current hogging and uneven brightness",
+          "Because resistors can only handle one color of light",
+          "Because Arduino code can only compile one resistor per line"
+        ],
+        "correctIndex": 0,
+        "explanation": "Individual resistors ensure equal, safe current distribution across all LEDs, preventing current hogging.",
+        "questions": [
+          {
+            "question": "Why must each LED in a multi-LED circuit have its own dedicated series resistor?",
+            "options": [
+              "Because forward voltages vary slightly between LEDs, and sharing one resistor causes current hogging and uneven brightness",
+              "Because resistors can only handle one color of light",
+              "Because Arduino code can only compile one resistor per line"
+            ],
+            "correctIndex": 0,
+            "explanation": "Individual resistors ensure equal, safe current distribution across all LEDs, preventing current hogging."
+          },
+          {
+            "question": "Why is the 'Change One Thing' rule critical when debugging robotics hardware and code?",
+            "options": [
+              "Changing one variable at a time isolates cause and effect so you know exactly which change fixed or caused the issue",
+              "Because computers cannot process more than one change per hour",
+              "To save battery power during tests"
+            ],
+            "correctIndex": 0,
+            "explanation": "Modifying only one variable at a time allows engineers to isolate cause and effect with certainty."
+          },
+          {
+            "question": "What happens if two independent LED circuits connect their ground wires to the same breadboard Ground rail?",
+            "options": [
+              "Both circuits operate normally, safely sharing the common 0V return reference",
+              "A catastrophic explosion occurs",
+              "Both LEDs are forced to turn purple"
+            ],
+            "correctIndex": 0,
+            "explanation": "Ground is a common reference plane that can be safely shared by any number of independent circuit branches."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

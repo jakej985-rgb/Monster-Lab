@@ -19,7 +19,33 @@
       "title": "Give the Monster Its Voice",
       "type": "story",
       "interactiveWidgetType": "visualFlowDiagram",
-      "markdownContent": "The Arduino is the robot's brain, but the brain needs instructions.\n\nYour computer is where you write those instructions. The **Arduino IDE** (Integrated Development Environment) is the workbench that lets you write sketches, verify syntax, compile machine binaries, upload them to the board, and monitor serial communications.\n\nThe Monster Lab will talk to your physical Arduino Uno through this IDE. Think of the engineering workflow as:\n```\nWrite Code \u2794 Check Syntax \u2794 Compile Binary \u2794 Upload Flash \u2794 Run Hardware \u2794 Observe\n```\n\nIn this lesson, you will set up your development station, select your communication port, and explore how firmware lifecycles work."
+      "markdownContent": "The Arduino is the robot's brain, but the brain needs instructions.\n\nYour computer is where you write those instructions. The **Arduino IDE** (Integrated Development Environment) is the workbench that lets you write sketches, verify syntax, compile machine binaries, upload them to the board, and monitor serial communications.\n\nThe Monster Lab will talk to your physical Arduino Uno through this IDE. Think of the engineering workflow as:\n```\nWrite Code \u2794 Check Syntax \u2794 Compile Binary \u2794 Upload Flash \u2794 Run Hardware \u2794 Observe\n```\n\nIn this lesson, you will set up your development station, select your communication port, and explore how firmware lifecycles work.",
+      "quickCheck": [
+        {
+          "questionId": "qc_l2b_01_s01_q1",
+          "question": "What is an IDE (Integrated Development Environment) like the Arduino IDE?",
+          "options": [
+            "A software program where you write, check, and upload code sketches to microcontrollers",
+            "A video streaming app",
+            "A physical screwdriver"
+          ],
+          "correctIndex": 0,
+          "explanation": "An IDE combines a code editor, compiler, and hardware programmer in one easy tool!",
+          "warmupExplanation": "An IDE is like a word processor designed especially for computer code and robot brains."
+        },
+        {
+          "questionId": "qc_l2b_01_s01_q2",
+          "question": "What are code programs called in the Arduino ecosystem?",
+          "options": [
+            "Sketches",
+            "Drawings",
+            "Paintings"
+          ],
+          "correctIndex": 0,
+          "explanation": "Arduino programs are affectionately called \"sketches\"!",
+          "warmupExplanation": "Just like drawing out an idea in a sketchbook, Arduino programs are known as sketches."
+        }
+      ]
     },
     {
       "stepId": "l2b_01_s02",

@@ -16,7 +16,33 @@
       "stepId": "cf_01_s01",
       "title": "What Are Programs?",
       "type": "story",
-      "markdownContent": "Programs are instructions a computer follows. Just like a recipe tells a chef how to bake a cake, a program tells a computer what to do."
+      "markdownContent": "Programs are instructions a computer follows. Just like a recipe tells a chef how to bake a cake, a program tells a computer what to do.",
+      "quickCheck": [
+        {
+          "questionId": "qc_cf_01_s01_q1",
+          "question": "What tells a computer or robot what actions to perform?",
+          "options": [
+            "A set of instructions called code or a program",
+            "A coat of colorful paint",
+            "A battery charging cord"
+          ],
+          "correctIndex": 0,
+          "explanation": "Computers follow written instructions called code or programs to know what actions to take!",
+          "warmupExplanation": "Just like a recipe tells a baker how to make cookies, computer instructions tell machines what to do."
+        },
+        {
+          "questionId": "qc_cf_01_s01_q2",
+          "question": "In what order do computer programs usually follow instructions?",
+          "options": [
+            "One step at a time from top to bottom",
+            "Backwards from bottom to top",
+            "Completely at random"
+          ],
+          "correctIndex": 0,
+          "explanation": "Programs execute sequentially, running one instruction after another from top to bottom!",
+          "warmupExplanation": "When you read a book or follow a recipe, you read line by line from top to bottom."
+        }
+      ]
     },
     {
       "stepId": "cf_01_s02",

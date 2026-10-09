@@ -17,7 +17,33 @@
       "title": "The Full Map",
       "type": "visualExplanation",
       "interactiveWidgetType": "visualFlowDiagram",
-      "markdownContent": "You've seen all the pieces. Let's look at the full Monster Lab map one last time.\n\n- **Learn Lab**: Read lessons.\n- **Parts Lab**: Learn about hardware.\n- **Build Lab**: Wire the circuit.\n- **Code Lab**: Copy the code.\n- **Challenges**: Go beyond the basics.\n\nReview the flow below."
+      "markdownContent": "You've seen all the pieces. Let's look at the full Monster Lab map one last time.\n\n- **Learn Lab**: Read lessons.\n- **Parts Lab**: Learn about hardware.\n- **Build Lab**: Wire the circuit.\n- **Code Lab**: Copy the code.\n- **Challenges**: Go beyond the basics.\n\nReview the flow below.",
+      "quickCheck": [
+        {
+          "questionId": "qc_l2a_08_s01_q1",
+          "question": "What makes a successful Monster Lab hardware inventor?",
+          "options": [
+            "Curiosity, patience, testing hypotheses, and learning from mistakes",
+            "Rushing as fast as possible without reading",
+            "Never testing anything"
+          ],
+          "correctIndex": 0,
+          "explanation": "Engineering is all about iterating, experimenting, and treating unexpected bugs as learning opportunities!",
+          "warmupExplanation": "When something doesn't work on the first try, engineers say: \"Fascinating! Let's find out why!\""
+        },
+        {
+          "questionId": "qc_l2a_08_s01_q2",
+          "question": "When you encounter an unfamiliar electronic component in your kit, what is your first step?",
+          "options": [
+            "Look up its name, symbol, and pinout in the Parts Lab",
+            "Plug random wires into it with power on",
+            "Throw it out the window"
+          ],
+          "correctIndex": 0,
+          "explanation": "Checking the Parts Lab reveals what the component does, its safe voltage range, and its pin layout!",
+          "warmupExplanation": "The Parts Lab is your secret field guide for every mystery component."
+        }
+      ]
     },
     {
       "stepId": "l2a_08_s02",

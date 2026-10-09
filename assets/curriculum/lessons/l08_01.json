@@ -3,7 +3,7 @@
   "title": "Why Do Devices Need to Talk?",
   "summary": "In earlier missions, you connected one component per pin: an LED to Pin 9, a pushbutton to Pin 2, and a potentiometer to A0.",
   "tier": "engineer",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_08",
   "sortOrder": 1,
   "isOptional": false,
@@ -46,6 +46,58 @@
           "warmupExplanation": "In Lesson 6 and Lesson 7, simple components like potentiometers and LEDs handled variable voltages directly, whereas smart devices exchange digital data."
         }
       ]
+    },
+    {
+      "stepId": "l08_01_s02",
+      "title": "The Pin Starvation Bottleneck & Bus Architecture",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### The Point-to-Point Wiring Bottleneck\n\nAn Arduino Uno has 14 digital pins and 6 analog pins. In complex robotics builds, pins run out quickly:\n- 16x2 Parallel LCD: Requires 6 to 10 pins!\n- 4x4 Matrix Keypad: Requires 8 pins!\n- 3 Distance Sensors: Require 6 pins!\n- **Total: Over 20 pins!** The Uno is completely starved of I/O lines.\n\n```\nPOINT-TO-POINT TOPOLOGY (Dozens of messy wires):\n[ Arduino ] \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u25ba [ LCD Display (6-10 Pins) ]\n[ Arduino ] \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u25ba [ RTC Clock (4 Pins) ]\n[ Arduino ] \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u25ba [ Pressure Sensor (4 Pins) ]\n\nBUS TOPOLOGY (Only 2 shared signal wires for ALL devices!):\n[ Arduino ] \u2500\u2500\u252c\u2500\u2500 SDA (Serial Data)  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba\n              \u2514\u2500\u2500 SCL (Serial Clock) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba\n                                                \u25bc              \u25bc\n                                           [ I2C LCD ]    [ I2C Sensor ]\n```\n\nA **bus** is a shared electrical highway where dozens of devices connect to the exact same two wires without interfering with each other!"
+    },
+    {
+      "stepId": "l08_01_s03",
+      "title": "Point-to-Point vs Bus Topology Experiment",
+      "type": "physicalTask",
+      "interactiveWidgetType": "i2cPullupChecker",
+      "markdownContent": "### The Power of Bus Architecture\n\nBy switching to I2C (Inter-Integrated Circuit), a 16x2 LCD display goes from needing 16 header pins down to just **4 wires**:\n1. **VCC**: +5V Power Rail\n2. **GND**: 0V Ground Return\n3. **SDA**: Serial Data (carries information bytes)\n4. **SCL**: Serial Clock (synchronizes timing)\n\nAnd the best part? You can attach 10 more sensors to those exact same SDA and SCL pins without using up a single extra pin on your Arduino!\n\n**Laboratory Task:**\nInspect the bus topology and pull-up resistor architecture in the interactive simulator below."
+    },
+    {
+      "stepId": "l08_01_s04",
+      "title": "Device Communication Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your understanding of communication buses and pin starvation solutions.",
+      "interactiveConfig": {
+        "question": "What major problem does a shared communication bus like I2C solve in robotics?",
+        "options": [
+          "It prevents pin starvation by allowing many devices to share the exact same two signal wires",
+          "It increases battery voltage so motors run faster",
+          "It replaces the need for power and ground wires"
+        ],
+        "correctIndex": 0,
+        "explanation": "A communication bus allows multiple smart peripherals to share two common wires (SDA and SCL) instead of requiring dedicated pins for each component.",
+        "questions": [
+          {
+            "question": "What major problem does a shared communication bus like I2C solve in robotics?",
+            "options": [
+              "It prevents pin starvation by allowing many devices to share the exact same two signal wires",
+              "It increases battery voltage so motors run faster",
+              "It replaces the need for power and ground wires"
+            ],
+            "correctIndex": 0,
+            "explanation": "A communication bus allows multiple smart peripherals to share two common wires (SDA and SCL) instead of requiring dedicated pins for each component."
+          },
+          {
+            "question": "How do multiple devices share the same communication bus without confusing the microcontroller?",
+            "options": [
+              "Each device has a unique digital address and only responds when addressed by the controller",
+              "Only one peripheral is physically plugged in at any given moment",
+              "Devices transmit random radio signals"
+            ],
+            "correctIndex": 0,
+            "explanation": "Every I2C device listens for its unique 7-bit address. When the controller broadcasts an address, only the matching device replies."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

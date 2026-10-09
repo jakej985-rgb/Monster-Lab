@@ -3,7 +3,7 @@
   "title": "Use an Example",
   "summary": "Here is the best secret every pro engineer knows: every good library comes with working example code!",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 8,
   "courseId": "lesson_03",
   "sortOrder": 5,
   "isOptional": false,
@@ -16,9 +16,9 @@
   ],
   "steps": [
     {
-      "stepId": "l03_s05",
+      "stepId": "l03_05_s01",
       "title": "Use an Example",
-      "type": "codeExperiment",
+      "type": "story",
       "markdownContent": "Here is the best secret every pro engineer knows: **every good library comes with working example code!**\n\nWhen you install a library, you don't have to guess how to use it. You can open a ready-to-run sketch directly:\n- In the Arduino IDE: go to **File > Examples > LiquidCrystal I2C > HelloWorld**.\n\nLook at this classic starter sketch:\n\n```cpp\n#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n\n// Create the screen helper: address 0x27, 16 columns, 2 rows\nLiquidCrystal_I2C lcd(0x27, 16, 2);\n\nvoid setup() {\n  lcd.init();          // Wake up the screen\n  lcd.backlight();     // Turn on the background light\n  lcd.setCursor(0, 0); // Start at column 0, row 0\n  lcd.print(\"Monster Lab!\");\n}\n\nvoid loop() {\n  // Nothing needed in the loop for a static message!\n}\n```\n\nStarting with an official example is the safest way to verify that your wiring and library installation both work perfectly before you write custom code!",
       "quickCheck": [
         {
@@ -46,6 +46,70 @@
           "warmupExplanation": "Starting with known working code eliminates guesswork about whether the problem is in your wiring or your code."
         }
       ]
+    },
+    {
+      "stepId": "l03_05_s02",
+      "title": "Anatomy of a Hardware Starter Sketch",
+      "type": "visualExplanation",
+      "markdownContent": "### Dissecting the Official Starter Sketch\n\nWhen you open **File > Examples > LiquidCrystal I2C > HelloWorld**, you see four critical structural zones:\n\n```cpp\n// 1. HEADER INCLUSION ZONE\n#include <Wire.h>               // I2C bus communications\n#include <LiquidCrystal_I2C.h>  // LCD driver commands\n\n// 2. CONSTRUCTOR / OBJECT CREATION\nLiquidCrystal_I2C lcd(0x27, 16, 2); // Address 0x27, 16 columns, 2 rows\n\n// 3. HARDWARE INITIALIZATION ZONE\nvoid setup() {\n  lcd.init();          // Wake up controller\n  lcd.backlight();     // Turn on backlight LED\n  lcd.setCursor(0, 0); // Position cursor\n  lcd.print(\"Monster Lab!\");\n}\n\n// 4. MAIN LOOP RUNTIME\nvoid loop() {\n  // Static messages remain on screen without constant refreshing!\n}\n```\n\n### Why `Wire.h` is Included\nThe `LiquidCrystal_I2C` library communicates over the Arduino's I2C bus (pins A4 and A5 on the Uno). It relies on the built-in Arduino `Wire.h` library to send the physical I2C clock and data packets!"
+    },
+    {
+      "stepId": "l03_05_s03",
+      "title": "Displaying Your First Message on Hardware",
+      "type": "physicalTask",
+      "interactiveWidgetType": "lcdContrastSimulator",
+      "markdownContent": "When you flash an example sketch to physical hardware, there's one physical trick that trips up almost every beginner!\n\nYou upload the code successfully, the backlight turns on, but... **no letters appear!** Is the code broken? Is the Arduino dead?\n\nNope! The LCD contrast potentiometer on the back of the backpack simply needs to be adjusted with a small screwdriver.\n\nInteract with the contrast simulator below: adjust the potentiometer until `Monster Lab!` displays sharp, high-contrast characters on the screen!",
+      "interactiveConfig": {
+        "title": "LCD Contrast Tuning: Getting the Example to Show"
+      }
+    },
+    {
+      "stepId": "l03_05_s04",
+      "title": "Knowledge Check: Working with Examples",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your understanding of opening, running, and verifying library example sketches.",
+      "interactiveConfig": {
+        "question": "What does LiquidCrystal_I2C lcd(0x27, 16, 2); tell the program?",
+        "options": [
+          "Create an LCD object at I2C address 0x27 with 16 columns and 2 rows",
+          "Buy an LCD from website #27 for 16 dollars",
+          "Turn off pins 16 and 2"
+        ],
+        "correctIndex": 0,
+        "explanation": "The constructor parameters configure the I2C bus address (0x27) and screen dimensions (16 characters wide by 2 lines tall).",
+        "questions": [
+          {
+            "question": "What does LiquidCrystal_I2C lcd(0x27, 16, 2); tell the program?",
+            "options": [
+              "Create an LCD object at I2C address 0x27 with 16 columns and 2 rows",
+              "Buy an LCD from website #27 for 16 dollars",
+              "Turn off pins 16 and 2"
+            ],
+            "correctIndex": 0,
+            "explanation": "The constructor parameters configure the I2C bus address (0x27) and screen dimensions (16 characters wide by 2 lines tall)."
+          },
+          {
+            "question": "Why does the example sketch include <Wire.h> alongside <LiquidCrystal_I2C.h>?",
+            "options": [
+              "Wire.h handles the low-level I2C hardware bus communication used by the LCD backpack",
+              "Wire.h is required to supply electricity to the computer mouse",
+              "Wire.h turns the Arduino into a speaker"
+            ],
+            "correctIndex": 0,
+            "explanation": "Wire.h is Arduino's standard I2C library; LiquidCrystal_I2C depends on Wire.h to send electrical packets."
+          },
+          {
+            "question": "If your example sketch compiles and uploads with zero errors but the screen shows only solid blank rectangles, what should you inspect first?",
+            "options": [
+              "Adjust the blue contrast potentiometer on the back of the LCD backpack",
+              "Smash the Arduino with a hammer",
+              "Reinstall Windows or macOS"
+            ],
+            "correctIndex": 0,
+            "explanation": "Solid rectangles or completely blank screens almost always mean the contrast trimmer potentiometer needs tuning."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

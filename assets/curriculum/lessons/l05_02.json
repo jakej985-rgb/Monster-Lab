@@ -46,6 +46,50 @@
           "warmupExplanation": "Momentary pushbuttons return to their open state as soon as pressure is released."
         }
       ]
+    },
+    {
+      "stepId": "l05_02_s02",
+      "title": "Normally Open (NO) Tactile Switches",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "Tactile Button Architecture\nInspect the 4 pins of a miniature tactile button: pins on the same side are connected in pairs internally."
+    },
+    {
+      "stepId": "l05_02_s03",
+      "title": "Hands-On: Pushbuttons",
+      "type": "physicalTask",
+      "interactiveWidgetType": "boardInspector",
+      "markdownContent": "### Interactive Bench Activity\nUse the simulated tool to test and observe how pushbuttons operates in a circuit."
+    },
+    {
+      "stepId": "l05_02_s04",
+      "title": "Button Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of physical inputs and circuit mechanics.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What does Normally Open (NO) mean for a momentary pushbutton?",
+            "options": [
+              "Contacts are disconnected until your finger presses down",
+              "Contacts are always connected",
+              "The button has no wires"
+            ],
+            "correctIndex": 0,
+            "explanation": "Normally Open buttons only conduct current while actively held down!"
+          },
+          {
+            "question": "Why do tactile pushbuttons have 4 pins?",
+            "options": [
+              "To provide mechanical stability on breadboards with two internal pairs",
+              "Because each pin needs its own battery",
+              "It is a mistake"
+            ],
+            "correctIndex": 0,
+            "explanation": "The 4 legs provide firm stability and duplicate pins in pairs!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

@@ -3,7 +3,7 @@
   "title": "LED + Resistor",
   "summary": "Let's construct your very first physical light circuit on the breadboard!",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_06",
   "sortOrder": 6,
   "isOptional": false,
@@ -17,10 +17,10 @@
   ],
   "steps": [
     {
-      "stepId": "l06_s06",
+      "stepId": "l06_06_s01",
       "title": "LED + Resistor",
-      "type": "physicalTask",
-      "markdownContent": "# LED + Resistor: The Foundational Circuit\n\nLet's construct your very first physical light circuit on the breadboard!\n\n### Know Your 5mm LED:\n- **Anode (+)**: The **longer leg**. Needs positive voltage (+5V).\n- **Cathode (-)**: The **shorter leg** (and the flat bevel on the rim). Needs Ground (0V).\n\n### Step-by-Step Build Instructions:\n1. Unplug USB power from your Arduino.\n2. **Place the Resistor (220\u03a9)**:\n   - Bend the leads into a gentle 'U' shape.\n   - Plug one leg into the **`+` (red) power rail**.\n   - Plug the second leg into **Row 15, column a**.\n3. **Place the LED**:\n   - Plug the **Long leg (Anode +)** into **Row 15, column b** (sharing Row 15 with the resistor!).\n   - Plug the **Short leg (Cathode -)** into **Row 16, column b**.\n4. **Place the Ground Wire**:\n   - Take a jumper wire. Plug one end into **Row 16, column c** (sharing Row 16 with the short leg!).\n   - Plug the other end into the **`-` (blue) Ground rail**.\n5. **Plug in USB and Behold!**\n   - Connect your USB cable. The LED glows brightly!\n\n### Trace the Complete Electrical Journey:\n```\n5V Rail \u2794 220\u03a9 Resistor \u2794 Row 15 \u2794 LED Anode (+) \u2794 Semiconductor \u2794 LED Cathode (-) \u2794 Row 16 \u2794 Jumper \u2794 GND Rail\n```\n\n### Systematic Troubleshooting:\n- *LED not glowing?* Unplug USB. Check if the LED is backwards (short leg must face Row 16 / GND). Check that the resistor and LED long leg are truly sharing Row 15!",
+      "type": "story",
+      "markdownContent": "# LED + Resistor: The Foundational Circuit\n\nLet's construct your very first physical light circuit on the breadboard!\n\n### Know Your 5mm LED:\n- **Anode (+)**: The **longer leg**. Needs positive voltage (+5V).\n- **Cathode (-)**: The **shorter leg** (and the flat bevel on the rim). Needs Ground (0V).\n\n### Step-by-Step Build Instructions:\n1. Unplug USB power from your Arduino.\n2. **Place the Resistor (220Ω)**:\n   - Bend the leads into a gentle 'U' shape.\n   - Plug one leg into the **`+` (red) power rail**.\n   - Plug the second leg into **Row 15, column a**.\n3. **Place the LED**:\n   - Plug the **Long leg (Anode +)** into **Row 15, column b** (sharing Row 15 with the resistor!).\n   - Plug the **Short leg (Cathode -)** into **Row 16, column b**.\n4. **Place the Ground Wire**:\n   - Take a jumper wire. Plug one end into **Row 16, column c** (sharing Row 16 with the short leg!).\n   - Plug the other end into the **`-` (blue) Ground rail**.\n5. **Plug in USB and Behold!**\n   - Connect your USB cable. The LED glows brightly!\n\n### Trace the Complete Electrical Journey:\n```\n5V Rail ➔ 220Ω Resistor ➔ Row 15 ➔ LED Anode (+) ➔ Semiconductor ➔ LED Cathode (-) ➔ Row 16 ➔ Jumper ➔ GND Rail\n```\n\n### Systematic Troubleshooting:\n- *LED not glowing?* Unplug USB. Check if the LED is backwards (short leg must face Row 16 / GND). Check that the resistor and LED long leg are truly sharing Row 15!",
       "quickCheck": [
         {
           "questionId": "q_l06_s06_01",
@@ -49,6 +49,68 @@
           "warmupExplanation": "To connect two parts on a breadboard, their pins must plug into the same numbered row (e.g., both into row 15)."
         }
       ]
+    },
+    {
+      "stepId": "l06_06_s02",
+      "title": "LED Anatomy & Polarity Architecture",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "ledPolarityInspector",
+      "markdownContent": "### Inside the Light Emitting Diode\n\nAn LED is a one-way electronic valve made of semiconductor material. It only emits photons when current flows in the forward direction:\n\n### Identifying Terminals:\n1. **Anode (+, Positive Terminal)**:\n   - **Longer wire leg** on new LEDs.\n   - Inside the clear epoxy lens, connects to the **smaller post contact**.\n   - Must connect toward the positive supply (+5V).\n2. **Cathode (-, Negative Terminal)**:\n   - **Shorter wire leg**.\n   - A noticeable **flat rim notch** on the side of the plastic base.\n   - Inside the lens, connects to the **larger anvil flag**.\n   - Must connect toward Ground (0V GND).\n\n### Biasing Physics:\n- **Forward Biased**: Anode connected toward +5V, Cathode toward GND. The semiconductor barrier collapses and electrons recombine with holes, releasing energy as photons of visible light!\n- **Reverse Biased**: Anode toward GND, Cathode toward +5V. The depletion region expands, blocking current flow ($0\\text{ mA}$). No light is produced.\n\nInspect the LED anatomy using the polarity inspector below!"
+    },
+    {
+      "stepId": "l06_06_s03",
+      "title": "Test Polarity & Assemble Circuit",
+      "type": "physicalTask",
+      "interactiveWidgetType": "ledPolarityInspector",
+      "markdownContent": "### Build and Test Your First LED Circuit\n\n1. **Unplug USB**: Disconnect Arduino power before inserting parts.\n2. **Place 220Ω Resistor**:\n   - Plug one leg into the **Red `+` power rail**.\n   - Plug the other leg into **Row 15, column a**.\n3. **Place the 5mm LED**:\n   - Plug the **Long leg (Anode +)** into **Row 15, column b** (joining the resistor in Row 15).\n   - Plug the **Short leg (Cathode -)** into **Row 16, column b**.\n4. **Place the Ground Return Jumper**:\n   - Plug one end into **Row 16, column c** (joining the Cathode in Row 16).\n   - Plug the other end into the **Blue `-` Ground rail**.\n5. **Apply Power**:\n   - Plug USB in. The LED shines bright red!\n6. **Interactive Inspector**:\n   - In the tool below, toggle polarity between forward and reverse bias to see how current flows or blocks."
+    },
+    {
+      "stepId": "l06_06_s04",
+      "title": "LED & Polarity Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Confirm your understanding of LED terminals, forward bias, and series connections.",
+      "interactiveConfig": {
+        "question": "Which physical features identify the negative Cathode (-) of a 5mm LED?",
+        "options": [
+          "The shorter leg, the flat rim edge on the lens base, and the larger internal anvil flag",
+          "The longer leg and a red plastic stripe",
+          "LEDs have no polarity and work identically backwards"
+        ],
+        "correctIndex": 0,
+        "explanation": "Cathode (-) is indicated by the shorter lead, the flat notch on the lens rim, and the larger anvil inside the epoxy.",
+        "questions": [
+          {
+            "question": "Which physical features identify the negative Cathode (-) of a 5mm LED?",
+            "options": [
+              "The shorter leg, the flat rim edge on the lens base, and the larger internal anvil flag",
+              "The longer leg and a red plastic stripe",
+              "LEDs have no polarity and work identically backwards"
+            ],
+            "correctIndex": 0,
+            "explanation": "Cathode (-) is indicated by the shorter lead, the flat notch on the lens rim, and the larger anvil inside the epoxy."
+          },
+          {
+            "question": "In a series circuit with a 5V supply, a 220Ω resistor, and an LED, does the resistor position (before Anode vs after Cathode) affect current?",
+            "options": [
+              "No, current is identical at every point in a single series loop",
+              "Yes, placing the resistor after the LED causes the LED to burn out",
+              "Yes, placing it before the LED makes it glow purple"
+            ],
+            "correctIndex": 0,
+            "explanation": "In any single series circuit loop, current is identical everywhere. The resistor protects the LED whether placed before or after it."
+          },
+          {
+            "question": "If your newly wired LED does not glow when USB is connected, what is the fastest diagnostic check?",
+            "options": [
+              "Unplug USB and check if the LED was inserted backwards (reverse biased), or verify both parts share Row 15",
+              "Hit the Arduino with a hammer",
+              "Throw away the breadboard and order a new kit"
+            ],
+            "correctIndex": 0,
+            "explanation": "Reversing the LED (reverse bias) or plugging leads into adjacent but non-matching rows are the two most common beginner bugs."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

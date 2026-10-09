@@ -7,14 +7,44 @@
   "courseId": "lesson_2b",
   "sortOrder": 5,
   "isOptional": false,
-  "prerequisites": ["l2b_04"],
-  "componentIds": ["comp_uno"],
+  "prerequisites": [
+    "l2b_04"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
   "steps": [
     {
       "stepId": "l2b_05_s01",
       "title": "What is Serial Communication?",
       "type": "story",
-      "markdownContent": "Your Arduino board and computer can talk to each other over the USB cable using **Serial communication**. They send text messages back and forth, one bit at a time (serially).\n\nThis is incredibly useful! You can use it to send commands to the robot or have the robot tell you sensor values. The IDE has a built-in tool called the **Serial Monitor** (under the Tools menu) to view these messages."
+      "markdownContent": "Your Arduino board and computer can talk to each other over the USB cable using **Serial communication**. They send text messages back and forth, one bit at a time (serially).\n\nThis is incredibly useful! You can use it to send commands to the robot or have the robot tell you sensor values. The IDE has a built-in tool called the **Serial Monitor** (under the Tools menu) to view these messages.",
+      "quickCheck": [
+        {
+          "questionId": "qc_l2b_05_s01_q1",
+          "question": "What is the Serial Monitor in the Arduino IDE used for?",
+          "options": [
+            "Viewing diagnostic messages, text outputs, and sensor readings sent from the board",
+            "Watching animated cartoons",
+            "Listening to music"
+          ],
+          "correctIndex": 0,
+          "explanation": "The Serial Monitor lets the Arduino \"speak\" to your computer screen using Serial.println()!",
+          "warmupExplanation": "If your robot can't talk out loud yet, it sends text messages to the Serial Monitor."
+        },
+        {
+          "questionId": "qc_l2b_05_s01_q2",
+          "question": "What command initializes Serial communication at a speed of 9600 baud in setup()?",
+          "options": [
+            "Serial.begin(9600);",
+            "startTalking();",
+            "helloScreen();"
+          ],
+          "correctIndex": 0,
+          "explanation": "Serial.begin(9600); wakes up the serial hardware and sets the baud rate to 9600 bits per second!",
+          "warmupExplanation": "Serial.begin(9600) opens the telephone line so your Arduino can talk to your screen."
+        }
+      ]
     },
     {
       "stepId": "l2b_05_s02",
@@ -40,7 +70,7 @@
       "title": "Baud Rate Mismatch",
       "type": "story",
       "interactiveWidgetType": "baudRateMismatchDemo",
-      "markdownContent": "What happens if the baud rate in `Serial.begin(9600)` doesn't match the dropdown in the Serial Monitor? \n\nYou get garbage characters like `\u2E2E\u2E2E\u2E2E`. See what happens in the demo below when the speeds don't match."
+      "markdownContent": "What happens if the baud rate in `Serial.begin(9600)` doesn't match the dropdown in the Serial Monitor? \n\nYou get garbage characters like `\u2e2e\u2e2e\u2e2e`. See what happens in the demo below when the speeds don't match."
     },
     {
       "stepId": "l2b_05_s06",

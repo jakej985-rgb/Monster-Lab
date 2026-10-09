@@ -18,7 +18,33 @@
       "stepId": "l09_s01",
       "title": "Mission Introduction",
       "type": "story",
-      "markdownContent": "### The Two-Wire Superhighway: Bus Topologies\nIf every sensor, motor driver, display, and keypad required its own dedicated pins on the Arduino, you would run out of pins after adding just three components. A humanoid robot needs dozens of sensors: gyroscopes, thermal cameras, pressure sensors, and displays.\n\nThe I2C bus solves this pin starvation problem by allowing up to 127 unique peripheral devices to communicate over the exact same two wires! In this lesson, you will network a display and a precision clock onto a shared data superhighway.\n\n```\nController (Uno) \u2500\u2500\u2500\u252c\u2500\u2500\u2500 SDA (Data: A4) \u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500 LCD Display (0x27)\n                    \u2502                       \u2502\n                    \u2514\u2500\u2500\u2500 SCL (Clock: A5) \u2500\u2500\u2500\u2534\u2500\u2500\u2500 DS3231 RTC Clock (0x68)\n```"
+      "markdownContent": "### The Two-Wire Superhighway: Bus Topologies\nIf every sensor, motor driver, display, and keypad required its own dedicated pins on the Arduino, you would run out of pins after adding just three components. A humanoid robot needs dozens of sensors: gyroscopes, thermal cameras, pressure sensors, and displays.\n\nThe I2C bus solves this pin starvation problem by allowing up to 127 unique peripheral devices to communicate over the exact same two wires! In this lesson, you will network a display and a precision clock onto a shared data superhighway.\n\n```\nController (Uno) \u2500\u2500\u2500\u252c\u2500\u2500\u2500 SDA (Data: A4) \u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500 LCD Display (0x27)\n                    \u2502                       \u2502\n                    \u2514\u2500\u2500\u2500 SCL (Clock: A5) \u2500\u2500\u2500\u2534\u2500\u2500\u2500 DS3231 RTC Clock (0x68)\n```",
+      "quickCheck": [
+        {
+          "questionId": "qc_l09_s01_q1",
+          "question": "Why do engineers use communication buses like I2C instead of wiring dedicated pins to every sensor?",
+          "options": [
+            "To share two communication wires among dozens of devices without running out of pins",
+            "Because wires are made of heavy rock",
+            "To slow down robot reflexes"
+          ],
+          "correctIndex": 0,
+          "explanation": "The I2C bus lets up to 127 devices share the exact same two wires (SDA and SCL) using unique 7-bit addresses!",
+          "warmupExplanation": "Imagine having to run a separate road to every single house versus sharing a highway network. Buses share wires!"
+        },
+        {
+          "questionId": "qc_l09_s01_q2",
+          "question": "How does an Arduino talk to one specific sensor when multiple sensors share the same I2C wires?",
+          "options": [
+            "Each sensor has a unique numerical address it listens for",
+            "The Arduino screams very loudly",
+            "By cutting wires to other sensors"
+          ],
+          "correctIndex": 0,
+          "explanation": "Every I2C sensor has an address (like a home postal address). When the Arduino announces that address, only that device answers!",
+          "warmupExplanation": "In a classroom, when a teacher calls your name, you respond while other students listen politely."
+        }
+      ]
     },
     {
       "stepId": "l09_s02",

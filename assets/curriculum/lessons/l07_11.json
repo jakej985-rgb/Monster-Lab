@@ -3,7 +3,7 @@
   "title": "Sensor Challenge",
   "summary": "Outstanding work, junior roboticist!",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_07",
   "sortOrder": 11,
   "isOptional": false,
@@ -136,6 +136,68 @@
             ],
             "correctIndex": 0,
             "explanation": "Correct: Serial Monitor (at matching baud rate). Live telemetry lets you observe exact sensor values for debugging and calibration."
+          }
+        ]
+      }
+    },
+    {
+      "stepId": "l07_11_s02",
+      "title": "Autonomous Sentry Robot Architecture",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### The Grand Challenge: Sentry Monster System\n\nCongratulations on reaching the Course 7 Capstone Challenge! In this project, you combine all your sensing skills into a unified Autonomous Sentry Monster:\n\n```\n[ LDR Ambient Light ] \u2500\u2500\u25ba Pin A0 (Analog ADC) \u2500\u2500\u2510\n                                                \u2502\n[ Ultrasonic Echolocation ] \u2500\u2500\u25ba Echo Pin 10 \u2500\u2500\u2500\u2500\u253c\u2500\u2500\u25ba [ Arduino Uno CPU ]\n                                                \u2502    (Threshold Logic & Fusion)\n[ Trigger Pulse ] \u25c4\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 Trig Pin 9 \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518        \u2502\n                                                         \u25bc\n                                             [ Alert Actuators ]\n                                             - Standby Green LED (Pin 12)\n                                             - Alert Red LED (Pin 13)\n                                             - Piezo Buzzer (Pin 11)\n```\n\nSystem Requirements:\n1. Continuously measure ambient light and target distance.\n2. Filter raw ADC jitter with moving average software smoothing.\n3. Apply calibrated thresholds: if darkness is detected AND an obstacle is within 20 cm, trigger the multi-tone alarm!"
+    },
+    {
+      "stepId": "l07_11_s03",
+      "title": "Multi-Sensor Noise Filtering & Calibration",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "analogReadNoiseFilter",
+      "markdownContent": "### Final Lab: Calibration and Signal Conditioning\n\nBefore uploading your final firmware, calibrate your sensors:\n1. Record ambient room light on A0 (e.g. 680 counts).\n2. Measure shadow reading with your hand over the LDR (e.g. 210 counts).\n3. Compute the decision midpoint: `(680 + 210) / 2 = 445`.\n4. Run the noise filter workbench below to verify that sensor noise remains below your hysteresis threshold margin!"
+    },
+    {
+      "stepId": "l07_11_s04",
+      "title": "Master Sensor Challenge Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Prove your complete mastery of sensors, ADC math, and perception-action robotics to claim your certification XP!",
+      "interactiveConfig": {
+        "question": "How does the HC-SR04 distance sensor calculate distance to an obstacle?",
+        "options": [
+          "It transmits ultrasonic sound pulses and measures the echo return time",
+          "It emits an infrared laser beam to measure photon speed",
+          "It senses the magnetic attraction of nearby metal objects"
+        ],
+        "correctIndex": 0,
+        "explanation": "The HC-SR04 emits 40 kHz ultrasonic acoustic waves and measures the microsecond travel duration until the echo reflects back to the receiver cylinder.",
+        "questions": [
+          {
+            "question": "How does the HC-SR04 distance sensor calculate distance to an obstacle?",
+            "options": [
+              "It transmits ultrasonic sound pulses and measures the echo return time",
+              "It emits an infrared laser beam to measure photon speed",
+              "It senses the magnetic attraction of nearby metal objects"
+            ],
+            "correctIndex": 0,
+            "explanation": "The HC-SR04 emits 40 kHz ultrasonic acoustic waves and measures the microsecond travel duration until the echo reflects back to the receiver cylinder."
+          },
+          {
+            "question": "What is the primary role of a voltage divider when interfacing an LDR with an Arduino analog pin?",
+            "options": [
+              "It converts the LDR's varying resistance into a measurable variable voltage between 0V and 5V",
+              "It amplifies sensor voltage up to 120 volts AC",
+              "It prevents the Arduino from compiling incorrect code"
+            ],
+            "correctIndex": 0,
+            "explanation": "Arduino analog pins only measure voltage. A voltage divider converts shifting resistance into a proportional voltage signal."
+          },
+          {
+            "question": "Which C++ control structure allows your robot to execute different actions depending on whether sensor data exceeds a threshold?",
+            "options": [
+              "if / else conditional statements",
+              "while(true) infinite loops",
+              "#include <Wire.h> preprocessor directives"
+            ],
+            "correctIndex": 0,
+            "explanation": "if / else conditional branches allow firmware to compare telemetry against thresholds and execute distinct action paths."
           }
         ]
       }

@@ -19,7 +19,33 @@
       "title": "Compilation & Flashing: What Happens When You Upload?",
       "type": "visualExplanation",
       "interactiveWidgetType": "compilationPipelineSimulator",
-      "markdownContent": "When you click **Upload** in the IDE, your computer does not send C++ words directly to the ATmega328P chip. Microcontrollers cannot read English or C++! They only understand raw hexadecimal binary opcodes.\n\n### The 4-Stage Build & Flash Pipeline:\n1. **Human Source Code**: You write C++ functions.\n2. **Syntax Verification & Lexing**: The compiler checks grammar, matching braces `{ }`, and semicolons `;`.\n3. **Binary Compilation (avr-g++)**: Converts C++ text into machine opcodes (Intel HEX format).\n4. **Hardware Flash Flashing (avrdude)**: Streams bytes over USB serial into the bootloader in flash memory.\n\nStep through each stage in the pipeline simulator below to see how code transforms into machine reality!"
+      "markdownContent": "When you click **Upload** in the IDE, your computer does not send C++ words directly to the ATmega328P chip. Microcontrollers cannot read English or C++! They only understand raw hexadecimal binary opcodes.\n\n### The 4-Stage Build & Flash Pipeline:\n1. **Human Source Code**: You write C++ functions.\n2. **Syntax Verification & Lexing**: The compiler checks grammar, matching braces `{ }`, and semicolons `;`.\n3. **Binary Compilation (avr-g++)**: Converts C++ text into machine opcodes (Intel HEX format).\n4. **Hardware Flash Flashing (avrdude)**: Streams bytes over USB serial into the bootloader in flash memory.\n\nStep through each stage in the pipeline simulator below to see how code transforms into machine reality!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l2b_02_s01_q1",
+          "question": "What does the compiler in the Arduino IDE do when you click the \"Verify\" (check mark) button?",
+          "options": [
+            "Translates your human-readable C++ code into machine binary code and checks for syntax errors",
+            "Deletes your file",
+            "Takes a picture of the screen"
+          ],
+          "correctIndex": 0,
+          "explanation": "Compiling turns text code into 1s and 0s that the microcontroller hardware can directly execute!",
+          "warmupExplanation": "Computers don't speak English\u2014they speak machine binary. The compiler is your translator."
+        },
+        {
+          "questionId": "qc_l2b_02_s01_q2",
+          "question": "What is \"flashing\" or \"uploading\" in microcontroller programming?",
+          "options": [
+            "Sending compiled binary instructions through the USB cable into the Arduino's flash memory",
+            "Waving a flashlight at the board",
+            "Taking a photo with a flash bulb"
+          ],
+          "correctIndex": 0,
+          "explanation": "Uploading writes machine code into the chip's non-volatile flash memory so it stays saved even without power!",
+          "warmupExplanation": "Flash memory is like the Arduino's long-term brain notebook where your program is stored."
+        }
+      ]
     },
     {
       "stepId": "l2b_02_s02",

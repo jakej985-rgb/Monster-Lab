@@ -48,6 +48,50 @@
           "warmupExplanation": "10-bit input (0-1023) is 4 times larger than 8-bit output (0-255), requiring scaling."
         }
       ]
+    },
+    {
+      "stepId": "l05_14_s02",
+      "title": "Mapping 10-Bit Input to 8-Bit Output",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "The map() Function\nint brightness = map(sensorVal, 0, 1023, 0, 255); scales the analog input range down to PWM range!"
+    },
+    {
+      "stepId": "l05_14_s03",
+      "title": "Hands-On: Potentiometer -> LED Brightness",
+      "type": "physicalTask",
+      "interactiveWidgetType": "potentiometerSimulator",
+      "markdownContent": "### Interactive Bench Activity\nUse the simulated tool to test and observe how potentiometer -> led brightness operates in a circuit."
+    },
+    {
+      "stepId": "l05_14_s04",
+      "title": "Map Function Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of physical inputs and circuit mechanics.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "Why must an analogRead value (0-1023) be scaled down before passing to analogWrite (0-255)?",
+            "options": [
+              "analogRead is 10-bit (0-1023) while analogWrite is 8-bit (0-255)",
+              "To save memory",
+              "Because numbers over 255 are illegal"
+            ],
+            "correctIndex": 0,
+            "explanation": "analogWrite only accepts 0-255. Dividing by 4 or using map() scales the ranges correctly!"
+          },
+          {
+            "question": "What convenient Arduino function rescales a number from one range to another?",
+            "options": [
+              "map(value, fromLow, fromHigh, toLow, toHigh)",
+              "convert()",
+              "scaleNumber()"
+            ],
+            "correctIndex": 0,
+            "explanation": "The built-in map() function calculates proportional scaling between any two numerical ranges!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

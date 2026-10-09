@@ -3,7 +3,7 @@
   "title": "Multiple I2C Devices",
   "summary": "In I2C, daisy-chaining refers to running parallel connections from device to device along the shared 4-wire bus (VCC, GND, SDA, SCL).",
   "tier": "engineer",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_08",
   "sortOrder": 8,
   "isOptional": false,
@@ -47,6 +47,58 @@
           "warmupExplanation": "Many sensor boards provide hardware jumpers to alter the lowest bits of their 7-bit I2C address."
         }
       ]
+    },
+    {
+      "stepId": "l08_08_s02",
+      "title": "Daisy-Chaining Architecture & Address Collisions",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "i2cDaisyChainSimulator",
+      "markdownContent": "### Multi-Device Buses & Address Collisions\n\nConnecting multiple I2C peripherals in parallel along a shared 4-wire bus (VCC, GND, SDA, SCL) is called **daisy-chaining**:\n\n```\n[ Arduino ] \u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba\n(Controller)   \u2502             \u2502             \u2502\n               \u25bc             \u25bc             \u25bc\n          [ LCD 16x2 ]   [ RTC Clock ] [ OLED Display ]\n           Addr: 0x27    Addr: 0x68    Addr: 0x3C\n            (No Conflict! All addresses are distinct)\n```\n\n### The Address Collision Hazard\nWhat happens if you plug in **two identical sensor boards** (e.g. two DS3231 RTCs or two identical gyroscopes, both configured to address `0x68`)?\n\nWhen the Arduino calls `0x68`, **both devices reply at the same moment!** They fight over the SDA line, causing bus contention and corrupted data bytes!\n\n### Solving Address Collisions:\nMost quality I2C breakout boards have **address solder jumpers (A0, A1, A2)**. Bridging a solder pad changes the low-order address bits (e.g. from `0x68` to `0x69`), resolving the conflict instantly!"
+    },
+    {
+      "stepId": "l08_08_s03",
+      "title": "Resolving I2C Bus Address Collisions",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "i2cDaisyChainSimulator",
+      "markdownContent": "### Interactive Daisy-Chain Simulator\n\nIn the bus simulator below, you can connect multiple peripherals to an Arduino Uno:\n- 16x2 Character LCD (`0x27`)\n- Real-Time Clock Module (`0x68`)\n- OLED Graphic Display (`0x3C`)\n\n**Laboratory Experiment:**\n1. Enable the second RTC module.\n2. Observe how the simulator flags an **ADDRESS COLLISION ALERT (0x68)**.\n3. Use the address configuration jumper to remap the second peripheral and restore clean bus communication!"
+    },
+    {
+      "stepId": "l08_08_s04",
+      "title": "Multiple I2C Devices Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your understanding of bus topologies, address conflicts, and hardware jumper configuration.",
+      "interactiveConfig": {
+        "question": "What happens on the I2C bus if two different breakout modules share the exact same hardware address (e.g. both 0x68)?",
+        "options": [
+          "An address collision occurs, causing bus contention and corrupting transmitted data",
+          "The Arduino board doubles its processor speed",
+          "Both devices take turns automatically without conflict"
+        ],
+        "correctIndex": 0,
+        "explanation": "Because both devices respond to the same address simultaneously, their open-drain outputs clash on the SDA line, corrupting bytes.",
+        "questions": [
+          {
+            "question": "What happens on the I2C bus if two different breakout modules share the exact same hardware address (e.g. both 0x68)?",
+            "options": [
+              "An address collision occurs, causing bus contention and corrupting transmitted data",
+              "The Arduino board doubles its processor speed",
+              "Both devices take turns automatically without conflict"
+            ],
+            "correctIndex": 0,
+            "explanation": "Because both devices respond to the same address simultaneously, their open-drain outputs clash on the SDA line, corrupting bytes."
+          },
+          {
+            "question": "How can you resolve an address conflict between two identical breakout boards on the same I2C bus?",
+            "options": [
+              "By bridging or cutting solder jumper pads (labeled A0, A1, or A2) on one board to alter its hardware address",
+              "By plugging the Arduino into a different USB socket",
+              "By changing wire colors on the breadboard"
+            ],
+            "correctIndex": 0,
+            "explanation": "Most I2C breakout boards include address select pads (A0, A1, A2) that connect internal address pins to VCC or GND, changing the hardware address."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

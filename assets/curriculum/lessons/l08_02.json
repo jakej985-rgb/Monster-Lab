@@ -3,7 +3,7 @@
   "title": "Meet I2C",
   "summary": "I2C stands for Inter-Integrated Circuit (pronounced \"Eye-Squared-See\" or \"I-Two-C\").",
   "tier": "engineer",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_08",
   "sortOrder": 2,
   "isOptional": false,
@@ -47,6 +47,58 @@
           "warmupExplanation": "In Lesson 5, you learned that pull-up resistors keep inputs at a defined voltage rather than leaving lines floating in an undefined state."
         }
       ]
+    },
+    {
+      "stepId": "l08_02_s02",
+      "title": "Controller-Target & Open-Drain Bus Architecture",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "i2cPullupChecker",
+      "markdownContent": "### Controller/Target Roles and Open-Drain Lines\n\nI2C works like a master conductor directing an orchestra:\n- **Controller (Master)**: The Arduino Uno. It generates the clock signal (SCL) and initiates all conversations.\n- **Targets (Slaves)**: The peripherals (LCD backpack, barometer, clock). They listen quietly until their address is called.\n\n```\n           +5V Power Rail\n                 \u2502\n           \u250c\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2510\n          \u250c\u2534\u2510         \u250c\u2534\u2510\n          \u2502 \u25024.7k\u03a9    \u2502 \u25024.7k\u03a9  Pull-up Resistors\n          \u2514\u252c\u2518         \u2514\u252c\u2518\n           \u2502           \u2502\nSDA \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 [ Open-Drain Data Highway ]\n                       \u2502\nSCL \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 [ Open-Drain Clock Highway ]\n     \u2502                   \u2502\n  [ Arduino ]         [ I2C LCD ]\n (Controller)          (Target)\n```\n\n### Why Open-Drain Architecture?\nIf multiple devices drove wires HIGH (+5V) and LOW (0V) with push-pull transistors, two devices outputting opposite levels at the same time would create a direct short circuit!\n\nIn I2C, devices **only pull lines LOW** to Ground. When no device pulls a line down, **pull-up resistors (typically 4.7 k\u03a9)** pull the lines gently up to +5V."
+    },
+    {
+      "stepId": "l08_02_s03",
+      "title": "The Open-Drain Pull-Up Resistor Lab",
+      "type": "physicalTask",
+      "interactiveWidgetType": "i2cPullupChecker",
+      "markdownContent": "### Exploring Pull-Up Resistor Physics\n\nIn the interactive lab below, test three different pull-up scenarios:\n1. **Proper 4.7 k\u03a9 Pull-Ups**: Lines rise rapidly to 5V, producing sharp square wave clock pulses.\n2. **Missing Pull-Ups**: The lines cannot return to HIGH; the bus stays clamped at 0V and communication freezes!\n3. **Weak Pull-Ups (100 k\u03a9)**: Rise times are sluggish, rounding off digital square waves and causing communication corruption at high speeds.\n\n**Laboratory Task:**\nSwitch between resistor modes in the simulator to observe how pull-up resistance shapes digital waveforms!"
+    },
+    {
+      "stepId": "l08_02_s04",
+      "title": "I2C Architecture Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your grasp of I2C roles and open-drain pull-up circuitry.",
+      "interactiveConfig": {
+        "question": "Why are I2C signal lines designed as 'open-drain' with pull-up resistors instead of push-pull outputs?",
+        "options": [
+          "To prevent short circuits when multiple devices share the bus lines simultaneously",
+          "Because +5V is too dangerous for microcontrollers to handle",
+          "Because I2C communication only operates using negative voltages"
+        ],
+        "correctIndex": 0,
+        "explanation": "Open-drain outputs can only pull lines to Ground, never to +5V. This allows multiple devices to connect in parallel without risking a short circuit if two talk at once.",
+        "questions": [
+          {
+            "question": "Why are I2C signal lines designed as 'open-drain' with pull-up resistors instead of push-pull outputs?",
+            "options": [
+              "To prevent short circuits when multiple devices share the bus lines simultaneously",
+              "Because +5V is too dangerous for microcontrollers to handle",
+              "Because I2C communication only operates using negative voltages"
+            ],
+            "correctIndex": 0,
+            "explanation": "Open-drain outputs can only pull lines to Ground, never to +5V. This allows multiple devices to connect in parallel without risking a short circuit if two talk at once."
+          },
+          {
+            "question": "What happens on the I2C bus if pull-up resistors are completely missing from both SDA and SCL?",
+            "options": [
+              "The bus lines remain at 0V and cannot return HIGH, completely halting communication",
+              "Communication speeds up to 100 megabits per second",
+              "The Arduino Uno flash memory is permanently erased"
+            ],
+            "correctIndex": 0,
+            "explanation": "Without pull-up resistors, open-drain lines have no mechanism to pull the voltage back up to +5V, leaving the lines floating or stuck at 0V."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

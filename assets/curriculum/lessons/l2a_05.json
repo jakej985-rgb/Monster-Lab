@@ -16,7 +16,33 @@
       "stepId": "l2a_05_s01",
       "title": "Welcome to the Code Lab",
       "type": "story",
-      "markdownContent": "Once your hardware is built, you need to give it a brain. That's what the **Code Lab** is for.\n\nThe Code Lab gives you the exact C++ sketches you need to upload to your Arduino to make your circuit come alive."
+      "markdownContent": "Once your hardware is built, you need to give it a brain. That's what the **Code Lab** is for.\n\nThe Code Lab gives you the exact C++ sketches you need to upload to your Arduino to make your circuit come alive.",
+      "quickCheck": [
+        {
+          "questionId": "qc_l2a_05_s01_q1",
+          "question": "What is the role of the Code Lab in Monster Lab?",
+          "options": [
+            "To write, review, and test code sketches before uploading to your Arduino",
+            "To print paper letters",
+            "To browse websites"
+          ],
+          "correctIndex": 0,
+          "explanation": "The Code Lab lets you deconstruct Arduino sketches, understand syntax, and solve programming challenges!",
+          "warmupExplanation": "The Code Lab is where you give your monster circuits their personality and smart behaviors."
+        },
+        {
+          "questionId": "qc_l2a_05_s01_q2",
+          "question": "What should you check when your code has a syntax error?",
+          "options": [
+            "Look for missing semicolons, unmatched parentheses, or typos in command names",
+            "Throw away the Arduino",
+            "Wait until tomorrow"
+          ],
+          "correctIndex": 0,
+          "explanation": "C++ compilers are very precise: missing semicolons or spelling mistakes are the most common syntax errors!",
+          "warmupExplanation": "If a sentence forgets a period, it looks strange. Code needs its semicolons and correct spellings."
+        }
+      ]
     },
     {
       "stepId": "l2a_05_s02",

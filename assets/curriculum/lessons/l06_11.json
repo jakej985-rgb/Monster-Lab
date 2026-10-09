@@ -3,7 +3,7 @@
   "title": "Build Challenge",
   "summary": "You can now route power rails, calculate safe current with series resistors, wire polarized semiconductor LEDs, interface ultrasonic distance senso...",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_06",
   "sortOrder": 11,
   "isOptional": false,
@@ -17,78 +17,10 @@
   ],
   "steps": [
     {
-      "stepId": "l06_s11",
-      "title": "Build Challenge",
-      "type": "quizCheckpoint",
-      "markdownContent": "# Lesson 6 Build Challenge\n\nCongratulations on completing your breadboard and physical circuits apprenticeship! You can now route power rails, calculate safe current with series resistors, wire polarized semiconductor LEDs, interface ultrasonic distance sensors, and diagnose circuit issues systematically.\n\nTake the final challenge assessment below to verify your circuit mastery and claim your **50 XP** reward!",
-      "interactiveConfig": {
-        "question": "What is the primary function of a 220\u03a9 resistor in series with an LED connected to an Arduino pin?",
-        "options": [
-          "To limit electrical current and prevent the LED and Arduino pin from burning out",
-          "To increase battery voltage up to 120 Volts",
-          "To store compiled C++ firmware code in flash memory",
-          "To convert DC voltage into AC radio waves"
-        ],
-        "correctIndex": 0,
-        "explanation": "The resistor restricts electrical current to a safe 15-20 mA level, shielding the fragile LED diode crystal and Arduino output driver from overcurrent destruction.",
-        "questions": [
-          {
-            "question": "What is the primary function of a 220\u03a9 resistor in series with an LED connected to an Arduino pin?",
-            "options": [
-              "To limit electrical current and prevent the LED and Arduino pin from burning out",
-              "To increase battery voltage up to 120 Volts",
-              "To store compiled C++ firmware code in flash memory",
-              "To convert DC voltage into AC radio waves"
-            ],
-            "correctIndex": 0,
-            "explanation": "The resistor restricts electrical current to a safe 15-20 mA level, shielding the fragile LED diode crystal and Arduino output driver from overcurrent destruction."
-          },
-          {
-            "question": "How are tie-point holes arranged internally on the main terminal strips of a solderless breadboard?",
-            "options": [
-              "In horizontal rows of 5 connected holes (a\u2013e and f\u2013j) separated by a center ravine",
-              "In single diagonal lines running across the entire board",
-              "Every hole on the entire board is connected to every other hole",
-              "Only the outer corners have metal connections"
-            ],
-            "correctIndex": 0,
-            "explanation": "On a solderless breadboard, each numbered row has two isolated groups of 5 tie-points (a-e and f-j) joined by internal bronze spring clips."
-          },
-          {
-            "question": "Which terminal of a standard 5mm LED is the positive Anode (+)?",
-            "options": [
-              "The longer lead",
-              "The shorter lead",
-              "The lead next to the flat rim notch",
-              "Both leads are completely identical"
-            ],
-            "correctIndex": 0,
-            "explanation": "The longer lead indicates the Anode (+), which connects toward positive supply voltage, while the shorter lead is the Cathode (-)."
-          },
-          {
-            "question": "How does the HC-SR04 ultrasonic distance sensor calculate distance to an obstacle?",
-            "options": [
-              "It emits a 40 kHz sound pulse from Trig, measures the echo return time on Echo, and multiplies by the speed of sound",
-              "It uses a mechanical measuring tape inside the metal cylinders",
-              "It calculates the weight of atmospheric air pushing against the board",
-              "It detects heat radiated from the target using an infrared thermal lens"
-            ],
-            "correctIndex": 0,
-            "explanation": "The ultrasonic sensor measures the round-trip travel time of an emitted 40 kHz sound ping and applies the speed of sound formula."
-          },
-          {
-            "question": "What should an engineer do first when a physical circuit does not respond as expected?",
-            "options": [
-              "Unplug power, inspect serial telemetry, and change one wire or parameter at a time",
-              "Tear out all wires and buy a completely new computer",
-              "Increase the power supply voltage to 50 Volts",
-              "Shake the breadboard vigorously while connected to USB"
-            ],
-            "correctIndex": 0,
-            "explanation": "Systematic debugging relies on safely removing power, observing diagnostic telemetry, and modifying only one variable at a time."
-          }
-        ]
-      },
+      "stepId": "l06_11_s01",
+      "title": "The Monster Lab Circuit Apprenticeship",
+      "type": "story",
+      "markdownContent": "# Lesson 6 Build Challenge: Master Circuit Guild\n\nCongratulations on completing your breadboard and physical circuits apprenticeship! You can now route power rails, calculate safe current with series resistors, wire polarized semiconductor LEDs, interface ultrasonic distance sensors, and diagnose circuit issues systematically.\n\nBefore you claim your final apprentice badge and **50 XP**, let's review the complete hardware integration checklist and verify your circuits under real lab conditions!",
       "quickCheck": [
         {
           "questionId": "q_l06_s11_01",
@@ -117,6 +49,72 @@
           "warmupExplanation": "Hardware pins must match software definitions. If your wire is in Pin 4 but code reads Pin 11, the signal is missed."
         }
       ]
+    },
+    {
+      "stepId": "l06_11_s02",
+      "title": "Full System Hardware Architecture",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "realWorldSystemDiagram",
+      "markdownContent": "### The Complete Monster System Architecture\n\nYour workbench now hosts an entire cyber-physical robotics workstation. Let's review how all the subsystems interact:\n\n1. **Power Subsystem**:\n   - Arduino Uno supplies regulated +5V and Ground to the breadboard side bus rails.\n   - Both the ultrasonic distance sensor and warning LED tap directly into this shared power infrastructure.\n2. **Sensory Telemetry Subsystem**:\n   - HC-SR04 Ultrasonic Sensor powered via +5V and GND.\n   - Trigger line connected to Digital Pin 12, emitting 40 kHz acoustic bursts.\n   - Echo line connected to Digital Pin 11, measuring reflected flight time.\n3. **Actuator Warning Subsystem**:\n   - Digital Pin 9 controls a series 220Ω resistor and 5mm LED returning to the Ground bus.\n4. **Firmware Control Loop**:\n   - Real-time sensing, distance computation, conditional threshold evaluation, and rapid LED strobe dispatch.\n\nStudy the complete system diagram below to verify every wire on your workbench!"
+    },
+    {
+      "stepId": "l06_11_s03",
+      "title": "Master Pre-Flight Circuit Inspection",
+      "type": "physicalTask",
+      "interactiveWidgetType": "breadboardInternalBusInspector",
+      "markdownContent": "### Pre-Flight Circuit Quality Checklist\n\nBefore certifying your build, perform this professional hardware verification:\n\n1. **Power Bus Verification**:\n   - Arduino 5V connects to breadboard Red `+` rail.\n   - Arduino GND connects to breadboard Blue `-` rail.\n   - No jumper wire accidentally bridges `+` to `-` (short circuit check).\n2. **Ultrasonic Sensor Wiring**:\n   - VCC connects to Red `+` rail, GND connects to Blue `-` rail.\n   - Trig connects to Pin 12, Echo connects to Pin 11.\n3. **LED + Resistor Output Wiring**:\n   - Digital Pin 9 connects to Row 10.\n   - 220Ω resistor bridges Row 10 to Row 15.\n   - LED Anode (long leg) plugs into Row 15; Cathode (short leg) plugs into Row 16.\n   - Jumper wire returns Row 16 to the Blue `-` Ground rail.\n4. **Power-On Test**:\n   - Plug USB in, upload code, wave your hand within 20 cm, and watch your monster sentry flash to life!"
+    },
+    {
+      "stepId": "l06_11_s04",
+      "title": "Final Circuit Mastery Assessment",
+      "type": "quizCheckpoint",
+      "markdownContent": "Demonstrate your mastery of circuits, breadboards, resistors, LEDs, and sensors to complete Course 6!",
+      "interactiveConfig": {
+        "question": "What is the primary function of a 220Ω resistor in series with an LED connected to an Arduino pin?",
+        "options": [
+          "To limit electrical current and prevent the LED and Arduino pin from burning out",
+          "To increase battery voltage up to 120 Volts",
+          "To store compiled C++ firmware code in flash memory",
+          "To convert DC voltage into AC radio waves"
+        ],
+        "correctIndex": 0,
+        "explanation": "The resistor restricts electrical current to a safe 15-20 mA level, shielding the fragile LED diode crystal and Arduino output driver from overcurrent destruction.",
+        "questions": [
+          {
+            "question": "What is the primary function of a 220Ω resistor in series with an LED connected to an Arduino pin?",
+            "options": [
+              "To limit electrical current and prevent the LED and Arduino pin from burning out",
+              "To increase battery voltage up to 120 Volts",
+              "To store compiled C++ firmware code in flash memory",
+              "To convert DC voltage into AC radio waves"
+            ],
+            "correctIndex": 0,
+            "explanation": "The resistor restricts electrical current to a safe 15-20 mA level, shielding the fragile LED diode crystal and Arduino output driver from overcurrent destruction."
+          },
+          {
+            "question": "How are tie-point holes arranged internally on the main terminal strips of a solderless breadboard?",
+            "options": [
+              "In horizontal rows of 5 connected holes (a–e and f–j) separated by a center ravine",
+              "In single diagonal lines running across the entire board",
+              "Every hole on the entire board is connected to every other hole",
+              "Only the outer corners have metal connections"
+            ],
+            "correctIndex": 0,
+            "explanation": "On a solderless breadboard, each numbered row has two isolated groups of 5 tie-points (a-e and f-j) joined by internal bronze spring clips."
+          },
+          {
+            "question": "How does the HC-SR04 ultrasonic distance sensor calculate distance to an obstacle?",
+            "options": [
+              "It emits a 40 kHz sound pulse from Trig, measures the echo return time on Echo, and multiplies by the speed of sound",
+              "It uses a mechanical measuring tape inside the metal cylinders",
+              "It calculates the weight of atmospheric air pushing against the board",
+              "It detects heat radiated from the target using an infrared thermal lens"
+            ],
+            "correctIndex": 0,
+            "explanation": "The ultrasonic sensor measures the round-trip travel time of an emitted 40 kHz sound ping and applies the speed of sound formula."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 15

@@ -46,6 +46,50 @@
           "warmupExplanation": "Arduino PWM operates on an 8-bit scale: 0 is completely off, and 255 is maximum power."
         }
       ]
+    },
+    {
+      "stepId": "l04_05_s02",
+      "title": "The analogWrite() Function Range (0 to 255)",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### The 8-Bit Number Range\nIn Arduino C++, the command to output PWM is .\n\nEven though it has \"analog\" in the name, it actually outputs a digital PWM square wave!\n\nThe  parameter is an **8-bit integer** ranging from **0 to 255**:\n-  -> 0% duty cycle (OFF)\n-  -> 25% duty cycle\n-  -> 50% duty cycle\n-  -> 100% duty cycle (Full brightness)"
+    },
+    {
+      "stepId": "l04_05_s03",
+      "title": "Deconstruct an analogWrite Statement",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "codeDeconstruction",
+      "markdownContent": "### Inspect the Syntax\nExamine the statement  to see how the pin number and duty cycle value are passed."
+    },
+    {
+      "stepId": "l04_05_s04",
+      "title": "analogWrite Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of the concepts covered in this module.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What range of values does analogWrite() accept?",
+            "options": [
+              "0 to 255",
+              "0 to 10",
+              "1 to 1000"
+            ],
+            "correctIndex": 0,
+            "explanation": "Arduino Uno uses 8-bit PWM timers, giving 256 discrete levels (0 to 255)!"
+          },
+          {
+            "question": "What duty cycle does analogWrite(pin, 127) produce approximately?",
+            "options": [
+              "50% (half brightness)",
+              "100% (full brightness)",
+              "0% (off)"
+            ],
+            "correctIndex": 0,
+            "explanation": "127 is roughly half of 255, producing a 50% duty cycle!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

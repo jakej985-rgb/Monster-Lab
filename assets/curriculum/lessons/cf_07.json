@@ -16,7 +16,33 @@
       "stepId": "cf_07_s01",
       "title": "Reading Unfamiliar Code",
       "type": "story",
-      "markdownContent": "Look for structure first: identify the variables, the `setup()` function, and the `loop()`. Trace execution step by step."
+      "markdownContent": "Look for structure first: identify the variables, the `setup()` function, and the `loop()`. Trace execution step by step.",
+      "quickCheck": [
+        {
+          "questionId": "qc_cf_07_s01_q1",
+          "question": "When a program doesn't do what you expect, what do engineers call that mistake?",
+          "options": [
+            "A bug",
+            "A monster byte",
+            "A ghost"
+          ],
+          "correctIndex": 0,
+          "explanation": "Flaws or mistakes in code logic are famously known as software bugs!",
+          "warmupExplanation": "Even master engineers write bugs! Finding and fixing bugs is called debugging."
+        },
+        {
+          "questionId": "qc_cf_07_s01_q2",
+          "question": "What is the best way to debug a program that isn't working?",
+          "options": [
+            "Test one small piece at a time and read error messages",
+            "Smash the keyboard",
+            "Delete the whole computer"
+          ],
+          "correctIndex": 0,
+          "explanation": "Testing small sections and reading compiler error messages helps pinpoint bugs quickly!",
+          "warmupExplanation": "Detectives look for clues one by one. Debugging means finding clues to fix the code."
+        }
+      ]
     },
     {
       "stepId": "cf_07_s02",

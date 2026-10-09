@@ -47,6 +47,50 @@
           "warmupExplanation": "Active-low circuits connect the input to ground when pressed, registering as LOW (0V)."
         }
       ]
+    },
+    {
+      "stepId": "l05_06_s02",
+      "title": "Tying Inputs to +5V Safely",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "Pull-Up Circuit Architecture\nA 10k resistor connects the pin to +5V. When the button is unpressed, the pin reads HIGH. When pressed to GND, it reads LOW."
+    },
+    {
+      "stepId": "l05_06_s03",
+      "title": "Hands-On: Pull-Up Resistors",
+      "type": "physicalTask",
+      "interactiveWidgetType": "internalPullupCircuitDiagram",
+      "markdownContent": "### Interactive Bench Activity\nUse the simulated tool to test and observe how pull-up resistors operates in a circuit."
+    },
+    {
+      "stepId": "l05_06_s04",
+      "title": "Pull-Up Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of physical inputs and circuit mechanics.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What state does a pull-up resistor keep a pin in when the button is NOT pressed?",
+            "options": [
+              "HIGH (+5V)",
+              "LOW (0V)",
+              "Floating randomly"
+            ],
+            "correctIndex": 0,
+            "explanation": "The pull-up resistor pulls the pin voltage up to +5V (HIGH) until grounded!"
+          },
+          {
+            "question": "Why is a 10k resistor used instead of a direct wire to +5V?",
+            "options": [
+              "To limit current when the button connects the pin directly to Ground",
+              "To speed up electrons",
+              "To turn the pin blue"
+            ],
+            "correctIndex": 0,
+            "explanation": "Without resistance, pressing a button connected to GND would cause a direct short circuit!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

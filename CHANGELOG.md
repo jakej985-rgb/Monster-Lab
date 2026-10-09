@@ -6,6 +6,31 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.1.9+19] - 2026-10-09
+
+### Overview & Release Highlights
+Release **0.1.9** introduces a massive pedagogical expansion to the Monster Lab curriculum. Over 100 lesson schemas have been restructured to include deeper progression modeling and pre-test diagnostics. This update transforms Courses 1–8 into structured 4-step submodules and integrates "Quick Check" diagnostics across foundational and standalone lessons. These changes ensure learners receive immediate feedback and a more scaffolded educational experience.
+
+---
+
+### 🚀 New Features & Capabilities
+- **Quick Check Pre-Test Diagnostics**:
+  - *What Changed*: Added interactive pre-test "Quick Check" elements to Coding Foundations (`cf_`), Level 2A (`l2a_`), Level 2B (`l2b_`), and standalone lessons (`09` through `12`).
+  - *Why*: Pedagogical design emphasizes early knowledge retrieval. Quick Checks assess baseline comprehension before instruction, priming the learner and calibrating the educational flow.
+  - *User Impact*: Learners will face a short diagnostic assessment before diving into foundational topics, ensuring better knowledge retention and self-evaluation.
+
+### 🏗️ Architecture & Data Layer
+- **4-Step Submodule Expansion (Courses 1–8)**:
+  - *What Changed*: Re-architected lesson JSON files and updated the `AssetCurriculumDataSource` with over 4,000 lines of new modular payload data. Courses 1 through 8 (`l01_` to `l08_`) have been explicitly expanded into dedicated 4-step submodules.
+  - *Why*: Breaks down complex coding concepts into smaller, more digestible learning steps (e.g., Theory, Demonstration, Guided Practice, Independent Task).
+  - *User Impact*: Substantially improves lesson pacing. Instead of monolithic sessions, learners progress through clearly defined, incremental milestones.
+
+### 🛠️ Developer Toolchains & CI/CD
+- **Automated Version & Release Bump**:
+  - *What Changed*: Updated versioning to `0.1.9+19` across `pubspec.yaml`, `Dockerfile`, `app_version.dart`, and Windows/InnoSetup runner scripts.
+  - *Why*: To accurately track the new curriculum payload, trigger release pipelines, and maintain semantic versioning parity across all target platforms.
+
+
 ## [0.1.8+18] - 2026-10-08
 
 ### Overview & Release Highlights

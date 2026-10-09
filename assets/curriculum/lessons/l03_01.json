@@ -3,7 +3,7 @@
   "title": "What Is a Library?",
   "summary": "Imagine you want your monster robot to speak numbers on an LCD display screen or steer a robotic arm with a motor.",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 8,
   "courseId": "lesson_03",
   "sortOrder": 1,
   "isOptional": false,
@@ -16,11 +16,10 @@
   ],
   "steps": [
     {
-      "stepId": "l03_s01",
+      "stepId": "l03_01_s01",
       "title": "What Is a Library?",
       "type": "story",
-      "interactiveWidgetType": "libraryConceptDiagram",
-      "markdownContent": "Welcome to Monster Lab! Imagine you want your monster robot to speak numbers on an LCD display screen or steer a robotic arm with a motor. \ud83e\udd16\n\nInside the screen or motor, thousands of tiny electrical pulses have to happen in the exact right microsecond pattern. If you had to write every single pulse, every timing rule, and every wire signal from scratch, building a simple blinking robot would take months!\n\nLuckily, you don't have to reinvent the wheel! In the coding world, expert engineers have already figured out those tricky signals and bundled them into neat packages called **Libraries**.\n\nA **library** is a pre-built toolbox of reusable code written by other friendly engineers. Instead of writing 500 lines of complex wire commands, you just use simple actions like `lcd.print(\"Monster Lab!\");` or `servo.write(90);`.\n\nThink of a library like a recipe book for your monster: you don't need to reinvent bread every time you make a sandwich\u2014you just follow the recipe!",
+      "markdownContent": "Welcome to Monster Lab! Imagine you want your monster robot to speak numbers on an LCD display screen or steer a robotic arm with a motor. 🤖\n\nInside the screen or motor, thousands of tiny electrical pulses have to happen in the exact right microsecond pattern. If you had to write every single pulse, every timing rule, and every wire signal from scratch, building a simple blinking robot would take months!\n\nLuckily, you don't have to reinvent the wheel! In the coding world, expert engineers have already figured out those tricky signals and bundled them into neat packages called **Libraries**.\n\nA **library** is a pre-built toolbox of reusable code written by other friendly engineers. Instead of writing 500 lines of complex wire commands, you just use simple actions like `lcd.print(\"Monster Lab!\");` or `servo.write(90);`.\n\nThink of a library like a recipe book for your monster: you don't need to reinvent bread every time you make a sandwich—you just follow the recipe!",
       "quickCheck": [
         {
           "questionId": "qc_l03_s01_q1",
@@ -47,6 +46,70 @@
           "warmupExplanation": "Reusing reliable tools lets you focus on building fun robot features instead of debugging low-level timing pulses."
         }
       ]
+    },
+    {
+      "stepId": "l03_01_s02",
+      "title": "How Libraries Work: The Software Stack",
+      "type": "visualExplanation",
+      "markdownContent": "### The Monster Software Stack: Layers of Abstraction\n\nHow does a friendly line of code like `lcd.print(\"ROAR!\")` actually make physical letters light up on your robot's screen? It all happens through **layers of abstraction**!\n\n```\n+-------------------------------------------------------+\n|  YOUR SKETCH: lcd.print(\"ROAR!\");                     |\n|  (Easy, human-friendly monster commands)             |\n+-------------------------------------------------------+\n                          │\n                          ▼\n+-------------------------------------------------------+\n|  LIBRARY: LiquidCrystal_I2C                           |\n|  (Translates letters into I2C bus bytes & ASCII codes)|\n+-------------------------------------------------------+\n                          │\n                          ▼\n+-------------------------------------------------------+\n|  ARDUINO CORE & REGISTERS: Wire.h / TWDR / TWCR       |\n|  (Wiggles SDA & SCL pins with microsecond clock ticks)|\n+-------------------------------------------------------+\n                          │\n                          ▼\n+-------------------------------------------------------+\n|  PHYSICAL HARDWARE: 16x2 LCD + HD44780 Controller     |\n|  (Liquid crystals twist and display photons!)        |\n+-------------------------------------------------------+\n```\n\nWithout the library, your sketch would have to manage register addresses (`0x27`), bitwise shifts, clock pulse delays, and 4-bit nibble transfers manually. With the library, all of that hard work is hidden inside clean, reusable tools!"
+    },
+    {
+      "stepId": "l03_01_s03",
+      "title": "Raw Registers vs. Clean Abstraction",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "libraryConceptDiagram",
+      "markdownContent": "Let's see the dramatic difference between programming hardware with and without a library!\n\nExplore both tabs in the interactive diagram below:\n1. Check the **Without Library** tab to see the hundreds of lines of cryptic register manipulation and timing pulses needed just to write one letter.\n2. Switch to the **With Library** tab to see how a library reduces all that complexity to a clean, readable one-liner!\n\nNotice how much time and energy libraries save you when building robots.",
+      "interactiveConfig": {
+        "title": "The Power of Libraries: Raw Registers vs Clean Abstraction"
+      }
+    },
+    {
+      "stepId": "l03_01_s04",
+      "title": "Knowledge Check: Library Fundamentals",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check what you've learned about software libraries and abstraction layers!",
+      "interactiveConfig": {
+        "question": "What does a library hide from the programmer?",
+        "options": [
+          "Complex low-level hardware timing, protocols, and register controls",
+          "The USB cable connecting the computer",
+          "The battery voltage of the wall outlet"
+        ],
+        "correctIndex": 0,
+        "explanation": "Libraries provide an abstraction layer that handles intricate hardware protocols and timing pulses so you can focus on building your robot's behavior.",
+        "questions": [
+          {
+            "question": "What does a library hide from the programmer?",
+            "options": [
+              "Complex low-level hardware timing, protocols, and register controls",
+              "The USB cable connecting the computer",
+              "The battery voltage of the wall outlet"
+            ],
+            "correctIndex": 0,
+            "explanation": "Libraries provide an abstraction layer that handles intricate hardware protocols and timing pulses so you can focus on building your robot's behavior."
+          },
+          {
+            "question": "What is the primary benefit of 'abstraction' in robotics code?",
+            "options": [
+              "You can use simple commands like print() instead of managing microsecond electrical pulses",
+              "It turns off the Arduino to save room power",
+              "It replaces the microcontroller with a cardboard cutout"
+            ],
+            "correctIndex": 0,
+            "explanation": "Abstraction lets programmers interact with hardware using intuitive commands rather than calculating low-level wire signals."
+          },
+          {
+            "question": "Who writes Arduino libraries?",
+            "options": [
+              "Open-source community engineers, hardware makers, and experienced developers",
+              "Only computer robots from the future",
+              "Nobody, libraries generate randomly on every reboot"
+            ],
+            "correctIndex": 0,
+            "explanation": "Arduino libraries are created and shared by generous engineers, chip manufacturers, and hobbyists worldwide."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

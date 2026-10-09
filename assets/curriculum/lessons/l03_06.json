@@ -3,7 +3,7 @@
   "title": "Change the Example",
   "summary": "The fun of engineering begins when you change someone else's example!",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 8,
   "courseId": "lesson_03",
   "sortOrder": 6,
   "isOptional": false,
@@ -16,10 +16,10 @@
   ],
   "steps": [
     {
-      "stepId": "l03_s06",
+      "stepId": "l03_06_s01",
       "title": "Change the Example",
-      "type": "codeExperiment",
-      "markdownContent": "The fun of engineering begins when you change someone else's example! \ud83d\udee0\ufe0f\n\nLet's modify our starter sketch to display a two-line greeting for your robot:\n\n```cpp\nvoid setup() {\n  lcd.init();\n  lcd.backlight();\n\n  // Line 1 (Top row)\n  lcd.setCursor(0, 0);\n  lcd.print(\"Monster: Sparky\");\n\n  // Line 2 (Bottom row)\n  lcd.setCursor(0, 1);\n  lcd.print(\"Status: ONLINE\");\n}\n```\n\n### Making Predictions\nNotice the cursor coordinates: `lcd.setCursor(col, row)`. In computer programming, rows and columns start counting from **0**, not 1!\n- `(0, 0)` is the very first character of the **top row**.\n- `(0, 1)` is the very first character of the **bottom row**.\n\nWhat happens if you change `\"ONLINE\"` to `\"SLEEPING\"`? The screen updates with your new word when you re-upload! By changing one line at a time, you learn how the library controls the physical world.",
+      "type": "story",
+      "markdownContent": "The fun of engineering begins when you change someone else's example! 🛠️\n\nLet's modify our starter sketch to display a two-line greeting for your robot:\n\n```cpp\nvoid setup() {\n  lcd.init();\n  lcd.backlight();\n\n  // Line 1 (Top row)\n  lcd.setCursor(0, 0);\n  lcd.print(\"Monster: Sparky\");\n\n  // Line 2 (Bottom row)\n  lcd.setCursor(0, 1);\n  lcd.print(\"Status: ONLINE\");\n}\n```\n\n### Making Predictions\nNotice the cursor coordinates: `lcd.setCursor(col, row)`. In computer programming, rows and columns start counting from **0**, not 1!\n- `(0, 0)` is the very first character of the **top row**.\n- `(0, 1)` is the very first character of the **bottom row**.\n\nWhat happens if you change `\"ONLINE\"` to `\"SLEEPING\"`? The screen updates with your new word when you re-upload! By changing one line at a time, you learn how the library controls the physical world.",
       "quickCheck": [
         {
           "questionId": "qc_l03_s06_q1",
@@ -46,6 +46,68 @@
           "warmupExplanation": "Change the text inside the quotes to print whatever message your monster wants to say!"
         }
       ]
+    },
+    {
+      "stepId": "l03_06_s02",
+      "title": "The 16x2 Display Coordinate Grid",
+      "type": "visualExplanation",
+      "markdownContent": "### Understanding the LCD Matrix Grid\n\nA 16x2 LCD display is arranged as a grid of character cells: **16 columns wide** (numbered 0 to 15) and **2 rows tall** (numbered 0 to 1):\n\n```\nCol:  0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15\n    ┌───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┬───┐\nRow0│ M │ o │ n │ s │ t │ e │ r │ : │   │ S │ p │ a │ r │ k │ y │   │\n    ├───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┼───┤\nRow1│ S │ t │ a │ t │ u │ s │ : │   │ O │ N │ L │ I │ N │ E │   │   │\n    └───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┴───┘\n```\n\n### Coordinate Rules\n- **Column 0, Row 0** (`lcd.setCursor(0, 0)`): Top-left corner.\n- **Column 0, Row 1** (`lcd.setCursor(0, 1)`): Bottom-left corner.\n- **Column 15, Row 1** (`lcd.setCursor(15, 1)`): Bottom-right corner.\n\nIf you print more than 16 characters on Row 0 without setting the cursor to Row 1, the extra characters either wrap unpredictably or vanish into memory!"
+    },
+    {
+      "stepId": "l03_06_s03",
+      "title": "Catching Code Modification Bugs",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "syntaxErrorDebugger",
+      "markdownContent": "When modifying example code, beginners frequently make small syntax mistakes like forgetting a semicolon, mixing up uppercase/lowercase letters, or misplacing braces.\n\nPut on your debugging goggles! Inspect each highlighted bug in the interactive editor below and apply the fix to achieve a successful compilation!",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "l03_06_s04",
+      "title": "Knowledge Check: Coordinates & Code Edits",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check what you know about cursor coordinates and editing example code.",
+      "interactiveConfig": {
+        "question": "What are the coordinates for the top-right corner of a 16x2 LCD?",
+        "options": [
+          "Column 15, Row 0",
+          "Column 16, Row 1",
+          "Column 0, Row 15"
+        ],
+        "correctIndex": 0,
+        "explanation": "Because columns count from 0 to 15 and rows count 0 and 1, Column 15, Row 0 is the top-right corner.",
+        "questions": [
+          {
+            "question": "What are the coordinates for the top-right corner of a 16x2 LCD?",
+            "options": [
+              "Column 15, Row 0",
+              "Column 16, Row 1",
+              "Column 0, Row 15"
+            ],
+            "correctIndex": 0,
+            "explanation": "Because columns count from 0 to 15 and rows count 0 and 1, Column 15, Row 0 is the top-right corner."
+          },
+          {
+            "question": "Why is C++ case-sensitivity important when calling library commands?",
+            "options": [
+              "lcd.print() works, but lcd.Print() or LCD.print() will fail with 'was not declared' error",
+              "Capital letters make the letters print in bold on the LCD",
+              "Lowercase letters run slower on the Arduino"
+            ],
+            "correctIndex": 0,
+            "explanation": "C++ is strictly case-sensitive; function names must match the exact capitalization defined by the library."
+          },
+          {
+            "question": "What happens if you print a 20-character string starting at (0, 0) on a 16-column display?",
+            "options": [
+              "The characters beyond column 15 get clipped or spill off the visible screen",
+              "The screen expands physically to fit the text",
+              "The microcontroller restarts in emergency mode"
+            ],
+            "correctIndex": 0,
+            "explanation": "Standard 16x2 displays only show 16 characters per line; text exceeding 16 columns gets cut off unless you scroll the display."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

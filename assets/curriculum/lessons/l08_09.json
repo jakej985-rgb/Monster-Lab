@@ -3,7 +3,7 @@
   "title": "I2C Troubleshooting",
   "summary": "Even veteran robotics engineers encounter I2C communication failures.",
   "tier": "engineer",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_08",
   "sortOrder": 9,
   "isOptional": false,
@@ -46,6 +46,58 @@
           "warmupExplanation": "In Step 4 and Step 6, we saw how testing the raw address confirms electrical continuity before writing full application code."
         }
       ]
+    },
+    {
+      "stepId": "l08_09_s02",
+      "title": "Systematic I2C Diagnostic Playbook",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### The Master I2C Diagnostic Playbook\n\nWhen an I2C LCD stays blank or a scanner finds zero devices, follow this 5-step checklist:\n\n```\n[ Problem: I2C Device Dead, Frozen, or Unrecognized ]\n                           \u2502\n                           \u25bc\n1. CHECK COMMON GROUND: Do ALL devices share a solid GND wire with Arduino?\n                           \u2502 (Without common ground, 5V reference is lost!)\n                           \u25bc\n2. CHECK SDA/SCL WIRING: Are data and clock wires swapped?\n                           \u2502 (SDA MUST go to A4, SCL MUST go to A5!)\n                           \u25bc\n3. CHECK CONTRAST POT: On LCDs, is the blue potentiometer adjusted?\n                           \u2502 (Too far left = blank; too far right = black blocks!)\n                           \u25bc\n4. RUN I2C SCANNER: Does the scanner report the expected hex address?\n                           \u2502 (Discovers if backpack is 0x3F instead of 0x27!)\n                           \u25bc\n5. CHECK PULL-UPS: Are bus lines held at 5V when idle?\n```"
+    },
+    {
+      "stepId": "l08_09_s03",
+      "title": "Interactive Bench Repair of I2C Bus Faults",
+      "type": "physicalTask",
+      "interactiveWidgetType": "interactiveTroubleshooting",
+      "markdownContent": "### Hands-On: Diagnosing Bus Lockups\n\n**The Dreaded Bus Lockup:**\nBecause I2C is a shared bus, if **one single wire** has a short circuit or loose connection, the entire bus can freeze! Calling `Wire.endTransmission()` may hang indefinitely waiting for an ACK that never comes.\n\nTop I2C bench traps to inspect:\n- **Wire Cross**: Accidentally connecting SDA to A5 and SCL to A4.\n- **Floating Ground**: Powering a sensor from an external battery without tying battery negative to Arduino GND.\n- **Wrong Sketch Address**: Hardcoding `0x27` in code when the module is actually configured to `0x3F`.\n\n**Workbench Task:**\nUse the interactive troubleshooting bench below to isolate and fix simulated I2C bus wiring and software faults!"
+    },
+    {
+      "stepId": "l08_09_s04",
+      "title": "I2C Troubleshooting Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your diagnostic instincts and systematic debugging skills on the I2C bus.",
+      "interactiveConfig": {
+        "question": "If your I2C scanner sketch reports 'No I2C devices found' despite power LEDs glowing on all modules, what is the most common wiring error?",
+        "options": [
+          "SDA and SCL jumper wires are swapped between the Arduino and the modules",
+          "The Arduino board does not have enough flash memory",
+          "The USB cable is plugged in upside down"
+        ],
+        "correctIndex": 0,
+        "explanation": "Swapping SDA and SCL is the #1 most common wiring error. Without clock pulses on SCL, peripherals cannot decode incoming address bits.",
+        "questions": [
+          {
+            "question": "If your I2C scanner sketch reports 'No I2C devices found' despite power LEDs glowing on all modules, what is the most common wiring error?",
+            "options": [
+              "SDA and SCL jumper wires are swapped between the Arduino and the modules",
+              "The Arduino board does not have enough flash memory",
+              "The USB cable is plugged in upside down"
+            ],
+            "correctIndex": 0,
+            "explanation": "Swapping SDA and SCL is the #1 most common wiring error. Without clock pulses on SCL, peripherals cannot decode incoming address bits."
+          },
+          {
+            "question": "Why is a shared Common Ground (GND) wire mandatory between the Arduino and every I2C device?",
+            "options": [
+              "Ground provides the common 0V voltage reference needed to measure whether SDA and SCL lines are HIGH or LOW",
+              "Ground is only needed to power the LED backlight",
+              "Ground makes the I2C clock run faster"
+            ],
+            "correctIndex": 0,
+            "explanation": "Voltage is a relative difference in electrical potential. Without a common Ground return, devices have no shared 0V reference to interpret logic levels."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

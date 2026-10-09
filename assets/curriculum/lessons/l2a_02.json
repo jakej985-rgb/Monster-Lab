@@ -16,7 +16,33 @@
       "stepId": "l2a_02_s01",
       "title": "Welcome to the Learn Lab",
       "type": "story",
-      "markdownContent": "The **Learn Lab** is your headquarters. It's the screen where all your lessons are listed, just like a table of contents in a book.\n\nWhenever you're ready to start a new mission, you come here to select your next lesson."
+      "markdownContent": "The **Learn Lab** is your headquarters. It's the screen where all your lessons are listed, just like a table of contents in a book.\n\nWhenever you're ready to start a new mission, you come here to select your next lesson.",
+      "quickCheck": [
+        {
+          "questionId": "qc_l2a_02_s01_q1",
+          "question": "What is the primary purpose of the Learn Lab in Monster Lab?",
+          "options": [
+            "To guide you through step-by-step concepts, diagrams, and experiments",
+            "To delete your code files",
+            "To buy groceries online"
+          ],
+          "correctIndex": 0,
+          "explanation": "The Learn Lab is where you study foundational electronics, signal flow, and programming mechanics!",
+          "warmupExplanation": "Every great inventor studies how things work first. The Learn Lab is your interactive library."
+        },
+        {
+          "questionId": "qc_l2a_02_s01_q2",
+          "question": "What can you do if a concept in Learn Lab feels new or challenging?",
+          "options": [
+            "Use the optional Quick Check warmups and interactive widgets to practice at your own pace",
+            "Give up immediately",
+            "Smash the monitor"
+          ],
+          "correctIndex": 0,
+          "explanation": "Warmups and interactive widgets let you manipulate simulated circuits and practice with zero stress!",
+          "warmupExplanation": "Mistakes are how engineers learn. Monster Lab gives you warmups whenever you want extra practice."
+        }
+      ]
     },
     {
       "stepId": "l2a_02_s02",

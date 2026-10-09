@@ -3,7 +3,7 @@
   "title": "SDA and SCL",
   "summary": "I2C communication relies on two dedicated electrical pathways:",
   "tier": "engineer",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_08",
   "sortOrder": 3,
   "isOptional": false,
@@ -47,6 +47,58 @@
           "warmupExplanation": "Remember from Lesson 1 and Lesson 6: every electrical circuit requires a complete return path to GND."
         }
       ]
+    },
+    {
+      "stepId": "l08_03_s02",
+      "title": "SDA & SCL Signal Waveforms & Timing",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "i2cBusTimingDiagram",
+      "markdownContent": "### The Clock and Data Dance\n\nI2C relies on two synchronized lines:\n1. **SDA (Serial Data)**: Carries binary bits (0 or 1). On an Arduino Uno R3, SDA is mapped to **Analog Pin A4** (and the dedicated SDA header pin above AREF).\n2. **SCL (Serial Clock)**: Synchronizes data sampling. On an Arduino Uno R3, SCL is mapped to **Analog Pin A5** (and the dedicated SCL header pin).\n\n```\n        START       BIT 7        BIT 6                 ACK        STOP\nSCL \u2500\u2500\u2500\u2500\u2510       \u250c\u2500\u2500\u2500\u2500\u2500\u2510      \u250c\u2500\u2500\u2500\u2500\u2500\u2510      \u250c\u2500\u2500\u2500\u2500\u2500\u2510       \u250c\u2500\u2500\u2500\u2500\u2500\u2510    \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n        \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518     \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2518     \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2518     \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518     \u2514\u2500\u2500\u2500\u2500\u2518\nSDA \u2500\u2500\u2510            \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510                             \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n      \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518               \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n      (SDA drops                  (Data bit sampled              (SDA rises\n       while SCL is HIGH)          when SCL is HIGH)              while SCL HIGH)\n```\n\n- **Rule of I2C**: Data on SDA may only change while SCL is **LOW**. Whenever SCL is **HIGH**, the data bit is locked and being read by the receiver!\n- **START Condition**: SDA transitions from HIGH to LOW while SCL is held HIGH.\n- **STOP Condition**: SDA transitions from LOW to HIGH while SCL is held HIGH."
+    },
+    {
+      "stepId": "l08_03_s03",
+      "title": "Stepping Through an I2C Frame Transaction",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "i2cBusTimingDiagram",
+      "markdownContent": "### An I2C Message Byte by Byte\n\nEvery standard I2C transmission contains:\n1. **START condition**: Alerts every device on the bus that a message is beginning.\n2. **7-Bit Target Address**: Broadcasts who the message is for (e.g. `0x27`).\n3. **Read/Write Bit**: `0` for Write (Arduino sends data), `1` for Read (Arduino requests data).\n4. **ACK (Acknowledge) Bit**: The target pulls SDA LOW to confirm receipt.\n5. **Data Bytes**: 8-bit payloads (commands, text characters, or sensor registers).\n6. **STOP condition**: Releases the bus back to IDLE.\n\n**Interactive Oscilloscope Task:**\nUse the timing diagram simulator below to step through clock cycles and watch data bits and ACK pulses in real time!"
+    },
+    {
+      "stepId": "l08_03_s04",
+      "title": "SDA & SCL Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your mastery of I2C clock timing, data framing, and pin assignments.",
+      "interactiveConfig": {
+        "question": "Which pins on an Arduino Uno R3 are connected to the hardware I2C bus lines?",
+        "options": [
+          "A4 (SDA) and A5 (SCL)",
+          "D0 (RX) and D1 (TX)",
+          "D10 (SS) and D13 (SCK)"
+        ],
+        "correctIndex": 0,
+        "explanation": "On the Arduino Uno R3, the ATmega328P hardware Two-Wire Interface (TWI/I2C) is wired internally to analog pins A4 (SDA) and A5 (SCL).",
+        "questions": [
+          {
+            "question": "Which pins on an Arduino Uno R3 are connected to the hardware I2C bus lines?",
+            "options": [
+              "A4 (SDA) and A5 (SCL)",
+              "D0 (RX) and D1 (TX)",
+              "D10 (SS) and D13 (SCK)"
+            ],
+            "correctIndex": 0,
+            "explanation": "On the Arduino Uno R3, the ATmega328P hardware Two-Wire Interface (TWI/I2C) is wired internally to analog pins A4 (SDA) and A5 (SCL)."
+          },
+          {
+            "question": "In the I2C protocol, what signal transition signals a START condition?",
+            "options": [
+              "SDA transitions from HIGH to LOW while SCL remains HIGH",
+              "Both SDA and SCL stay LOW for 5 seconds",
+              "SCL pulses 10 times with SDA disconnected"
+            ],
+            "correctIndex": 0,
+            "explanation": "A START condition is defined specifically by SDA falling from HIGH to LOW while SCL is held HIGH."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

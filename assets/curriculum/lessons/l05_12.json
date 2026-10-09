@@ -47,6 +47,50 @@
           "warmupExplanation": "512 / 1023 is approximately 50%, which corresponds to 2.5V out of 5.0V."
         }
       ]
+    },
+    {
+      "stepId": "l05_12_s02",
+      "title": "Reading Variable Signals in Code",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "The analogRead() Function\nint sensorVal = analogRead(A0); returns a number between 0 and 1023 in about 100 microseconds."
+    },
+    {
+      "stepId": "l05_12_s03",
+      "title": "Hands-On: analogRead",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "codeDeconstruction",
+      "markdownContent": "### Interactive Bench Activity\nUse the simulated tool to test and observe how analogread operates in a circuit."
+    },
+    {
+      "stepId": "l05_12_s04",
+      "title": "analogRead Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of physical inputs and circuit mechanics.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What range of integer values does analogRead() return on an Uno?",
+            "options": [
+              "0 to 1023",
+              "0 to 255",
+              "HIGH or LOW only"
+            ],
+            "correctIndex": 0,
+            "explanation": "10-bit analogRead() produces numbers from 0 (0V) up to 1023 (5V)!"
+          },
+          {
+            "question": "What reading does analogRead() return if an analog pin is connected directly to 5V?",
+            "options": [
+              "1023",
+              "500",
+              "0"
+            ],
+            "correctIndex": 0,
+            "explanation": "Full supply voltage (5.0V) reaches the maximum 10-bit ADC value: 1023!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

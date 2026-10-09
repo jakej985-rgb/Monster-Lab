@@ -46,6 +46,50 @@
           "warmupExplanation": "Digital inputs only measure binary two-state logic: HIGH or LOW."
         }
       ]
+    },
+    {
+      "stepId": "l05_04_s02",
+      "title": "Reading Pin States in Code",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "The digitalRead() Function\nUse int state = digitalRead(pin); to poll whether an input pin is HIGH or LOW."
+    },
+    {
+      "stepId": "l05_04_s03",
+      "title": "Hands-On: digitalRead",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "codeDeconstruction",
+      "markdownContent": "### Interactive Bench Activity\nUse the simulated tool to test and observe how digitalread operates in a circuit."
+    },
+    {
+      "stepId": "l05_04_s04",
+      "title": "digitalRead Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of physical inputs and circuit mechanics.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "What command reads the state of an Arduino digital pin?",
+            "options": [
+              "digitalRead(pin)",
+              "analogWrite(pin)",
+              "listenToPin(pin)"
+            ],
+            "correctIndex": 0,
+            "explanation": "digitalRead() samples the pin voltage and returns HIGH or LOW!"
+          },
+          {
+            "question": "What mode must the pin be configured to in setup() before digitalRead?",
+            "options": [
+              "INPUT or INPUT_PULLUP",
+              "OUTPUT",
+              "SHUTDOWN"
+            ],
+            "correctIndex": 0,
+            "explanation": "pinMode(pin, INPUT) prepares the pin circuitry to listen to signals!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

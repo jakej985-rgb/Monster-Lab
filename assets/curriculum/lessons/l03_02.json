@@ -3,7 +3,7 @@
   "title": "Libraries in the Real World",
   "summary": "Where do you see libraries in real robotics and everyday gadgets?",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 8,
   "courseId": "lesson_03",
   "sortOrder": 2,
   "isOptional": false,
@@ -16,10 +16,10 @@
   ],
   "steps": [
     {
-      "stepId": "l03_s02",
+      "stepId": "l03_02_s01",
       "title": "Libraries in the Real World",
-      "type": "visualExplanation",
-      "markdownContent": "Where do you see libraries in real robotics and everyday gadgets? Almost everywhere!\n\nEvery cool gadget around you uses specialized libraries to talk to different components:\n\n1. **Character Displays (LCDs)**: An LCD library lets a smart microwave or 3D printer print text without worrying about how liquid crystals twist and turn.\n2. **Servo Motors**: A servo library lets an animatronic dinosaur or robot arm turn to an exact angle like 45\u00b0 or 90\u00b0 with a single command.\n3. **Sensors (Temperature & Distance)**: Sensor libraries turn electrical voltages into readable numbers like `22\u00b0C` or `15 cm`.\n4. **Motor Drivers**: Motor libraries control robot wheels going forward, backward, or spinning on a dime.\n5. **Sound & Buzzers**: Tone libraries create music notes and sound effects for games.\n6. **Communication Modules**: Radio and Bluetooth libraries let robots send secret messages to each other wirelessly!\n\nJust like a carpenter brings different specialized tools\u2014a hammer, a saw, and a ruler\u2014your robot program brings in different libraries for each cool part it controls.",
+      "type": "story",
+      "markdownContent": "Where do you see libraries in real robotics and everyday gadgets? Almost everywhere!\n\nEvery cool gadget around you uses specialized libraries to talk to different components:\n\n1. **Character Displays (LCDs)**: An LCD library lets a smart microwave or 3D printer print text without worrying about how liquid crystals twist and turn.\n2. **Servo Motors**: A servo library lets an animatronic dinosaur or robot arm turn to an exact angle like 45° or 90° with a single command.\n3. **Sensors (Temperature & Distance)**: Sensor libraries turn electrical voltages into readable numbers like `22°C` or `15 cm`.\n4. **Motor Drivers**: Motor libraries control robot wheels going forward, backward, or spinning on a dime.\n5. **Sound & Buzzers**: Tone libraries create music notes and sound effects for games.\n6. **Communication Modules**: Radio and Bluetooth libraries let robots send secret messages to each other wirelessly!\n\nJust like a carpenter brings different specialized tools—a hammer, a saw, and a ruler—your robot program brings in different libraries for each cool part it controls.",
       "quickCheck": [
         {
           "questionId": "qc_l03_s02_q1",
@@ -42,10 +42,74 @@
             "No, using two libraries causes the board to catch fire"
           ],
           "correctIndex": 0,
-          "explanation": "Robots routinely combine multiple libraries\u2014for example, one library for a screen and another library for a distance sensor!",
+          "explanation": "Robots routinely combine multiple libraries—for example, one library for a screen and another library for a distance sensor!",
           "warmupExplanation": "Just like a carpenter uses both a hammer and a tape measure, a sketch can include multiple libraries."
         }
       ]
+    },
+    {
+      "stepId": "l03_02_s02",
+      "title": "Cooperating Libraries in a Robot System",
+      "type": "visualExplanation",
+      "markdownContent": "### A Robot's Multi-Tool Backpack\n\nReal robots almost never rely on just a single library. A full-featured monster robot integrates senses, displays, and actuators simultaneously!\n\n| Robot System | Real-World Hardware | Popular Arduino Library | Example Action |\n| :--- | :--- | :--- | :--- |\n| **Face / Display** | 16x2 Character LCD | `LiquidCrystal_I2C.h` | `lcd.print(\"Scanning...\");` |\n| **Arm / Steering** | SG90 Micro Servo | `Servo.h` | `clawServo.write(45);` |\n| **Senses / Range** | HC-SR04 Ultrasonic Sensor | `NewPing.h` | `int cm = sonar.ping_cm();` |\n| **Clock / Time** | DS3231 Real Time Clock | `RTClib.h` | `DateTime now = rtc.now();` |\n| **Sound / Voice** | Piezo Buzzer / Speaker | `Tone.h` | `tone(8, 440, 200);` |\n\nBecause each library is self-contained, you can include multiple `.h` headers at the top of a single sketch. They cooperate smoothly to create complex, intelligent behavior!"
+    },
+    {
+      "stepId": "l03_02_s03",
+      "title": "Hands-On Hardware: The Real LCD Backpack",
+      "type": "physicalTask",
+      "interactiveWidgetType": "lcdContrastSimulator",
+      "markdownContent": "One of the most famous real-world library components in your kit is the **16x2 I2C Character LCD (comp_07)**.\n\nOn the back of the LCD board is a small black chip called an **I2C backpack**, featuring a tiny blue box with a brass adjustment screw (the contrast potentiometer).\n\nIf the contrast is adjusted incorrectly, the screen either shows nothing at all or solid white blocks! Even with perfect library code, bad contrast hides your text.\n\nTry the simulator below: rotate the potentiometer screw to find the sweet spot where your monster's status text is crisp and readable!",
+      "interactiveConfig": {
+        "title": "LCD Contrast Tuning: The Blue Potentiometer"
+      }
+    },
+    {
+      "stepId": "l03_02_s04",
+      "title": "Knowledge Check: Real-World Libraries",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your understanding of how libraries power real-world gadgets and robotic peripherals.",
+      "interactiveConfig": {
+        "question": "What happens when you adjust the blue trimmer potentiometer on an LCD backpack?",
+        "options": [
+          "It adjusts the contrast of the display characters so text becomes visible",
+          "It changes the Arduino's CPU speed",
+          "It changes the Wi-Fi password"
+        ],
+        "correctIndex": 0,
+        "explanation": "The potentiometer on the LCD backpack controls the contrast voltage feeding the liquid crystal elements, tuning character sharpness.",
+        "questions": [
+          {
+            "question": "What happens when you adjust the blue trimmer potentiometer on an LCD backpack?",
+            "options": [
+              "It adjusts the contrast of the display characters so text becomes visible",
+              "It changes the Arduino's CPU speed",
+              "It changes the Wi-Fi password"
+            ],
+            "correctIndex": 0,
+            "explanation": "The potentiometer on the LCD backpack controls the contrast voltage feeding the liquid crystal elements, tuning character sharpness."
+          },
+          {
+            "question": "Which component would you pair with the Servo.h library?",
+            "options": [
+              "A 9g micro servo motor to rotate an arm to a set degree",
+              "A standard resistor to change its ohms",
+              "A 9V battery snap"
+            ],
+            "correctIndex": 0,
+            "explanation": "Servo.h is designed specifically to output precise PWM pulses for controlling servo motor angles."
+          },
+          {
+            "question": "Why do engineers split robot functionality across several focused libraries?",
+            "options": [
+              "Modular libraries keep code clean, lightweight, and easy to maintain",
+              "Because microcontrollers can only read files with fewer than 10 lines",
+              "Because libraries delete each other if they do too much"
+            ],
+            "correctIndex": 0,
+            "explanation": "Modular design allows engineers to pick only the exact drivers their project needs without wasting microcontroller memory."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

@@ -16,7 +16,33 @@
       "stepId": "cf_04_s01",
       "title": "What is a Function?",
       "type": "story",
-      "markdownContent": "A function is a named block of reusable instructions. It helps avoid repeating code and keeps your program organized."
+      "markdownContent": "A function is a named block of reusable instructions. It helps avoid repeating code and keeps your program organized.",
+      "quickCheck": [
+        {
+          "questionId": "qc_cf_04_s01_q1",
+          "question": "What does a computer use to make choices like \"IF it is raining, THEN open umbrella\"?",
+          "options": [
+            "Conditional IF statements",
+            "A magic crystal ball",
+            "Random guessing"
+          ],
+          "correctIndex": 0,
+          "explanation": "Conditional IF statements check if a condition is true before running specific code!",
+          "warmupExplanation": "You make decisions all day: IF bedtime, THEN sleep! Computers use the exact same IF logic."
+        },
+        {
+          "questionId": "qc_cf_04_s01_q2",
+          "question": "What word specifies what a computer should do when an IF condition is FALSE?",
+          "options": [
+            "ELSE",
+            "NEVER",
+            "STOP_FOREVER"
+          ],
+          "correctIndex": 0,
+          "explanation": "The ELSE block gives alternative instructions to run when the IF condition isn't met!",
+          "warmupExplanation": "IF sunny wear sunglasses, ELSE wear a raincoat! ELSE is the backup plan when IF is false."
+        }
+      ]
     },
     {
       "stepId": "cf_04_s02",

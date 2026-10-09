@@ -16,7 +16,33 @@
       "stepId": "cf_08_s01",
       "title": "Bringing It All Together",
       "type": "story",
-      "markdownContent": "You now know about statements, variables, operators, if/else decisions, functions, loops, and the structure of an Arduino sketch."
+      "markdownContent": "You now know about statements, variables, operators, if/else decisions, functions, loops, and the structure of an Arduino sketch.",
+      "quickCheck": [
+        {
+          "questionId": "qc_cf_08_s01_q1",
+          "question": "How do software code and physical hardware components work together in a robot?",
+          "options": [
+            "Code sends electrical signals through pins to command components",
+            "They do not interact at all",
+            "Components whisper to the screen"
+          ],
+          "correctIndex": 0,
+          "explanation": "The microcontroller translates code commands into electrical voltages that power motors, lights, and sensors!",
+          "warmupExplanation": "Your brain thinks raise hand, and your muscles move. Code is the thought, electronics are the muscles."
+        },
+        {
+          "questionId": "qc_cf_08_s01_q2",
+          "question": "What are the two core functions found in every Arduino program?",
+          "options": [
+            "setup() and loop()",
+            "start() and finish()",
+            "eat() and sleep()"
+          ],
+          "correctIndex": 0,
+          "explanation": "Every Arduino program requires setup() to initialize hardware once, and loop() to repeat tasks continuously!",
+          "warmupExplanation": "First you wake up and get ready (setup), then you go about your active day (loop)."
+        }
+      ]
     },
     {
       "stepId": "cf_08_s02",

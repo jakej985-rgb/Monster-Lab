@@ -19,7 +19,33 @@
       "stepId": "l12_s01",
       "title": "Mission Introduction",
       "type": "story",
-      "markdownContent": "### High Current & Raw Power: The Muscle of Robotics\nRobots must move, climb, steer, and grip! But motors are hungry, violent electrical beasts. Unlike delicate LEDs that consume just 10 milliamps, motors contain heavy coils of copper wire that store magnetic energy. Connecting a motor directly to an Arduino pin will immediately fry the microcontroller or cause violent resets.\n\nIn this capstone lesson, you will master the physics of inductive kickback, flyback diode protection, and dual H-Bridge circuits to command high-power robotic actuators!\n\n```\nArduino Uno (5V Logic) \u2500\u2500\u2500 Pins 7, 8, 9 \u2500\u2500\u2500\u25ba L293D H-Bridge Driver IC \u25c4\u2500\u2500\u2500 External 9V Battery\n                                                    \u2502\n                                                    \u25bc\n                                            High-Power DC Motor\n```"
+      "markdownContent": "### High Current & Raw Power: The Muscle of Robotics\nRobots must move, climb, steer, and grip! But motors are hungry, violent electrical beasts. Unlike delicate LEDs that consume just 10 milliamps, motors contain heavy coils of copper wire that store magnetic energy. Connecting a motor directly to an Arduino pin will immediately fry the microcontroller or cause violent resets.\n\nIn this capstone lesson, you will master the physics of inductive kickback, flyback diode protection, and dual H-Bridge circuits to command high-power robotic actuators!\n\n```\nArduino Uno (5V Logic) \u2500\u2500\u2500 Pins 7, 8, 9 \u2500\u2500\u2500\u25ba L293D H-Bridge Driver IC \u25c4\u2500\u2500\u2500 External 9V Battery\n                                                    \u2502\n                                                    \u25bc\n                                            High-Power DC Motor\n```",
+      "quickCheck": [
+        {
+          "questionId": "qc_l12_s01_q1",
+          "question": "Why should electric motors NEVER be powered directly from an Arduino I/O pin?",
+          "options": [
+            "Motors draw much more current than an Arduino pin can safely supply and require a driver",
+            "Motors are scared of pins",
+            "Pins only produce cold air"
+          ],
+          "correctIndex": 0,
+          "explanation": "Arduino pins max out at 40mA. Spinning motors draw hundreds of milliamps and need a motor driver (like L293D)!",
+          "warmupExplanation": "An Arduino pin is like an AAA battery trying to launch a real rocket\u2014it needs a motor driver helper to supply muscle power."
+        },
+        {
+          "questionId": "qc_l12_s01_q2",
+          "question": "What technique controls the speed of a DC motor using digital switching pulses?",
+          "options": [
+            "Pulse Width Modulation (PWM)",
+            "Static electricity",
+            "Wrapping tape around the axle"
+          ],
+          "correctIndex": 0,
+          "explanation": "PWM rapidly switches power ON and OFF, varying the duty cycle to smoothly regulate motor speed!",
+          "warmupExplanation": "By tapping the gas pedal faster or holding it down longer, you control how fast a car moves. That is PWM!"
+        }
+      ]
     },
     {
       "stepId": "l12_s02",

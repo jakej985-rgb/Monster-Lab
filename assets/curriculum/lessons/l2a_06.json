@@ -16,7 +16,33 @@
       "stepId": "l2a_06_s01",
       "title": "Earning XP",
       "type": "story",
-      "markdownContent": "As you complete lessons, quizzes, and challenges, you earn **XP** (Experience Points).\n\nXP is a measure of your robotics knowledge. The more you learn, the more XP you get!"
+      "markdownContent": "As you complete lessons, quizzes, and challenges, you earn **XP** (Experience Points).\n\nXP is a measure of your robotics knowledge. The more you learn, the more XP you get!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l2a_06_s01_q1",
+          "question": "How do you earn Experience Points (XP) and unlock new badges in Monster Lab?",
+          "options": [
+            "By completing lessons, building circuits, and passing challenge checkpoints",
+            "By clicking random buttons rapidly",
+            "By turning the computer off"
+          ],
+          "correctIndex": 0,
+          "explanation": "Completing learning journeys and solving hands-on challenges awards XP and unlocks achievement badges!",
+          "warmupExplanation": "Every time you learn a concept or build a circuit, your engineer level increases!"
+        },
+        {
+          "questionId": "qc_l2a_06_s01_q2",
+          "question": "Can you re-visit past lessons to review concepts after completing them?",
+          "options": [
+            "Yes, all completed lessons remain unlocked in your Learn Lab library",
+            "No, completed lessons disappear forever",
+            "Only once per year"
+          ],
+          "correctIndex": 0,
+          "explanation": "You can re-open any unlocked lesson at any time to refresh your memory or try experiments again!",
+          "warmupExplanation": "Great engineers look back at notes and diagrams often. Lessons stay available in your library."
+        }
+      ]
     },
     {
       "stepId": "l2a_06_s02",

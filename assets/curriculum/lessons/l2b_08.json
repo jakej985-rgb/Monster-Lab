@@ -7,15 +7,45 @@
   "courseId": "lesson_2b",
   "sortOrder": 8,
   "isOptional": false,
-  "prerequisites": ["l2b_07"],
-  "componentIds": ["comp_uno"],
+  "prerequisites": [
+    "l2b_07"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
   "steps": [
     {
       "stepId": "l2b_08_s01",
       "title": "First Upload Walkthrough",
       "type": "physicalTask",
       "interactiveWidgetType": "compilationPipelineSimulator",
-      "markdownContent": "Time to put it all together and upload your first sketch! We will use the built-in Blink example.\n\n1. **Connect**: Plug the Arduino into USB.\n2. **Open Sketch**: In the IDE, go to File > Examples > 01.Basics > Blink.\n3. **Select Board**: Tools > Board > Arduino Uno.\n4. **Select Port**: Tools > Port > [Select your port].\n5. **Verify**: Click the Checkmark button to compile.\n6. **Upload**: Click the Right Arrow button to flash.\n7. **Observe**: Look at the board. The built-in LED near pin 13 should blink on and off every second!"
+      "markdownContent": "Time to put it all together and upload your first sketch! We will use the built-in Blink example.\n\n1. **Connect**: Plug the Arduino into USB.\n2. **Open Sketch**: In the IDE, go to File > Examples > 01.Basics > Blink.\n3. **Select Board**: Tools > Board > Arduino Uno.\n4. **Select Port**: Tools > Port > [Select your port].\n5. **Verify**: Click the Checkmark button to compile.\n6. **Upload**: Click the Right Arrow button to flash.\n7. **Observe**: Look at the board. The built-in LED near pin 13 should blink on and off every second!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l2b_08_s01_q1",
+          "question": "When uploading a sketch, what indicator lights on the Arduino Uno flash to show data is transferring?",
+          "options": [
+            "The TX and RX LEDs flash rapidly",
+            "The power light turns purple",
+            "A bell rings"
+          ],
+          "correctIndex": 0,
+          "explanation": "The TX (Transmit) and RX (Receive) LEDs blink rapidly as code bytes stream over the USB cable!",
+          "warmupExplanation": "Watch the TX and RX lights dance when your code travels into the board!"
+        },
+        {
+          "questionId": "qc_l2b_08_s01_q2",
+          "question": "Congratulations! What have you mastered by completing Lesson 2B?",
+          "options": [
+            "The entire Arduino IDE workflow: writing sketches, selecting boards/ports, compiling, and flashing hardware",
+            "Only how to click a mouse",
+            "Nothing yet"
+          ],
+          "correctIndex": 0,
+          "explanation": "You now know how to take ideas from your mind, turn them into code, and upload them to real hardware!",
+          "warmupExplanation": "You are officially equipped with the master tools of an embedded software engineer!"
+        }
+      ]
     },
     {
       "stepId": "l2b_08_s02",

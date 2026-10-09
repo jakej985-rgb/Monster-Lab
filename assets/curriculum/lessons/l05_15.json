@@ -47,6 +47,50 @@
           "warmupExplanation": "Code can divide numeric ranges into discrete buckets using `if-else` threshold comparisons."
         }
       ]
+    },
+    {
+      "stepId": "l05_15_s02",
+      "title": "Multi-Threshold Color Selection",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "Color Tuning Dial\nTurn the dial to glide through rainbow colors as thresholds route PWM power to different channels."
+    },
+    {
+      "stepId": "l05_15_s03",
+      "title": "Hands-On: Potentiometer -> RGB Color",
+      "type": "physicalTask",
+      "interactiveWidgetType": "rgbMixer",
+      "markdownContent": "### Interactive Bench Activity\nUse the simulated tool to test and observe how potentiometer -> rgb color operates in a circuit."
+    },
+    {
+      "stepId": "l05_15_s04",
+      "title": "Color Dial Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Check your understanding of physical inputs and circuit mechanics.",
+      "interactiveConfig": {
+        "questions": [
+          {
+            "question": "How can a single rotary knob select among multiple colors?",
+            "options": [
+              "Divide the 0-1023 reading into ranges using IF/ELSE checks or math equations",
+              "Paint the knob red",
+              "Twist the wires together"
+            ],
+            "correctIndex": 0,
+            "explanation": "Splitting the 0-1023 range into segments lets one knob select presets or blend colors!"
+          },
+          {
+            "question": "What visual component helps learners verify sensor readings in real time?",
+            "options": [
+              "The Arduino IDE Serial Plotter and Serial Monitor",
+              "A paper drawing",
+              "A multimeter without batteries"
+            ],
+            "correctIndex": 0,
+            "explanation": "The Serial Monitor and Plotter show live numerical graphs of potentiometer movements!"
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

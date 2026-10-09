@@ -3,7 +3,7 @@
   "title": "When Should I Use a Library?",
   "summary": "Now that you know how awesome libraries are, an important engineering question arises:",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 8,
   "courseId": "lesson_03",
   "sortOrder": 8,
   "isOptional": false,
@@ -16,11 +16,10 @@
   ],
   "steps": [
     {
-      "stepId": "l03_s08",
+      "stepId": "l03_08_s01",
       "title": "When Should I Use a Library?",
       "type": "story",
-      "interactiveWidgetType": "missingLibraryTroubleshooting",
-      "markdownContent": "Now that you know how awesome libraries are, an important engineering question arises:\n\n**Should you use a library for EVERYTHING?** \ud83e\udd14\n\nLet's compare two scenarios:\n\n### 1. When You DO Want a Library:\n- Complex communication (talking to an LCD screen, an OLED display, or a Wi-Fi chip).\n- Precise timing devices (servo motors, ultrasonic distance sensors, sound decoders).\n- Complicated math (reading a 6-axis gyroscope, calculating angles, or encrypting data).\n\n### 2. When You DON'T Need a Library:\n- Simple things built right into Arduino! Turning a single LED on or off only needs `digitalWrite(pin, HIGH);`.\n- Reading a basic pushbutton switch only needs `digitalRead(pin);`.\n- Reading a potentiometer dial only needs `analogRead(pin);`.\n\nUsing a giant library for a simple pushbutton is like calling a helicopter just to cross the street! A great engineer chooses the right tool for the job: simple built-in commands for basic pins, and powerful libraries for smart modules.",
+      "markdownContent": "Now that you know how awesome libraries are, an important engineering question arises:\n\n**Should you use a library for EVERYTHING?** 🤔\n\nLet's compare two scenarios:\n\n### 1. When You DO Want a Library:\n- Complex communication (talking to an LCD screen, an OLED display, or a Wi-Fi chip).\n- Precise timing devices (servo motors, ultrasonic distance sensors, sound decoders).\n- Complicated math (reading a 6-axis gyroscope, calculating angles, or encrypting data).\n\n### 2. When You DON'T Need a Library:\n- Simple things built right into Arduino! Turning a single LED on or off only needs `digitalWrite(pin, HIGH);`.\n- Reading a basic pushbutton switch only needs `digitalRead(pin);`.\n- Reading a potentiometer dial only needs `analogRead(pin);`.\n\nUsing a giant library for a simple pushbutton is like calling a helicopter just to cross the street! A great engineer chooses the right tool for the job: simple built-in commands for basic pins, and powerful libraries for smart modules.",
       "quickCheck": [
         {
           "questionId": "qc_l03_s08_q1",
@@ -31,7 +30,7 @@
             "Yes, an LED requires at least three different libraries"
           ],
           "correctIndex": 0,
-          "explanation": "Basic input/output like digitalWrite() and digitalRead() are built right into the Arduino language\u2014no extra libraries needed!",
+          "explanation": "Basic input/output like digitalWrite() and digitalRead() are built right into the Arduino language—no extra libraries needed!",
           "warmupExplanation": "Simple LED control is already built into Arduino: digitalWrite() does the job with zero extra downloads!"
         },
         {
@@ -47,6 +46,68 @@
           "warmupExplanation": "Use libraries whenever a component requires dozens of complex timing steps to operate safely."
         }
       ]
+    },
+    {
+      "stepId": "l03_08_s02",
+      "title": "The Engineering Decision Matrix",
+      "type": "visualExplanation",
+      "markdownContent": "### When to Library vs. When to Keep It Native\n\nEvery library you include consumes **Flash Memory** (program storage) and **SRAM** (working memory) on your ATmega328P microcontroller, which only has 32 KB of flash and 2 KB of RAM!\n\nUse this decision matrix when planning your robot features:\n\n```\n                                  Is the hardware task\n                                simple on/off or analog?\n                                     /            \\\n                                   YES             NO\n                                   /                \\\n                   Use Native Built-in           Does it use a serial\n                 digitalWrite() / analogRead()  bus (I2C/SPI) or complex\n                 Zero extra memory overhead!       math and timing?\n                                                    /           \\\n                                                  YES            NO\n                                                  /               \\\n                                          USE A LIBRARY!     Write a quick\n                                       (LCD, Servo, MPU6050) custom helper\n```\n\n### The Cost of Over-Engineering\nAdding an external library for an action that only takes one line of native code (`digitalWrite(13, HIGH);`) wastes precious bytes and makes your sketch harder to share!"
+    },
+    {
+      "stepId": "l03_08_s03",
+      "title": "Missing Library Troubleshooting",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "missingLibraryTroubleshooting",
+      "markdownContent": "What happens when someone shares a sketch with you that uses a library you haven't installed yet?\n\nYou hit Verify, and BAM: `fatal error: LiquidCrystal_I2C.h: No such file or directory`!\n\nWalk through the interactive troubleshooter below:\n1. Observe the compiler failure output.\n2. Open the Library Manager to install the missing package.\n3. Re-run compilation to verify that the build succeeds!",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "l03_08_s04",
+      "title": "Knowledge Check: Library Strategy & Memory",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your decision-making on when to use libraries and how to fix missing dependency errors.",
+      "interactiveConfig": {
+        "question": "Why is it wasteful to use an external library to read a simple momentary push button?",
+        "options": [
+          "Arduino already provides built-in digitalRead() with zero memory overhead",
+          "Push buttons require high-voltage AC current",
+          "Libraries cause buttons to physically stick"
+        ],
+        "correctIndex": 0,
+        "explanation": "Native functions like digitalRead() and pinMode() are built into the core Arduino runtime, using zero extra flash storage.",
+        "questions": [
+          {
+            "question": "Why is it wasteful to use an external library to read a simple momentary push button?",
+            "options": [
+              "Arduino already provides built-in digitalRead() with zero memory overhead",
+              "Push buttons require high-voltage AC current",
+              "Libraries cause buttons to physically stick"
+            ],
+            "correctIndex": 0,
+            "explanation": "Native functions like digitalRead() and pinMode() are built into the core Arduino runtime, using zero extra flash storage."
+          },
+          {
+            "question": "What does 'fatal error: ... No such file or directory' mean during compilation?",
+            "options": [
+              "The compiler cannot find the header file referenced in your #include directive",
+              "Your Arduino board has been unplugged",
+              "The computer's hard drive is completely full"
+            ],
+            "correctIndex": 0,
+            "explanation": "This classic error means the referenced library hasn't been installed into the Arduino libraries directory."
+          },
+          {
+            "question": "How much RAM does the Arduino Uno (ATmega328P) have for storing runtime variables?",
+            "options": [
+              "2 Kilobytes (2,048 bytes)",
+              "16 Gigabytes",
+              "500 Megabytes"
+            ],
+            "correctIndex": 0,
+            "explanation": "The Uno's ATmega328P has only 2 KB of SRAM, making memory awareness an essential skill for robotics engineers."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10

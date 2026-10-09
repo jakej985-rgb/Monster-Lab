@@ -3,7 +3,7 @@
   "title": "Reading Sensor Data",
   "summary": "Let's stream live sensor telemetry straight into your computer's screen using the Arduino IDE Serial Monitor!",
   "tier": "builder",
-  "estimatedMinutes": 5,
+  "estimatedMinutes": 10,
   "courseId": "lesson_07",
   "sortOrder": 6,
   "isOptional": false,
@@ -47,6 +47,58 @@
           "warmupExplanation": "Both sides must agree on the exact same speed (like 9600 baud) to understand each other's data signals."
         }
       ]
+    },
+    {
+      "stepId": "l07_06_s02",
+      "title": "The Serial Telemetry Pipeline",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### Streaming Data Over UART Serial\n\nTo see what your robot senses, you stream digital telemetry over the USB cable to your computer's screen:\n\n```\n[ Sensor Voltage ] \u2500\u2500\u25ba [ ATmega328P ADC ]\n                              \u2502\n                              \u25bc (10-bit integer 0-1023)\n                       [ Hardware UART ]\n                              \u2502\n                              \u25bc (ASCII text bytes at 9600 bits/sec)\n                       [ USB-Serial Bridge Chip ]\n                              \u2502\n                              \u25bc (USB D+ / D- packets)\n                       [ Computer Screen: Arduino Serial Monitor ]\n```\n\n- `Serial.begin(9600)`: Synchronizes the communication clock to 9,600 baud (bits per second).\n- `Serial.print()`: Streams text or numbers side-by-side on the same terminal line.\n- `Serial.println()`: Appends a carriage return and newline (`\\r\\n`), moving the cursor down to the next row."
+    },
+    {
+      "stepId": "l07_06_s03",
+      "title": "Diagnosing Serial Monitor Mismatches",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "interactiveTroubleshooting",
+      "markdownContent": "### Formatting Telemetry and Fixing Mismatches\n\nWhen printing sensor data, always include descriptive text labels so you know what each number represents:\n\n```cpp\nvoid loop() {\n  int rawLdr = analogRead(A0);\n  float voltage = rawLdr * (5.0 / 1023.0);\n\n  Serial.print(\"LDR Count: \");\n  Serial.print(rawLdr);\n  Serial.print(\" | Voltage: \");\n  Serial.print(voltage);\n  Serial.println(\" V\");\n\n  delay(250);\n}\n```\n\n**Common Trap: Baud Rate Mismatch**\nIf `Serial.begin(9600);` is in code, but the Serial Monitor bottom dropdown is set to `115200 baud`, the computer samples incoming bits at the wrong clock speed, displaying garbled alien characters (`\u2e2e\u2e2e\u2e2e`).\n\nPractice aligning serial settings in the troubleshooting lab below!"
+    },
+    {
+      "stepId": "l07_06_s04",
+      "title": "Serial Telemetry Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Verify your understanding of serial communications and telemetry formatting.",
+      "interactiveConfig": {
+        "question": "What happens if the baud rate selected in the Arduino Serial Monitor does not match Serial.begin() in your sketch?",
+        "options": [
+          "The Serial Monitor displays garbled, unintelligible symbols or question marks",
+          "The Arduino board immediately powers off",
+          "The sensor values are automatically multiplied by 10"
+        ],
+        "correctIndex": 0,
+        "explanation": "When baud rates do not match, the receiver samples incoming bits at the wrong clock frequency, causing timing framing errors and garbled output.",
+        "questions": [
+          {
+            "question": "What happens if the baud rate selected in the Arduino Serial Monitor does not match Serial.begin() in your sketch?",
+            "options": [
+              "The Serial Monitor displays garbled, unintelligible symbols or question marks",
+              "The Arduino board immediately powers off",
+              "The sensor values are automatically multiplied by 10"
+            ],
+            "correctIndex": 0,
+            "explanation": "When baud rates do not match, the receiver samples incoming bits at the wrong clock frequency, causing timing framing errors and garbled output."
+          },
+          {
+            "question": "What is the key difference between Serial.print(\"Value\") and Serial.println(\"Value\")?",
+            "options": [
+              "Serial.println() automatically moves the terminal cursor to a new line after printing",
+              "Serial.println() only prints numbers while Serial.print() only prints letters",
+              "Serial.println() sends data directly to an SD card instead of USB"
+            ],
+            "correctIndex": 0,
+            "explanation": "Serial.println() appends newline and carriage return characters at the end of the text, advancing subsequent output to the next line."
+          }
+        ]
+      }
     }
   ],
   "xpReward": 10
