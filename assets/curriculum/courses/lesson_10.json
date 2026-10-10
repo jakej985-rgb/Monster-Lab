@@ -1,0 +1,22 @@
+{
+  "id": "lesson_10",
+  "title": "Lesson 10 — High-Speed SPI Protocol & Peripheral Displays",
+  "summary": "Unleash multi-megahertz communication with the 4-wire synchronous SPI protocol for high-bandwidth matrix displays, RFID readers, and fast telemetry.",
+  "lessonIds": [
+    "l10_01",
+    "l10_02",
+    "l10_03",
+    "l10_04",
+    "l10_05",
+    "l10_06",
+    "l10_07",
+    "l10_08"
+  ],
+  "isOptional": false,
+  "placementLessonId": null,
+  "prerequisites": [
+    "lesson_09"
+  ],
+  "xpReward": 100,
+  "estimatedMinutes": 50
+}

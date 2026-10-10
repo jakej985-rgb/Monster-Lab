@@ -1,0 +1,124 @@
+{
+  "id": "l11_05",
+  "title": "Logic Level Shifting: Protecting 3.3V Radio Inputs with Voltage Dividers",
+  "summary": "Protect delicate 3.3V wireless receivers from 5V Arduino signals by calculating and wiring a precise resistor voltage divider.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_11",
+  "sortOrder": 5,
+  "isOptional": false,
+  "prerequisites": [
+    "l11_04"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l11_05_s01",
+      "title": "The 5V vs 3.3V Silicon Clash",
+      "type": "story",
+      "markdownContent": "### The Smoke Warning: When 5V Meets 3.3V Silicon\nMicrocontroller architectures are divided into two distinct electrical kingdoms:\n1. **The 5V Kingdom:** The classic Arduino Uno R3, Mega 2560, and ATmega328P. High power, robust noise immunity, outputs swing between 0V and 5.0V.\n2. **The 3.3V Kingdom:** High-frequency radio modules (HC-05/06 Bluetooth, ESP8266 Wi-Fi, NRF24L01, and GPS receivers). Built with nanometer-scale transistors optimized for high speed and low battery drain, running strictly at 3.3V.\n\n```\nArduino Uno TX Pin (5.0V Output)  \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u25ba  HC-05 Bluetooth RX Pin (3.3V MAX!)\n                                              [ DANGER! Gate Oxide Breakdown! ]\n```\n\nIf you connect an Arduino Uno output pin (5.0V) directly to the RX input of a 3.3V radio module, the excess 1.7 Volts causes **gate dielectric breakdown** inside the radio's silicon die. The module will overheat, drop packets, and permanently burn out!\n\n### The Asymmetrical Secret:\nCan a 5V Arduino read a 3.3V signal? **YES!** On an Arduino Uno running at 5V, any input voltage above $0.6 \\times 5.0\\text{V} = 3.0\\text{V}$ is safely recognized as a digital `HIGH`. So the radio's 3.3V TX output can connect directly to Arduino RX with zero level shifting! Only the Arduino's 5.0V TX output going INTO the radio's 3.3V RX input requires voltage protection.",
+      "quickCheck": [
+        {
+          "questionId": "qc_l11_05_s01_q1",
+          "question": "Why is connecting a 5V Arduino Uno output pin directly to a 3.3V radio transceiver's RX pin dangerous?",
+          "options": [
+            "The excessive 5.0V voltage over-stresses the sensitive 3.3V transistor gates, causing thermal destruction and silicon failure",
+            "The excess voltage reverses the polarity of the Arduino power supply",
+            "The jumper wire will melt into liquid copper immediately"
+          ],
+          "correctIndex": 0,
+          "explanation": "3.3V integrated circuits have microscopic transistor gate oxides rated only up to ~3.6V. Feeding 5.0V causes dielectric breakdown and destroys the chip.",
+          "warmupExplanation": "Think of filling a delicate bicycle tire with a commercial semi-truck air compressor: too much pressure ruptures the tube."
+        },
+        {
+          "questionId": "qc_l11_05_s01_q2",
+          "question": "Can an Arduino Uno (5V) safely read a 3.3V logic signal from a radio module's TX pin without any level shifter?",
+          "options": [
+            "Yes, because the ATmega328P registers any input voltage above 3.0V as a valid digital HIGH",
+            "No, 3.3V will register as 0V ground",
+            "No, the Arduino Uno will shut down in protest"
+          ],
+          "correctIndex": 0,
+          "explanation": "ATmega328P CMOS inputs consider any voltage above 0.6 * Vcc (0.6 * 5.0V = 3.0V) as HIGH. A 3.3V signal comfortably exceeds this threshold.",
+          "warmupExplanation": "The Uno's input threshold is 3.0V. Since 3.3V is higher than 3.0V, the Uno easily recognizes it as a HIGH signal."
+        }
+      ]
+    },
+    {
+      "stepId": "l11_05_s02",
+      "title": "Calculating the Voltage Divider for 3.3V Protection",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "voltageLevelShiftDiagram",
+      "interactiveConfig": {
+        "r1Ohms": 1000,
+        "r2Ohms": 2000,
+        "inputVoltage": 5.0,
+        "expectedOutput": 3.33
+      },
+      "markdownContent": "### The Resistor Voltage Divider: Passive Level Shifting\n\nYou do not need expensive converter chips to protect a 3.3V input. Two standard resistors form a passive **voltage divider** that scales 5.0V down to an ideal 3.33V:\n\n```\nArduino Uno Pin 11 (5V TX) \u2500\u2500\u2500\u2500[ R1: 1k\u03a9 ]\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u25ba Radio RX Pin (3.33V SAFE!)\n                                              \u2502\n                                         [ R2: 2k\u03a9 ]\n                                              \u2502\nGround (0V GND) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u25ba Radio GND (0V)\n```\n\n### The Voltage Divider Formula:\n$$V_{\\text{out}} = V_{\\text{in}} \\times \\frac{R_2}{R_1 + R_2}$$\n\nSubstituting our values ($V_{\\text{in}} = 5.0\\text{V}$, $R_1 = 1\\text{k}\\Omega = 1000\\,\\Omega$, $R_2 = 2\\text{k}\\Omega = 2000\\,\\Omega$):\n\n$$V_{\\text{out}} = 5.0\\text{V} \\times \\frac{2000}{1000 + 2000} = 5.0\\text{V} \\times \\frac{2}{3} = 3.333\\text{ Volts}!$$\n\n- **3.33V** is well below the 3.6V maximum rating of the Bluetooth module.\n- **3.33V** is high above the module's 2.0V minimum HIGH logic threshold.\n- *Tip:* If you don't have a single 2k\u03a9 resistor, connect **two 1k\u03a9 resistors in series** ($1\\text{k}\\Omega + 1\\text{k}\\Omega = 2\\text{k}\\Omega$)!"
+    },
+    {
+      "stepId": "l11_05_s03",
+      "title": "Verifying Voltage Divider Attenuation with ADC",
+      "type": "codeExperiment",
+      "interactiveConfig": {
+        "inputVolts": 5.0,
+        "r1": 1000,
+        "r2": 2000,
+        "targetVolts": 3.33
+      },
+      "markdownContent": "### Verification Lab: Measuring Stepped-Down Logic Levels\n\nBefore connecting a delicate 3.3V radio module, you should verify that your breadboard voltage divider correctly steps down the 5.0V signal. Connect the output of your $1\\text{k}\\Omega / 2\\text{k}\\Omega$ divider to Arduino analog input **A0**:\n\n```cpp\n// Monster Lab - Voltage Divider Logic Shifter Tester\nconst int TEST_SIGNAL_PIN = 11; // Simulates 5V UART TX pin\nconst int VOLTAGE_PROBE_PIN = A0; // Probes divider center tap\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(TEST_SIGNAL_PIN, OUTPUT);\n\n  Serial.println(\"========================================\");\n  Serial.println(\"VOLTAGE DIVIDER VERIFICATION ACTIVE\");\n  Serial.println(\"========================================\");\n}\n\nvoid loop() {\n  // Drive output HIGH (+5.0V)\n  digitalWrite(TEST_SIGNAL_PIN, HIGH);\n  delay(10); // Allow voltage to stabilize\n\n  // Read analog voltage at center tap\n  int rawAdc = analogRead(VOLTAGE_PROBE_PIN);\n  float measuredVolts = (rawAdc * 5.0) / 1023.0;\n\n  Serial.print(\"Input: 5.00V | Raw ADC: \");\n  Serial.print(rawAdc);\n  Serial.print(\" | Divided Output: \");\n  Serial.print(measuredVolts, 2);\n  Serial.print(\" V\");\n\n  if (measuredVolts >= 3.1 && measuredVolts <= 3.5) {\n    Serial.println(\" --> [SAFE FOR 3.3V RADIO RX]\");\n  } else {\n    Serial.println(\" --> [DANGER: CHECK RESISTOR VALUES!]\");\n  }\n\n  delay(1500);\n}\n```\n\n### Code Breakdown:\n1. `digitalWrite(TEST_SIGNAL_PIN, HIGH)` simulates the continuous 5.0V HIGH idle state of an Arduino UART TX line.\n2. `(rawAdc * 5.0) / 1023.0` calculates the exact voltage measured at the junction between R1 and R2.\n3. The conditional logic verifies that the output sits safely in the 3.1V\u20133.5V safe operating window."
+    },
+    {
+      "stepId": "l11_05_s04",
+      "title": "Voltage Divider Level Shifter Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your grasp of logic level shifting, resistor divider calculations, and 3.3V component protection.",
+      "interactiveConfig": {
+        "question": "In a voltage divider stepping 5.0V down to 3.33V with R1 = 1k\u03a9 and R2 = 2k\u03a9, which resistor connects to Ground (0V)?",
+        "options": [
+          "R2 (the 2k\u03a9 resistor connects between the center output tap and Ground)",
+          "R1 (the 1k\u03a9 resistor connects between the output tap and Ground)",
+          "Neither resistor connects to Ground"
+        ],
+        "correctIndex": 0,
+        "explanation": "According to the divider formula Vout = Vin * (R2 / (R1 + R2)), R2 is the lower resistor that connects between the output junction and Ground.",
+        "questions": [
+          {
+            "question": "In a voltage divider stepping 5.0V down to 3.33V with R1 = 1k\u03a9 and R2 = 2k\u03a9, which resistor connects to Ground (0V)?",
+            "options": [
+              "R2 (the 2k\u03a9 resistor connects between the center output tap and Ground)",
+              "R1 (the 1k\u03a9 resistor connects between the output tap and Ground)",
+              "Neither resistor connects to Ground"
+            ],
+            "correctIndex": 0,
+            "explanation": "According to the divider formula Vout = Vin * (R2 / (R1 + R2)), R2 is the lower resistor that connects between the output junction and Ground."
+          },
+          {
+            "question": "What would happen if an engineer accidentally swapped the resistors, putting 2k\u03a9 as R1 and 1k\u03a9 as R2?",
+            "options": [
+              "The output voltage would drop to 1.67V, which is too low to be reliably recognized as a digital HIGH by the 3.3V chip",
+              "The output voltage would rise to 10.0V and explode",
+              "The Arduino Uno would short circuit"
+            ],
+            "correctIndex": 0,
+            "explanation": "With R1=2k\u03a9 and R2=1k\u03a9, Vout = 5V * (1 / 3) = 1.67V. This is below the minimum 2.0V threshold for a 3.3V logic HIGH, causing dropped communication."
+          },
+          {
+            "question": "Why don't we need a voltage divider on the line running from the radio's TX pin to the Arduino's RX pin?",
+            "options": [
+              "The radio outputs 3.3V, which is completely safe for the 5V Arduino and high enough (>3.0V) to be registered as HIGH",
+              "Because serial communication only flows in one direction",
+              "Because digital inputs on the Arduino have built-in transformers"
+            ],
+            "correctIndex": 0,
+            "explanation": "A 3.3V output poses zero danger to a 5V input, and because 3.3V is above the Uno's 3.0V minimum HIGH threshold, it reads perfectly without shifting."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

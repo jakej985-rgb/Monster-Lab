@@ -51,8 +51,7 @@ void main() {
       );
     }
 
-    testWidgets('Renders all 10 course folders and standalone lessons 9 to 12',
-        (tester) async {
+    testWidgets('Renders all 14 course folders', (tester) async {
       tester.view.physicalSize = const Size(1200, 4000);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -83,12 +82,18 @@ void main() {
       expect(find.text('Lesson 7 — Libraries: Power Up Your Code'),
           findsOneWidget);
       expect(find.text('Lesson 8 — I2C & Connected Devices'), findsOneWidget);
-
-      // Check standalone lessons 9 to 12
-      expect(find.text('The I2C Communication Bus'), findsOneWidget);
-      expect(find.text('The High-Speed SPI Protocol'), findsOneWidget);
-      expect(find.text('Serial UART & Wireless Communication'), findsOneWidget);
-      expect(find.text('PWM & Motor Physics'), findsOneWidget);
+      expect(
+          find.text(
+              'Lesson 9 (Advanced) — Multi-Device I2C Architectures & Real-Time Clocks'),
+          findsOneWidget);
+      expect(
+          find.text(
+              'Lesson 10 — High-Speed SPI Protocol & Peripheral Displays'),
+          findsOneWidget);
+      expect(find.text('Lesson 11 — Serial UART & Wireless Telemetry'),
+          findsOneWidget);
+      expect(find.text('Lesson 12 — Motors, H-Bridges & Inductive Physics'),
+          findsOneWidget);
     });
 
     testWidgets(

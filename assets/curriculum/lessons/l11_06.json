@@ -1,0 +1,125 @@
+{
+  "id": "l11_06",
+  "title": "Meet the HC-05 / HC-06 Bluetooth Module",
+  "summary": "Unbox and thoroughly explore the HC-05/06 wireless Bluetooth transceiver, its pinout, operating modes, and pairing protocol.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_11",
+  "sortOrder": 6,
+  "isOptional": false,
+  "prerequisites": [
+    "l11_05"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_29"
+  ],
+  "steps": [
+    {
+      "stepId": "l11_06_s01",
+      "title": "Unboxing comp_29: The Invisible Serial Cable",
+      "type": "story",
+      "markdownContent": "### Introducing comp_29: The HC-05 / HC-06 Bluetooth Transceiver\nOpen your component kit and locate `comp_29`: the **UART Bluetooth Serial Module**!\n\nThis small blue circuit board is like an invisible wireless serial cable spanning up to 10 meters (33 feet) through the air. It operates on the **2.4 GHz ISM radio band** using **Bluetooth Classic SPP (Serial Port Profile)**.\n\n```\n[ Smartphone or PC ]  ~ ~ ~ (2.4 GHz Bluetooth SPP) ~ ~ ~  [ comp_29: HC-05 Module ]\n  Virtual COM Port / Terminal App                            UART Pins (TXD/RXD) to Uno\n```\n\n### How It Works Behind the Shield:\nUnderneath the metal RF shield is a complete standalone 32-bit ARM radio microcontroller with onboard flash memory and an integrated ceramic antenna. To your Arduino, the HC-05 looks like a standard wired serial connection. Any byte sent into its `RXD` pin is converted into radio packets and beamed through the air. Any byte received over radio is streamed out its `TXD` pin into your Arduino!\n\n### The Status LED Blink Code:\nWatch the small onboard LED on the HC-05:\n- **Rapid Fast Blink (~2 Hz / twice per second):** Standby mode. The module is unpaired, searching for a host.\n- **Slow Double Blink (every 2 seconds):** Connected / Paired! A wireless communication bridge is active.\n- **Slow Blink (every 2 seconds with button held):** AT command configuration mode.",
+      "quickCheck": [
+        {
+          "questionId": "qc_l11_06_s01_q1",
+          "question": "What Bluetooth protocol profile does the HC-05 module implement to emulate a serial cable?",
+          "options": [
+            "SPP (Serial Port Profile), which provides a transparent wireless serial stream",
+            "A2DP (Advanced Audio Distribution Profile) for streaming stereo music",
+            "HID (Human Interface Device) for computer mice"
+          ],
+          "correctIndex": 0,
+          "explanation": "HC-05 uses Bluetooth SPP (Serial Port Profile). It emulates a traditional RS-232 serial cable wirelessly over radio waves.",
+          "warmupExplanation": "Think of SPP as a virtual serial wire through the air: bytes in on one side pop out on the other."
+        },
+        {
+          "questionId": "qc_l11_06_s01_q2",
+          "question": "What does a rapid fast blinking LED on the HC-05 module indicate?",
+          "options": [
+            "The module is powered on and waiting for a smartphone or computer to pair with it",
+            "The module battery is completely exhausted",
+            "The internal antenna has experienced a catastrophic short circuit"
+          ],
+          "correctIndex": 0,
+          "explanation": "A rapid flashing LED means the module is in discovery mode, waiting to pair with a host device.",
+          "warmupExplanation": "When your phone searches for Bluetooth devices, the module flashes rapidly to say 'I'm ready to connect!'"
+        }
+      ]
+    },
+    {
+      "stepId": "l11_06_s02",
+      "title": "Pinout Anatomy & Complete Circuit Wiring",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "bluetoothAtCommandTerminal",
+      "interactiveConfig": {
+        "defaultBaud": 9600,
+        "atBaud": 38400,
+        "defaultPin": "1234",
+        "moduleName": "HC-05"
+      },
+      "markdownContent": "### The 6-Pin Header of comp_29 (HC-05)\n\nInspect the pin header along the bottom edge of your Bluetooth module:\n1. **VCC:** Power input (+3.6V to +6.0V). Connects directly to Arduino Uno **5V** because the breakout carrier has an onboard 3.3V Low-Dropout (LDO) regulator.\n2. **GND:** Ground reference. Connects directly to Arduino Uno **GND**.\n3. **TXD:** UART Data Output from Bluetooth. Operates at safe 3.3V logic. Connects directly to Arduino Uno **Pin 10** (`SoftwareSerial RX`).\n4. **RXD:** UART Data Input to Bluetooth (**3.3V Logic ONLY!**). Must connect through our $1\\text{k}\\Omega / 2\\text{k}\\Omega$ voltage divider from Arduino Uno **Pin 11** (`SoftwareSerial TX`).\n5. **STATE:** Output flag. Goes HIGH when a Bluetooth device is actively paired; LOW when disconnected.\n6. **EN (or KEY):** Configuration mode enable. Pulling HIGH enters AT command mode.\n\n```\nArduino Uno (5V) \u2500\u2500\u2500\u2500\u2500\u2500 Pin 11 (TX) \u2500\u2500\u2500[ 1k\u03a9 ]\u2500\u2500\u2500\u252c\u2500\u2500\u2500 RXD (3.3V) \u2500\u2500\u2500 HC-05 Bluetooth\n                                                 \u2502\n                                               [ 2k\u03a9 ]\n                                                 \u2502\nArduino Uno (GND) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500 GND \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 HC-05 Bluetooth\nArduino Uno (5V) \u2500\u2500\u2500\u2500\u2500\u2500 Pin 10 (RX) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 TXD \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 HC-05 Bluetooth\nArduino Uno (5V) \u2500\u2500\u2500\u2500\u2500\u2500 5V Power    \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 VCC \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 HC-05 Bluetooth\n```\n\n### Pairing with Your Smartphone:\n1. Open your smartphone's Bluetooth settings.\n2. Scan for devices: look for `HC-05` (or `HC-06`).\n3. Tap to pair. When prompted for a PIN, enter `1234` (or `0000`).\n4. Open any serial terminal app (e.g. *Serial Bluetooth Terminal* on Android or iOS)."
+    },
+    {
+      "stepId": "l11_06_s03",
+      "title": "Establishing the Wireless Telemetry Bridge",
+      "type": "codeExperiment",
+      "interactiveConfig": {
+        "baudRate": 9600,
+        "module": "HC-05",
+        "rxPin": 10,
+        "txPin": 11
+      },
+      "markdownContent": "### The Wireless Telemetry Echo Sketch\n\nWire the circuit as shown in Step 2 and upload this sketch. It forwards messages between your smartphone app and your computer's USB Serial Monitor.\n\n```cpp\n// Monster Lab - HC-05 Wireless Bluetooth Bridge\n#include <SoftwareSerial.h>\n\n// Pin 10 = Arduino RX (connects directly to Module TXD)\n// Pin 11 = Arduino TX (connects via voltage divider to Module RXD)\nSoftwareSerial btSerial(10, 11);\n\nvoid setup() {\n  Serial.begin(9600);   // USB Monitor to Computer\n  btSerial.begin(9600); // Standard factory baud rate for HC-05 data mode\n\n  Serial.println(\"========================================\");\n  Serial.println(\"HC-05 WIRELESS BLUETOOTH BRIDGE READY\");\n  Serial.println(\"Pair your phone to HC-05 (PIN: 1234).\");\n  Serial.println(\"Send text from your terminal app!\");\n  Serial.println(\"========================================\");\n}\n\nvoid loop() {\n  // Forward characters received wirelessly from smartphone to PC monitor\n  if (btSerial.available()) {\n    char incomingChar = btSerial.read();\n    Serial.write(incomingChar);\n  }\n\n  // Forward characters typed in PC monitor out wirelessly to smartphone\n  if (Serial.available()) {\n    char outgoingChar = Serial.read();\n    btSerial.write(outgoingChar);\n  }\n}\n```\n\n### Code Breakdown:\n1. `btSerial.begin(9600)`: Default factory baud rate for the HC-05 when in normal transparent data mode.\n2. When paired, type *'Hello Robot!'* on your phone terminal app\u2014it appears instantly in your Arduino IDE Serial Monitor!\n3. Type *'Monster Lab Online'* in your PC Serial Monitor\u2014it pops up on your phone screen over the air!"
+    },
+    {
+      "stepId": "l11_06_s04",
+      "title": "HC-05 Hardware & Pinout Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your grasp of HC-05 hardware specifications, pin functions, and Bluetooth pairing.",
+      "interactiveConfig": {
+        "question": "Why can the HC-05 module's VCC pin be connected to the Arduino Uno's 5V power pin, even though its radio chip runs on 3.3V?",
+        "options": [
+          "The module breakout carrier includes an onboard 3.3V Low-Dropout (LDO) voltage regulator",
+          "The Arduino Uno 5V pin actually outputs 3.3V when Bluetooth is detected",
+          "The Bluetooth radio operates only on alternating current"
+        ],
+        "correctIndex": 0,
+        "explanation": "The breakout board features an onboard 3.3V regulator that steps 5V down to 3.3V for the main IC.",
+        "questions": [
+          {
+            "question": "Why can the HC-05 module's VCC pin be connected to the Arduino Uno's 5V power pin, even though its radio chip runs on 3.3V?",
+            "options": [
+              "The module breakout carrier includes an onboard 3.3V Low-Dropout (LDO) voltage regulator",
+              "The Arduino Uno 5V pin actually outputs 3.3V when Bluetooth is detected",
+              "The Bluetooth radio operates only on alternating current"
+            ],
+            "correctIndex": 0,
+            "explanation": "The breakout board features an onboard 3.3V regulator that steps 5V down to 3.3V for the main IC."
+          },
+          {
+            "question": "Which HC-05 pin MUST connect through a voltage divider rather than directly to an Arduino Uno 5V pin?",
+            "options": [
+              "The RXD pin (the serial receive pin on the module)",
+              "The TXD pin",
+              "The GND pin"
+            ],
+            "correctIndex": 0,
+            "explanation": "The RXD pin feeds directly into the 3.3V baseband chip without internal regulation. A voltage divider is required to protect it from 5V Arduino signals."
+          },
+          {
+            "question": "What is the standard factory pairing PIN code for most HC-05 and HC-06 Bluetooth modules?",
+            "options": [
+              "'1234' or '0000'",
+              "'9999'",
+              "'ABCD'"
+            ],
+            "correctIndex": 0,
+            "explanation": "Virtually all factory-default HC-05 and HC-06 modules use the standard 4-digit pairing PIN code '1234' or '0000'."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

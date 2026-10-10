@@ -1,0 +1,126 @@
+{
+  "id": "l11_08",
+  "title": "Wireless Robot Telemetry Mission Challenge",
+  "summary": "Capstone engineering mission: Architect an autonomous telemetry heartbeat system with fail-safe wireless disconnect detection.",
+  "tier": "engineer",
+  "estimatedMinutes": 15,
+  "courseId": "lesson_11",
+  "sortOrder": 8,
+  "isOptional": false,
+  "prerequisites": [
+    "l11_07"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_29"
+  ],
+  "steps": [
+    {
+      "stepId": "l11_08_s01",
+      "title": "The Runaway Rover Disaster: Heartbeat Failsafes",
+      "type": "story",
+      "markdownContent": "### The Runaway Rover Incident\nIn the early days of autonomous robotics, a team of university researchers launched an experimental wheeled rover across an outdoor obstacle course. The operator sent the command: `DRIVE_FORWARD(100)`.\n\nThe rover surged forward smoothly. But as it rounded a concrete bunker, it lost radio line-of-sight with the laptop base station. Because the rover had no connection watchdog in its firmware, it continued executing its last received command at full speed\u2014crashing headlong into a retaining wall!\n\n```\nNormal Link:     [ Base Station ] \u2500\u2500\u2500 Heartbeat (every 500ms) \u2500\u2500\u2500\u25ba [ Rover: Motors OK ]\nSignal Lost:     [ Base Station ] \u2500\u2500\u2500 X X X X (WALL BLOCKS RF) \u2500\u2500\u2500\u25ba [ Rover: TIMEOUT! FAILSAFE! ]\n```\n\n### The Golden Rule of Untethered Robotics:\nAn autonomous robot must **NEVER** assume a wireless radio connection is eternal. RF signals get jammed, batteries die, and operators walk out of range. A professional wireless robot must implement a **Heartbeat Watchdog**:\n1. The base station sends periodic heartbeat pings (every 500ms).\n2. The rover records the timestamp (`millis()`) of every valid received packet.\n3. If $(millis() - lastPacketTime > TIMEOUT)$, the rover recognizes a signal loss, executes an immediate **Emergency Stop**, flashes warning beacons, and broadcasts distress telemetry!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l11_08_s01_q1",
+          "question": "What is a communication 'heartbeat' in mobile wireless robotics?",
+          "options": [
+            "A regular periodic signal exchanged between base station and robot to prove the wireless link is actively alive",
+            "The acoustic sound made by high-speed stepper motors",
+            "A pulse of high voltage used to reset the battery management system"
+          ],
+          "correctIndex": 0,
+          "explanation": "A heartbeat signal confirms that both ends of the radio link are in communication. If heartbeats stop arriving, a failsafe is triggered.",
+          "warmupExplanation": "Just like a doctor checks for a pulse, your robot checks for heartbeats from the base station to confirm the connection is still alive."
+        },
+        {
+          "questionId": "qc_l11_08_s01_q2",
+          "question": "What must an untethered robot immediately do if its wireless connection watchdog times out?",
+          "options": [
+            "Enter a failsafe state: shut down drive motors immediately and signal an alert",
+            "Accelerate forward at maximum speed in hopes of re-establishing signal",
+            "Erase all compiled sketch files from microcontroller memory"
+          ],
+          "correctIndex": 0,
+          "explanation": "Failsafe design mandates cutting all motor power immediately when contact is lost to prevent runaway vehicle crashes.",
+          "warmupExplanation": "If you lose steering control of a car, the safest action is to hit the brakes, not press the gas pedal."
+        }
+      ]
+    },
+    {
+      "stepId": "l11_08_s02",
+      "title": "Heartbeat Watchdog Timing & Failsafe State Machine",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "interactiveConfig": {
+        "timeoutMs": 2000,
+        "heartbeatIntervalMs": 500,
+        "states": [
+          "STATE_CONNECTED",
+          "STATE_FAILSAFE_HALT"
+        ]
+      },
+      "markdownContent": "### The Fail-Safe State Machine Architecture\n\nThe mission challenge requires coordinating two non-blocking timing loops:\n1. **Periodic Telemetry Broadcast:** Send sensor metrics every 1000 milliseconds.\n2. **Watchdog Disconnect Detection:** Check elapsed time since the last valid operator command.\n\n```\n                     \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n                     \u2502       STATE: CONNECTED_ACTIVE    \u2502\n                     \u2502   - Motors Allowed to Run        \u2502\n                     \u2502   - Telemetry Streaming Out      \u2502\n                     \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n                                      \u2502\n                     If (millis() - lastPacketTime > 2000 ms)\n                                      \u2502\n                                      \u25bc\n                     \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n                     \u2502       STATE: EMERGENCY_FAILSAFE  \u2502\n                     \u2502   - MOTORS FORCIBLY HALTED! (0V) \u2502\n                     \u2502   - Status LED Rapid Alarm Blink \u2502\n                     \u2502   - Dispatches Distress Beacon   \u2502\n                     \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n                                      \u2502\n                     Valid Packet Received ('F', 'S', or 'H')\n                                      \u2502\n                                      \u2514\u2500\u2500\u2500\u2500\u2500\u25ba [ Resets Timer & Reconnects ]\n```\n\n### Why millis() Is Vital for Life-Safety:\nUsing `delay(2000)` would put the microcontroller to sleep for two seconds. During those two seconds, the robot is blind and deaf: it cannot parse incoming recovery packets, cannot read sensors, and cannot control motor deceleration. Non-blocking `millis()` math checks deadlines every microsecond while keeping the CPU fully alert."
+    },
+    {
+      "stepId": "l11_08_s03",
+      "title": "Complete Capstone: Telemetry & Failsafe Watchdog",
+      "type": "codeExperiment",
+      "interactiveConfig": {
+        "baudRate": 9600,
+        "timeoutMs": 2000,
+        "telemetryPeriodMs": 1000
+      },
+      "markdownContent": "### The Mission Capstone Firmware\n\nUpload this complete, production-grade telemetry and watchdog sketch. Test it with your smartphone Bluetooth terminal app:\n1. Send `'F'` to start driving.\n2. Watch continuous telemetry stream onto your phone screen.\n3. Turn off your phone's Bluetooth or walk into another room: within 2 seconds, the robot detects the signal timeout, halts the motors, and flashes the emergency alert LED!\n\n```cpp\n// Monster Lab - Capstone: Wireless Telemetry & Watchdog Failsafe\n#include <SoftwareSerial.h>\n\n// Virtual UART on Pins 10 (RX) and 11 (TX via voltage divider)\nSoftwareSerial bt(10, 11);\n\nconst int MOTOR_PIN = 13;      // Simulates robot drive motor\nconst int TIMEOUT_MS = 2000;   // 2-second watchdog timeout deadline\nconst int TELEMETRY_MS = 1000; // 1-second telemetry broadcast period\n\nunsigned long lastPacketTime = 0;\nunsigned long lastTelemetryTime = 0;\nunsigned long telemetrySequence = 0;\n\nbool motorsRunning = false;\nbool failsafeTriggered = false;\n\nvoid setup() {\n  Serial.begin(9600); // USB Debug Console\n  bt.begin(9600);     // Wireless Bluetooth Link\n\n  pinMode(MOTOR_PIN, OUTPUT);\n  digitalWrite(MOTOR_PIN, LOW);\n\n  Serial.println(\"========================================\");\n  Serial.println(\"CAPSTONE: ROBOT TELEMETRY & WATCHDOG ONLINE\");\n  Serial.println(\"========================================\");\n\n  lastPacketTime = millis(); // Initialize watchdog timer\n}\n\nvoid loop() {\n  unsigned long currentMillis = millis();\n\n  // -----------------------------------------------------\n  // 1. INCOMING WIRELESS COMMAND PARSER\n  // -----------------------------------------------------\n  if (bt.available()) {\n    char cmd = bt.read();\n\n    if (cmd != '\\r' && cmd != '\\n') {\n      // Any valid command or heartbeat resets the watchdog timer!\n      lastPacketTime = currentMillis;\n\n      if (failsafeTriggered) {\n        failsafeTriggered = false;\n        Serial.println(\"WATCHDOG: Connection restored by operator packet!\");\n        bt.println(\"EVENT: CONNECTION_RESTORED\");\n      }\n\n      switch (cmd) {\n        case 'F':\n        case 'f':\n          motorsRunning = true;\n          digitalWrite(MOTOR_PIN, HIGH);\n          bt.println(\"ACK: MOTORS_ENGAGED\");\n          break;\n\n        case 'S':\n        case 's':\n          motorsRunning = false;\n          digitalWrite(MOTOR_PIN, LOW);\n          bt.println(\"ACK: MOTORS_STOPPED\");\n          break;\n\n        case 'H':\n        case 'h': // Heartbeat ping\n          bt.println(\"ACK: HEARTBEAT_PONG\");\n          break;\n      }\n    }\n  }\n\n  // -----------------------------------------------------\n  // 2. WATCHDOG CONNECTION TIMEOUT CHECK\n  // -----------------------------------------------------\n  if (!failsafeTriggered && (currentMillis - lastPacketTime > TIMEOUT_MS)) {\n    failsafeTriggered = true;\n    motorsRunning = false;\n    digitalWrite(MOTOR_PIN, LOW); // EMERGENCY SHUTDOWN!\n\n    Serial.println(\"ALARM: Wireless connection timed out! Emergency stop engaged.\");\n    bt.println(\"ALARM: WATCHDOG_TIMEOUT_EMERGENCY_HALT\");\n  }\n\n  // -----------------------------------------------------\n  // 3. PERIODIC DOWNLINK TELEMETRY BROADCAST (Every 1000ms)\n  // -----------------------------------------------------\n  if (currentMillis - lastTelemetryTime >= TELEMETRY_MS) {\n    lastTelemetryTime = currentMillis;\n    telemetrySequence++;\n\n    // Read simulated rover telemetry\n    int batteryLevel = 87; // Battery %\n    int obstacleDist = 120; // Obstacle distance cm\n\n    bt.print(\"$TLM,\");\n    bt.print(telemetrySequence);\n    bt.print(\",STATE:\");\n    bt.print(failsafeTriggered ? \"FAILSAFE\" : (motorsRunning ? \"RUNNING\" : \"STOPPED\"));\n    bt.print(\",BAT:\");\n    bt.print(batteryLevel);\n    bt.print(\",DIST:\");\n    bt.print(obstacleDist);\n    bt.println(\"*END\");\n  }\n}\n```\n\n### Code Breakdown:\n1. **`lastPacketTime = currentMillis`:** Every valid command or heartbeat `'H'` resets the countdown timer.\n2. **`currentMillis - lastPacketTime > TIMEOUT_MS`:** When silence exceeds 2000ms, the failsafe shuts down motors.\n3. **Independent Periodic Telemetry:** Streams structured packets every 1000ms regardless of drive state."
+    },
+    {
+      "stepId": "l11_08_s04",
+      "title": "Course 11 Capstone Certification",
+      "type": "quizCheckpoint",
+      "markdownContent": "Comprehensive final certification for Course 11: Serial UART, level shifting, SoftwareSerial, and untethered telemetry.",
+      "interactiveConfig": {
+        "question": "Why is non-blocking timing using `millis()` essential when building a wireless connection watchdog on an autonomous robot?",
+        "options": [
+          "It allows the robot to track elapsed time continuously while actively checking the serial buffer for incoming commands without freezing execution",
+          "It doubles the memory capacity of the microcontroller RAM",
+          "It prevents the Bluetooth antenna from drawing excessive battery current"
+        ],
+        "correctIndex": 0,
+        "explanation": "millis() allows non-blocking timeout detection, ensuring incoming emergency commands can be processed instantly without CPU sleep freezes.",
+        "questions": [
+          {
+            "question": "Why is non-blocking timing using `millis()` essential when building a wireless connection watchdog on an autonomous robot?",
+            "options": [
+              "It allows the robot to track elapsed time continuously while actively checking the serial buffer for incoming commands without freezing execution",
+              "It doubles the memory capacity of the microcontroller RAM",
+              "It prevents the Bluetooth antenna from drawing excessive battery current"
+            ],
+            "correctIndex": 0,
+            "explanation": "millis() allows non-blocking timeout detection, ensuring incoming emergency commands can be processed instantly without CPU sleep freezes."
+          },
+          {
+            "question": "In an untethered robot using an HC-05 module with SoftwareSerial on pins 10 and 11, what circuit elements protect the module and ensure reliable data transfer?",
+            "options": [
+              "A 1k\u03a9/2k\u03a9 resistor voltage divider stepping 5V TX down to 3.3V RX, crossed TX-to-RX wiring, and a shared common ground",
+              "Direct 5V wires from Pin 11 to RXD without resistors, with floating ground",
+              "A 100\u03bcF capacitor wired in series with the power rail"
+            ],
+            "correctIndex": 0,
+            "explanation": "The voltage divider safely protects the 3.3V RX input, crossed wiring connects transmit to receive, and common ground provides a shared 0V reference."
+          },
+          {
+            "question": "If your wireless rover suddenly enters emergency failsafe and you see the HC-05 LED blinking rapidly twice per second, what has occurred?",
+            "options": [
+              "The Bluetooth radio dropped its wireless link with the phone and returned to un-paired discovery mode",
+              "The ATmega328P microcontroller has lost its compiled firmware",
+              "The voltage divider resistors have burned out"
+            ],
+            "correctIndex": 0,
+            "explanation": "A rapidly blinking LED (2 Hz) signifies that the Bluetooth link is disconnected and the module is searching for a host, explaining why the watchdog triggered."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 15
+}

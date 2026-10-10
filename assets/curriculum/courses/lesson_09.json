@@ -1,0 +1,22 @@
+{
+  "id": "lesson_09",
+  "title": "Lesson 9 (Advanced) — Multi-Device I2C Architectures & Real-Time Clocks",
+  "summary": "Advance your I2C mastery with multi-device bus arbitration, precision real-time clock registers, hardware pull-up rise times, and address collision resolution.",
+  "lessonIds": [
+    "l09_01",
+    "l09_02",
+    "l09_03",
+    "l09_04",
+    "l09_05",
+    "l09_06",
+    "l09_07",
+    "l09_08"
+  ],
+  "isOptional": false,
+  "placementLessonId": null,
+  "prerequisites": [
+    "lesson_08"
+  ],
+  "xpReward": 100,
+  "estimatedMinutes": 50
+}

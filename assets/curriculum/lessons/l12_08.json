@@ -1,0 +1,122 @@
+{
+  "id": "l12_08",
+  "title": "Autonomous Actuator Capstone Challenge",
+  "summary": "Engineer a complete dual-actuator robotic steering and propulsion subsystem combining L293D H-bridge drive, SG90 servo steering, and robust state-machine logic.",
+  "tier": "engineer",
+  "estimatedMinutes": 15,
+  "courseId": "lesson_12",
+  "sortOrder": 8,
+  "isOptional": false,
+  "prerequisites": [
+    "l12_07"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_33",
+    "comp_36",
+    "comp_l293d",
+    "comp_power_supply"
+  ],
+  "steps": [
+    {
+      "stepId": "l12_08_s01",
+      "title": "Mission Briefing: The Autonomous Mobile Rover Subsystem",
+      "type": "story",
+      "markdownContent": "### Engineering Capstone: The Autonomous Actuator Subsystem\n\nWelcome to the Capstone Challenge for Course 12! Across the last seven missions, you have unlocked the deepest principles of robotic motion engineering:\n- The electrical physics of high current and why microcontrollers require motor drivers (`l12_01`).\n- Inductance ($L$), back-EMF, Lenz's Law, and flyback diode clamping ($V = -L \\frac{di}{dt}$) (`l12_02`).\n- The 4-switch H-Bridge topology, current reversal, dynamic braking, and shoot-through protection (`l12_03`).\n- The 16-pin L293D dual motor driver IC and dual power supply architecture (`l12_04`).\n- High-frequency PWM speed regulation, effective voltage scaling, and overcoming stiction (`l12_05`).\n- The SG90 micro servo, closed-loop potentiometer feedback, and 50Hz pulse-width positioning (`l12_06`).\n- External power isolation (`comp_power_supply`), common ground highways, and decoupling capacitor filters (`l12_07`).\n\n```\n                              THE MASTER ACTUATOR RIG:\n                                \n                  Arduino Uno (Brain) \u2500\u2500\u2500 Pins 7, 8, 9 (PWM) \u2500\u2500\u2500\u25ba L293D H-Bridge IC\n                                     \u2502                                  \u2502\n                                     \u2502 Pin 10 (Timer 1 PWM)             \u25bc\n                                     \u25bc                           DC Propulsion Motor\n                             SG90 Steering Servo                  (Rear Drive Axle)\n                            (Front Steering Horn)                       \u2502\n                                     \u25b2                                  \u25b2\n                                     \u2502                                  \u2502\n                            +5V Regulated Rail              +9V External Power Rail\n                                     \u2502                                  \u2502\n                                     \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 COMMON GND \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n```\n\n### The Mission Objective\nYour challenge is to build the complete mechatronic drive platform for an **Autonomous Exploration Rover**:\n1. **Propulsion:** High-speed DC Motor (`comp_33`) driven through Channel 1 of the L293D (`comp_l293d`).\n2. **Steering:** SG90 Micro Servo (`comp_36`) commanding precision steering angles ($45^\\circ$ Left, $90^\\circ$ Straight, $135^\\circ$ Right).\n3. **Power Isolation:** External 9V power supply (`comp_power_supply`) with a unified common ground.\n4. **Control Architecture:** A non-blocking **Finite State Machine (FSM)** executing a multi-stage autonomous patrol routine with acceleration ramps and dynamic braking!",
+      "quickCheck": [
+        {
+          "questionId": "q_l12_08_s01_1",
+          "question": "In an integrated robotic rover combining a DC drive motor and a steering servo, how are their mechanical roles partitioned?",
+          "options": [
+            "The DC motor through the L293D provides variable speed propulsion (forward/reverse), while the servo provides precise angular steering",
+            "The servo powers the drive wheels while the DC motor measures distance",
+            "Both actuators must always rotate at the exact same RPM"
+          ],
+          "correctIndex": 0,
+          "explanation": "DC motors deliver continuous variable-speed driving power, while servos provide precise angular steering positioning.",
+          "warmupExplanation": "The DC motor is the rover's engine, and the servo is the rover's steering wheel!"
+        },
+        {
+          "questionId": "q_l12_08_s01_2",
+          "question": "What software architecture is ideal for coordinating complex multi-step robot maneuvers without freezing sensor checks?",
+          "options": [
+            "A non-blocking Finite State Machine (FSM) utilizing millis() timing and switch-case states",
+            "An infinite while(1) loop containing 10-second delay() calls",
+            "Executing analogRead() inside an empty interrupt handler"
+          ],
+          "correctIndex": 0,
+          "explanation": "A non-blocking finite state machine allows the robot to track maneuver progress over time without freezing program execution.",
+          "warmupExplanation": "State machines step through behaviors like chapters in a book, without getting stuck!"
+        }
+      ]
+    },
+    {
+      "stepId": "l12_08_s02",
+      "title": "Complete Mobile Rover Mechatronic Architecture",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "interactiveConfig": {
+        "title": "Rover Finite State Machine & Actuator Architecture"
+      },
+      "markdownContent": "### Rover Finite State Machine (FSM) Architecture\n\nTo execute autonomous maneuvers gracefully, our rover program uses an **Enumerated State Machine**:\n\n```\n \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510      Timer: 2.5s      \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510      Timer: 0.8s      \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n \u2502 STATE_CRUISE \u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba\u2502 STATE_BRAKE  \u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba\u2502 STATE_REVERSE_L \u2502\n \u2502 Steer: 90\u00b0   \u2502                       \u2502 Steer: 90\u00b0   \u2502                       \u2502 Steer: 45\u00b0      \u2502\n \u2502 Drive: Fwd 80\u2502                       \u2502 Drive: BRAKE \u2502                       \u2502 Drive: Rev 65   \u2502\n \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518                       \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518                       \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n        \u25b2                                                                               \u2502\n        \u2502                                                                               \u2502 Timer: 1.5s\n        \u2502                                                                               \u25bc\n \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510                     \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510                       \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n \u2502 STATE_NAV_DONE \u2502\u25c4\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524 STATE_FWD_R  \u2502\u25c4\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524 STATE_BRAKE_2   \u2502\n \u2502 Steer: 90\u00b0     \u2502      Timer: 2.0s    \u2502 Steer: 135\u00b0  \u2502      Timer: 0.8s      \u2502 Steer: 90\u00b0      \u2502\n \u2502 Drive: STOP    \u2502                     \u2502 Drive: Fwd 75\u2502                       \u2502 Drive: BRAKE    \u2502\n \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518                     \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518                       \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n```\n\n### Complete Bench Wiring Matrix:\n- **Arduino Uno:**\n  - Pin 9 (PWM) \u2500\u2500\u2500\u25ba L293D Pin 1 (1,2EN Throttle)\n  - Pin 8 (GPIO) \u2500\u2500\u25ba L293D Pin 2 (1A Leg A)\n  - Pin 7 (GPIO) \u2500\u2500\u25ba L293D Pin 7 (2A Leg B)\n  - Pin 10 (PWM) \u2500\u2500\u25ba SG90 Servo Signal (Orange Wire)\n  - 5V Output \u2500\u2500\u2500\u2500\u25ba L293D Pin 16 (VCC1 Logic) & Servo Red Wire (+5V)\n  - GND \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba L293D Pins 4,5,12,13 & Servo Brown Wire & Battery (-)\n- **L293D Outputs:**\n  - Pins 3 & 6 \u2500\u2500\u2500\u25ba DC Motor Terminals (with 0.1\u00b5F ceramic capacitor across leads)\n  - Pin 8 \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba External 9V Battery (+) with 100\u00b5F bulk capacitor to GND"
+    },
+    {
+      "stepId": "l12_08_s03",
+      "title": "Complete Autonomous Rover Mechatronic Controller Sketch",
+      "type": "codeExperiment",
+      "interactiveConfig": {
+        "codeSnippet": "#include <Servo.h>\n\nconst int PIN_DRIVE_PWM  = 9;\nconst int PIN_DRIVE_IN1  = 8;\nconst int PIN_DRIVE_IN2  = 7;\nconst int PIN_STEER_SERVO = 10;\n\nServo steeringServo;\n\nenum RoverState {\n  STATE_CRUISE_FWD,\n  STATE_ACTIVE_BRAKE_1,\n  STATE_REVERSE_LEFT,\n  STATE_ACTIVE_BRAKE_2,\n  STATE_FORWARD_RIGHT,\n  STATE_PARK_IDLE\n};\n\nRoverState currentState = STATE_CRUISE_FWD;\nunsigned long stateStartTime = 0;\n\nvoid setup() {\n  pinMode(PIN_DRIVE_PWM, OUTPUT);\n  pinMode(PIN_DRIVE_IN1, OUTPUT);\n  pinMode(PIN_DRIVE_IN2, OUTPUT);\n  steeringServo.attach(PIN_STEER_SERVO);\n  setDrive(0, true, false);\n  setSteering(90);\n  Serial.begin(9600);\n  stateStartTime = millis();\n}"
+      },
+      "markdownContent": "### Production Autonomous Rover Mechatronic Controller\n\nHere is the complete capstone sketch. It coordinates dual actuators, enforces hardware dead-time, uses non-blocking `millis()` timing, and logs real-time telemetry to the Serial Monitor.\n\n```cpp\n#include <Servo.h>\n\n// Hardware Pin Definitions\nconst int PIN_DRIVE_PWM   = 9;  // L293D Channel 1 Enable (PWM)\nconst int PIN_DRIVE_IN1   = 8;  // L293D Channel 1 Input 1\nconst int PIN_DRIVE_IN2   = 7;  // L293D Channel 1 Input 2\nconst int PIN_STEER_SERVO = 10; // SG90 Steering Servo Signal\n\n// Steering Angle Constants\nconst int STEER_LEFT     = 45;  // 45 degrees\nconst int STEER_STRAIGHT = 90;  // 90 degrees center\nconst int STEER_RIGHT    = 135; // 135 degrees\n\nServo steeringServo;\n\n// Finite State Machine Definitions\nenum RoverState {\n  STATE_CRUISE_FWD,\n  STATE_ACTIVE_BRAKE_1,\n  STATE_REVERSE_LEFT,\n  STATE_ACTIVE_BRAKE_2,\n  STATE_FORWARD_RIGHT,\n  STATE_PARK_IDLE\n};\n\nRoverState currentState = STATE_CRUISE_FWD;\nunsigned long stateStartTime = 0;\n\nvoid setDrive(int speed, bool forward, bool brake = false) {\n  if (brake) {\n    // Regenerative Dynamic Brake\n    digitalWrite(PIN_DRIVE_IN1, HIGH);\n    digitalWrite(PIN_DRIVE_IN2, HIGH);\n    analogWrite(PIN_DRIVE_PWM, 255);\n  } else if (speed == 0) {\n    // Coasting / De-energized\n    digitalWrite(PIN_DRIVE_IN1, LOW);\n    digitalWrite(PIN_DRIVE_IN2, LOW);\n    analogWrite(PIN_DRIVE_PWM, 0);\n  } else {\n    // Directional Drive with PWM\n    digitalWrite(PIN_DRIVE_IN1, forward ? HIGH : LOW);\n    digitalWrite(PIN_DRIVE_IN2, forward ? LOW : HIGH);\n    analogWrite(PIN_DRIVE_PWM, constrain(speed, 0, 255));\n  }\n}\n\nvoid setSteering(int angle) {\n  steeringServo.write(constrain(angle, 30, 150));\n}\n\nvoid setup() {\n  pinMode(PIN_DRIVE_PWM, OUTPUT);\n  pinMode(PIN_DRIVE_IN1, OUTPUT);\n  pinMode(PIN_DRIVE_IN2, OUTPUT);\n\n  // Initialize steering servo\n  steeringServo.attach(PIN_STEER_SERVO);\n  setSteering(STEER_STRAIGHT);\n\n  // Ensure drive motor is stopped\n  setDrive(0, true, false);\n\n  Serial.begin(9600);\n  Serial.println(F(\"========================================\"));\n  Serial.println(F(\"  AUTONOMOUS ROVER ACTUATOR PLATFORM    \"));\n  Serial.println(F(\"========================================\"));\n\n  stateStartTime = millis();\n}\n\nvoid loop() {\n  unsigned long timeInState = millis() - stateStartTime;\n\n  switch (currentState) {\n    case STATE_CRUISE_FWD:\n      setSteering(STEER_STRAIGHT);\n      setDrive(190, true); // Cruise forward at ~75% power\n      if (timeInState >= 2500) {\n        Serial.println(F(\"[FSM] Cruise Complete -> Applying Dynamic Brake\"));\n        currentState = STATE_ACTIVE_BRAKE_1;\n        stateStartTime = millis();\n      }\n      break;\n\n    case STATE_ACTIVE_BRAKE_1:\n      setDrive(0, true, true); // Active brake\n      if (timeInState >= 800) {\n        Serial.println(F(\"[FSM] Brake Complete -> Evading Obstacle: Steer Left, Drive Reverse\"));\n        currentState = STATE_REVERSE_LEFT;\n        stateStartTime = millis();\n      }\n      break;\n\n    case STATE_REVERSE_LEFT:\n      setSteering(STEER_LEFT);\n      setDrive(160, false); // Reverse at ~63% power\n      if (timeInState >= 1800) {\n        Serial.println(F(\"[FSM] Reverse Clear -> Braking\"));\n        currentState = STATE_ACTIVE_BRAKE_2;\n        stateStartTime = millis();\n      }\n      break;\n\n    case STATE_ACTIVE_BRAKE_2:\n      setDrive(0, true, true); // Active brake\n      if (timeInState >= 800) {\n        Serial.println(F(\"[FSM] Resuming Forward Course: Steer Right\"));\n        currentState = STATE_FORWARD_RIGHT;\n        stateStartTime = millis();\n      }\n      break;\n\n    case STATE_FORWARD_RIGHT:\n      setSteering(STEER_RIGHT);\n      setDrive(180, true); // Forward turn\n      if (timeInState >= 2000) {\n        Serial.println(F(\"[FSM] Patrol Complete -> Rover Parked & Neutralized\"));\n        currentState = STATE_PARK_IDLE;\n        stateStartTime = millis();\n      }\n      break;\n\n    case STATE_PARK_IDLE:\n      setSteering(STEER_STRAIGHT);\n      setDrive(0, true, false); // De-energize\n      // Remain parked safely\n      break;\n  }\n}\n```\n\n### Code Breakdown:\n- `setDrive()`: Unified actuator driver supporting forward, reverse, coasting, and dynamic braking with full PWM velocity clamping.\n- `setSteering()`: Clamps angular steering between $30^\\circ$ and $150^\\circ$ to prevent mechanical strain against chassis steering linkages.\n- `enum RoverState`: Clean state machine ensuring deterministic transitions between cruising, emergency braking, evasive reversing, and parking without blocking sensor threads."
+    },
+    {
+      "stepId": "l12_08_s04",
+      "title": "Course 12 Engineering Capstone Certification",
+      "type": "quizCheckpoint",
+      "markdownContent": "Congratulations on completing Course 12! Prove your mastery of high-power robotics, actuators, H-bridges, and system integration.",
+      "interactiveConfig": {
+        "question": "When orchestrating both high-torque DC motor drive and servo steering in an autonomous robot, what is the best strategy to prevent power brownouts during rapid maneuvers?",
+        "options": [
+          "Stagger actuator activation times, ramp DC motor speeds smoothly, and provide external power with bulk decoupling capacitors",
+          "Power everything directly from the Arduino 3.3V pin",
+          "Remove all flyback diodes from the circuit"
+        ],
+        "correctIndex": 0,
+        "explanation": "Staggering actuator starts, ramping speeds gradually, and utilizing external power with bulk reservoir capacitors isolates logic from current surges.",
+        "questions": [
+          {
+            "question": "When orchestrating both high-torque DC motor drive and servo steering in an autonomous robot, what is the best strategy to prevent power brownouts during rapid maneuvers?",
+            "options": [
+              "Stagger actuator activation times, ramp DC motor speeds smoothly, and provide external power with bulk decoupling capacitors",
+              "Power everything directly from the Arduino 3.3V pin",
+              "Remove all flyback diodes from the circuit"
+            ],
+            "correctIndex": 0,
+            "explanation": "Staggering actuator starts, ramping speeds gradually, and utilizing external power with bulk reservoir capacitors isolates logic from current surges."
+          },
+          {
+            "question": "In an L293D H-bridge, how do you immediately engage active regenerative dynamic braking when an obstacle is detected?",
+            "options": [
+              "Set Enable to HIGH (255) and pull both directional inputs (IN1 and IN2) to the same logic level (both HIGH or both LOW)",
+              "Set Enable to 0 and unplug the Arduino USB cable",
+              "Reverse the polarity of the wall power adapter"
+            ],
+            "correctIndex": 0,
+            "explanation": "Setting both directional inputs to the same logic level with Enable active shorts both motor terminals together, utilizing back-EMF to brake the rotor."
+          },
+          {
+            "question": "Why is a shared Common Ground between the Arduino, L293D driver, and external 9V battery critical for proper servo and motor operation?",
+            "options": [
+              "Without a shared 0V reference, PWM control pulses and logic signals cannot establish defined voltage differentials and will fluctuate wildly",
+              "To ensure battery voltage flows backwards into the USB computer port",
+              "It makes the breadboard magnetically stick to the table"
+            ],
+            "correctIndex": 0,
+            "explanation": "A common ground establishes a shared 0V reference. Without it, logic signals float unpredictably, causing actuator chatter and communication loss."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 15
+}

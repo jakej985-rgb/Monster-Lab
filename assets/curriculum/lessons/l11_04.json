@@ -1,0 +1,168 @@
+{
+  "id": "l11_04",
+  "title": "The SoftwareSerial Library: Virtual UART on Any Pin",
+  "summary": "Liberate hardware pins 0 and 1 by using SoftwareSerial to emulate full UART transmitters and receivers on general-purpose GPIO pins.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_11",
+  "sortOrder": 4,
+  "isOptional": false,
+  "prerequisites": [
+    "l11_03"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l11_04_s01",
+      "title": "The Dual-Serial Dilemma",
+      "type": "story",
+      "markdownContent": "### One UART Is Not Enough!\nThe Arduino Uno's ATmega328P chip is a fantastic microcontroller, but it has one major hardware bottleneck: it possesses only **one single hardware UART peripheral** (pins 0 and 1).\n\nImagine you are debugging a wireless robot:\n1. You want the USB cable connected to your PC so you can print diagnostic messages to the **Serial Monitor** at 9600 baud.\n2. At the EXACT same time, your robot needs to communicate with an external **Bluetooth transceiver** or **GPS module**!\n\nIf the external radio occupies Pins 0 and 1, your Serial Monitor is locked out. If the Serial Monitor occupies Pins 0 and 1, your external radio is locked out!\n\n```\nProblem:  Only 1 Hardware UART  \u2500\u2500\u25ba Who gets it? USB Monitor OR Wireless Radio?\nSolution: SoftwareSerial!      \u2500\u2500\u25ba Hardware UART stays with USB; Virtual UART created on Pins 10 & 11!\n```\n\nThe built-in **`SoftwareSerial`** library solves this dilemma by using software bit-banging and pin-change interrupts to turn almost any standard digital I/O pins into a fully functional serial port!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l11_04_s01_q1",
+          "question": "Why do Arduino engineers frequently use SoftwareSerial instead of the hardware Serial port?",
+          "options": [
+            "To keep hardware Pins 0 and 1 free for USB Serial Monitor debugging while communicating with external serial devices on other GPIO pins",
+            "Because SoftwareSerial operates 100 times faster than hardware silicon",
+            "Because hardware pins 0 and 1 cannot handle text strings"
+          ],
+          "correctIndex": 0,
+          "explanation": "SoftwareSerial creates virtual UART ports on standard pins (like 10 and 11), keeping Pins 0 and 1 dedicated to the USB debugging terminal.",
+          "warmupExplanation": "Think of having two phone lines: one for talking to your PC debugger, and a second line for talking to your wireless robot."
+        },
+        {
+          "questionId": "qc_l11_04_s01_q2",
+          "question": "In the constructor declaration `SoftwareSerial mySerial(10, 11);`, which pin serves as the receive (RX) line?",
+          "options": [
+            "Pin 10 (the first parameter is always RX, and the second is TX)",
+            "Pin 11 (the first parameter is always TX)",
+            "Both pins share transmit and receive functions simultaneously"
+          ],
+          "correctIndex": 0,
+          "explanation": "The SoftwareSerial constructor signature is SoftwareSerial(rxPin, txPin); pin 10 is RX and pin 11 is TX.",
+          "warmupExplanation": "Remember the alphabetical acronym 'RT' (Receive then Transmit): the first pin argument is always RX, the second is TX."
+        }
+      ]
+    },
+    {
+      "stepId": "l11_04_s02",
+      "title": "Dual-Serial Architecture: Hardware vs Software UART",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "interactiveConfig": {
+        "nodes": [
+          {
+            "id": "pc",
+            "label": "PC Serial Monitor",
+            "type": "input"
+          },
+          {
+            "id": "hw_uart",
+            "label": "Hardware Serial (Pins 0/1)",
+            "type": "process"
+          },
+          {
+            "id": "uno_cpu",
+            "label": "Arduino Uno CPU",
+            "type": "process"
+          },
+          {
+            "id": "sw_uart",
+            "label": "SoftwareSerial (Pins 10/11)",
+            "type": "process"
+          },
+          {
+            "id": "wireless",
+            "label": "External Wireless Module",
+            "type": "output"
+          }
+        ],
+        "connections": [
+          {
+            "from": "pc",
+            "to": "hw_uart",
+            "label": "USB Cable (9600 baud)"
+          },
+          {
+            "from": "hw_uart",
+            "to": "uno_cpu",
+            "label": "Hardware Interrupts"
+          },
+          {
+            "from": "uno_cpu",
+            "to": "sw_uart",
+            "label": "Bit-Banged Emulation"
+          },
+          {
+            "from": "sw_uart",
+            "to": "wireless",
+            "label": "Virtual UART (9600 baud)"
+          }
+        ]
+      },
+      "markdownContent": "### The Dual-UART Bridge Architecture\n\nWith `SoftwareSerial`, the Arduino acts as an intelligent router or transparent bridge between two completely independent communication channels:\n\n```\nPC Laptop                                  Arduino Uno                      External Radio Module\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510       USB Cable        \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510                 \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 Serial Monitor  \u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba\u2502 Pin 0 (RX)   \u2502                 \u2502                 \u2502\n\u2502 (Debug Console) \u2502\u25c4\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524 Pin 1 (TX)   \u2502                 \u2502                 \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518                        \u2502              \u2502                 \u2502                 \u2502\n                                           \u2502 Pin 10 (RX)  \u2502\u25c4\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524 TX (Transmit)   \u2502\n                                           \u2502 Pin 11 (TX)  \u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba\u2502 RX (Receive)    \u2502\n                                           \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518                 \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n                                            Hardware Serial:                   SoftwareSerial:\n                                            USB Debug Channel                  Wireless Telemetry\n```\n\n### Engineering Trade-Offs of SoftwareSerial:\n1. **CPU Overhead:** Hardware UART has dedicated silicon registers and DMA buffers. SoftwareSerial requires the main CPU to execute precise microsecond delay loops to sample pin voltages.\n2. **Interrupt Latency:** During reception of a character on SoftwareSerial, interrupts are briefly disabled, which can affect servo jitter or micros() precision.\n3. **Speed Limit:** While hardware UART reliably runs at 115200 or 1000000 baud, SoftwareSerial is most reliable at **9600 to 38400 baud**."
+    },
+    {
+      "stepId": "l11_04_s03",
+      "title": "Building a Bidirectional Serial Passthrough Bridge",
+      "type": "codeExperiment",
+      "interactiveConfig": {
+        "baudRate": 9600,
+        "rxPin": 10,
+        "txPin": 11
+      },
+      "markdownContent": "### The Bidirectional Passthrough Bridge Sketch\n\nThis sketch establishes a transparent bridge between the PC's USB Serial Monitor and an external device on virtual pins 10 and 11.\n\n```cpp\n// Monster Lab - SoftwareSerial Dual-Port Passthrough Bridge\n#include <SoftwareSerial.h>\n\n// Instantiate virtual UART on digital pins: (RX, TX)\n// Pin 10 connects to external device TX\n// Pin 11 connects to external device RX\nSoftwareSerial portTwo(10, 11);\n\nvoid setup() {\n  // Open hardware serial communication to PC Serial Monitor\n  Serial.begin(9600);\n  while (!Serial) { ; }\n\n  // Open software serial communication to external peripheral\n  portTwo.begin(9600);\n\n  Serial.println(\"========================================\");\n  Serial.println(\"DUAL SERIAL PASSTHROUGH BRIDGE ACTIVE\");\n  Serial.println(\"Port 1: Hardware USB (Pins 0 & 1 @ 9600)\");\n  Serial.println(\"Port 2: SoftwareSerial (Pins 10 & 11 @ 9600)\");\n  Serial.println(\"========================================\");\n}\n\nvoid loop() {\n  // Forward bytes from SoftwareSerial (Port 2) to Hardware Serial (PC)\n  if (portTwo.available()) {\n    char inByte = portTwo.read();\n    Serial.write(inByte); // write() sends raw binary byte without added newlines\n  }\n\n  // Forward bytes from Hardware Serial (PC) to SoftwareSerial (Port 2)\n  if (Serial.available()) {\n    char outByte = Serial.read();\n    portTwo.write(outByte);\n  }\n}\n```\n\n### Code Breakdown:\n1. `#include <SoftwareSerial.h>`: Imports the official Arduino virtual UART driver.\n2. `SoftwareSerial portTwo(10, 11)`: Instantiates the port with Pin 10 as RX and Pin 11 as TX.\n3. `Serial.write(inByte)`: Uses `write()` rather than `println()` so individual raw bytes pass across unchanged without appending carriage returns or newline characters."
+    },
+    {
+      "stepId": "l11_04_s04",
+      "title": "SoftwareSerial Architecture Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your grasp of SoftwareSerial instantiation, pin order, and passthrough bridge mechanics.",
+      "interactiveConfig": {
+        "question": "What is the correct pin assignment in the statement `SoftwareSerial btPort(10, 11);`?",
+        "options": [
+          "Pin 10 is the virtual Receive (RX) input; Pin 11 is the virtual Transmit (TX) output",
+          "Pin 10 is Transmit (TX); Pin 11 is Receive (RX)",
+          "Pin 10 is Clock; Pin 11 is Data"
+        ],
+        "correctIndex": 0,
+        "explanation": "SoftwareSerial takes parameters in the order (receivePin, transmitPin). Therefore Pin 10 is RX and Pin 11 is TX.",
+        "questions": [
+          {
+            "question": "What is the correct pin assignment in the statement `SoftwareSerial btPort(10, 11);`?",
+            "options": [
+              "Pin 10 is the virtual Receive (RX) input; Pin 11 is the virtual Transmit (TX) output",
+              "Pin 10 is Transmit (TX); Pin 11 is Receive (RX)",
+              "Pin 10 is Clock; Pin 11 is Data"
+            ],
+            "correctIndex": 0,
+            "explanation": "SoftwareSerial takes parameters in the order (receivePin, transmitPin). Therefore Pin 10 is RX and Pin 11 is TX."
+          },
+          {
+            "question": "Why is `Serial.write(c)` preferred over `Serial.println(c)` when forwarding raw characters in a serial passthrough bridge?",
+            "options": [
+              "Serial.write() transmits the exact raw byte without appending unwanted carriage return and newline characters",
+              "Serial.write() can only output numbers",
+              "Serial.println() deletes characters from memory"
+            ],
+            "correctIndex": 0,
+            "explanation": "println() appends \\r\\n after every single character, which would corrupt multi-byte binary protocols. write() forwards the exact byte as received."
+          },
+          {
+            "question": "What is an important operational limitation of SoftwareSerial compared to hardware UART?",
+            "options": [
+              "It uses CPU clock cycles for software bit-timing and is generally restricted to speeds up to 38400 or 57600 baud",
+              "It cannot send text strings",
+              "It requires an external 9V battery on the breadboard"
+            ],
+            "correctIndex": 0,
+            "explanation": "Because bit-sampling timing is performed in software by the CPU, SoftwareSerial has higher processor overhead and lower top speeds than dedicated silicon UART hardware."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

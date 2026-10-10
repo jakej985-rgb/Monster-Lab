@@ -1,0 +1,114 @@
+{
+  "id": "l10_01",
+  "title": "The Speed Barrier: Why SPI Outruns I2C",
+  "summary": "Explore why high-bandwidth devices like graphic displays and memory cards switch from I2C to the multi-megahertz SPI protocol.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_10",
+  "sortOrder": 1,
+  "isOptional": false,
+  "prerequisites": [
+    "l09_08"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l10_01_s01",
+      "title": "The High-Speed Telemetry Bottleneck",
+      "type": "story",
+      "markdownContent": "### When Milliseconds Matter in Robotics\nIn your previous missions, you mastered the I2C bus. With just two shared wires (SDA and SCL), I2C daisy-chained displays and sensors with effortless elegance. But imagine you are now tasked with engineering an autonomous monster rover navigating treacherous terrain at high velocity!\n\nYour rover needs to stream live camera frames, read megabytes of map data from an SD card flight recorder, and update a high-resolution graphic display 60 times every second. Suddenly, you hit an electrical roadblock: **The Speed Barrier**.\n\n```\nI2C Standard Mode:    100 kbps (Kilobits per second)  ─► Sluggish graphics, frame tearing\nI2C Fast Mode:        400 kbps                        ─► Limited sensor telemetry\nSPI on Arduino Uno: 8,000 kbps (8 MHz!)               ─► Blazing fast, 20x to 80x faster!\n```\n\n### Why Does I2C Hit a Speed Ceiling?\nI2C relies on **open-drain lines with passive pull-up resistors**. To send a binary 1, transistors let go of the wire, and resistors slowly drag the voltage back up to 5V. That resistor-capacitor (RC) rise time acts like electrical molasses at high frequencies.\n\nEnter **SPI (Serial Peripheral Interface)**: a synchronous, push-pull communication highway engineered for pure, unthrottled velocity!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l10_01_s01_q1",
+          "question": "What electrical characteristic limits the maximum speed of the I2C protocol compared to SPI?",
+          "options": [
+            "Open-drain lines relying on passive pull-up resistors create an RC rise-time bottleneck",
+            "I2C wires are too thick to allow electrons to travel quickly",
+            "Microcontrollers must convert I2C signals into sound waves first"
+          ],
+          "correctIndex": 0,
+          "explanation": "Open-drain buses depend on pull-up resistors to pull voltages back to 5V, which creates slow rise times and limits clock frequencies.",
+          "warmupExplanation": "Remember from Lesson 9: open-drain lines gently float back HIGH through pull-up resistors instead of being actively driven."
+        },
+        {
+          "questionId": "qc_l10_01_s01_q2",
+          "question": "Approximately how much faster can SPI run on an Arduino Uno (up to 8 MHz) compared to standard 100 kHz I2C?",
+          "options": [
+            "Up to 80 times faster",
+            "Only 2 percent faster",
+            "SPI is actually slower than I2C"
+          ],
+          "correctIndex": 0,
+          "explanation": "8 MHz SPI transmits up to 8,000,000 clock pulses per second, compared to 100,000 clock pulses per second for standard I2C—an 80x speedup!",
+          "warmupExplanation": "Divide 8 MHz by 100 kHz: 8,000,000 / 100,000 = 80 times faster raw bit clocking."
+        }
+      ]
+    },
+    {
+      "stepId": "l10_01_s02",
+      "title": "Architectural Showdown: SPI vs. I2C",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "spiVsI2cComparison",
+      "markdownContent": "### Push-Pull vs. Open-Drain Drivers\nWhy does SPI run circles around I2C? The difference lies in the transistor architecture of the output pins:\n\n```\nI2C OPEN-DRAIN DRIVER:                   SPI PUSH-PULL DRIVER:\n     +5V Rail                                 +5V Rail\n        │                                        │\n      [4.7kΩ Pull-Up]                          ┌─┴─┐ High-side P-MOSFET\n        │                                      │ Q1│ (Actively drives HIGH to 5V!)\nBus ────┴──────┬──────                         └─┬─┘\n             ┌─┴─┐ Low-side N-MOSFET   Bus ──────┼──────\n             │ Q2│ (Only pulls to GND)         ┌─┴─┐ Low-side N-MOSFET\n             └─┬─┘                             │ Q2│ (Actively pulls LOW to GND!)\n              GND                              └─┬─┘\n                                                GND\n```\n\n### The Engineering Trade-Offs\n1. **Active Push-Pull Drive:** SPI pins contain complementary transistor pairs (push-pull). One transistor actively forces the line to 5V, while the other actively forces it to GND. This eliminates sluggish RC rise curves and enables razor-sharp square waves at 8 MHz!\n2. **No Protocol Overhead:** I2C requires transmitting START conditions, 7-bit device addresses, read/write bits, and mandatory 9th-clock ACK/NACK responses. SPI eliminates address headers and ACK cycles entirely; clock ticks directly shift data bits in and out.\n3. **Wire Count Trade-off:** While I2C uses only 2 signal wires (SDA, SCL), SPI requires 4 wires (MOSI, MISO, SCK, and a dedicated CS line per peripheral).\n\n### Interactive Engineering Lab: SPI vs. I2C Decisions\nEvaluate the interactive trade-off matrix below and choose the optimal protocol for various robotics subsystems based on throughput, pin availability, and electrical constraints!",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "l10_01_s03",
+      "title": "Benchmarking Bus Latency & Throughput",
+      "type": "codeExperiment",
+      "markdownContent": "### The Bus Speed Benchmark Sketch\nLet's calculate and verify the massive transmission speed difference between I2C and SPI in Arduino C++.\n\nImagine sending a 1024-byte graphics buffer to a display:\n- Over standard I2C (100 kHz, with address + ACK overhead): $\\approx 92\\text{ ms}$\n- Over hardware SPI (8 MHz, zero framing overhead): $\\approx 1.02\\text{ ms}$\nThat is the difference between an unplayable 10 frames per second and an ultra-smooth 60+ FPS!\n\n```cpp\n// Monster Lab: Bus Speed Calculation Benchmark\nvoid setup() {\n  Serial.begin(9600);\n  while (!Serial);\n  Serial.println(\"=== BUS SPEED BENCHMARK: SPI vs. I2C ===\");\n\n  const unsigned long payloadBytes = 1024; // 1 KB display buffer\n\n  // I2C 100 kHz: 9 clock pulses per byte (8 data bits + 1 ACK bit)\n  float i2cClockSpeedHz = 100000.0;\n  float i2cBitsPerByte = 9.0;\n  float i2cTimeSec = (payloadBytes * i2cBitsPerByte) / i2cClockSpeedHz;\n\n  // SPI 8 MHz: 8 clock pulses per byte (pure push-pull, no ACK overhead)\n  float spiClockSpeedHz = 8000000.0;\n  float spiBitsPerByte = 8.0;\n  float spiTimeSec = (payloadBytes * spiBitsPerByte) / spiClockSpeedHz;\n\n  Serial.print(\"Payload size: \");\n  Serial.print(payloadBytes);\n  Serial.println(\" bytes\");\n\n  Serial.print(\"I2C 100kHz Transfer Time: \");\n  Serial.print(i2cTimeSec * 1000.0);\n  Serial.println(\" ms\");\n\n  Serial.print(\"SPI 8MHz Transfer Time:   \");\n  Serial.print(spiTimeSec * 1000.0);\n  Serial.println(\" ms\");\n\n  float speedup = i2cTimeSec / spiTimeSec;\n  Serial.print(\"SPI is \");\n  Serial.print(speedup);\n  Serial.println(\"x faster for this buffer!\");\n}\n\nvoid loop() {\n  // Run once in setup\n}\n```\n\n### Code Breakdown:\n- `i2cBitsPerByte = 9.0`: Every byte on I2C requires a 9th clock tick for the peripheral's ACK bit.\n- `spiBitsPerByte = 8.0`: SPI transmits exactly 8 clock pulses per byte with zero protocol framing waste.\n- Notice the speedup: SPI completes the 1 KB transfer in approximately 1 millisecond, freeing the CPU to calculate navigation math!",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "l10_01_s04",
+      "title": "Speed Barrier Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your mastery of SPI speed advantages, electrical drivers, and architectural trade-offs.",
+      "interactiveConfig": {
+        "question": "Why can SPI achieve clock speeds of 8 MHz and above while I2C is typically limited to 100 kHz or 400 kHz?",
+        "options": [
+          "SPI uses push-pull output transistors that actively drive both HIGH and LOW states, eliminating sluggish pull-up rise times",
+          "SPI uses radio waves instead of copper wires",
+          "SPI chips have onboard cooling fans"
+        ],
+        "correctIndex": 0,
+        "explanation": "Push-pull transistors actively force signal lines to +5V and GND, allowing crisp, ultra-fast square waves without relying on slow pull-up resistors.",
+        "questions": [
+          {
+            "question": "Why can SPI achieve clock speeds of 8 MHz and above while I2C is typically limited to 100 kHz or 400 kHz?",
+            "options": [
+              "SPI uses push-pull output transistors that actively drive both HIGH and LOW states, eliminating sluggish pull-up rise times",
+              "SPI uses radio waves instead of copper wires",
+              "SPI chips have onboard cooling fans"
+            ],
+            "correctIndex": 0,
+            "explanation": "Push-pull transistors actively force signal lines to +5V and GND, allowing crisp, ultra-fast square waves without relying on slow pull-up resistors."
+          },
+          {
+            "question": "What is the primary trade-off when choosing SPI over I2C in a robotics project?",
+            "options": [
+              "SPI offers much higher speeds but requires more wires (4 base wires plus a dedicated CS line for each peripheral)",
+              "SPI only works with rechargeable batteries",
+              "SPI cannot transmit numerical values"
+            ],
+            "correctIndex": 0,
+            "explanation": "SPI sacrifices wire count economy (needing 4+ wires) in exchange for extreme transmission throughput and simpler hardware."
+          },
+          {
+            "question": "Which type of peripheral is best suited for an SPI interface rather than an I2C interface?",
+            "options": [
+              "High-resolution graphical displays and high-speed memory cards requiring megabytes of data per second",
+              "A simple room temperature sensor updating once per minute",
+              "A mechanical emergency stop button"
+            ],
+            "correctIndex": 0,
+            "explanation": "Graphic screens, RFID interrogators, and SD cards demand multi-megahertz bandwidth to move large volumes of data without stuttering."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

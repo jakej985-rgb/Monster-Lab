@@ -1,0 +1,119 @@
+{
+  "id": "l12_06",
+  "title": "Meet the SG90 Servo Motor: Precision Angle Positioning",
+  "summary": "Introduce the SG90 micro servo motor, closed-loop feedback control, 50Hz pulse-width positioning, and the Arduino Servo library.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_12",
+  "sortOrder": 6,
+  "isOptional": false,
+  "prerequisites": [
+    "l12_05"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_36"
+  ],
+  "steps": [
+    {
+      "stepId": "l12_06_s01",
+      "title": "From Continuous Spin to Precision Angle: The Servo Actuator",
+      "type": "story",
+      "markdownContent": "### Precision Angle Positioning: Introducing the Servo Motor\n\nIn Lessons 1 through 5, you mastered DC motors. DC motors are fantastic for continuous rotational propulsion (driving rover wheels or spinning propellers). But what if you need to steer a front wheel to exactly $45^\\circ$, aim a robotic ultrasonic sensor turret, or close a mechanical gripper?\n\nIf you try using a raw DC motor, inertia makes precision positioning impossible\u2014the motor overshoots, drifts, and cannot hold position against an external push.\n\nEnter `comp_36` (SG90 Micro Servo Motor / Precision Position Actuator)!\n\n```\n                \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n                \u2502        SG90 MICRO SERVO           \u2502\n                \u2502                                   \u2502\nPWM Pulse \u2500\u2500\u2500\u2500\u2500\u25ba\u2502 [Onboard Controller]              \u2502\n                \u2502         \u2502                         \u2502\n                \u2502         \u25bc                         \u2502\n                \u2502   [DC Coreless Motor]             \u2502\n                \u2502         \u2502                         \u2502\n                \u2502         \u25bc                         \u2502\n                \u2502    [Gear Train] \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba Output Spline (0\u00b0 - 180\u00b0)\n                \u2502         \u2502                         \u25b2\n                \u2502         \u25bc                         \u2502\n                \u2502   [Potentiometer] \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n                \u2502   (Angle Feedback)                \u2502\n                \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n```\n\n### What is Inside a Servo?\nA hobby servo is a self-contained **closed-loop control system (servomechanism)**:\n1. **DC Motor:** Provides rotational driving torque.\n2. **Precision Reduction Gearbox:** High gear reduction trades high speed for massive torque, making the output horn strong.\n3. **Rotary Potentiometer:** Mechanically geared directly to the output shaft. As the shaft turns, the potentiometer's resistance changes, providing an exact analog voltage representing the shaft's current angle.\n4. **Onboard Control Chip:** Continuously compares the commanded target angle against the actual potentiometer feedback angle. If an external force pushes the arm away from its target, the internal driver immediately powers the motor to resist and push it back!",
+      "quickCheck": [
+        {
+          "questionId": "q_l12_06_s01_1",
+          "question": "What internal component inside a servo motor provides feedback about the output shaft's current angular position?",
+          "options": [
+            "A rotary potentiometer mechanically linked to the output gear shaft",
+            "An ultrasonic distance sensor",
+            "A mercury tilt switch"
+          ],
+          "correctIndex": 0,
+          "explanation": "A rotary potentiometer turns with the output shaft, feeding a variable voltage back to the internal control chip to monitor its exact angle.",
+          "warmupExplanation": "Just like the volume knob in Lesson 6, a potentiometer inside the servo tells the chip where the arm is pointing!"
+        },
+        {
+          "questionId": "q_l12_06_s01_2",
+          "question": "What is the primary difference between a standard DC motor and a positional servo motor?",
+          "options": [
+            "A DC motor spins continuously without position awareness, while a servo rotates to and holds a precise angle between 0\u00b0 and 180\u00b0",
+            "A DC motor requires AC power while a servo runs on chemical steam",
+            "A servo motor can only spin clockwise and cannot hold torque"
+          ],
+          "correctIndex": 0,
+          "explanation": "DC motors provide continuous high-speed rotation, while servos provide precise closed-loop angular positioning over a fixed range (0\u00b0 to 180\u00b0).",
+          "warmupExplanation": "DC motors run like car wheels; servos point like human elbows!"
+        }
+      ]
+    },
+    {
+      "stepId": "l12_06_s02",
+      "title": "Servo Closed-Loop Architecture & 50Hz Pulse-Width Protocol",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "servoPulseWidthModulator",
+      "interactiveConfig": {
+        "simulation": "servoPulseWidthModulator"
+      },
+      "markdownContent": "### The 50Hz Servo Control Protocol\n\nStandard positional servos do NOT use duty cycle to control speed. Instead, they use a specific **Pulse Width Protocol** operating at a repetition rate of **50 Hz** (one pulse every **20 milliseconds**).\n\nThe absolute duration (width) of the positive pulse encodes the commanded angular position:\n\n```\n50 Hz FRAME PERIOD = 20.0 ms (20,000 microseconds)\n\n1.0 ms PULSE (1000 \u00b5s) = 0 DEGREES (Full Counter-Clockwise Limit):\n\u250c\u2500\u2510\n\u2502 \u2502\n\u2518 \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n  \u25c4\u2500 1.0 ms \u2500\u25ba \u25c4\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 19.0 ms \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba\n\n1.5 ms PULSE (1500 \u00b5s) = 90 DEGREES (Center Neutral Position):\n\u250c\u2500\u2500\u2500\u2510\n\u2502   \u2502\n\u2518   \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n  \u25c4\u2500\u2500 1.5 ms \u2500\u2500\u25ba \u25c4\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 18.5 ms \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba\n\n2.0 ms PULSE (2000 \u00b5s) = 180 DEGREES (Full Clockwise Limit):\n\u250c\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502     \u2502\n\u2518     \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n  \u25c4\u2500\u2500\u2500 2.0 ms \u2500\u2500\u2500\u25ba \u25c4\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 18.0 ms \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba\n```\n\n### 3-Wire Interface Pinout:\n- **Brown or Black Wire:** Ground (**0V GND**) \u2014 Common electrical reference.\n- **Red Wire:** Positive Power Supply (**+5V VCC**) \u2014 Powers internal motor and amplifier.\n- **Orange or Yellow Wire:** Control Signal (**PWM Input**) \u2014 Receives the 50Hz positioning pulses from an Arduino digital pin.\n\n> **Crucial Difference:** DC motor PWM varies duty cycle from 0% to 100% to regulate speed. Servo PWM varies pulse width strictly between **1.0 ms and 2.0 ms** to command absolute mechanical angle!"
+    },
+    {
+      "stepId": "l12_06_s03",
+      "title": "Mastering the Arduino <Servo.h> Library",
+      "type": "codeExperiment",
+      "interactiveConfig": {
+        "codeSnippet": "#include <Servo.h>\n\nServo myServo;\nconst int servoPin = 10;\n\nvoid setup() {\n  myServo.attach(servoPin);\n  Serial.begin(9600);\n  Serial.println(F(\"--- SG90 Precision Servo Initialized ---\"));\n}\n\nvoid loop() {\n  Serial.println(F(\"Position: 0 degrees (Left)\"));\n  myServo.write(0);\n  delay(1000);\n\n  Serial.println(F(\"Position: 90 degrees (Center)\"));\n  myServo.write(90);\n  delay(1000);\n\n  Serial.println(F(\"Position: 180 degrees (Right)\"));\n  myServo.write(180);\n  delay(1000);\n}"
+      },
+      "markdownContent": "### Precision Positioning with the Arduino `<Servo.h>` Library\n\nGenerating 50Hz pulses with microsecond accuracy by hand using `delayMicroseconds()` would block your entire program. Fortunately, the official Arduino `<Servo.h>` library uses **Hardware Timer 1** to generate perfect background servo pulses automatically!\n\n```cpp\n#include <Servo.h>\n\n// Create a Servo object instance\nServo steeringServo;\n\n// Pin 10 connects to the Orange/Yellow signal wire of the SG90 servo\nconst int servoPin = 10;\n\nvoid setup() {\n  // Attach the servo object to pin 10 (Timer 1 takes over pulse generation)\n  steeringServo.attach(servoPin);\n\n  Serial.begin(9600);\n  Serial.println(F(\"--- SG90 Precision Servo Initialized ---\"));\n}\n\nvoid sweepSmoothly() {\n  Serial.println(F(\"Sweeping smoothly from 0 to 180 degrees...\"));\n  for (int angle = 0; angle <= 180; angle += 2) {\n    steeringServo.write(angle);\n    delay(15); // Allow mechanical gears time to reach target angle\n  }\n\n  delay(500);\n\n  Serial.println(F(\"Sweeping smoothly back from 180 to 0 degrees...\"));\n  for (int angle = 180; angle >= 0; angle -= 2) {\n    steeringServo.write(angle);\n    delay(15);\n  }\n}\n\nvoid loop() {\n  // Step 1: Discrete position targeting\n  Serial.println(F(\"TARGET: 0 degrees (Full Left)\"));\n  steeringServo.write(0);\n  delay(1000);\n\n  Serial.println(F(\"TARGET: 90 degrees (Neutral Center)\"));\n  steeringServo.write(90);\n  delay(1000);\n\n  Serial.println(F(\"TARGET: 180 degrees (Full Right)\"));\n  steeringServo.write(180);\n  delay(1000);\n\n  // Step 2: Smooth mechanical sweep\n  sweepSmoothly();\n  delay(1000);\n}\n```\n\n### Code Breakdown:\n- `#include <Servo.h>`: Imports the standard Arduino servo library, which controls servos via background hardware timer interrupts.\n- `steeringServo.attach(servoPin)`: Binds Pin 10 to the servo object and starts outputting 50Hz pulse trains immediately.\n- `steeringServo.write(angle)`: Accepts an angle between `0` and `180` degrees and converts it into the exact microsecond pulse duration ($1000\\,\\mu\\text{s} - 2000\\,\\mu\\text{s}$).\n- `delay(15)` in the sweep loop: Essential mechanical pacing! Servos take a finite physical time to turn (SG90 speed is approximately $0.1\\text{ s} / 60^\\circ$). Stepping the angle gradually prevents mechanical gear backlash."
+    },
+    {
+      "stepId": "l12_06_s04",
+      "title": "SG90 Servo Positioning Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Confirm your grasp of closed-loop servo feedback, 50Hz timing protocols, and servo library programming.",
+      "interactiveConfig": {
+        "question": "In the standard 50Hz servo control protocol, what pulse width commands the servo to move to its 90-degree center position?",
+        "options": [
+          "1.5 milliseconds (1500 microseconds)",
+          "10.0 milliseconds",
+          "0.2 milliseconds"
+        ],
+        "correctIndex": 0,
+        "explanation": "A 1.5 ms pulse commands the 90-degree center position, while 1.0 ms commands 0 degrees and 2.0 ms commands 180 degrees.",
+        "questions": [
+          {
+            "question": "In the standard 50Hz servo control protocol, what pulse width commands the servo to move to its 90-degree center position?",
+            "options": [
+              "1.5 milliseconds (1500 microseconds)",
+              "10.0 milliseconds",
+              "0.2 milliseconds"
+            ],
+            "correctIndex": 0,
+            "explanation": "A 1.5 ms pulse commands the 90-degree center position, while 1.0 ms commands 0 degrees and 2.0 ms commands 180 degrees."
+          },
+          {
+            "question": "What color wire on a standard SG90 servo connector carries the digital PWM control signal?",
+            "options": [
+              "Orange (or yellow in some cable variants)",
+              "Brown or Black",
+              "Red"
+            ],
+            "correctIndex": 0,
+            "explanation": "The Orange/Yellow wire carries the control signal, Red is +5V power, and Brown/Black is Ground."
+          },
+          {
+            "question": "When you call myServo.attach(9), which internal Arduino Uno hardware resource is utilized by the <Servo.h> library?",
+            "options": [
+              "Hardware Timer 1, which generates precise 50Hz background pulses without tying up processor cycles",
+              "The analog-to-digital converter multiplexer",
+              "The EEPROM storage memory"
+            ],
+            "correctIndex": 0,
+            "explanation": "The Arduino Servo library utilizes 16-bit Hardware Timer 1 to generate jitter-free 50Hz pulses in the background."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

@@ -1,0 +1,116 @@
+{
+  "id": "l10_05",
+  "title": "The MAX7219 8x8 LED Matrix Display",
+  "summary": "Introduce the MAX7219 driver chip and control 64 individual LEDs using high-speed serial shift registers.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_10",
+  "sortOrder": 5,
+  "isOptional": false,
+  "prerequisites": [
+    "l10_04"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_23",
+    "comp_15"
+  ],
+  "steps": [
+    {
+      "stepId": "l10_05_s01",
+      "title": "Meet the MAX7219 Arcade Matrix",
+      "type": "story",
+      "markdownContent": "### The 64-LED Wiring Nightmare\nImagine you want your robot monster to display expressive facial emotions: happy eyes, mischievous winks, or alarmed cross-eyes. An 8x8 LED matrix contains **64 individual light-emitting diodes** arranged in a neat grid of 8 rows and 8 columns.\n\nIf you tried to control 64 LEDs directly with standard Arduino pins, you would need 16 separate wires (8 rows + 8 columns) and write complex microcontroller code to rapidly strobe each row hundreds of times a second just to prevent flickering!\n\n```\nDIRECT WIRING:   16 Microcontroller Pins Required + High CPU Strobe Load!\nMAX7219 DRIVER:  Only 3 SPI Signal Wires (DIN, CS, CLK) + Zero CPU Overhead!\n```\n\n### The MAX7219 Smart Silicon Driver\nTo solve this, our 8x8 matrix module integrates a specialized **MAX7219 display driver IC** on the back of the circuit board:\n\n- **Internal 8x8 Static RAM:** The MAX7219 stores the exact on/off state of every single LED in internal memory registers.\n- **Autonomous 800 Hz Multiplexing:** The chip scans across the 8 rows automatically at 800 times per second. Thanks to human **Persistence of Vision (POV)**, the rapid flashing blends together into a solid, brilliant, flicker-free image.\n- **Global Constant-Current Brightness:** Built-in PWM circuitry provides 16 digital brightness levels with an internal current limiter, protecting your LEDs from burning out without requiring 64 individual resistors!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l10_05_s01_q1",
+          "question": "How does the MAX7219 display driver chip allow an Arduino to control 64 LEDs using only 3 SPI signal wires?",
+          "options": [
+            "It contains internal shift registers and automatically multiplexes all 8 rows at 800 Hz from internal display RAM",
+            "It turns all 64 LEDs on at the same time using a single high-voltage battery",
+            "It converts digital code into analog radio waves"
+          ],
+          "correctIndex": 0,
+          "explanation": "The MAX7219 receives 16-bit serial packets via SPI, stores pixels in internal SRAM, and handles high-speed multiplexing autonomously.",
+          "warmupExplanation": "Think of the MAX7219 as a dedicated co-processor for the display: the Arduino sends pixel data once, and the MAX7219 keeps the LEDs lit."
+        },
+        {
+          "questionId": "qc_l10_05_s01_q2",
+          "question": "What optical principle allows multiplexed LED displays to appear constantly illuminated to human eyes?",
+          "options": [
+            "Persistence of Vision (POV), where rapid strobing above 60 Hz blends into a continuous image",
+            "Total Internal Reflection",
+            "Electromagnetic Doppler Shift"
+          ],
+          "correctIndex": 0,
+          "explanation": "Human retinas retain images for approximately 1/16th of a second. Strobing LEDs at 800 Hz makes them appear steadily glowing.",
+          "warmupExplanation": "Just like spinning movie film frames creates smooth motion, rapid LED strobing creates a steady picture."
+        }
+      ]
+    },
+    {
+      "stepId": "l10_05_s02",
+      "title": "Multiplexing Physics & Internal Registers",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### Module Pinout & Electrical Connections\nInspect the 5-pin female header on the bottom edge of the MAX7219 8x8 Matrix module:\n\n```\nMAX7219 MODULE HEADER PINOUT:\n  • VCC  ───► Connect to Uno +5V (5V Power Supply)\n  • GND  ───► Connect to Uno GND (0V Ground Reference)\n  • DIN  ───► Data In: Connect to Uno Pin 11 (MOSI)\n  • CS   ───► Chip Select: Connect to Uno Pin 10 (SS / Load)\n  • CLK  ───► Serial Clock: Connect to Uno Pin 13 (SCK)\n```\n\n### The 16-Bit SPI Command Packet\nCommunication with the MAX7219 uses a **16-bit packet** sent as two consecutive bytes:\n\n```\n┌──────────────────────────── 16-BIT SPI PACKET ────────────────────────────┐\n│      HIGH BYTE (Bits 15..8)        │        LOW BYTE (Bits 7..0)         │\n│     [ 4 Don't Care | 4-bit Address ]│           8-bit Data Payload        │\n└────────────────────────────────────┴─────────────────────────────────────┘\n```\n\n1. The Arduino pulls `CS` **LOW**.\n2. The Arduino transmits the **Address Byte** (which internal register to configure).\n3. The Arduino transmits the **Data Byte** (the pixel pattern or setting value).\n4. The Arduino pulls `CS` **HIGH**. This rising edge latches the 16 bits into the MAX7219 control registers!\n\n### Critical Control Registers\n- **Register `0x0C` (Shutdown):** Value `0x01` activates normal display mode; value `0x00` enters low-power sleep.\n- **Register `0x0B` (Scan Limit):** Value `0x07` enables all 8 rows (rows 0 through 7).\n- **Register `0x0A` (Intensity):** Value `0x00` (dimmest) to `0x0F` (brightest 15/16 duty cycle).\n- **Register `0x09` (Decode Mode):** Value `0x00` enables raw bitmapping (1 = LED ON, 0 = LED OFF).\n- **Registers `0x01` through `0x08` (Row 1 to Row 8):** Each bit represents an individual LED in that row!",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "l10_05_s03",
+      "title": "Drawing Monster Icons on the 8x8 Grid",
+      "type": "codeExperiment",
+      "markdownContent": "### Hands-On: Direct Register SPI Control\nLet's write a pure SPI sketch to initialize the MAX7219 and paint a cheerful monster face without relying on external third-party libraries!\n\n```cpp\n#include <SPI.h>\n\nconst int CS_PIN = 10; // Chip Select connected to Pin 10\n\n// Low-level function to write 16 bits to the MAX7219\nvoid writeMax7219(byte regAddress, byte dataValue) {\n  digitalWrite(CS_PIN, LOW);       // 1. Select MAX7219\n  SPI.transfer(regAddress);        // 2. Send Register Address\n  SPI.transfer(dataValue);         // 3. Send Data Payload\n  digitalWrite(CS_PIN, HIGH);      // 4. Latch data on rising CS edge!\n}\n\n// 8x8 Bitmap of a Smiling Monster Face (1 = LED ON, 0 = LED OFF)\nconst byte monsterSmile[8] = {\n  B00111100, // Row 1: Top of head\n  B01000010, // Row 2: Forehead\n  B10100101, // Row 3: Eyes (columns 2 & 5 active!)\n  B10000001, // Row 4: Cheeks\n  B10100101, // Row 5: Smile corners\n  B10011001, // Row 6: Wide smile mouth\n  B01000010, // Row 7: Chin\n  B00111100  // Row 8: Jawline\n};\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(CS_PIN, OUTPUT);\n  digitalWrite(CS_PIN, HIGH);\n\n  // Initialize SPI bus in Mode 0\n  SPI.begin();\n  SPI.beginTransaction(SPISettings(8000000, MSBFIRST, SPI_MODE0));\n\n  // MAX7219 Hardware Initialization Sequence:\n  writeMax7219(0x0C, 0x01); // 1. Wake up from Shutdown mode\n  writeMax7219(0x09, 0x00); // 2. Decode Mode: None (raw matrix bitmapping)\n  writeMax7219(0x0B, 0x07); // 3. Scan Limit: Display all 8 rows\n  writeMax7219(0x0A, 0x04); // 4. Intensity: Medium brightness (4 out of 15)\n\n  // Paint the monster face row by row\n  for (int row = 0; row < 8; row++) {\n    writeMax7219(row + 1, monsterSmile[row]); // Row registers are 0x01 to 0x08\n  }\n  Serial.println(\"Monster smile rendered successfully on MAX7219!\");\n}\n\nvoid loop() {\n  // Image stays lit autonomously inside MAX7219 RAM!\n}\n```\n\n### Code Breakdown:\n- `writeMax7219(0x0C, 0x01)`: Clears shutdown mode; the display turns ON.\n- `writeMax7219(0x09, 0x00)`: Turns off 7-segment BCD decode so each bit maps directly to an LED.\n- `writeMax7219(row + 1, monsterSmile[row])`: Streams each byte to registers `0x01` through `0x08`.\n- Notice that `loop()` is completely empty—the MAX7219 autonomously refreshes the LEDs without using a single microsecond of Arduino CPU time!",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "l10_05_s04",
+      "title": "MAX7219 Matrix Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your grasp of the MAX7219 display driver, 16-bit packet structure, and register configuration.",
+      "interactiveConfig": {
+        "question": "Which pin on the MAX7219 module connects to the Arduino Uno's MOSI line (Pin 11)?",
+        "options": [
+          "DIN (Data In)",
+          "CLK (Serial Clock)",
+          "CS (Chip Select / Load)"
+        ],
+        "correctIndex": 0,
+        "explanation": "DIN on the MAX7219 receives the outward serial bitstream from the Arduino's MOSI (Master Out Slave In) pin.",
+        "questions": [
+          {
+            "question": "Which pin on the MAX7219 module connects to the Arduino Uno's MOSI line (Pin 11)?",
+            "options": [
+              "DIN (Data In)",
+              "CLK (Serial Clock)",
+              "CS (Chip Select / Load)"
+            ],
+            "correctIndex": 0,
+            "explanation": "DIN on the MAX7219 receives the outward serial bitstream from the Arduino's MOSI (Master Out Slave In) pin."
+          },
+          {
+            "question": "Why does the MAX7219 require sending the register address byte followed by the data byte before pulling CS HIGH?",
+            "options": [
+              "The internal shift register expects a 16-bit word; pulling CS HIGH latches the address and data into internal memory",
+              "To reset the internal microcontroller fuse bits",
+              "To discharge static electricity into ground"
+            ],
+            "correctIndex": 0,
+            "explanation": "The MAX7219 shifts in 16 bits (8 bits address + 8 bits data) on clock pulses, and latches them on the rising edge of CS."
+          },
+          {
+            "question": "What happens if you forget to write 0x01 to the Shutdown Register (0x0C) during setup?",
+            "options": [
+              "The MAX7219 remains in low-power shutdown mode with all LEDs turned OFF",
+              "The LEDs turn bright purple and flash uncontrollably",
+              "The Arduino Uno reboots continuously"
+            ],
+            "correctIndex": 0,
+            "explanation": "The MAX7219 powers up in shutdown mode by default. You must write 0x01 to register 0x0C to awaken the display oscillator."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

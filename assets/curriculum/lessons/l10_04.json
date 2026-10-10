@@ -1,0 +1,114 @@
+{
+  "id": "l10_04",
+  "title": "Arduino Uno Hardware SPI Pinouts: Pins 10, 11, 12, 13",
+  "summary": "Map the ATmega328P dedicated SPI peripheral pins and discover why hardware SPI outperforms bit-banging.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_10",
+  "sortOrder": 4,
+  "isOptional": false,
+  "prerequisites": [
+    "l10_03"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l10_04_s01",
+      "title": "The Dedicated Silicon Engine",
+      "type": "story",
+      "markdownContent": "### Hardware Peripheral vs. Software 'Bit-Banging'\nOn an Arduino Uno, you could theoretically wiggle any four digital pins using `digitalWrite()` to mimic an SPI bus. This technique is called **bit-banging**.\n\nHowever, bit-banging requires the main CPU to execute dozens of instructions for every single bit: set MOSI HIGH, delay, set SCK HIGH, delay, read MISO, set SCK LOW, delay... Bit-banging struggles to exceed 100 kHz and eats 100% of the microcontroller's CPU cycles!\n\nInstead, the ATmega328P chip contains a dedicated **Hardware SPI Engine** fabricated directly into its silicon:\n\n```\nArduino Uno Digital Header Pinout:\n  • Pin 10 ─── SS   (Hardware Slave Select)\n  • Pin 11 ─── MOSI (Master Out Slave In)\n  • Pin 12 ─── MISO (Master In Slave Out)\n  • Pin 13 ─── SCK  (Serial Clock & Onboard 'L' LED)\n  • ICSP 6-Pin Header (Alternative direct connection to Pins 11, 12, 13, 5V, GND, RESET)\n```\n\n### The Golden Rule of Hardware Pin 10\nIn ATmega328P microcontroller hardware, Pin 10 is the dedicated hardware **SS (Slave Select)** pin. Even if you choose to use Pin 9 or Pin 8 as the Chip Select for your sensor, **Pin 10 MUST be configured as an OUTPUT** in your sketch!\n\n> [!WARNING]\n> If Pin 10 is left as a floating INPUT and drops to 0V (LOW), the ATmega328P's internal hardware automatically flips the Arduino out of SPI Master mode into SPI Slave mode, freezing the bus completely!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l10_04_s01_q1",
+          "question": "Which specific digital pins on the Arduino Uno connect to the internal ATmega328P hardware SPI engine?",
+          "options": [
+            "Pin 10 (SS), Pin 11 (MOSI), Pin 12 (MISO), and Pin 13 (SCK)",
+            "Pin 0 (RX), Pin 1 (TX), Pin 2, and Pin 3",
+            "Analog Pins A0, A1, A2, and A3"
+          ],
+          "correctIndex": 0,
+          "explanation": "On the Arduino Uno, the ATmega328P routes its hardware SPI peripheral to digital pins 10 (SS), 11 (MOSI), 12 (MISO), and 13 (SCK).",
+          "warmupExplanation": "Look at the high end of the Uno's digital header: pins 10 through 13 host the hardware SPI bus."
+        },
+        {
+          "questionId": "qc_l10_04_s01_q2",
+          "question": "Why must digital Pin 10 always be set to pinMode(10, OUTPUT) when using the Uno as an SPI Master?",
+          "options": [
+            "If Pin 10 is an INPUT and pulled LOW, the ATmega328P hardware automatically forces the Arduino out of Master mode into Slave mode",
+            "Because Pin 10 provides the 5V electrical power to the other pins",
+            "To prevent the USB port from disconnecting"
+          ],
+          "correctIndex": 0,
+          "explanation": "If hardware SS (Pin 10) is an input and goes LOW, the SPI engine halts master operations and waits for an external master.",
+          "warmupExplanation": "The ATmega328P silicon treats Pin 10 as its hardware master/slave gatekeeper. Keeping it as an OUTPUT locks in Master mode."
+        }
+      ]
+    },
+    {
+      "stepId": "l10_04_s02",
+      "title": "Hardware SPI Registers & The Pin 10 Master Rule",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### The Internal SPI Silicon Architecture\nInside the ATmega328P microcontroller, three special function registers run the SPI bus with zero CPU overhead:\n\n```\n                   ATmega328P SILICON CORE\n  ┌─────────────────────────────────────────────────────────┐\n  │  SPCR (SPI Control Register):                           │\n  │  [ SPIE | SPE | DORD | MSTR | CPOL | CPHA | SPR1 | SPR0 ]│\n  │    - SPE:  Enables SPI hardware                         │\n  │    - MSTR: Selects Master Mode                          │\n  │    - SPR0/SPR1: Clock divider (fosc/4 = 4MHz, /2 = 8MHz)│\n  │                                                         │\n  │  SPDR (SPI Data Register): 8-bit Shift Register         │\n  │  Writing a byte here automatically shifts it out Pin 11!│\n  │                                                         │\n  │  SPSR (SPI Status Register):                            │\n  │  [ SPIF | WCOL | - | - | - | - | - | SPI2X ]            │\n  │    - SPIF: SPI Interrupt Flag (Sets 1 when transfer done│\n  │    - SPI2X: Double-speed bit (achieves 8 MHz on 16MHz)  │\n  └─────────────────────────────────────────────────────────┘\n          │             │             │             │\n       Pin 10        Pin 11        Pin 12        Pin 13\n        (SS)         (MOSI)        (MISO)        (SCK)\n```\n\n### The Pin 13 LED Consideration\nDigital Pin 13 on the Uno is also connected to an onboard yellow LED marked **L** through an op-amp buffer. While you transmit SPI data at multi-megahertz frequencies, this LED may flicker rapidly or appear dimly glowing. This is completely normal and indicates active clock activity!",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "l10_04_s03",
+      "title": "Hardware SPI vs. Software Bit-Bang Benchmark",
+      "type": "codeExperiment",
+      "markdownContent": "### Benchmarking Silicon Against Software\nTo appreciate the raw power of the hardware SPI engine, run this benchmark sketch that compares the hardware `SPI.transfer()` against software bit-banging using `shiftOut()`:\n\n```cpp\n#include <SPI.h>\n\nconst int HARDWARE_CS = 10;\nconst int SOFT_DATA   = 4;\nconst int SOFT_CLOCK  = 5;\nconst int TEST_ITERATIONS = 1000;\n\nvoid setup() {\n  Serial.begin(9600);\n  while (!Serial);\n  Serial.println(\"=== HARDWARE SPI VS. BIT-BANG SPEED TEST ===\");\n\n  // Configure pins\n  pinMode(HARDWARE_CS, OUTPUT);\n  digitalWrite(HARDWARE_CS, HIGH);\n  pinMode(SOFT_DATA, OUTPUT);\n  pinMode(SOFT_CLOCK, OUTPUT);\n\n  // Initialize hardware SPI\n  SPI.begin();\n  SPI.beginTransaction(SPISettings(8000000, MSBFIRST, SPI_MODE0));\n\n  // 1. Benchmark Software Bit-Banging (shiftOut)\n  unsigned long startSoft = micros();\n  for (int i = 0; i < TEST_ITERATIONS; i++) {\n    shiftOut(SOFT_DATA, SOFT_CLOCK, MSBFIRST, 0xAA);\n  }\n  unsigned long durationSoft = micros() - startSoft;\n\n  // 2. Benchmark Hardware SPI (SPI.transfer)\n  unsigned long startHard = micros();\n  digitalWrite(HARDWARE_CS, LOW);\n  for (int i = 0; i < TEST_ITERATIONS; i++) {\n    SPI.transfer(0xAA);\n  }\n  digitalWrite(HARDWARE_CS, HIGH);\n  unsigned long durationHard = micros() - startHard;\n\n  // Print benchmark report\n  Serial.print(\"Software shiftOut (1000 bytes): \");\n  Serial.print(durationSoft);\n  Serial.println(\" microseconds\");\n\n  Serial.print(\"Hardware SPI 8MHz (1000 bytes): \");\n  Serial.print(durationHard);\n  Serial.println(\" microseconds\");\n\n  float speedup = (float)durationSoft / (float)durationHard;\n  Serial.print(\"Hardware SPI is \");\n  Serial.print(speedup, 1);\n  Serial.println(\"x FASTER than software bit-banging!\");\n}\n\nvoid loop() {\n  // Run once\n}\n```\n\n### Code Breakdown:\n- `shiftOut(...)`: Executes software bit-banging. The CPU manually loops over every bit, toggling pins with CPU instructions.\n- `SPI.transfer(...)`: Directly loads the hardware `SPDR` register. Dedicated internal gates clock out the entire byte in just 16 clock cycles (1 microsecond at 8 MHz)!\n- Hardware SPI is typically **15x to 25x faster** than software bit-banging.",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "l10_04_s04",
+      "title": "Arduino Hardware SPI Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your mastery of Arduino Uno SPI pins, internal hardware registers, and Pin 10 configuration rules.",
+      "interactiveConfig": {
+        "question": "Which Uno header pins are physically mapped to the ATmega328P hardware SPI interface?",
+        "options": [
+          "Pins 10 (SS), 11 (MOSI), 12 (MISO), and 13 (SCK)",
+          "Pins A4 (SDA) and A5 (SCL)",
+          "Pins 2 (Interrupt 0) and 3 (Interrupt 1)"
+        ],
+        "correctIndex": 0,
+        "explanation": "Digital pins 10, 11, 12, and 13 are hardwired to the ATmega328P SPI peripheral in silicon.",
+        "questions": [
+          {
+            "question": "Which Uno header pins are physically mapped to the ATmega328P hardware SPI interface?",
+            "options": [
+              "Pins 10 (SS), 11 (MOSI), 12 (MISO), and 13 (SCK)",
+              "Pins A4 (SDA) and A5 (SCL)",
+              "Pins 2 (Interrupt 0) and 3 (Interrupt 1)"
+            ],
+            "correctIndex": 0,
+            "explanation": "Digital pins 10, 11, 12, and 13 are hardwired to the ATmega328P SPI peripheral in silicon."
+          },
+          {
+            "question": "Why is dedicated hardware SPI vastly superior to software 'bit-banging' with shiftOut()?",
+            "options": [
+              "Hardware SPI transfers bytes through autonomous shift registers at up to 8 MHz with minimal CPU instruction overhead",
+              "Bit-banging requires high-voltage power supplies",
+              "Hardware SPI does not require ground connections"
+            ],
+            "correctIndex": 0,
+            "explanation": "Dedicated hardware registers (SPDR) clock bits out at multi-megahertz rates automatically, freeing the CPU from manual bit-flipping."
+          },
+          {
+            "question": "What component is also connected to Digital Pin 13 on the Arduino Uno board?",
+            "options": [
+              "The on-board yellow 'L' status LED",
+              "The reset pushbutton switch",
+              "The 16 MHz main crystal oscillator"
+            ],
+            "correctIndex": 0,
+            "explanation": "Digital Pin 13 is shared between the SCK SPI clock output and the on-board yellow 'L' LED buffer."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

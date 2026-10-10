@@ -1,0 +1,120 @@
+{
+  "id": "l12_05",
+  "title": "PWM Motor Speed Regulation & Direction Control Code",
+  "summary": "Regulate DC motor velocity with high-frequency Pulse Width Modulation, calculate effective voltage, overcome static friction, and program smooth speed ramps.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_12",
+  "sortOrder": 5,
+  "isOptional": false,
+  "prerequisites": [
+    "l12_04"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_33",
+    "comp_l293d"
+  ],
+  "steps": [
+    {
+      "stepId": "l12_05_s01",
+      "title": "From On/Off to Variable Velocity",
+      "type": "story",
+      "markdownContent": "### Smooth Throttles: Why Robots Need Speed Regulation\n\nDriving a robot with only full-speed and stop is like driving a car with an accelerator pedal that is either slammed to the floor or untouched! Your robot would jerk violently, skid its wheels, fail to dock accurately, and strip gear teeth.\n\nHow do you smoothly regulate the speed of a DC motor when your battery provides a fixed voltage (e.g., 9V)?\n- You cannot easily vary the battery voltage with variable resistors (potentiometers burn up from heavy current!).\n- Instead, engineers use **Pulse Width Modulation (PWM)**!\n\n```\nPWM PERIOD T = ~2.04 ms (490 Hz on Arduino Pin 9)\n\n25% DUTY CYCLE (Crawl Speed):\n\u250c\u2500\u2510       \u250c\u2500\u2510       \u250c\u2500\u2510\n\u2502 \u2502       \u2502 \u2502       \u2502 \u2502\n\u2518 \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518 \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518 \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500  V_effective = 9V * 0.25 = 2.25V\n\n50% DUTY CYCLE (Half Speed):\n\u250c\u2500\u2500\u2500\u2510   \u250c\u2500\u2500\u2500\u2510   \u250c\u2500\u2500\u2500\u2510\n\u2502   \u2502   \u2502   \u2502   \u2502   \u2502\n\u2518   \u2514\u2500\u2500\u2500\u2518   \u2514\u2500\u2500\u2500\u2518   \u2514\u2500\u2500\u2500        V_effective = 9V * 0.50 = 4.50V\n\n75% DUTY CYCLE (Cruise Speed):\n\u250c\u2500\u2500\u2500\u2500\u2500\u2510 \u250c\u2500\u2500\u2500\u2500\u2500\u2510 \u250c\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502     \u2502 \u2502     \u2502 \u2502     \u2502\n\u2518     \u2514\u2500\u2518     \u2514\u2500\u2518     \u2514\u2500        V_effective = 9V * 0.75 = 6.75V\n```\n\n### The Magic of Rotor Inertia and Inductance\nWhen you feed PWM into the L293D's Enable pin (Pin 1), you are pulsing the motor supply ON and OFF nearly 500 times per second. The rotor's heavy mechanical inertia and the coil's electrical inductance prevent the motor from stopping between pulses. Instead, the motor responds to the **time-averaged effective voltage**, spinning smoothly at a speed proportional to the duty cycle!\n\n### Beware the Deadband (Static Friction / Stiction)\nIf you send `analogWrite(enablePin, 20)`, the motor will not spin at all! It will emit a quiet 490Hz humming whine. Why? Mechanical bearings, commutator brushes, and gearbox teeth suffer from **static friction (stiction)**. The motor requires a minimum threshold duty cycle (typically `analogWrite` values of 60 to 80) to break stiction and start moving.",
+      "quickCheck": [
+        {
+          "questionId": "q_l12_05_s01_1",
+          "question": "How does PWM regulate the speed of a DC motor when the supply voltage is fixed at 9V?",
+          "options": [
+            "It rapidly pulses the 9V supply ON and OFF, varying the duty cycle to alter the effective average voltage",
+            "It inserts physical resistors into the circuit using internal relays",
+            "It changes the frequency of the microcontroller crystal oscillator"
+          ],
+          "correctIndex": 0,
+          "explanation": "PWM rapidly switches power ON and OFF, varying the ratio of ON time to period (duty cycle) to control average motor voltage.",
+          "warmupExplanation": "Tapping the gas pedal rapidly simulates variable speed without needing a smaller engine!"
+        },
+        {
+          "questionId": "q_l12_05_s01_2",
+          "question": "What causes a motor to emit a high-pitched humming whine without rotating when fed very low PWM values (e.g. 20)?",
+          "options": [
+            "The average electrical torque is insufficient to overcome static friction (stiction) and gearbox mechanical drag",
+            "The motor's permanent magnets have lost their charge permanently",
+            "Low PWM reverses the direction of gravity inside the motor casing"
+          ],
+          "correctIndex": 0,
+          "explanation": "At low PWM values, the electrical torque cannot overcome the static friction of brushes, bearings, and gears (the motor deadband).",
+          "warmupExplanation": "Think of pushing a heavy box: a tiny nudge won't overcome friction, but a firm push gets it sliding."
+        }
+      ]
+    },
+    {
+      "stepId": "l12_05_s02",
+      "title": "Duty Cycle Physics & Effective Voltage Calculation",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "interactiveConfig": {
+        "title": "PWM Duty Cycle and Voltage Relationship"
+      },
+      "markdownContent": "### Calculating Effective Motor Voltage\n\nThe Arduino `analogWrite()` function accepts values from **0** (0% duty cycle, completely OFF) to **255** (100% duty cycle, fully continuous ON):\n\n$$\\text{Duty Cycle } (\\%) = \\left( \\frac{\\text{PWM Value}}{255} \\right) \\times 100\\%$$\n\nThe effective average voltage delivered to the motor ($V_{\\text{effective}}$) from a supply voltage ($V_{\\text{motor}}$) is:\n\n$$V_{\\text{effective}} = V_{\\text{motor}} \\times \\left( \\frac{\\text{PWM Value}}{255} \\right)$$\n\n### Voltage & Throttle Reference Table (9V Battery Supply):\n\n| `analogWrite` Value | Duty Cycle | Effective Voltage | Motor Operating Regime |\n| :---: | :---: | :---: | :--- |\n| **0** | **0%** | **0.00 V** | Fully Stopped (De-energized) |\n| **40** | **15.7%** | **1.41 V** | Deadband (Coils hum; static friction holds rotor) |\n| **75** | **29.4%** | **2.65 V** | Minimum Reliable Crawl Speed (Stiction overcome) |\n| **128** | **50.2%** | **4.52 V** | Half-Throttle Cruising Speed |\n| **192** | **75.3%** | **6.78 V** | Fast Maneuver Speed |\n| **255** | **100%** | **9.00 V** | Full Throttle Sprint (Maximum RPM and Torque) |\n\n### Why Gradual Speed Ramping Matters\nInstantly jumping from PWM 0 to 255 creates massive stall-level inrush currents (1.2A+) that cause severe power rail dips and mechanical shocks. In robotics, engineers always program **software acceleration ramps** to smoothly step the PWM value up over 200\u2013500 milliseconds."
+    },
+    {
+      "stepId": "l12_05_s03",
+      "title": "Smooth Acceleration, Cruise, and Deceleration Ramp Code",
+      "type": "codeExperiment",
+      "interactiveConfig": {
+        "codeSnippet": "const int enablePin = 9; // PWM pin on Uno\nconst int in1Pin = 8;\nconst int in2Pin = 7;\n\nvoid setup() {\n  pinMode(enablePin, OUTPUT);\n  pinMode(in1Pin, OUTPUT);\n  pinMode(in2Pin, OUTPUT);\n  stopMotor();\n  Serial.begin(9600);\n  Serial.println(F(\"--- PWM Motor Speed Regulation Initialized ---\"));\n}\n\nvoid setMotorSpeed(int speed, bool forward) {\n  digitalWrite(in1Pin, forward ? HIGH : LOW);\n  digitalWrite(in2Pin, forward ? LOW : HIGH);\n  analogWrite(enablePin, constrain(speed, 0, 255));\n}\n\nvoid rampSpeed(int startSpeed, int targetSpeed, bool forward, int stepDelayMs) {\n  int step = (startSpeed < targetSpeed) ? 5 : -5;\n  for (int s = startSpeed; (step > 0) ? (s <= targetSpeed) : (s >= targetSpeed); s += step) {\n    setMotorSpeed(s, forward);\n    delay(stepDelayMs);\n  }\n}"
+      },
+      "markdownContent": "### Clean Motor Control Encapsulation Sketch\n\nHere is production-grade motor control code that encapsulates direction logic, clamps speed values with `constrain()`, and executes smooth acceleration and deceleration ramps.\n\n```cpp\n// PWM Speed Regulation and Ramp Controller\n// Pin 9 is a hardware PWM output connected to L293D Enable 1\nconst int enablePin = 9; // L293D Pin 1 (1,2EN)\nconst int in1Pin    = 8; // L293D Pin 2 (1A)\nconst int in2Pin    = 7; // L293D Pin 7 (2A)\n\nconst int MIN_SPEED = 70;  // Stiction threshold (below this motor just hums)\nconst int MAX_SPEED = 230; // Max continuous cruising speed\n\nvoid setup() {\n  pinMode(enablePin, OUTPUT);\n  pinMode(in1Pin, OUTPUT);\n  pinMode(in2Pin, OUTPUT);\n\n  stopMotor();\n  Serial.begin(9600);\n  Serial.println(F(\"--- PWM Motor Speed Regulation Initialized ---\"));\n}\n\nvoid setMotorSpeed(int speed, bool forward) {\n  // Set directional legs\n  if (forward) {\n    digitalWrite(in1Pin, HIGH);\n    digitalWrite(in2Pin, LOW);\n  } else {\n    digitalWrite(in1Pin, LOW);\n    digitalWrite(in2Pin, HIGH);\n  }\n  // Clamp PWM duty cycle to safe 0-255 bounds\n  int safePwm = constrain(speed, 0, 255);\n  analogWrite(enablePin, safePwm);\n}\n\nvoid stopMotor() {\n  digitalWrite(in1Pin, LOW);\n  digitalWrite(in2Pin, LOW);\n  analogWrite(enablePin, 0);\n}\n\nvoid rampSpeed(int fromSpeed, int toSpeed, bool forward, int stepDelayMs) {\n  int step = (fromSpeed < toSpeed) ? 5 : -5;\n  for (int s = fromSpeed; (step > 0) ? (s <= toSpeed) : (s >= toSpeed); s += step) {\n    setMotorSpeed(s, forward);\n    delay(stepDelayMs);\n  }\n}\n\nvoid loop() {\n  Serial.println(F(\"RAMPING UP: Accelerating forward from MIN to MAX speed...\"));\n  rampSpeed(MIN_SPEED, MAX_SPEED, true, 30); // 30ms per 5 PWM units\n  delay(1500); // Cruise at high speed\n\n  Serial.println(F(\"RAMPING DOWN: Smoothly decelerating to stop...\"));\n  rampSpeed(MAX_SPEED, 0, true, 20);\n  stopMotor();\n  delay(1000);\n\n  Serial.println(F(\"RAMPING UP: Accelerating reverse...\"));\n  rampSpeed(MIN_SPEED, MAX_SPEED, false, 30);\n  delay(1500);\n\n  Serial.println(F(\"RAMPING DOWN: Decelerating reverse to stop...\"));\n  rampSpeed(MAX_SPEED, 0, false, 20);\n  stopMotor();\n  delay(2000);\n}\n```\n\n### Code Breakdown:\n- `analogWrite(enablePin, safePwm)`: Generates a 490 Hz square wave on Pin 9 that gates the L293D Channel 1 outputs at the commanded duty cycle.\n- `constrain(speed, 0, 255)`: Prevents numerical overflows from corrupting the PWM register.\n- `MIN_SPEED = 70`: Skips the non-rotating friction deadband directly to useful mechanical rotation.\n- `rampSpeed()`: Steps the PWM value in small increments of 5 units every 20\u201330 ms, eliminating electrical current spikes and mechanical gear shocks."
+    },
+    {
+      "stepId": "l12_05_s04",
+      "title": "PWM Motor Regulation Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Verify your understanding of PWM duty cycles, effective voltage calculations, and acceleration ramping.",
+      "interactiveConfig": {
+        "question": "If a 9V motor is powered through an L293D with analogWrite(enablePin, 128), what is the approximate effective average voltage across the motor?",
+        "options": [
+          "Approximately 4.5 Volts (50% duty cycle of 9V)",
+          "Exactly 9.0 Volts continuously",
+          "0.5 Volts"
+        ],
+        "correctIndex": 0,
+        "explanation": "An analogWrite value of 128 corresponds to a 50% duty cycle (128 / 255 \u2248 0.50). 50% of 9V is approximately 4.5V.",
+        "questions": [
+          {
+            "question": "If a 9V motor is powered through an L293D with analogWrite(enablePin, 128), what is the approximate effective average voltage across the motor?",
+            "options": [
+              "Approximately 4.5 Volts (50% duty cycle of 9V)",
+              "Exactly 9.0 Volts continuously",
+              "0.5 Volts"
+            ],
+            "correctIndex": 0,
+            "explanation": "An analogWrite value of 128 corresponds to a 50% duty cycle (128 / 255 \u2248 0.50). 50% of 9V is approximately 4.5V."
+          },
+          {
+            "question": "Why is ramping motor speed gradually with software delays preferred over instantaneous 0 to 255 jumps?",
+            "options": [
+              "It prevents huge current surge spikes, mechanical shock to gear teeth, and power rail brownout dips",
+              "It keeps the Arduino sketch from running out of memory",
+              "Motors cannot run at 100% speed unless ramped up for 10 minutes"
+            ],
+            "correctIndex": 0,
+            "explanation": "Smooth acceleration ramps prevent massive inrush stall currents that cause power supply brownout crashes and mechanical gear damage."
+          },
+          {
+            "question": "If your robot motor does not begin spinning until analogWrite() reaches 70, what hardware parameter accounts for this deadband?",
+            "options": [
+              "Static friction (stiction) in the motor bearings, brushes, and mechanical gearbox",
+              "The Arduino USB cable has too much electrical resistance",
+              "The ATmega328P processor is running at half clock speed"
+            ],
+            "correctIndex": 0,
+            "explanation": "Stiction is the initial static friction in bearings, brushes, and gears that requires a minimum threshold torque before motion begins."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

@@ -1,0 +1,22 @@
+{
+  "id": "lesson_12",
+  "title": "Lesson 12 — Motors, H-Bridges & Inductive Physics",
+  "summary": "Master high-current actuator control, inductive kickback flyback diode protection, and dual H-bridge motor direction and speed regulation.",
+  "lessonIds": [
+    "l12_01",
+    "l12_02",
+    "l12_03",
+    "l12_04",
+    "l12_05",
+    "l12_06",
+    "l12_07",
+    "l12_08"
+  ],
+  "isOptional": false,
+  "placementLessonId": null,
+  "prerequisites": [
+    "lesson_11"
+  ],
+  "xpReward": 100,
+  "estimatedMinutes": 50
+}

@@ -251,34 +251,34 @@ void main() {
       await profileRepo.saveProfile(testProfile);
       await profileRepo.setActiveProfile(testProfile.id);
 
-      // Pre-complete 11 out of 12 sub-lessons of Lesson 1
+      // Pre-complete 15 out of 16 sub-lessons of Lesson 1
       final preCompleted = {
-        for (int i = 1; i <= 11; i++) 'l01_${i.toString().padLeft(2, '0')}'
+        for (int i = 1; i <= 15; i++) 'l01_${i.toString().padLeft(2, '0')}'
       };
 
       var progress = localDataSource.getProgress('learner_course_completion');
       progress = progress.copyWith(
-        totalXp: 110,
+        totalXp: 150,
         completedLessonIds: preCompleted,
       );
       await localDataSource.saveProgress(progress);
 
       await tester.pumpWidget(
         createTestWidget(
-          child: const LessonDetailScreen(lessonId: 'l01_12'),
+          child: const LessonDetailScreen(lessonId: 'l01_16'),
         ),
       );
       await tester.pumpAndSettle();
 
-      // Advance through steps of l01_12
+      // Advance through steps of l01_16
       while (find.text('Next Step').evaluate().isNotEmpty) {
         await tester.ensureVisible(find.text('Next Step'));
         await tester.tap(find.text('Next Step'));
         await tester.pumpAndSettle();
       }
 
-      // Complete last sub-lesson (l01_12 has 15 XP reward)
-      final completeButton = find.text('Complete Lesson (+15 XP)');
+      // Complete last sub-lesson (l01_16 has 25 XP reward)
+      final completeButton = find.text('Complete Lesson (+25 XP)');
       await tester.ensureVisible(completeButton);
       await tester.tap(completeButton);
       await tester.pumpAndSettle();
@@ -289,11 +289,11 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify that course 'lesson_01' was completed and awarded +100 XP
-      // Total XP should be 110 (pre) + 15 (lesson) + 100 (course) = 225
+      // Total XP should be 150 (pre) + 25 (lesson) + 100 (course) = 275
       final updated = localDataSource.getProgress('learner_course_completion');
-      expect(updated.completedLessonIds, contains('l01_12'));
+      expect(updated.completedLessonIds, contains('l01_16'));
       expect(updated.completedCourseIds, contains('lesson_01'));
-      expect(updated.totalXp, equals(225));
+      expect(updated.totalXp, equals(275));
     });
   });
 }

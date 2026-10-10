@@ -1,0 +1,114 @@
+{
+  "id": "l10_02",
+  "title": "The 4-Wire SPI Bus: MOSI, MISO, SCK, and CS",
+  "summary": "Explore the dedicated four lines of the SPI bus and understand how chip select avoids addressing overhead.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_10",
+  "sortOrder": 2,
+  "isOptional": false,
+  "prerequisites": [
+    "l10_01"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l10_02_s01",
+      "title": "Unraveling the 4-Wire Cable",
+      "type": "story",
+      "markdownContent": "### The 4 Dedicated Signal Pathways\nUnlike I2C where data traveled bidirectionally on a single SDA wire, SPI divides responsibilities across four specialized lines:\n\n1. **MOSI (Master Out, Slave In):** The outward data stream. The Arduino controller uses MOSI to send commands, configuration registers, and display pixels to the peripheral.\n2. **MISO (Master In, Slave Out):** The inward return stream. The peripheral uses MISO to transmit sensor readings, RFID card IDs, or status bytes back to the Arduino.\n3. **SCK (Serial Clock):** The synchronized heartbeat. Driven solely by the master Arduino, each clock pulse latches exactly one bit on the data lines.\n4. **CS / SS (Chip Select / Slave Select):** The dedicated private line. Each peripheral chip has its own CS line connected to a separate Arduino digital pin.\n\n```\nMaster (Uno) ──── MOSI (Pin 11: Data Out) ────► Target (Display / Sensor)\n             ◄─── MISO (Pin 12: Data In)  ────\n             ──── SCK  (Pin 13: Clock)    ────►\n             ──── CS   (Pin 10: Select)   ────►\n```\n\n### The Magic of Active-Low Chip Select\nIn most digital chips, the Chip Select pin is **active-low** (often written as $\\overline{\\text{CS}}$ or $\\text{CS\\#}$):\n- When CS is **HIGH (5V)**, the peripheral is asleep. Crucially, its MISO pin enters a **High-Impedance (Hi-Z)** state—acting like an open switch disconnected from the bus!\n- When CS is pulled **LOW (0V)**, the peripheral wakes up and engages its MISO output transistor to drive data back to the Arduino.",
+      "quickCheck": [
+        {
+          "questionId": "qc_l10_02_s01_q1",
+          "question": "Which SPI signal line carries data bytes from the peripheral chip back into the Arduino microcontroller?",
+          "options": [
+            "MISO (Master In Slave Out)",
+            "MOSI (Master Out Slave In)",
+            "SCK (Serial Clock)"
+          ],
+          "correctIndex": 0,
+          "explanation": "MISO stands for Master In Slave Out: data originates at the peripheral (slave) and flows into the Arduino (master).",
+          "warmupExplanation": "Look closely at the acronym: Master IN, Slave OUT. The arrow points toward the Master."
+        },
+        {
+          "questionId": "qc_l10_02_s01_q2",
+          "question": "What electrical state does a peripheral's MISO pin enter when its Chip Select (CS) pin is held HIGH (inactive)?",
+          "options": [
+            "High-Impedance (Hi-Z) tri-state, disconnecting electrically from the shared bus",
+            "Continuous 5V HIGH output",
+            "Ground 0V short circuit"
+          ],
+          "correctIndex": 0,
+          "explanation": "Tri-state High-Impedance (Hi-Z) disconnects the pin electrically so other peripherals can share the exact same MISO wire without interference.",
+          "warmupExplanation": "Think of Hi-Z like lifting a wire off the breadboard—the pin neither pushes current nor sinks current."
+        }
+      ]
+    },
+    {
+      "stepId": "l10_02_s02",
+      "title": "SPI Bus Topology and Tri-State Logic",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "chipSelectArbitrator",
+      "markdownContent": "### Multi-Peripheral SPI Architecture\nHow do multiple SPI devices share the bus without address collisions?\n\nPeripherals share the **MOSI**, **MISO**, and **SCK** lines in parallel. However, each peripheral has its own dedicated **Chip Select (CS)** line connected to a unique GPIO pin on the Arduino Uno:\n\n```\nArduino Uno (Master)\n  Pin 11 (MOSI) ──┬──────────────────┬─────────────────► Shared Outward Data\n  Pin 12 (MISO) ◄─┼──────────────────┼─────────────────  Shared Return Data\n  Pin 13 (SCK)  ──┼──────────────────┼─────────────────► Shared Clock Pulse\n                  │                  │\n  Pin 10 (CS1)  ──┴──► [ Device 1 ]  │   (CS1 = LOW:  Device 1 Active)\n  Pin 9  (CS2)  ─────────────────────┴──► [ Device 2 ]  (CS2 = HIGH: Device 2 in Hi-Z!)\n```\n\n### The Danger of Bus Contention\n> [!CAUTION]\n> Never drive two Chip Select pins LOW at the same instant! If Device 1 attempts to output a 5V HIGH on MISO while Device 2 simultaneously outputs a 0V LOW on MISO, a direct short circuit occurs between the output driver transistors, corrupting data and risking chip burnout!\n\n### Interactive Bus Arbitrator\nToggle the Chip Select lines in the simulator below to wake up peripherals, observe the high-impedance tri-state standby, and witness how independent CS lines arbitrate shared bus traffic!",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "l10_02_s03",
+      "title": "Manual Chip Select Arbitration Sketch",
+      "type": "codeExperiment",
+      "markdownContent": "### Mastering Chip Select in Code\nIn SPI programming, controlling which peripheral listens is as simple as toggling a standard digital GPIO pin.\n\nHere is a complete Arduino sketch showing how an engineer coordinates two SPI peripherals using manual Chip Select toggling:\n\n```cpp\n#include <SPI.h>\n\nconst int CS_DISPLAY = 10; // Dedicated Chip Select for LED Matrix\nconst int CS_SENSOR  = 9;  // Dedicated Chip Select for RFID/Sensor\n\nvoid setup() {\n  Serial.begin(9600);\n  while (!Serial);\n\n  // CRITICAL: Configure CS pins as OUTPUT and set HIGH before SPI.begin()!\n  pinMode(CS_DISPLAY, OUTPUT);\n  pinMode(CS_SENSOR, OUTPUT);\n  digitalWrite(CS_DISPLAY, HIGH); // De-select Display (Hi-Z state)\n  digitalWrite(CS_SENSOR, HIGH);  // De-select Sensor (Hi-Z state)\n\n  SPI.begin(); // Initializes hardware SPI on Pins 11, 12, 13\n  Serial.println(\"SPI Bus Initialized with 2 CS lines.\");\n}\n\nvoid loop() {\n  // 1. TALK TO DISPLAY\n  digitalWrite(CS_DISPLAY, LOW);  // Wake up Display!\n  byte displayReply = SPI.transfer(0x55); // Send test byte 0x55\n  digitalWrite(CS_DISPLAY, HIGH); // Put Display back to sleep\n\n  delayMicroseconds(5);\n\n  // 2. TALK TO SENSOR\n  digitalWrite(CS_SENSOR, LOW);   // Wake up Sensor!\n  byte sensorReply = SPI.transfer(0xAA);  // Send command byte 0xAA\n  digitalWrite(CS_SENSOR, HIGH);  // Put Sensor back to sleep\n\n  Serial.print(\"Display Reply: 0x\");\n  Serial.print(displayReply, HEX);\n  Serial.print(\" | Sensor Reply: 0x\");\n  Serial.println(sensorReply, HEX);\n\n  delay(1000);\n}\n```\n\n### Code Breakdown:\n- `digitalWrite(CS_..., HIGH)`: Setting CS HIGH before `SPI.begin()` guarantees that neither peripheral attempts to drive MISO during system boot.\n- `digitalWrite(CS_DISPLAY, LOW)`: Wakes up only the display. The sensor remains completely inactive in Hi-Z mode.\n- `SPI.transfer(value)`: Clocks 8 bits out on MOSI while simultaneously reading 8 bits on MISO.",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "l10_02_s04",
+      "title": "4-Wire SPI Bus Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your understanding of the four SPI lines, chip select arbitration, and tri-state standby.",
+      "interactiveConfig": {
+        "question": "What must the Arduino do to initiate communication with a specific SPI peripheral?",
+        "options": [
+          "Drive that peripheral's dedicated Chip Select (CS) pin LOW",
+          "Send a 7-bit hexadecimal address over the clock line",
+          "Cut power to all other chips on the breadboard"
+        ],
+        "correctIndex": 0,
+        "explanation": "Because SPI peripherals use active-low chip select lines, pulling the specific CS pin to 0V (LOW) wakes the chip up to communicate.",
+        "questions": [
+          {
+            "question": "What must the Arduino do to initiate communication with a specific SPI peripheral?",
+            "options": [
+              "Drive that peripheral's dedicated Chip Select (CS) pin LOW",
+              "Send a 7-bit hexadecimal address over the clock line",
+              "Cut power to all other chips on the breadboard"
+            ],
+            "correctIndex": 0,
+            "explanation": "Because SPI peripherals use active-low chip select lines, pulling the specific CS pin to 0V (LOW) wakes the chip up to communicate."
+          },
+          {
+            "question": "If you connect three SPI devices to an Arduino Uno, how many total signal lines are needed?",
+            "options": [
+              "6 signal lines: 3 shared lines (MOSI, MISO, SCK) plus 3 individual CS lines",
+              "12 individual signal lines",
+              "Only 2 signal lines total"
+            ],
+            "correctIndex": 0,
+            "explanation": "The 3 high-speed bus lines (MOSI, MISO, SCK) are shared across all devices, while each device requires 1 dedicated CS line: 3 + 3 = 6 lines."
+          },
+          {
+            "question": "What happens if two SPI devices have their CS lines pulled LOW at the exact same moment?",
+            "options": [
+              "Bus contention occurs: both chips attempt to drive the MISO line simultaneously, corrupting data and risking electrical damage",
+              "Both devices communicate twice as fast",
+              "The Arduino resets its clock frequency to zero"
+            ],
+            "correctIndex": 0,
+            "explanation": "If multiple devices drive MISO simultaneously, opposing high and low push-pull transistors clash, creating bus contention."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

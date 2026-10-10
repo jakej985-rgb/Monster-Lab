@@ -1,0 +1,143 @@
+{
+  "id": "l09_06",
+  "title": "Simultaneous LCD + RTC Dual Peripheral Operations",
+  "summary": "Build an integrated real-time monster habitat chronometer displaying live calendar dates, timestamps, and precision temperature on a 16x2 LCD.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_09",
+  "sortOrder": 6,
+  "isOptional": false,
+  "prerequisites": [
+    "l09_05"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_07",
+    "comp_10"
+  ],
+  "steps": [
+    {
+      "stepId": "l09_06_s01",
+      "title": "The Monster Habitat Chronometer",
+      "type": "story",
+      "markdownContent": "### Bringing the Lab to Life\nNow that your I2C bus scanner has verified that both your 16x2 Character LCD (`comp_07` at `0x27`) and DS3231 Precision Real-Time Clock (`comp_10` at `0x68`) are responding with clean ACK pulses on the breadboard highway, it is time to build our mission-critical project: the **Automated Monster Habitat Chronometer**!\n\nThis system must continuously:\n1. Read the exact calendar date, hours, minutes, and seconds from the DS3231.\n2. Read the high-precision internal die temperature of the DS3231 TCXO thermometer.\n3. Render crisp, human-readable telemetry onto the 16x2 LCD screen in real time.\n\n### The Coordination Conundrum\nRemember: the Arduino Uno has only one Two-Wire Interface engine. It cannot physically speak to the LCD and the RTC at the exact same microsecond! Instead, our firmware must act like an expert orchestra conductor:\n- **Phase 1 (The Clock Query):** The Arduino opens a transaction with `0x68`, requests 7 time bytes, and closes the session with a STOP condition.\n- **Phase 2 (The Data Translation):** The Arduino CPU converts raw BCD registers into decimal numbers and formats text strings.\n- **Phase 3 (The Screen Update):** The Arduino opens a transaction with `0x27`, transmitting display commands and ASCII characters over the exact same two wires!\n\nAll of this occurs in less than **4 milliseconds**, leaving the bus idle and ready for other robot tasks for the remaining 996 milliseconds of every second!",
+      "quickCheck": [
+        {
+          "questionId": "q_l09_06_s01_1",
+          "question": "How does the Arduino Uno alternate between reading data from the RTC (0x68) and updating the LCD screen (0x27)?",
+          "options": [
+            "It finishes the complete transaction with the RTC (START -> 0x68 -> read -> STOP) before opening a new transaction with the LCD (START -> 0x27 -> write -> STOP)",
+            "It sends time data directly to the LCD without going through the microcontroller",
+            "It unplugs the RTC jumper wires while the screen is rendering text"
+          ],
+          "correctIndex": 0,
+          "explanation": "Because I2C is a shared bus, each communication session must be framed by START and STOP conditions. The controller talks to one peripheral at a time sequentially.",
+          "warmupExplanation": "Remember from Lesson 1 of Course 9: the controller uses time-division polling to talk to devices one after another."
+        },
+        {
+          "questionId": "q_l09_06_s01_2",
+          "question": "What common programming mistake causes an LCD screen to flicker unpleasantly when updating once every second?",
+          "options": [
+            "Calling lcd.clear() repeatedly inside the loop instead of overwriting characters at fixed coordinates",
+            "Setting the screen contrast potentiometer too tight",
+            "Connecting the LCD to 5V power instead of 3.3V"
+          ],
+          "correctIndex": 0,
+          "explanation": "Calling lcd.clear() turns off all liquid crystal pixels and resets internal memory, causing a visible flash/blink. Instead, write new characters directly over old ones using lcd.setCursor().",
+          "warmupExplanation": "Clearing the screen every cycle takes several milliseconds of blank screen time, which the human eye perceives as distracting flicker."
+        }
+      ]
+    },
+    {
+      "stepId": "l09_06_s02",
+      "title": "Bus Arbitration & Non-Blocking Refresh Timing",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### The 1-Second Telemetry Execution Cycle\n\nHere is how time-division multiplexing coordinates our dual peripherals in real time:\n\n```\nTIMELINE (Repeats Every 1000 Milliseconds):\n\n0 ms ──► [ TRANSACTION A: RTC (0x68) ] ──► ~0.8 ms duration\n         ├── START ──► Addr 0x68 (Write 0x00 Pointer) ──► STOP\n         └── START ──► Addr 0x68 (Read 7 BCD Bytes)   ──► STOP\n\n1 ms ──► [ CPU DATA PROCESSING ] ──► ~0.2 ms duration\n         └── Decode BCD -> Format Strings: \"14:30:15\" & \"24.5C\"\n\n2 ms ──► [ TRANSACTION B: LCD (0x27) ] ──► ~3.0 ms duration\n         ├── START ──► Addr 0x27 (Set Cursor 0,0) ──► STOP\n         ├── START ──► Addr 0x27 (Print Time String) ──► STOP\n         ├── START ──► Addr 0x27 (Set Cursor 0,1) ──► STOP\n         └── START ──► Addr 0x27 (Print Temp String) ──► STOP\n\n5 ms ──► [ BUS IDLE (SDA & SCL Pulled HIGH) ] ──► ~995 ms remaining!\n         └── Microcontroller is free to read buttons, drive motors, or check alarms!\n```\n\n### Anti-Flicker Screen Refresh Technique\nNotice what we **do not do**: we never call `lcd.clear()`! Calling `lcd.clear()` wipes the entire HD44780 controller memory, which forces the liquid crystal molecules to relax and then re-align, creating an annoying strobing effect. By using `lcd.setCursor(col, row)` and printing formatted strings with constant field widths (e.g. `\"14:05:09\"`), new characters smoothly overwrite existing pixels with zero flicker!",
+      "interactiveConfig": {
+        "nodes": [
+          {
+            "id": "step_rtc",
+            "label": "1. Query RTC (0x68)\nRead 7 BCD Bytes",
+            "icon": "timer",
+            "role": "Arduino reads seconds, minutes, hours, date, and internal die temperature.",
+            "color": "#00E5FF"
+          },
+          {
+            "id": "step_cpu",
+            "label": "2. CPU Processing\nBCD Decoding & Math",
+            "icon": "memory",
+            "role": "Converts BCD nibbles into formatted strings with leading zeros.",
+            "color": "#FFB300"
+          },
+          {
+            "id": "step_lcd",
+            "label": "3. Command LCD (0x27)\nRender Telemetry",
+            "icon": "display",
+            "role": "Transmits text data across the same SDA/SCL bus to update the display.",
+            "color": "#76FF03"
+          }
+        ]
+      }
+    },
+    {
+      "stepId": "l09_06_s03",
+      "title": "The Master Dual-Peripheral Habitat Chronometer Sketch",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### The Master Dual-Peripheral Sketch\n\nUpload this complete, working sketch to your Arduino Uno. It coordinates both the DS3231 RTC (`comp_10`) and 16x2 LCD (`comp_07`) over the shared bus without external clock libraries:\n\n```cpp\n#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n\nconst byte LCD_ADDR   = 0x27;\nconst byte DS3231_ADDR = 0x68;\n\nLiquidCrystal_I2C lcd(LCD_ADDR, 16, 2);\n\nunsigned long lastTick = 0;\nconst unsigned long TICK_INTERVAL = 1000; // Update once per second\n\n// Convert BCD to Decimal integer\nbyte bcdToDec(byte bcd) {\n  return ((bcd >> 4) * 10) + (bcd & 0x0F);\n}\n\nvoid setup() {\n  Wire.begin();\n  Serial.begin(9600);\n  \n  lcd.init();\n  lcd.backlight();\n  lcd.setCursor(0, 0);\n  lcd.print(\"MONSTER LAB RTC\");\n  lcd.setCursor(0, 1);\n  lcd.print(\"INITIALIZING...\");\n  delay(1000);\n  lcd.clear();\n}\n\nvoid loop() {\n  // Non-blocking 1-second cadence\n  if (millis() - lastTick >= TICK_INTERVAL) {\n    lastTick = millis();\n    \n    // 1. Read Time from DS3231 (0x68)\n    Wire.beginTransmission(DS3231_ADDR);\n    Wire.write(0x00); // Point to register 0x00 (Seconds)\n    Wire.endTransmission();\n    \n    Wire.requestFrom(DS3231_ADDR, (byte)7);\n    if (Wire.available() >= 7) {\n      byte sec  = bcdToDec(Wire.read() & 0x7F);\n      byte min  = bcdToDec(Wire.read());\n      byte hr   = bcdToDec(Wire.read() & 0x3F);\n      Wire.read(); // Skip day of week\n      byte date = bcdToDec(Wire.read());\n      byte mon  = bcdToDec(Wire.read() & 0x1F);\n      byte yr   = bcdToDec(Wire.read());\n      \n      // 2. Read Temperature Registers (0x11 and 0x12)\n      Wire.beginTransmission(DS3231_ADDR);\n      Wire.write(0x11);\n      Wire.endTransmission();\n      Wire.requestFrom(DS3231_ADDR, (byte)2);\n      int tempMSB = Wire.read();\n      int tempLSB = Wire.read() >> 6; // Upper 2 bits = fractional 0.25 C\n      float tempC = tempMSB + (tempLSB * 0.25);\n      \n      // 3. Render Line 1: TIME [HH:MM:SS]\n      lcd.setCursor(0, 0);\n      lcd.print(\"TIME: \");\n      if (hr < 10) lcd.print('0');\n      lcd.print(hr);\n      lcd.print(':');\n      if (min < 10) lcd.print('0');\n      lcd.print(min);\n      lcd.print(':');\n      if (sec < 10) lcd.print('0');\n      lcd.print(sec);\n      \n      // 4. Render Line 2: DATE & TEMP [DD/MM  24.5C]\n      lcd.setCursor(0, 1);\n      if (date < 10) lcd.print('0');\n      lcd.print(date);\n      lcd.print('/');\n      if (mon < 10) lcd.print('0');\n      lcd.print(mon);\n      lcd.print(\"  \");\n      lcd.print(tempC, 1);\n      lcd.print((char)223); // Degree symbol in HD44780 font ROM\n      lcd.print('C');\n    }\n  }\n}\n```\n\n### Code Deconstruction:\n- `(char)223`: Character code `223` in the LCD controller's internal ROM represents the degree symbol (`°`).\n- `lcd.setCursor(0, 0)`: Places the writing cursor at the top-left coordinate, completely avoiding `lcd.clear()` and eliminating screen flicker.\n- `Wire.requestFrom(DS3231_ADDR, 2)`: Demonstrates reading internal TCXO temperature registers `0x11` and `0x12` seamlessly during the same loop iteration.",
+      "interactiveConfig": {
+        "codeSnippet": "Wire.beginTransmission(0x68);\nWire.write(0x00);\nWire.endTransmission();\nWire.requestFrom(0x68, 7);\n// Decode BCD and render on LCD (0x27)\nlcd.setCursor(0, 0);\nlcd.print(timeString);"
+      }
+    },
+    {
+      "stepId": "l09_06_s04",
+      "title": "Dual-Device Integration Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your understanding of simultaneous dual-peripheral bus coordination, non-blocking timing, and display formatting.",
+      "interactiveConfig": {
+        "question": "How does the Arduino firmware prevent bus contention when interacting with both the LCD and RTC?",
+        "options": [
+          "It executes individual, sequentially framed transactions (START, address, transfer, STOP) for each device one at a time",
+          "It uses two completely separate clock signals generated by two different timers",
+          "It disconnects the power wire to the LCD while reading the clock"
+        ],
+        "correctIndex": 0,
+        "explanation": "The controller uses sequential bus transactions: it finishes its transmission with the RTC and releases the bus before opening a new transaction with the LCD.",
+        "questions": [
+          {
+            "question": "How does the Arduino firmware prevent bus contention when interacting with both the LCD and RTC?",
+            "options": [
+              "It executes individual, sequentially framed transactions (START, address, transfer, STOP) for each device one at a time",
+              "It uses two completely separate clock signals generated by two different timers",
+              "It disconnects the power wire to the LCD while reading the clock"
+            ],
+            "correctIndex": 0,
+            "explanation": "The controller uses sequential bus transactions: it finishes its transmission with the RTC and releases the bus before opening a new transaction with the LCD."
+          },
+          {
+            "question": "Why should you avoid calling lcd.clear() inside a periodic display update loop?",
+            "options": [
+              "It turns off all display pixels and clears internal RAM, causing visible screen flicker each time it updates",
+              "It permanently damages the liquid crystal glass",
+              "It causes the Arduino Uno to reboot"
+            ],
+            "correctIndex": 0,
+            "explanation": "lcd.clear() blanks the entire screen before redrawing, which the human eye sees as an annoying flash. Overwriting characters with lcd.setCursor() provides smooth, flicker-free updates."
+          },
+          {
+            "question": "How does using non-blocking millis() timing improve multi-device robotics systems?",
+            "options": [
+              "It leaves the microcontroller CPU free to process other tasks during the intervals between periodic sensor readings",
+              "It halves the electrical resistance of the breadboard wires",
+              "It doubles the memory capacity of the DS3231 clock"
+            ],
+            "correctIndex": 0,
+            "explanation": "Non-blocking millis() timing ensures the loop() continues executing rapidly, allowing your robot to respond to buttons, safety sensors, or alarms without being frozen by delay()."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

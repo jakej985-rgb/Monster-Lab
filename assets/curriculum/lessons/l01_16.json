@@ -1,0 +1,163 @@
+{
+  "id": "l01_16",
+  "title": "Course 1 Review & Microcontroller Master Challenge",
+  "summary": "You have completed your comprehensive tour of the microcontroller universe! Put on your detective hat and prove your skills in the Grand Capstone Exam.",
+  "tier": "rookie",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_01",
+  "sortOrder": 16,
+  "isOptional": false,
+  "prerequisites": [
+    "l01_15"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_nano",
+    "comp_mega",
+    "comp_esp32",
+    "comp_esp8266"
+  ],
+  "steps": [
+    {
+      "stepId": "l01_16_s01",
+      "title": "Course 1 Master Recap",
+      "type": "story",
+      "markdownContent": "Hooray! 🎉 You have completed your tour of the entire microcontroller universe!\n\nLet's review the big ideas you mastered:\n- The **Arduino Uno** is a microcontroller development board that serves as the brain of your robot.\n- The **Arduino Family** includes the compact breadboard-friendly **Nano** and the 54-pin powerhouse **Mega 2560**.\n- The **IoT Revolution** introduced the **ESP8266** and dual-core 240 MHz **ESP32** with built-in Wi-Fi and Bluetooth.\n- **Logic Voltages**: Classic Arduinos run at **5V**, while modern IoT chips run at **3.3V**. Always protect 3.3V inputs with level shifters or voltage dividers!\n- **Inputs** gather senses from the world; **Outputs** perform physical actions.\n- **Digital** signals have two states (HIGH/LOW); **Analog** signals cover a smooth continuous range.\n- Circuits require a complete loop from **Power (+5V)** through components and back to **Ground (GND)**.\n\nPut on your detective hat and get ready to prove your skills in the Grand Monster Lab Challenge!",
+      "quickCheck": [
+        {
+          "questionId": "l01_16_s01_q1",
+          "question": "What is the main role of a microcontroller development board in robotics?",
+          "options": [
+            "To act as the brain reading sensors and controlling outputs",
+            "To serve as a heavy paperweight",
+            "To play loud music like a radio"
+          ],
+          "correctIndex": 0,
+          "explanation": "The microcontroller is the brain of your robot, taking in sensor data and commanding motors and lights!",
+          "warmupExplanation": "Remember our main big idea: the microcontroller board is the brain that brings robots to life."
+        },
+        {
+          "questionId": "l01_16_s01_q2",
+          "question": "Why do we take quizzes and challenges at the end of a lesson?",
+          "options": [
+            "To celebrate what we learned and prove our new skills",
+            "To erase our memory of what we did",
+            "To lose points and start over"
+          ],
+          "correctIndex": 0,
+          "explanation": "Challenges help review key concepts, celebrate your progress, and earn XP!",
+          "warmupExplanation": "Reviews help lock in your new skills and show how much you've learned as a young engineer."
+        }
+      ]
+    },
+    {
+      "stepId": "l01_16_s02",
+      "title": "Grand Monster Lab Architecture Review",
+      "type": "visualExplanation",
+      "markdownContent": "### Master Review: The Pillars of Microcontroller Engineering 🏛️\n\nYou've learned everything needed to bring machines to life! Here is your quick-reference sheet:\n\n```\n┌────────────────────────────────────────────────────────────────────────┐\n│                        COURSE 1 CHEAT SHEET                            │\n├────────────────────────────────────────────────────────────────────────┤\n│ 1. THE BRAIN:      Microcontroller CPU & Flash memory (Uno/Nano/Mega)  │\n│ 2. WIRELESS IOT:   ESP8266 (WiFi) & ESP32 (WiFi + Bluetooth BLE)      │\n│ 3. VOLTAGES:       5V (Arduino classic) vs 3.3V (IoT chips & sensors)  │\n│ 4. INPUTS:         Sensors that bring information IN (Buttons, Light)  │\n│ 5. OUTPUTS:        Actuators that send actions OUT (LEDs, Motors)      │\n│ 6. DIGITAL:        Two discrete states: HIGH or LOW                    │\n│ 7. ANALOG:         Continuous voltages: 0V to 5V (Reads 0 to 1023)     │\n│ 8. CIRCUITS:       Unbroken loops: Power (+5V) ➔ Load ➔ Ground (GND)   │\n└────────────────────────────────────────────────────────────────────────┘\n```\n\n#### The Engineer's Mindset:\n- Plan before you build.\n- Predict before you test.\n- Check power, pin match, and ground when bugs arise.",
+      "interactiveConfig": {
+        "boardsCovered": ["comp_uno", "comp_nano", "comp_mega", "comp_esp32", "comp_esp8266"]
+      }
+    },
+    {
+      "stepId": "l01_16_s03",
+      "title": "Mini Capstone Inspection Challenge",
+      "type": "physicalTask",
+      "interactiveWidgetType": "boardLabelDragDrop",
+      "markdownContent": "### Capstone Bench Challenge: Complete Board Inspection! 🏆\n\nBefore you take your final graduation exam, prove that you can identify every key system on your Arduino board without hesitation!\n\nDrag each landmark badge to its matching system on the Arduino Uno!",
+      "interactiveConfig": {
+        "targets": [
+          {
+            "id": "usb",
+            "label": "USB Connection",
+            "hint": "Silver port linking to PC for code upload & 5V power"
+          },
+          {
+            "id": "dc_jack",
+            "label": "DC Power Barrel Jack",
+            "hint": "Black barrel jack for mobile battery packs"
+          },
+          {
+            "id": "digital_pins",
+            "label": "Digital Pins (0–13)",
+            "hint": "Header pins for HIGH/LOW binary signals"
+          },
+          {
+            "id": "analog_pins",
+            "label": "Analog Pins (A0–A5)",
+            "hint": "Header pins for smooth continuous analog signals"
+          }
+        ]
+      }
+    },
+    {
+      "stepId": "l01_16_s04",
+      "title": "Course 1 Final Graduation Quiz",
+      "type": "quizCheckpoint",
+      "markdownContent": "Answer these graduation questions to complete Course 1 and earn your Master Rookie Engineer XP!",
+      "interactiveConfig": {
+        "question": "What is the Arduino Uno?",
+        "options": [
+          "A microcontroller development board that acts as a robot brain",
+          "A mechanical toy car",
+          "A computer monitor"
+        ],
+        "correctIndex": 0,
+        "explanation": "The Arduino Uno is a microcontroller development board that acts as the brain for your robot projects.",
+        "questions": [
+          {
+            "question": "What is the Arduino Uno?",
+            "options": [
+              "A microcontroller development board that acts as a robot brain",
+              "A mechanical toy car",
+              "A computer monitor"
+            ],
+            "correctIndex": 0,
+            "explanation": "The Arduino Uno is a microcontroller development board that acts as the brain for your robot projects."
+          },
+          {
+            "question": "Which Arduino board plugs directly into a solderless breadboard?",
+            "options": [
+              "Arduino Nano",
+              "Arduino Uno",
+              "Arduino Mega"
+            ],
+            "correctIndex": 0,
+            "explanation": "The Arduino Nano has DIP header pins on the bottom, allowing it to press directly into breadboards."
+          },
+          {
+            "question": "What built-in features make the ESP32 ideal for modern IoT robotics?",
+            "options": [
+              "Dual-core high speed processor with built-in Wi-Fi and Bluetooth",
+              "It runs on steam power",
+              "It produces cold water"
+            ],
+            "correctIndex": 0,
+            "explanation": "The ESP32 features dual 240 MHz cores along with 2.4 GHz Wi-Fi and Bluetooth wireless radios."
+          },
+          {
+            "question": "Why should you NOT connect a 5V output pin directly to a 3.3V microcontroller input?",
+            "options": [
+              "The excess voltage can damage or destroy the sensitive 3.3V chip",
+              "Because 5V is too quiet",
+              "Because the wires will change color"
+            ],
+            "correctIndex": 0,
+            "explanation": "3.3V chips cannot tolerate 5V input pressures and require voltage dividers or level shifters for protection."
+          },
+          {
+            "question": "What does GND stand for in an electronic circuit?",
+            "options": [
+              "Ground — the safe return path for electric current",
+              "Green Night Light",
+              "Giant Number Dial"
+            ],
+            "correctIndex": 0,
+            "explanation": "Ground (GND) is the 0V reference point and the essential return path for electrical current."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 25
+}

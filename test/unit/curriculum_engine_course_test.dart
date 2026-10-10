@@ -33,9 +33,9 @@ void main() {
       await engine.initialize();
     });
 
-    test('Loads all 10 courses from disk assets', () async {
+    test('Loads all 14 courses from disk assets', () async {
       final courses = await engine.getCourses();
-      expect(courses.length, equals(10));
+      expect(courses.length, equals(14));
 
       final courseIds = courses.map((c) => c.id).toSet();
       expect(
@@ -51,13 +51,17 @@ void main() {
             'lesson_06',
             'lesson_07',
             'lesson_08',
+            'lesson_09',
+            'lesson_10',
+            'lesson_11',
+            'lesson_12',
           ]));
     });
 
     test('getCourseById returns specific course', () async {
       final l01 = await engine.getCourseById('lesson_01');
       expect(l01.id, equals('lesson_01'));
-      expect(l01.lessonIds.length, equals(12));
+      expect(l01.lessonIds.length, equals(16));
 
       final cf = await engine.getCourseById('coding_foundations');
       expect(cf.id, equals('coding_foundations'));

@@ -1,0 +1,119 @@
+{
+  "id": "l12_03",
+  "title": "The H-Bridge Circuit: Bidirectional Motor Direction Switching",
+  "summary": "Explore the classic 4-switch H-Bridge topology, bidirectional current reversal, dynamic braking, and critical shoot-through prevention.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_12",
+  "sortOrder": 3,
+  "isOptional": false,
+  "prerequisites": [
+    "l12_02"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_33"
+  ],
+  "steps": [
+    {
+      "stepId": "l12_03_s01",
+      "title": "Reversing the Polarity: The H-Bridge Architecture",
+      "type": "story",
+      "markdownContent": "### Beyond One-Way Motion: The Need for Bidirectional Drive\n\nA single transistor switch can turn a motor ON or OFF, but current can only travel through the motor in one direction. That's fine for an electric desk fan, but useless for a mobile robot! A mobile robot must drive forward, reverse out of dead ends, spin in place, and execute precision maneuvers.\n\nHow do you reverse a DC motor? By swapping the polarity of its terminals! If terminal A is positive and terminal B is negative, the motor spins clockwise. If you swap them so terminal B is positive and terminal A is negative, the magnetic force (Lorentz Force) pushes in reverse, spinning the shaft counter-clockwise.\n\n```\n       +V Power Rail                   +V Power Rail\n           \u2502                               \u2502\n       \u250c\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2510                       \u250c\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2510\n     [Q1]     [Q3]                   [Q1]     [Q3]\n       \u2502       \u2502                       \u2502       \u2502\n       \u251c\u2500\u2500[M]\u2500\u2500\u2524 (Current: A -> B)     \u251c\u2500\u2500[M]\u2500\u2500\u2524 (Current: B -> A)\n       \u2502 (CW)  \u2502                       \u2502 (CCW) \u2502\n     [Q2]     [Q4]                   [Q2]     [Q4]\n       \u2514\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2518                       \u2514\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2518\n           \u2502                               \u2502\n          GND                             GND\n     FORWARD ROTATION                REVERSE ROTATION\n     (Q1 & Q4 CLOSED)                (Q2 & Q3 CLOSED)\n```\n\n### The H-Bridge Solution\n\nManually unplugging and swapping motor wires on a moving robot is impossible. In electronics, the standard solution is an **H-Bridge circuit**\u2014an arrangement of four solid-state switches (transistors or MOSFETs) forming the shape of the letter **H**, with the DC motor bridging the center horizontal bar.\n\nBy selectively commanding pairs of switches, an H-Bridge provides complete control over direction, coasting, and rapid dynamic braking!",
+      "quickCheck": [
+        {
+          "questionId": "q_l12_03_s01_1",
+          "question": "How does an H-bridge reverse the rotational direction of a DC motor?",
+          "options": [
+            "By reversing the polarity of the voltage and direction of current flowing through the motor terminals",
+            "By physically spinning the motor stator 180 degrees",
+            "By changing the battery voltage from positive to alternating current"
+          ],
+          "correctIndex": 0,
+          "explanation": "An H-bridge routes current in either direction across the motor windings, reversing the magnetic torque and rotational direction.",
+          "warmupExplanation": "Swapping positive and negative across a DC motor reverses the magnetic push on the rotor."
+        },
+        {
+          "questionId": "q_l12_03_s01_2",
+          "question": "What catastrophic condition is known as 'shoot-through' in an H-bridge circuit?",
+          "options": [
+            "When top and bottom switches on the same leg close simultaneously, shorting the power supply directly to ground",
+            "When the motor spins so fast the axle flies off",
+            "When the microcontroller sends serial data backwards"
+          ],
+          "correctIndex": 0,
+          "explanation": "Shoot-through occurs when high and low switches on the same side turn on together, creating a direct short circuit across the power rails.",
+          "warmupExplanation": "Never open both gates on the same vertical leg at once\u2014it creates a dead short from power straight to ground!"
+        }
+      ]
+    },
+    {
+      "stepId": "l12_03_s02",
+      "title": "The Four Operational States of an H-Bridge",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "hBridgeDirectionSwitch",
+      "interactiveConfig": {
+        "simulation": "hBridgeDirectionSwitch"
+      },
+      "markdownContent": "### The H-Bridge State Matrix & Shoot-Through Protection\n\nAn H-Bridge has four controllable switches: Top-Left ($Q_1$), Bottom-Left ($Q_2$), Top-Right ($Q_3$), and Bottom-Right ($Q_4$). These switches produce four distinct operational states:\n\n| Mode | Q1 (Top L) | Q2 (Bot L) | Q3 (Top R) | Q4 (Bot R) | Motor Terminal A | Motor Terminal B | Resulting Behavior |\n| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :--- |\n| **Forward** | **ON** | OFF | OFF | **ON** | +V (High) | GND (Low) | Current flows L \u2192 R; Forward spin |\n| **Reverse** | OFF | **ON** | **ON** | OFF | GND (Low) | +V (High) | Current flows R \u2192 L; Reverse spin |\n| **Coast (Float)** | OFF | OFF | OFF | OFF | Floating | Floating | High impedance; coast to stop by friction |\n| **Dynamic Brake** | OFF | **ON** | OFF | **ON** | GND | GND | Terminals shorted to GND; back-EMF stops rotor! |\n| **FATAL SHORT** | **ON** | **ON** | Any | Any | **DEAD SHORT** | **DEAD SHORT** | **SHOOT-THROUGH! Transistors vaporize!** |\n\n### Dynamic Braking vs Coasting\n- **Coasting (Freewheel):** When all switches open, current stops, but the rotor keeps spinning due to rotational inertia, slowly coming to a halt from mechanical friction.\n- **Dynamic Braking:** When both bottom switches ($Q_2$ & $Q_4$) close simultaneously, both motor terminals connect to Ground. As the spinning rotor continues moving through permanent magnets, it acts as a generator, producing Back-EMF. Because the terminals are shorted together, this generated current produces a powerful counter-torque (electromagnetic brake) that halts rotation almost instantly!\n\n### The Shoot-Through Trap (Cross-Conduction)\nIf $Q_1$ and $Q_2$ are closed at the same time, power flows straight from $+V$ to $\\text{GND}$ with near-zero resistance ($R \\approx 0\\,\\Omega$). By Ohm's law, hundreds of amps attempt to flow, instantly destroying the switches. Motor control code must always enforce a **dead-time delay** (a brief microsecond pause) where all switches are disabled before changing directions."
+    },
+    {
+      "stepId": "l12_03_s03",
+      "title": "Discrete H-Bridge Logic & Dead-Time Protection Code",
+      "type": "codeExperiment",
+      "interactiveConfig": {
+        "codeSnippet": "const int legA_High = 2;\nconst int legA_Low = 3;\nconst int legB_High = 4;\nconst int legB_Low = 5;\n\nvoid setup() {\n  pinMode(legA_High, OUTPUT);\n  pinMode(legA_Low, OUTPUT);\n  pinMode(legB_High, OUTPUT);\n  pinMode(legB_Low, OUTPUT);\n  allSwitchesOff();\n  Serial.begin(9600);\n  Serial.println(F(\"--- H-Bridge Controller with Dead-Time Interlock ---\"));\n}\n\nvoid allSwitchesOff() {\n  digitalWrite(legA_High, LOW);\n  digitalWrite(legA_Low, LOW);\n  digitalWrite(legB_High, LOW);\n  digitalWrite(legB_Low, LOW);\n  delayMicroseconds(50); // Dead-time buffer\n}"
+      },
+      "markdownContent": "### Safe H-Bridge State Machine with Dead-Time Protection\n\nThe following C++ sketch models an H-Bridge control architecture. Notice how the `allSwitchesOff()` function enforces a hardware **dead-time delay** between state transitions, guaranteeing that cross-conduction shoot-through is mathematically impossible.\n\n```cpp\n// 4-Switch Discrete H-Bridge Controller\n// Enforces dead-time protection to prevent shoot-through short circuits\nconst int legA_High = 2; // Q1 (Top-Left)\nconst int legA_Low  = 3; // Q2 (Bottom-Left)\nconst int legB_High = 4; // Q3 (Top-Right)\nconst int legB_Low  = 5; // Q4 (Bottom-Right)\n\nvoid setup() {\n  pinMode(legA_High, OUTPUT);\n  pinMode(legA_Low,  OUTPUT);\n  pinMode(legB_High, OUTPUT);\n  pinMode(legB_Low,  OUTPUT);\n\n  // Initial safety state: all switches open\n  allSwitchesOff();\n\n  Serial.begin(9600);\n  Serial.println(F(\"--- H-Bridge Controller with Dead-Time Interlock ---\"));\n}\n\nvoid allSwitchesOff() {\n  // Disengage all 4 switches\n  digitalWrite(legA_High, LOW);\n  digitalWrite(legA_Low,  LOW);\n  digitalWrite(legB_High, LOW);\n  digitalWrite(legB_Low,  LOW);\n  // Crucial dead-time buffer: ensure opening transistors fully turn off\n  delayMicroseconds(50);\n}\n\nvoid driveForward() {\n  allSwitchesOff(); // Prevent shoot-through before switching!\n  digitalWrite(legA_High, HIGH); // Q1 ON\n  digitalWrite(legB_Low,  HIGH); // Q4 ON\n  Serial.println(F(\"STATE: Forward (Q1 + Q4 ON)\"));\n}\n\nvoid driveReverse() {\n  allSwitchesOff(); // Prevent shoot-through before switching!\n  digitalWrite(legB_High, HIGH); // Q3 ON\n  digitalWrite(legA_Low,  HIGH); // Q2 ON\n  Serial.println(F(\"STATE: Reverse (Q3 + Q2 ON)\"));\n}\n\nvoid dynamicBrake() {\n  allSwitchesOff();\n  digitalWrite(legA_Low, HIGH); // Q2 ON\n  digitalWrite(legB_Low, HIGH); // Q4 ON (Both terminals shorted to GND)\n  Serial.println(F(\"STATE: Dynamic Regenerative Brake Active\"));\n}\n\nvoid loop() {\n  driveForward();\n  delay(2000);\n\n  dynamicBrake();\n  delay(1000);\n\n  driveReverse();\n  delay(2000);\n\n  dynamicBrake();\n  delay(1000);\n}\n```\n\n### Code Breakdown:\n- `allSwitchesOff()`: Shuts down all four switches and inserts a `delayMicroseconds(50)` dead-time window before closing opposite switch pairs.\n- `driveForward()` & `driveReverse()`: Activates diagonally opposite switch pairs ($Q_1 + Q_4$ vs $Q_3 + Q_2$) to reverse current flow across the motor.\n- `dynamicBrake()`: Closes both bottom switches ($Q_2 + Q_4$), tying both motor terminals to ground so the motor acts as an electromagnetic brake."
+    },
+    {
+      "stepId": "l12_03_s04",
+      "title": "H-Bridge Circuit Mastery Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your comprehension of H-Bridge switch states, regenerative braking, and shoot-through protection.",
+      "interactiveConfig": {
+        "question": "Which switch combination produces forward rotation in a standard 4-switch H-bridge?",
+        "options": [
+          "Top-left switch (Q1) and bottom-right switch (Q4) closed simultaneously",
+          "Top-left switch (Q1) and bottom-left switch (Q2) closed simultaneously",
+          "All four switches closed simultaneously"
+        ],
+        "correctIndex": 0,
+        "explanation": "Diagonally opposite switches (Q1 and Q4) allow current to flow from the positive supply rail through the motor to ground in the forward direction.",
+        "questions": [
+          {
+            "question": "Which switch combination produces forward rotation in a standard 4-switch H-bridge?",
+            "options": [
+              "Top-left switch (Q1) and bottom-right switch (Q4) closed simultaneously",
+              "Top-left switch (Q1) and bottom-left switch (Q2) closed simultaneously",
+              "All four switches closed simultaneously"
+            ],
+            "correctIndex": 0,
+            "explanation": "Diagonally opposite switches (Q1 and Q4) allow current to flow from the positive supply rail through the motor to ground in the forward direction."
+          },
+          {
+            "question": "How does dynamic braking stop a spinning DC motor faster than coasting?",
+            "options": [
+              "Shorting both motor terminals together forces generated back-EMF to produce counter-torque that rapidly decelerates the rotor",
+              "It reverses the battery polarity at 1000 Volts",
+              "It releases mechanical brake fluid onto the axle"
+            ],
+            "correctIndex": 0,
+            "explanation": "Shorting both motor terminals together allows the back-EMF generated by the spinning rotor to recirculate as reverse torque, braking the motor rapidly."
+          },
+          {
+            "question": "Why is a software 'dead-time' delay essential when switching an H-bridge between forward and reverse?",
+            "options": [
+              "It ensures opening transistors fully turn off before closing transistors turn on, preventing shoot-through short circuits",
+              "It gives the Arduino time to save sensor logs to flash memory",
+              "It prevents the DC motor from running out of electrons"
+            ],
+            "correctIndex": 0,
+            "explanation": "Transistors require a finite time to switch off. Dead-time delays prevent top and bottom transistors on the same leg from conducting simultaneously."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

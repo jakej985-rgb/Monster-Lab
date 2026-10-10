@@ -1,0 +1,116 @@
+{
+  "id": "l10_06",
+  "title": "The RC522 RFID Card Reader Module",
+  "summary": "Explore 13.56 MHz Near-Field radio communication and interface the RC522 reader module over SPI.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_10",
+  "sortOrder": 6,
+  "isOptional": false,
+  "prerequisites": [
+    "l10_05"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_15",
+    "comp_23"
+  ],
+  "steps": [
+    {
+      "stepId": "l10_06_s01",
+      "title": "Wireless Magic: The 13.56 MHz RFID Transceiver",
+      "type": "story",
+      "markdownContent": "### Contactless Identification for Secret Agent Monsters\nHave you ever tapped a plastic keycard against a hotel room door, scanned an automated subway pass, or used contactless tap-to-pay with a phone? These systems use **RFID (Radio-Frequency Identification)**!\n\nIn our monster robotics lab, we want our monster access gate to identify authorized monster operators instantly by reading secret digital tokens. To do this, we use the **RC522 RFID Module** (`comp_23`).\n\n```\nRC522 Reader (Active Transmitter)                 Smart Card / Key Fob (Passive Tag)\n┌────────────────────────────────┐                 ┌────────────────────────────────┐\n│ [MFRC522 IC]                   │                 │ Microscopic Silicon Chip       │\n│       │                        │  13.56 MHz RF   │       ▲                        │\n│ [Copper PCB Loop Antenna]      │════ Magnetic ═══►│ [Internal Wire Coil Antenna]   │\n│ Transmits 13.56 MHz EM Field   │     Field       │ Powered by Inductive Coupling! │\n└────────────────────────────────┘                 └────────────────────────────────┘\n```\n\n### The Mystery of the Batteryless Card\nLook closely at your blue RFID keychain fob and white plastic access card. They have **no batteries**, no charging ports, and no solar panels! How can a dead piece of plastic compute numbers and transmit radio waves?\n\n1. **Electromagnetic Inductive Coupling:** The RC522 reader pumps high-frequency alternating current through the wide copper trace spiraling around its circuit board, creating a localized 13.56 MHz magnetic field.\n2. **Wireless Harvesting:** When you bring a card within 3 centimeters of the reader, the magnetic field cuts across a tiny coiled antenna embedded inside the plastic card.\n3. **Faraday's Law of Induction:** The fluctuating magnetic field induces an electrical current in the tag's coil! A tiny internal capacitor rectifies this electricity, powering up the tag's microchip.\n4. **Load Modulation:** The tag wakes up, reads its burned-in **Unique Identifier (UID)**, and alters the electrical load on its coil to transmit its secret serial number back to the RC522!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l10_06_s01_q1",
+          "question": "How do passive RFID cards and key fobs obtain electrical power to transmit their data back to the RC522 reader?",
+          "options": [
+            "Through electromagnetic induction: the reader's 13.56 MHz magnetic field induces an electrical current inside the card's internal coil antenna",
+            "They contain miniature nuclear batteries that last 50 years",
+            "They absorb light through microscopic solar cells hidden under the plastic"
+          ],
+          "correctIndex": 0,
+          "explanation": "Faraday's Law of Induction allows the reader's alternating magnetic field to transfer electrical energy wirelessly across the air gap.",
+          "warmupExplanation": "Remember electromagnetism: a changing magnetic field induces an electric voltage in any nearby coil of wire."
+        },
+        {
+          "questionId": "qc_l10_06_s01_q2",
+          "question": "What radio frequency standard does the MFRC522 RFID reader module operate at?",
+          "options": [
+            "13.56 MHz (High Frequency / NFC band)",
+            "2.4 GHz (Microwave Wi-Fi band)",
+            "100 kHz (Low Frequency Audio)"
+          ],
+          "correctIndex": 0,
+          "explanation": "The RC522 conforms to ISO/IEC 14443A standard, operating at the global 13.56 MHz High Frequency Near-Field band.",
+          "warmupExplanation": "Look at the component specifications for comp_23: it specifically targets 13.56 MHz smart cards."
+        }
+      ]
+    },
+    {
+      "stepId": "l10_06_s02",
+      "title": "Inductive Coupling Physics & 3.3V Power Safety",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### CRITICAL HARDWARE SAFETY: The 3.3V Voltage Rule\n> [!CAUTION]\n> **THE RC522 MODULE RUNS ON 3.3V POWER ONLY!**\n> The MFRC522 silicon chip is rated for a maximum supply voltage of **3.6V**. Connecting the module's `3.3V` pin to the Arduino's `5V` power rail will **permanently destroy the internal radio receiver circuitry**! Always connect the module's power pin strictly to the Uno's **3.3V** pin.\n\n### The 8-Pin RC522 Header Pinout\nExamine the 8-pin single-row header on the RC522 module:\n\n```\nRC522 MODULE PINOUT (8 PINS):\n  1. 3.3V  ───► Connect to Uno 3.3V ONLY! (Red wire)\n  2. RST   ───► Reset input: Connect to Uno Pin 9 (White wire)\n  3. GND   ───► Ground: Connect to Uno GND (Black wire)\n  4. IRQ   ───► Interrupt: Leave UNCONNECTED for basic polling\n  5. MISO  ───► SPI Data In: Connect to Uno Pin 12 (Yellow wire)\n  6. MOSI  ───► SPI Data Out: Connect to Uno Pin 11 (Blue wire)\n  7. SCK   ───► SPI Clock: Connect to Uno Pin 13 (Green wire)\n  8. SDA   ───► Chip Select (NSS/CS): Connect to Uno Pin 10 (Orange wire)\n```\n\n*(Note: On the RC522 module silk-screen, the Chip Select pin is labeled `SDA` or `NSS`. In SPI mode, this functions as the standard active-low `CS` line!)*",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "l10_06_s03",
+      "title": "Reading Smart Card UIDs via SPI",
+      "type": "codeExperiment",
+      "markdownContent": "### The Smart Badge Reader Sketch\nLet's write a complete Arduino sketch to initialize the RC522 reader module over SPI and print the hexadecimal Unique Identifier (UID) of any tapped card or keychain tag to the Serial Monitor!\n\n```cpp\n#include <SPI.h>\n#include <MFRC522.h>\n\n// Pin definitions for RC522\nconst int SS_PIN  = 10; // Chip Select (labeled SDA on module)\nconst int RST_PIN = 9;  // Hardware Reset pin\n\nMFRC522 rfid(SS_PIN, RST_PIN); // Create MFRC522 instance\n\nvoid setup() {\n  Serial.begin(9600);\n  while (!Serial);\n\n  SPI.begin();       // 1. Initialize SPI bus (Pins 11, 12, 13)\n  rfid.PCD_Init();   // 2. Initialize MFRC522 silicon over SPI\n\n  Serial.println(\"====================================\");\n  Serial.println(\"MONSTER ACCESS CONTROL TERMINAL READY\");\n  Serial.println(\"Tap your RFID card or key fob...\");\n  Serial.println(\"====================================\");\n}\n\nvoid loop() {\n  // 1. Look for new cards in the 13.56 MHz field\n  if (!rfid.PICC_IsNewCardPresent()) {\n    return;\n  }\n\n  // 2. Interrogate the card and read its serial number\n  if (!rfid.PICC_ReadCardSerial()) {\n    return;\n  }\n\n  // 3. Print the Unique Identifier (UID)\n  Serial.print(\"SUCCESS: Card Detected! UID (HEX): \");\n  for (byte i = 0; i < rfid.uid.size; i++) {\n    if (rfid.uid.uidByte[i] < 0x10) {\n      Serial.print(\" 0\");\n    } else {\n      Serial.print(\" \");\n    }\n    Serial.print(rfid.uid.uidByte[i], HEX);\n  }\n  Serial.println();\n\n  // 4. Halt the card so it doesn't continuously trigger\n  rfid.PICC_HaltA();\n  rfid.PCD_StopCrypto1();\n  delay(500);\n}\n```\n\n### Code Breakdown:\n- `rfid.PCD_Init()`: Sends commands over hardware SPI to configure the RC522's internal antenna gain, timer registers, and modulation depth.\n- `rfid.PICC_IsNewCardPresent()`: Queries whether a resonant 13.56 MHz tag is currently drawing energy from the antenna field.\n- `rfid.uid.uidByte[i]`: Accesses each byte of the card's burned-in hardware serial number (typically a 4-byte string such as `DE AD BE EF`).",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "l10_06_s04",
+      "title": "RC522 RFID Module Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your grasp of RFID electromagnetic physics, power safety, and SPI interface signals.",
+      "interactiveConfig": {
+        "question": "What catastrophic mistake must you avoid when wiring power to the RC522 RFID module?",
+        "options": [
+          "Connecting VCC to 5V instead of 3.3V, which will permanently destroy the MFRC522 silicon",
+          "Using a red wire instead of a green wire",
+          "Connecting ground to the Arduino GND pin"
+        ],
+        "correctIndex": 0,
+        "explanation": "The MFRC522 chip is designed strictly for 3.3V operation. Applying 5V exceeds maximum voltage ratings and fries the silicon.",
+        "questions": [
+          {
+            "question": "What catastrophic mistake must you avoid when wiring power to the RC522 RFID module?",
+            "options": [
+              "Connecting VCC to 5V instead of 3.3V, which will permanently destroy the MFRC522 silicon",
+              "Using a red wire instead of a green wire",
+              "Connecting ground to the Arduino GND pin"
+            ],
+            "correctIndex": 0,
+            "explanation": "The MFRC522 chip is designed strictly for 3.3V operation. Applying 5V exceeds maximum voltage ratings and fries the silicon."
+          },
+          {
+            "question": "What label is standardly printed on the RC522 module header for its active-low SPI Chip Select pin?",
+            "options": [
+              "SDA or NSS",
+              "VCC",
+              "IRQ"
+            ],
+            "correctIndex": 0,
+            "explanation": "On RC522 boards, the Chip Select pin is silk-screened as SDA or NSS (Negative Slave Select)."
+          },
+          {
+            "question": "What is the UID read from an RFID tag by the MFRC522 library?",
+            "options": [
+              "A factory-programmed Unique Identifier code that distinguishes each tag from all others",
+              "The current temperature of the card",
+              "The remaining battery voltage of the key fob"
+            ],
+            "correctIndex": 0,
+            "explanation": "The UID (Unique Identifier) is a permanent digital serial number burned into the tag's silicon chip during manufacturing."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

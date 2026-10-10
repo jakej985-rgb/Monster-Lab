@@ -1,0 +1,125 @@
+{
+  "id": "l11_02",
+  "title": "How UART Works: Asynchronous Framing, Baud Rates & 8-N-1",
+  "summary": "Explore the physics of UART serial transmission, including start bits, 8-N-1 packet framing, and strict baud rate synchronization.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_11",
+  "sortOrder": 2,
+  "isOptional": false,
+  "prerequisites": [
+    "l11_01"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l11_02_s01",
+      "title": "The Clockless Serial Mystery",
+      "type": "story",
+      "markdownContent": "### The Missing Clock Conundrum\nIn earlier missions, you investigated synchronous communication buses like SPI (`SCK`) and I2C (`SCL`). In both protocols, a dedicated clock wire pulses like a metronome, telling the receiver: *'Read the bit NOW! Read the bit NOW!'*\n\nNow look closely at UART (**Universal Asynchronous Receiver-Transmitter**). It uses only two data wires: Transmit (`TX`) and Receive (`RX`). There is **NO clock wire** anywhere!\n\n```\nSynchronous (SPI/I2C):  [Data Wire] + [Shared Clock Wire]  --> Clock commands the timing!\nAsynchronous (UART):    [Data Wire ONLY]                    --> How do we know when to sample?!\n```\n\nHow can two separate microchips exchange billions of bits across a single copper wire without a shared clock ticking between them? The secret lies in **pre-agreed baud rate timing** and **packet framing**!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l11_02_s01_q1",
+          "question": "How does asynchronous UART coordinate bit sampling without a shared clock wire?",
+          "options": [
+            "Both devices agree on an exact timing speed (baud rate) in advance, and a Start Bit synchronizes the receiver clock",
+            "The wire changes physical color based on binary state",
+            "Electrons carry microscopic timestamps inside their atomic shells"
+          ],
+          "correctIndex": 0,
+          "explanation": "Because UART is asynchronous, both devices must be configured to the identical baud rate in advance, with start bits resetting the receiver's sampling timer.",
+          "warmupExplanation": "Think of two musicians playing together in different rooms: if they both set their metronomes to exactly 120 BPM and start on a shared count, they stay in sync."
+        },
+        {
+          "questionId": "qc_l11_02_s01_q2",
+          "question": "In standard UART serial communication, what electrical state does the data line sit at when no data is being sent (idle)?",
+          "options": [
+            "HIGH (logic 1 / 5V or 3.3V)",
+            "LOW (logic 0 / 0V)",
+            "Floating (high-impedance disconnect)"
+          ],
+          "correctIndex": 0,
+          "explanation": "UART data lines idle at HIGH (+5V or +3.3V). This allows a falling transition to 0V to signal the arrival of a Start Bit.",
+          "warmupExplanation": "If the line idled at 0V, a 0 bit wouldn't cause any electrical transition. Idling HIGH guarantees a sharp falling edge."
+        }
+      ]
+    },
+    {
+      "stepId": "l11_02_s02",
+      "title": "Anatomy of an 8-N-1 UART Frame",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "uartFrameVisualizer",
+      "interactiveConfig": {
+        "baudRate": 9600,
+        "dataBits": 8,
+        "parity": "None",
+        "stopBits": 1,
+        "character": "M"
+      },
+      "markdownContent": "### The 8-N-1 Standard Framing Protocol\n\nAlmost all microcontroller UART links use the **8-N-1** configuration:\n- **8 Data Bits**: Transmits 1 full ASCII byte (0 to 255).\n- **No Parity (N)**: No error checking bit.\n- **1 Stop Bit**: Guarantees line returns HIGH before the next frame.\n\n```\nIDLE      START    BIT 0   BIT 1   BIT 2   BIT 3   BIT 4   BIT 5   BIT 6   BIT 7    STOP     IDLE\n(+5V)    (LOW)     (LSB)                                                   (MSB)   (HIGH)   (+5V)\n\u2500\u2500\u2500\u2500\u2500\u2510   \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510       \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n     \u2502   \u2502                 \u2502       \u2502       \u2502       \u2502       \u2502       \u2502       \u2502       \u2502\n     \u2514\u2500\u2500\u2500\u2518                 \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n     \u2502\u25c4\u2500\u25ba\u2502                 \u25b2                                               \u25b2       \u2502\u25c4\u2500\u25ba\u2502\n    1 bit period      Sample @ 1.5T                                   Sample @ 8.5T 1 bit period\n```\n\n### The 4 Stages of a UART Frame:\n1. **Idle State:** The line rests continuously at **HIGH** (+5V or +3.3V).\n2. **Start Bit (1 bit period):** The transmitter pulls the line **LOW** for exactly 1 bit duration. The receiver detects this falling edge and starts its internal clock counter.\n3. **8 Data Bits (LSB first):** The transmitter holds the line HIGH or LOW for each bit. The receiver samples the voltage in the **middle of each bit window** (at $1.5T, 2.5T, 3.5T, \\dots$) to avoid edge noise.\n4. **Stop Bit (1 bit period):** The transmitter pulls the line **HIGH** for at least 1 bit duration, ensuring the line returns to idle so the next falling edge can be detected.\n\n**Total Bits per Character:** $1 \\text{ (Start)} + 8 \\text{ (Data)} + 1 \\text{ (Stop)} = 10 \\text{ bits transferred per byte}!$"
+    },
+    {
+      "stepId": "l11_02_s03",
+      "title": "Calculating Bit Timing and Frame Throughput",
+      "type": "codeExperiment",
+      "interactiveConfig": {
+        "baudRate": 9600,
+        "bitTimeMicros": 104,
+        "totalBitsPerByte": 10,
+        "bytesPerSecond": 960
+      },
+      "markdownContent": "### Baud Rate & Bit Time Physics\n\n**Baud rate** is the number of signal transitions (bits) transmitted per second.\n\n$$\\text{Bit Duration } (T) = \\frac{1}{\\text{Baud Rate}}$$\n\nAt **9600 baud**:\n$$T = \\frac{1}{9600} \\approx 0.000104166\\text{ seconds} = 104.17\\ \\mu\\text{s}$$\n\nBecause each byte requires 10 total bits (1 Start + 8 Data + 1 Stop):\n$$\\text{Effective Throughput} = \\frac{9600\\text{ bits/s}}{10\\text{ bits/byte}} = 960\\text{ bytes/second}$$\n\n```cpp\n// Monster Lab - UART Frame Timing Analyzer\nconst unsigned long BAUD = 9600;\nconst unsigned long BIT_TIME_US = 1000000UL / BAUD; // ~104 microseconds\nconst int BITS_PER_FRAME = 10; // 1 Start + 8 Data + 1 Stop\n\nvoid setup() {\n  Serial.begin(BAUD);\n  while (!Serial) { ; }\n\n  Serial.println(\"--- UART 8-N-1 TIMING BENCHMARK ---\");\n  Serial.print(\"Configured Baud Rate: \");\n  Serial.print(BAUD);\n  Serial.println(\" bits/sec\");\n\n  Serial.print(\"Single Bit Duration: \");\n  Serial.print(BIT_TIME_US);\n  Serial.println(\" microseconds (us)\");\n\n  Serial.print(\"Theoretical Max Throughput: \");\n  Serial.print(BAUD / BITS_PER_FRAME);\n  Serial.println(\" bytes/sec\");\n}\n\nvoid loop() {\n  // Transmit 10 bytes and measure elapsed time\n  unsigned long tStart = micros();\n  Serial.print(\"1234567890\");\n  Serial.flush(); // Wait until hardware transmission finishes\n  unsigned long tElapsed = micros() - tStart;\n\n  Serial.println();\n  Serial.print(\"Actual 10-byte transmit duration: \");\n  Serial.print(tElapsed);\n  Serial.println(\" us\");\n  delay(3000);\n}\n```\n\n### Code Breakdown:\n- `1000000UL / BAUD` calculates microsecond bit time with integer math.\n- `Serial.flush()` halts execution until all buffered outgoing bits physically leave the ATmega hardware shift register."
+    },
+    {
+      "stepId": "l11_02_s04",
+      "title": "UART Framing Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your mastery of asynchronous framing, 8-N-1 packet structure, and baud timing.",
+      "interactiveConfig": {
+        "question": "What does '8-N-1' specify in standard UART configuration?",
+        "options": [
+          "8 data bits, No parity bit, and 1 stop bit per transmitted character frame",
+          "8 stop bits, Normal polarity, and 1 baud rate clock",
+          "8 analog channels, Negative voltage, and 1 master controller"
+        ],
+        "correctIndex": 0,
+        "explanation": "8-N-1 defines 8 data bits, No parity error checking bit, and 1 stop bit. This creates a 10-bit frame per transmitted byte.",
+        "questions": [
+          {
+            "question": "What does '8-N-1' specify in standard UART configuration?",
+            "options": [
+              "8 data bits, No parity bit, and 1 stop bit per transmitted character frame",
+              "8 stop bits, Normal polarity, and 1 baud rate clock",
+              "8 analog channels, Negative voltage, and 1 master controller"
+            ],
+            "correctIndex": 0,
+            "explanation": "8-N-1 defines 8 data bits, No parity error checking bit, and 1 stop bit. This creates a 10-bit frame per transmitted byte."
+          },
+          {
+            "question": "At 9600 baud with 8-N-1 framing, how many complete bytes can be transmitted per second?",
+            "options": [
+              "960 bytes per second (9600 bits divided by 10 bits per byte frame)",
+              "9600 bytes per second",
+              "1200 bytes per second"
+            ],
+            "correctIndex": 0,
+            "explanation": "Because 1 Start bit + 8 Data bits + 1 Stop bit = 10 bits total per character, 9600 / 10 = 960 bytes per second maximum."
+          },
+          {
+            "question": "Why does a UART receiver sample the voltage in the middle of each bit window rather than right at the edge?",
+            "options": [
+              "To avoid transient electrical noise and ringing that occur during voltage transitions at the edges",
+              "Because microcontrollers can only read voltage when the clock cycle is half finished",
+              "To allow the receiving capacitor to fully discharge to 0V"
+            ],
+            "correctIndex": 0,
+            "explanation": "Edge transitions suffer from rise/fall time slurs and ringing. Sampling at 50% bit time provides the cleanest, most stable logic measurement."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

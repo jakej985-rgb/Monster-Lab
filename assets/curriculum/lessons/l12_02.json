@@ -1,0 +1,119 @@
+{
+  "id": "l12_02",
+  "title": "Inductance, Back-EMF & Flyback Diode Protection",
+  "summary": "Master the electromagnetic physics of inductive kickback, Lenz's law, and how antiparallel flyback diodes prevent destructive high-voltage spikes.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_12",
+  "sortOrder": 2,
+  "isOptional": false,
+  "prerequisites": [
+    "l12_01"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_33"
+  ],
+  "steps": [
+    {
+      "stepId": "l12_02_s01",
+      "title": "The Ghost in the Coil: Inductive Kickback",
+      "type": "story",
+      "markdownContent": "### Coils, Magnetic Fields, and Hidden Voltage Monters\n\nIn Lesson 1, you learned that motors draw heavy currents. But there is a far deadlier physical phenomenon lurking inside every motor: **Inductance** ($L$).\n\nAn electric motor is not a simple resistor. Inside, hundreds of loops of insulated copper wire form electromagnets. When current flows through these coils, it establishes a concentrated magnetic field that stores energy:\n\n$$E = \\frac{1}{2} L I^2$$\n\nWhere $L$ is the coil's inductance (measured in Henrys, $H$) and $I$ is the current.\n\n```\nSTEADY STATE (Motor Running):\nCurrent flows smoothly \u2500\u2500\u2500> Magnetic field established \u2500\u2500\u2500> Energy stored in coil\n\nPOWER CUTOFF (Switch Opens):\nCurrent drops to 0 instantly (di/dt -> -\u221e) \u2500\u2500\u2500> Magnetic field collapses violently!\nCollapsing field induces a REVERSE VOLTAGE SPIKE (>70V - 100V) = INDUCTIVE KICKBACK!\n```\n\n### Lenz's Law and the Kickback Spike\n\nIn 1834, physicist Heinrich Lenz formulated **Lenz's Law**: an induced electromotive force always opposes the change in magnetic flux that produced it. Mathematically:\n\n$$V = -L \\frac{di}{dt}$$\n\nWhen a transistor switch opens to turn off a motor, current that was happily flowing at 500 mA attempts to drop to 0 mA in a few nanoseconds ($dt \\to 0$). Because $\\frac{di}{dt}$ becomes a massive negative number, the coil reacts by generating a **gigantic positive voltage spike in reverse polarity**!\n\nA modest 5V toy motor can easily generate an inductive kickback spike of **60V to 120V**! This massive spike races backward toward the control transistor, easily puncturing its delicate silicon PN junction and permanently destroying the driver circuit.",
+      "quickCheck": [
+        {
+          "questionId": "q_l12_02_s01_1",
+          "question": "What physical law dictates that a collapsing magnetic field induces a voltage opposing the change in current?",
+          "options": [
+            "Lenz's Law of Induction (V = -L di/dt)",
+            "Coulomb's Law of Electrostatics",
+            "Bernoulli's Principle of Fluid Dynamics"
+          ],
+          "correctIndex": 0,
+          "explanation": "Lenz's Law states that the induced electromotive force opposes the change in current, generating a high-voltage back-EMF spike when switched off.",
+          "warmupExplanation": "Coils hate changes in current: when power is cut abruptly, the magnetic field snaps back with high voltage."
+        },
+        {
+          "questionId": "q_l12_02_s01_2",
+          "question": "How should a flyback diode be oriented relative to the DC motor power supply?",
+          "options": [
+            "In reverse-bias across the motor terminals (Cathode to positive, Anode to negative)",
+            "In forward-bias in series with the power wire to block all current",
+            "Connected between the Arduino reset pin and ground"
+          ],
+          "correctIndex": 0,
+          "explanation": "The flyback diode connects antiparallel across the motor: Cathode to +V and Anode to GND. It remains non-conductive during operation and clamps reverse spikes when power cuts.",
+          "warmupExplanation": "A diode is a one-way valve: place it backwards across the motor so normal power ignores it, but reverse spikes get trapped!"
+        }
+      ]
+    },
+    {
+      "stepId": "l12_02_s02",
+      "title": "Physics of Lenz's Law and Diode Clamping",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "inductiveKickbackSimulator",
+      "interactiveConfig": {
+        "simulation": "inductiveKickbackSimulator"
+      },
+      "markdownContent": "### The Flyback Diode: The Electrical Pressure Relief Valve\n\nTo protect driver transistors from inductive destruction, engineers install a **Flyback Diode** (also known as a snubber, freewheeling, or clamping diode) connected in **antiparallel** directly across the motor terminals.\n\n```\nNORMAL MOTOR OPERATION (Switch CLOSED):\n         +5V Power Rail\n               \u2502\n               \u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n               \u2502                   \u2502\n         [ DC Motor ]         [ Cathode |<\u2500 Diode REVERSE-BIASED ]\n         (Current: A to B)    [ Anode   |   (No current flows)     ]\n               \u2502                   \u2502\n               \u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n               \u2502\n       [ Transistor Switch ] (ON)\n               \u2502\n              GND\n\nPOWER SWITCH OFF (Switch OPENS):\n         +5V Power Rail\n               \u2502\n               \u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n               \u2502                   \u25b2 (Reverse Kickback Induced)\n         [ DC Motor ]              \u2502 \n         (Colapsing Field)    [ Cathode \u25c4\u2500 Diode FORWARD-BIASED!  ]\n               \u2502              [ Anode   \u2502  (Clamps spike to ~0.7V) ]\n               \u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n               \u2502\n       [ Transistor Switch ] (OFF / Open)\n               \u2502\n              GND\n```\n\n### How the Flyback Loop Works:\n1. **During Normal Running:** The diode's cathode connects to +5V and its anode connects to ground/switch. The diode is **reverse-biased** and acts as an open circuit.\n2. **At Power Cutoff:** The motor coil attempts to force current forward, flipping terminal B to a potential higher than terminal A (+60V spike).\n3. **The Clamping Action:** The moment terminal B exceeds terminal A by 0.7V, the flyback diode becomes **forward-biased**! Current is redirected in a closed loop through the diode and back through the motor windings.\n4. **Energy Dissipation:** The magnetic energy is safely dissipated as mild heat across the diode junction and internal coil wire resistance ($I^2 R$), clamping the peak voltage safely to $V_{\\text{supply}} + 0.7\\text{ V}$."
+    },
+    {
+      "stepId": "l12_02_s03",
+      "title": "Inductive Kickback Snubbing & Transistor Pulse Code",
+      "type": "codeExperiment",
+      "interactiveConfig": {
+        "codeSnippet": "const int motorPin = 9;\n\nvoid setup() {\n  pinMode(motorPin, OUTPUT);\n  digitalWrite(motorPin, LOW);\n  Serial.begin(9600);\n  Serial.println(F(\"--- Flyback Protection Verification Test ---\"));\n}\n\nvoid loop() {\n  Serial.println(F(\"Pulsing motor coil ON...\"));\n  digitalWrite(motorPin, HIGH);\n  delay(1000);\n\n  Serial.println(F(\"Abrupt turn-off: Flyback diode clamps inductive spike safely!\"));\n  digitalWrite(motorPin, LOW);\n  delay(2000);\n}"
+      },
+      "markdownContent": "### Rapid Inductive Switching & Clamping Test Sketch\n\nLet's test rapid inductive load switching. When running this sketch, the flyback diode (such as a 1N4007 or 1N4148) across the motor terminals guarantees that fast digital transitions on Pin 9 do not feed destructive back-EMF spikes into your board.\n\n```cpp\n// Inductive Load Switching Test Sketch\n// Verifies safe switching when protected by a flyback clamp diode\nconst int motorPin = 9;\n\nvoid setup() {\n  pinMode(motorPin, OUTPUT);\n  digitalWrite(motorPin, LOW); // Start with de-energized coil\n\n  Serial.begin(9600);\n  Serial.println(F(\"--- Flyback Protection Verification Test ---\"));\n  Serial.println(F(\"Flyback diode connected antiparallel across motor terminals\"));\n}\n\nvoid loop() {\n  // Energize coil: current ramps up, establishing magnetic field\n  Serial.println(F(\"COIL CHARGING: Transistor ON -> Storing magnetic energy (1/2 L I^2)\"));\n  digitalWrite(motorPin, HIGH);\n  delay(1000);\n\n  // Abrupt switch off: di/dt causes instant back-EMF kickback\n  Serial.println(F(\"COIL DISCHARGING: Transistor OFF -> Diode safely recirculates spike!\"));\n  digitalWrite(motorPin, LOW);\n  delay(2000); // Allow complete inductive energy decay\n}\n```\n\n### Code Breakdown:\n- `digitalWrite(motorPin, HIGH)`: Closes the driver switch. Current flows through the motor winding, building a magnetic field in the coil.\n- `digitalWrite(motorPin, LOW)`: Opens the driver switch in under 1 microsecond. Without the flyback diode, a 70V spike would arc across the transistor. With the diode installed, the spike is clamped to ~5.7V and current decays harmlessly in the diode loop.\n- `delay(2000)`: Ensures that the collapsing magnetic field completely dissipates before the next cycle begins."
+    },
+    {
+      "stepId": "l12_02_s04",
+      "title": "Inductance & Flyback Protection Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Evaluate your mastery of inductive physics, Lenz's law, and diode flyback protection.",
+      "interactiveConfig": {
+        "question": "According to the formula V = -L di/dt, why does a rapid turn-off switch generate a much higher voltage spike than a slow turn-off?",
+        "options": [
+          "Because shrinking the switching time dt causes di/dt to approach infinity, multiplying the induced voltage spike",
+          "Because slow switches heat up the motor wires",
+          "Because inductors only work when the switch is held closed"
+        ],
+        "correctIndex": 0,
+        "explanation": "Since time dt is in the denominator, instantaneous switching causes di/dt to become massive, resulting in a dangerous high-voltage inductive spike.",
+        "questions": [
+          {
+            "question": "According to the formula V = -L di/dt, why does a rapid turn-off switch generate a much higher voltage spike than a slow turn-off?",
+            "options": [
+              "Because shrinking the switching time dt causes di/dt to approach infinity, multiplying the induced voltage spike",
+              "Because slow switches heat up the motor wires",
+              "Because inductors only work when the switch is held closed"
+            ],
+            "correctIndex": 0,
+            "explanation": "Since time dt is in the denominator, instantaneous switching causes di/dt to become massive, resulting in a dangerous high-voltage inductive spike."
+          },
+          {
+            "question": "During normal motor operation when power is applied, what state is the flyback diode in?",
+            "options": [
+              "Reverse-biased (non-conducting), so it acts as an open circuit and does not drain power",
+              "Forward-biased (conducting), carrying all motor current",
+              "Alternating between AC and DC modes"
+            ],
+            "correctIndex": 0,
+            "explanation": "In normal operation, the cathode connects to positive voltage, keeping the diode reverse-biased and dormant until power is cut."
+          },
+          {
+            "question": "What happens to the energy stored in the motor's magnetic field when clamped by a flyback diode?",
+            "options": [
+              "The energy circulates through the diode-coil loop and safely dissipates as gentle heat through the coil's internal resistance",
+              "The energy is fed back into the USB cable to charge the computer",
+              "The energy turns into radio signals that disrupt WiFi"
+            ],
+            "correctIndex": 0,
+            "explanation": "The collapsing magnetic field drives recirculating current through the diode and winding resistance, harmlessly dissipating energy as mild thermal dissipation."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

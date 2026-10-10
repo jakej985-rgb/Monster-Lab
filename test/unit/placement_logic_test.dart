@@ -48,8 +48,12 @@ void main() {
         () async {
       const learnerId = 'learner_skip_cf';
 
-      // 1. Complete Lesson 1
-      await progressRepo.completeLesson(learnerId, 'lesson_01', 50);
+      // 1. Complete Lesson 1 course and sub-lessons
+      for (int i = 1; i <= 16; i++) {
+        await progressRepo.completeLesson(
+            learnerId, 'l01_${i.toString().padLeft(2, '0')}', 10);
+      }
+      await progressRepo.completeCourse(learnerId, 'lesson_01', 100);
 
       // 2. Mark Coding Foundations placement as passed
       await progressRepo.markPlacementPassed(learnerId, 'coding_foundations');
@@ -69,7 +73,9 @@ void main() {
         }
 
         final missingPrereqs = lesson.prerequisites.where(
-          (req) => !progress.completedLessonIds.contains(req),
+          (req) =>
+              !progress.completedLessonIds.contains(req) &&
+              !progress.completedCourseIds.contains(req),
         );
         if (missingPrereqs.isEmpty) {
           nextLessonId = lesson.id;

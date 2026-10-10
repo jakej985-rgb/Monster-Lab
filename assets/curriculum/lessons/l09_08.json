@@ -1,0 +1,143 @@
+{
+  "id": "l09_08",
+  "title": "Advanced I2C Diagnostics & Bus Lockup Recovery Challenge",
+  "summary": "Solve advanced multi-device bus lockups, handle SDA clamp faults with clock recovery pulses, and pass the Master I2C Capstone Challenge.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_09",
+  "sortOrder": 8,
+  "isOptional": false,
+  "prerequisites": [
+    "l09_07"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_07",
+    "comp_10"
+  ],
+  "steps": [
+    {
+      "stepId": "l09_08_s01",
+      "title": "The Stuck Bus Catastrophe: Surviving I2C Lockups",
+      "type": "story",
+      "markdownContent": "### The Dreaded 'SDA Stuck LOW' Nightmare\nImagine your monster habitat controller has been operating flawlessly for three days. Suddenly, without warning, the entire system freezes! The Arduino sketch hangs permanently inside `Wire.endTransmission()`, never returning! You hit the red reset button on your Arduino Uno, but when it reboots, it freezes at the exact same line of code!\n\nWhat happened? You have encountered the most famous failure mode in embedded serial bus engineering: **The I2C Bus Lockup (SDA Stuck LOW)**.\n\n```\nHOW A BUS LOCKUP HAPPENS:\n1. Master requests data from RTC: \"Send me byte 0x00!\"\n2. RTC begins clocking out bits. On bit 4, the RTC pulls SDA LOW to send a binary '0'.\n3. SUDDEN EVENT: Power glitch, loose wire, or MCU watchdog reset restarts the Arduino!\n4. Arduino reboots: \"I'm starting fresh! Let me send a START condition on I2C!\"\n5. CATASTROPHE: The RTC was never reset! It is STILL holding SDA clamped to Ground (0V),\n   patiently waiting for clock pulse 5 from the previous conversation!\n6. Because SDA is clamped at 0V, the Arduino CANNOT generate a START condition (which\n   requires SDA to fall from HIGH to LOW while SCL is HIGH)! The bus is completely paralyzed!\n```\n\n### Why Resetting the Arduino Doesn't Help\nThe Arduino's reset button only restarts the ATmega328P microcontroller chip. It does **not** cut power to the breadboard or reset connected I2C peripheral chips! The peripheral remains powered, waiting in an infinite pause state.\n\nTo rescue an autonomous robot without physically cutting battery power, aerospace and automotive engineers use an automated **9-Clock Bus Recovery Protocol**!",
+      "quickCheck": [
+        {
+          "questionId": "q_l09_08_s01_1",
+          "question": "What causes the dreaded 'SDA Stuck LOW' I2C bus lockup in embedded systems?",
+          "options": [
+            "The microcontroller reboots during a read transaction while a peripheral is holding SDA LOW, leaving the peripheral waiting indefinitely for remaining clock pulses",
+            "The copper wires absorb too much radio interference and melt internally",
+            "The Arduino Uno flash memory runs out of electrical charge"
+          ],
+          "correctIndex": 0,
+          "explanation": "If the controller resets while a target device is outputting a '0' bit on SDA, the target remains holding the line LOW waiting for clock pulses, preventing the master from issuing a START condition.",
+          "warmupExplanation": "The peripheral doesn't know the master rebooted; it is still in the middle of transmitting a byte."
+        },
+        {
+          "questionId": "q_l09_08_s01_2",
+          "question": "Why does pressing the Arduino Uno's reset button often fail to recover a locked I2C bus?",
+          "options": [
+            "The reset button only reboots the microcontroller and does not reset or cycle power to external peripheral chips",
+            "Resetting the Uno inverts the polarity of the 5V power supply",
+            "Microcontrollers can only be reset using high-voltage programming"
+          ],
+          "correctIndex": 0,
+          "explanation": "External breakout modules remain powered by the 5V rail; unless their internal state machine is clocked to completion or power is cycled, they remain holding the bus line LOW.",
+          "warmupExplanation": "Resetting the Arduino does not reset external modules on the breadboard."
+        }
+      ]
+    },
+    {
+      "stepId": "l09_08_s02",
+      "title": "The 9-Clock Pulse Bus Recovery Protocol",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### The NXP Bus Recovery Protocol\n\nThe official I2C specification provides an elegant hardware algorithm to break out of stuck bus conditions without cutting power:\n\n```\nAUTOMATED BUS RECOVERY SEQUENCE:\n\n1. SENSE: Check if SDA is clamped LOW before initializing Wire library:\n          if (digitalRead(SDA_PIN) == LOW) { Bus is Locked! Initiate Recovery! }\n\n2. TAKEOVER: Configure SCL pin as manual GPIO Output (PinMode OUTPUT).\n\n3. TOGGLE (Up to 9 Clock Pulses):\n   SCL: ──┐   ┌───┐   ┌───┐   ┌───┐   ┌───┐   ┌───┐   ┌───┐   ┌───┐   ┌───┐\n          │ 1 │ 2 │ 3 │ 4 │ 5 │ 6 │ 7 │ 8 │ 9 │ (Forces target to finish byte)\n          └───┘   └───┘   └───┘   └───┘   └───┘   └───┘   └───┘   └───┘   └───\n   SDA: ──────────────────────────────────────▲ (Target finishes byte and releases SDA HIGH!)\n\n4. STOP CONDITION GENERATION:\n   Pull SDA LOW, drive SCL HIGH, then release SDA HIGH (Official I2C STOP condition).\n\n5. HANDOVER: Re-initialize the ATmega328P hardware Two-Wire Interface with Wire.begin()!\n```\n\n### Why Exactly 9 Pulses?\nAn I2C data byte is 8 bits long, followed by 1 ACK/NACK bit (9 clock pulses total). Even in the worst-case scenario where the peripheral had just started clocking out bit 1 when the MCU crashed, pulsing SCL 9 times guarantees the peripheral will finish its current byte and release the SDA line!",
+      "interactiveConfig": {
+        "nodes": [
+          {
+            "id": "step_sense",
+            "label": "1. Sense Fault\nCheck SDA Level",
+            "icon": "search",
+            "role": "Detects if SDA is clamped at 0V when the bus should be idle.",
+            "color": "#FF5252"
+          },
+          {
+            "id": "step_toggle",
+            "label": "2. 9 Clock Pulses\nToggle SCL in GPIO",
+            "icon": "bolt",
+            "role": "Generates up to 9 manual clock pulses to coax the target into completing its byte.",
+            "color": "#FFB300"
+          },
+          {
+            "id": "step_stop",
+            "label": "3. Manual STOP\nRelease Bus to 5V",
+            "icon": "check_circle",
+            "role": "Generates STOP condition, freeing the bus for Wire.begin() initialization.",
+            "color": "#76FF03"
+          }
+        ]
+      }
+    },
+    {
+      "stepId": "l09_08_s03",
+      "title": "Robust Bus Recovery & Multi-Device Watchdog Sketch",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### The Self-Healing I2C Firmware\n\nHere is a complete, self-healing sketch that implements automated bus recovery during `setup()` before launching dual-peripheral operations with your LCD (`comp_07`) and RTC (`comp_10`):\n\n```cpp\n#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n\nconst int SDA_PIN = A4;\nconst int SCL_PIN = A5;\n\nLiquidCrystal_I2C lcd(0x27, 16, 2);\n\n// Official 9-Clock I2C Bus Recovery Routine\nbool recoverI2CBus() {\n  pinMode(SDA_PIN, INPUT_PULLUP);\n  pinMode(SCL_PIN, INPUT_PULLUP);\n  \n  // If SDA is already HIGH, bus is healthy!\n  if (digitalRead(SDA_PIN) == HIGH) {\n    return true;\n  }\n  \n  Serial.println(\"WARNING: SDA clamped LOW! Initiating 9-clock recovery...\");\n  pinMode(SCL_PIN, OUTPUT);\n  \n  // Pulse SCL up to 9 times to clear peripheral state machine\n  for (int i = 0; i < 9; i++) {\n    digitalWrite(SCL_PIN, HIGH);\n    delayMicroseconds(10);\n    digitalWrite(SCL_PIN, LOW);\n    delayMicroseconds(10);\n    \n    // Check if target released SDA\n    pinMode(SDA_PIN, INPUT_PULLUP);\n    if (digitalRead(SDA_PIN) == HIGH) {\n      Serial.print(\"SDA released on clock pulse \");\n      Serial.println(i + 1);\n      break;\n    }\n  }\n  \n  // Generate manual STOP condition\n  pinMode(SDA_PIN, OUTPUT);\n  digitalWrite(SDA_PIN, LOW);\n  delayMicroseconds(10);\n  digitalWrite(SCL_PIN, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(SDA_PIN, HIGH); // SDA rises while SCL is HIGH = STOP!\n  delayMicroseconds(10);\n  \n  pinMode(SDA_PIN, INPUT_PULLUP);\n  return (digitalRead(SDA_PIN) == HIGH);\n}\n\nvoid setup() {\n  Serial.begin(9600);\n  Serial.println(\"\\n--- MONSTER LAB ROBUST I2C STARTUP ---\");\n  \n  // 1. Recover bus if clamped\n  if (recoverI2CBus()) {\n    Serial.println(\"Bus Health Check: PASS (SDA & SCL Idle HIGH)\");\n  } else {\n    Serial.println(\"FATAL: Bus hardware shorted to Ground!\");\n  }\n  \n  // 2. Initialize Hardware TWI\n  Wire.begin();\n  Wire.setWireTimeout(25000, true); // 25ms timeout with auto-reset (AVR Core)\n  \n  // 3. Initialize Display\n  lcd.init();\n  lcd.backlight();\n  lcd.setCursor(0, 0);\n  lcd.print(\"BUS RECOVERY: OK\");\n  lcd.setCursor(0, 1);\n  lcd.print(\"SYSTEM ONLINE!\");\n}\n\nvoid loop() {\n  // Telemetry loop runs reliably\n}\n```\n\n### Code Deconstruction:\n- `digitalRead(SDA_PIN)`: Senses whether the bus is clamped LOW before enabling TWI hardware.\n- `digitalWrite(SCL_PIN, ...)`: Toggles the clock line manually in GPIO mode to force the target peripheral to complete its byte transfer.\n- `Wire.setWireTimeout(25000, true)`: Enables the Arduino AVR core's built-in bus timeout feature, preventing `Wire.endTransmission()` from locking up forever if a jumper wire is unplugged!",
+      "interactiveConfig": {
+        "codeSnippet": "if (digitalRead(SDA_PIN) == LOW) {\n  for (int i = 0; i < 9; i++) {\n    digitalWrite(SCL_PIN, HIGH);\n    delayMicroseconds(10);\n    digitalWrite(SCL_PIN, LOW);\n    delayMicroseconds(10);\n  }\n}"
+      }
+    },
+    {
+      "stepId": "l09_08_s04",
+      "title": "Master I2C Engineer Certification Challenge",
+      "type": "quizCheckpoint",
+      "markdownContent": "Complete this master 3-question capstone assessment covering bus lockup recovery, multi-device bus architecture, and industrial I2C best practices to claim your certified Monster Master XP!",
+      "interactiveConfig": {
+        "question": "What is the primary action of the 9-clock I2C bus recovery algorithm?",
+        "options": [
+          "It manually pulses the SCL clock line up to 9 times in GPIO mode to coax the target peripheral into completing its byte and releasing SDA",
+          "It discharges static electricity from the breadboard into a grounded water pipe",
+          "It sends 9 encrypted passwords over the serial monitor"
+        ],
+        "correctIndex": 0,
+        "explanation": "Because an I2C byte plus ACK is 9 bits, pulsing SCL 9 times guarantees that a hung peripheral will finish shifting out its current byte and release the SDA line.",
+        "questions": [
+          {
+            "question": "What is the primary action of the 9-clock I2C bus recovery algorithm?",
+            "options": [
+              "It manually pulses the SCL clock line up to 9 times in GPIO mode to coax the target peripheral into completing its byte and releasing SDA",
+              "It discharges static electricity from the breadboard into a grounded water pipe",
+              "It sends 9 encrypted passwords over the serial monitor"
+            ],
+            "correctIndex": 0,
+            "explanation": "Because an I2C byte plus ACK is 9 bits, pulsing SCL 9 times guarantees that a hung peripheral will finish shifting out its current byte and release the SDA line."
+          },
+          {
+            "question": "Which signal transition must be generated at the end of the recovery sequence to officially release the bus back to IDLE?",
+            "options": [
+              "A STOP condition: SDA transitioning from LOW to HIGH while SCL is held HIGH",
+              "A START condition: SDA transitioning from HIGH to LOW while SCL is held LOW",
+              "Cutting the 5V power wire with wire cutters"
+            ],
+            "correctIndex": 0,
+            "explanation": "An official I2C STOP condition (SDA rising while SCL is HIGH) resets all connected peripheral state machines back to the IDLE listening state."
+          },
+          {
+            "question": "What combination of hardware and software design practices ensures a robust, production-grade multi-device I2C system?",
+            "options": [
+              "Dedicated 4.7kΩ pull-up resistors, unique 7-bit addresses, non-blocking millis() timing, and automated bus timeout/recovery routines",
+              "Removing all pull-up resistors and calling delay(5000) between every byte",
+              "Using 10-meter unshielded cables and sharing identical 0x27 addresses on all sensors"
+            ],
+            "correctIndex": 0,
+            "explanation": "Industrial reliability requires properly sized pull-up resistors (4.7 kΩ), unique hardware addresses, non-blocking software scheduling, and automated recovery routines to handle wire disconnects or glitched states."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 15
+}

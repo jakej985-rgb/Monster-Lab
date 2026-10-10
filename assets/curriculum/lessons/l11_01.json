@@ -1,0 +1,188 @@
+{
+  "id": "l11_01",
+  "title": "Untethered Robotics: Introduction to Serial Telemetry",
+  "summary": "Discover how wireless serial telemetry liberates robots from USB cables, allowing long-distance real-time diagnostics and control.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_11",
+  "sortOrder": 1,
+  "isOptional": false,
+  "prerequisites": [
+    "l10_08"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l11_01_s01",
+      "title": "Cutting the Physical Tether",
+      "type": "story",
+      "markdownContent": "### The Prisoner of the Workbench\nImagine designing an all-terrain rover built to explore subterranean caves or navigate Martian gravel beds. You install high-torque motors, tracked wheels, and an array of ultrasonic sensors. But when you power it on, it can only roll three feet before violently yanking its USB cable from your laptop!\n\nA robot physically tethered by a cord is not truly autonomous\u2014it is a workbench prisoner. In professional robotics, aerospace engineering, and industrial automation, machines communicate through **telemetry** (from the ancient Greek *tele* meaning 'far off', and *metron* meaning 'measure').\n\n```\n[ Exploration Rover ] ~ ~ ~ (Untethered Radio Link) ~ ~ ~ [ Mission Control ]\n  Sensors: Distance, Speed, Battery                     Operator Joystick & Plots\n```\n\n### What is Serial Telemetry?\nTelemetry is the automated bidirectional transmission of operational metrics and control commands across a distance:\n1. **Downlink Telemetry (Robot \u2794 Base Station):** Continuous streaming of sensor readings, battery voltage, motor RPM, and error flags.\n2. **Uplink Commands (Base Station \u2794 Robot):** Steering instructions, mission target waypoints, and emergency stop triggers.\n\nIn this course, you will cut the umbilical cord and build an asynchronous wireless telemetry bridge between your Arduino Uno and a wireless terminal!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l11_01_s01_q1",
+          "question": "What is the primary role of a telemetry downlink in robotics?",
+          "options": [
+            "Streaming real-time sensor measurements, battery health, and system diagnostics to a remote base station",
+            "Increasing motor supply voltage beyond normal battery limits",
+            "Permanently writing machine code directly into read-only memory"
+          ],
+          "correctIndex": 0,
+          "explanation": "Telemetry streams live operational status and sensor readings from the remote machine back to the operator or base station.",
+          "warmupExplanation": "Recall that 'telemetry' means measuring at a distance. It keeps you informed of your robot's condition from afar."
+        },
+        {
+          "questionId": "qc_l11_01_s01_q2",
+          "question": "Why is relying on a physical USB cable impractical for mobile field robots?",
+          "options": [
+            "It restricts operating range, tangles moving mechanical components, and limits rover mobility",
+            "USB cables cannot conduct digital binary signals",
+            "Microcontrollers automatically shut off when tethered to a computer"
+          ],
+          "correctIndex": 0,
+          "explanation": "Physical cables tether the robot to a desk, limiting its operational radius and risking snagging or disconnection during locomotion.",
+          "warmupExplanation": "Think of an autonomous drone or planetary rover: a wire dragging behind it would severely limit where it can travel."
+        }
+      ]
+    },
+    {
+      "stepId": "l11_01_s02",
+      "title": "The Bidirectional Telemetry Architecture",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "interactiveConfig": {
+        "nodes": [
+          {
+            "id": "sensors",
+            "label": "Onboard Sensors (Distance/Batt)",
+            "type": "input"
+          },
+          {
+            "id": "mcu",
+            "label": "Arduino Uno CPU",
+            "type": "process"
+          },
+          {
+            "id": "tx_transceiver",
+            "label": "Wireless Radio Transceiver",
+            "type": "process"
+          },
+          {
+            "id": "rf_link",
+            "label": "2.4GHz RF Airwaves",
+            "type": "bus"
+          },
+          {
+            "id": "rx_station",
+            "label": "Base Station / Smartphone",
+            "type": "output"
+          }
+        ],
+        "connections": [
+          {
+            "from": "sensors",
+            "to": "mcu",
+            "label": "Raw ADC/GPIO"
+          },
+          {
+            "from": "mcu",
+            "to": "tx_transceiver",
+            "label": "UART Downlink"
+          },
+          {
+            "from": "tx_transceiver",
+            "to": "rf_link",
+            "label": "Modulated RF"
+          },
+          {
+            "from": "rf_link",
+            "to": "rx_station",
+            "label": "Demodulated Data"
+          },
+          {
+            "from": "rx_station",
+            "to": "rf_link",
+            "label": "Uplink Commands"
+          },
+          {
+            "from": "rf_link",
+            "to": "tx_transceiver",
+            "label": "RF Packets"
+          },
+          {
+            "from": "tx_transceiver",
+            "to": "mcu",
+            "label": "UART Uplink"
+          }
+        ]
+      },
+      "markdownContent": "### The Telemetry Loop: From Silicon to Airwaves\n\nTo establish an untethered link, a robot passes data through multiple architectural layers:\n\n```\nROBOT SYSTEM                                      OPERATOR BASE STATION\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510                          \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 Sensors & Actuators  \u2502                          \u2502 Telemetry Dashboard  \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518                          \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25b2\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n           \u2502 Analog/Digital Signals                          \u2502 Parsed Metrics\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25bc\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510                          \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 Arduino Uno (ATmega) \u2502                          \u2502 Computer / Phone App \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518                          \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25b2\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n           \u2502 Serial Byte Stream (UART)                       \u2502 Demodulated Bytes\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25bc\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510       2.4 GHz RF Link    \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 Wireless Transceiver \u251c\u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500\u25ba\u2502 Wireless Receiver    \u2502\n\u2502 (e.g. HC-05/ESP32)   \u2502\u25c4\u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500 \u2500\u2524 (e.g. Phone Radio)   \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518       Uplink Commands    \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n```\n\n### Packet Formatting: Delimited vs Raw Bytes\nWhen sending telemetry over the air, raw voltages are useless without structure. Engineers format data into **telemetry frames** using standard conventions:\n- **Human-Readable CSV Frames:** `TLM,BAT=84,DIST=142,TEMP=22.4\\n`\n  - Easy to read in serial terminals.\n  - Terminated by a newline character (`\\n` or `\\r\\n`) so the receiver knows when a complete packet has arrived.\n- **Binary Struct Frames:** Compact, fixed-byte packets with header and checksum bytes for high-frequency control."
+    },
+    {
+      "stepId": "l11_01_s03",
+      "title": "Formatting and Streaming Telemetry Packets",
+      "type": "codeExperiment",
+      "interactiveConfig": {
+        "baudRate": 9600,
+        "packetFormat": "CSV",
+        "updateIntervalMs": 500,
+        "fields": [
+          "batteryPercent",
+          "distanceCm",
+          "packetCount"
+        ]
+      },
+      "markdownContent": "### Telemetry Packet Generation Sketch\n\nThis sketch reads simulated rover telemetry metrics and formats them into a clean, delimited telemetry packet transmitted out the serial port every 500 milliseconds.\n\n```cpp\n// Monster Lab - Telemetry Stream Formatter\nunsigned long lastTelemetryTime = 0;\nconst unsigned long TELEMETRY_INTERVAL = 500; // 500ms update rate\nunsigned long packetSequence = 0;\n\nvoid setup() {\n  Serial.begin(9600); // 9600 baud serial connection\n  while (!Serial) { ; } // Wait for serial connection\n  Serial.println(\"# MONSTER LAB ROBOT TELEMETRY INITIALIZED\");\n}\n\nvoid loop() {\n  unsigned long currentMillis = millis();\n\n  // Non-blocking timer: send telemetry at regular intervals\n  if (currentMillis - lastTelemetryTime >= TELEMETRY_INTERVAL) {\n    lastTelemetryTime = currentMillis;\n    packetSequence++;\n\n    // Simulate reading robot telemetry metrics\n    int batteryLevel = 88;       // Battery charge percentage (%)\n    int distanceObstacle = 145;  // Ultrasonic distance (cm)\n    float boardTemp = 24.5;      // Microcontroller temperature (C)\n\n    // Construct standardized delimited telemetry frame\n    Serial.print(\"$TLM,\");\n    Serial.print(packetSequence);\n    Serial.print(\",BAT:\");\n    Serial.print(batteryLevel);\n    Serial.print(\",DIST:\");\n    Serial.print(distanceObstacle);\n    Serial.print(\",TEMP:\");\n    Serial.print(boardTemp, 1);\n    Serial.println(\"*END\"); // println automatically appends \\r\\n\n  }\n}\n```\n\n### Code Breakdown:\n1. **Non-blocking Timing (`millis()`):** Never use `delay()` in telemetry systems. `delay()` stops the CPU from processing incoming safety commands!\n2. **Frame Identifier (`$TLM`):** Distinguishes valid telemetry packets from random electrical noise.\n3. **Delimiter Commas (`,`):** Allows receiving software to split fields cleanly.\n4. **Packet Terminator (`println()`):** Appends `\\r\\n` to signal to the receiving dashboard that a complete packet has landed."
+    },
+    {
+      "stepId": "l11_01_s04",
+      "title": "Serial Telemetry Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your grasp of untethered robot architecture and telemetry packet framing.",
+      "interactiveConfig": {
+        "question": "What is the primary role of a packet delimiter like a newline character (`\\n`) in serial telemetry?",
+        "options": [
+          "It signals to the receiver that a complete data frame has ended and can now be parsed",
+          "It speeds up electrical signals traveling through copper traces",
+          "It recharges the onboard microcontroller capacitor"
+        ],
+        "correctIndex": 0,
+        "explanation": "Without a delimiter like \\n, the receiving computer cannot tell where one telemetry packet ends and the next begins.",
+        "questions": [
+          {
+            "question": "What is the primary role of a packet delimiter like a newline character (`\\n`) in serial telemetry?",
+            "options": [
+              "It signals to the receiver that a complete data frame has ended and can now be parsed",
+              "It speeds up electrical signals traveling through copper traces",
+              "It recharges the onboard microcontroller capacitor"
+            ],
+            "correctIndex": 0,
+            "explanation": "Without a delimiter like \\n, the receiving computer cannot tell where one telemetry packet ends and the next begins."
+          },
+          {
+            "question": "Why is non-blocking timing using `millis()` essential in robot telemetry loops?",
+            "options": [
+              "It allows the CPU to continuously monitor incoming radio commands without freezing inside delay() loops",
+              "It prevents flash memory wear-out",
+              "It converts digital pins into analog outputs"
+            ],
+            "correctIndex": 0,
+            "explanation": "Using millis() keeps the loop() executing at full speed, ensuring emergency stop commands can be received and acted on immediately."
+          },
+          {
+            "question": "In a bidirectional telemetry link, what do we call commands transmitted from the operator down to the robot?",
+            "options": [
+              "Uplink commands",
+              "Downlink telemetry",
+              "Open-drain arbitration"
+            ],
+            "correctIndex": 0,
+            "explanation": "Transmissions from the base station/controller to the remote vehicle are termed uplink commands; vehicle sensor reports are downlink telemetry."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

@@ -1,0 +1,124 @@
+{
+  "id": "l11_03",
+  "title": "Crossed Lines (TX to RX) & USB Hardware Serial Conflicts",
+  "summary": "Master the cardinal rule of UART cross-wiring (TX to RX) and understand hardware pin conflicts on Arduino pins 0 and 1.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_11",
+  "sortOrder": 3,
+  "isOptional": false,
+  "prerequisites": [
+    "l11_02"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l11_03_s01",
+      "title": "The Mouth and Ear Paradox",
+      "type": "story",
+      "markdownContent": "### The Classic Rookie Trap\nIt happens to every engineer at least once: you carefully wire your brand-new wireless transceiver to an Arduino. You connect TX on the board to TX on the module, and RX to RX. You open the terminal, type a command, and... **absolute silence**. Nothing transmits, nothing receives!\n\nThink about human conversation:\n- Your mouth **transmits** spoken words (`TX`).\n- Your ear **receives** acoustic sounds (`RX`).\n\n```\nWRONG (Mouth-to-Mouth & Ear-to-Ear):   TX \u2500\u2500\u25ba TX  (Both pushing voltage! Deadlock!)\n                                      RX \u25c4\u2500\u2500 RX  (Both listening! Dead silence!)\n\nCORRECT (Mouth-to-Ear):                TX \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba RX  (Device A talks to Device B's ear!)\n                                       RX \u25c4\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500 TX  (Device B talks to Device A's ear!)\n```\n\n### The Second Trap: The Pin 0 and 1 Hardware War\nOn the Arduino Uno, Digital Pin 0 is labeled `RX` and Pin 1 is labeled `TX`. But these two pins are NOT independent! They are permanently soldered on the PCB to the ATmega16U2 USB interface chip. If you attach an external radio to Pins 0 and 1 while programming over USB, both chips fight for control, producing the dreaded `avrdude: programmer is not responding` upload crash!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l11_03_s01_q1",
+          "question": "What is the universal rule for wiring UART serial lines between two electronic devices?",
+          "options": [
+            "Transmitter (TX) on Device A connects to Receiver (RX) on Device B, and RX on Device A connects to TX on Device B",
+            "TX always connects directly to TX, and RX always connects directly to RX",
+            "Both TX and RX must be tied directly to the +5V power rail"
+          ],
+          "correctIndex": 0,
+          "explanation": "UART lines must cross: output transmit lines (TX) must feed input receive lines (RX) on the partner device.",
+          "warmupExplanation": "Think of a telephone: you speak into the microphone (TX) so the other person hears through their earpiece (RX)."
+        },
+        {
+          "questionId": "qc_l11_03_s01_q2",
+          "question": "Why does uploading an Arduino sketch fail if an external module is plugged into Pins 0 and 1?",
+          "options": [
+            "Pins 0 and 1 are physically wired to the USB chip; external modules create bus contention during code uploading",
+            "Pins 0 and 1 are high-voltage analog inputs that disable the CPU",
+            "The Arduino bootloader refuses to run when jumper wires are inserted"
+          ],
+          "correctIndex": 0,
+          "explanation": "The USB-to-Serial converter uses Pins 0 and 1 to flash code. Connecting external hardware to these pins causes electrical bus contention.",
+          "warmupExplanation": "Pins 0 and 1 are shared with the USB cable connection. If two devices try to drive the pin at once, neither signal gets through."
+        }
+      ]
+    },
+    {
+      "stepId": "l11_03_s02",
+      "title": "Crossed Lines & The Uno USB Bus Contention",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "txRxCrossWireChecker",
+      "interactiveConfig": {
+        "showBusContention": true,
+        "correctWiring": {
+          "pin0_rx": "external_tx",
+          "pin1_tx": "external_rx"
+        }
+      },
+      "markdownContent": "### The Three-Wire Reality: TX, RX, and Common GND\n\nA full-duplex UART serial connection always requires at least **three wires**:\n\n```\nArduino Uno                               External Peripheral\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510                       \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 Digital Pin 1 TX\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba\u2502 RX (Receive)    \u2502  Data Downlink\n\u2502                 \u2502                       \u2502                 \u2502\n\u2502 Digital Pin 0 RX\u2502\u25c4\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524 TX (Transmit)   \u2502  Data Uplink\n\u2502                 \u2502                       \u2502                 \u2502\n\u2502 GND (Ground)    \u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524 GND (Ground)    \u2502  0V Reference Return\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518                       \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n```\n\n### Why Common GND is Absolutely Mandatory:\nVoltage is an electrical potential difference relative to ground ($V = V_{\\text{pin}} - V_{\\text{GND}}$). If the Arduino and external peripheral are powered from separate battery packs and do not share a common ground wire, the Arduino's 0V might be floating at 3.2V relative to the module! The receiver will misinterpret every single HIGH and LOW bit as random gibberish.\n\n### The Pin 0/1 Hardware Architecture:\n```\n[ Computer USB Port ]\n          \u2502\n[ ATmega16U2 USB-UART Chip ]\n    TXD \u2500\u2500[ 1k\u03a9 Resistor ]\u2500\u2500\u25ba Arduino Pin 0 (RX) \u25c4\u2500\u2500 [ External Module TX Pin ]  (CONTENTION!)\n    RXD \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba Arduino Pin 1 (TX) \u2500\u2500\u2500\u25ba [ External Module RX Pin ]\n```\nWhen the Arduino IDE flashes a sketch, the ATmega16U2 drives Pin 0. If an external transceiver is also driving Pin 0 with strong low-impedance transistors, the signals collide, corrupting the firmware upload."
+    },
+    {
+      "stepId": "l11_03_s03",
+      "title": "Hardware Serial Echo & Buffer Inspection",
+      "type": "codeExperiment",
+      "interactiveConfig": {
+        "baudRate": 9600,
+        "bufferSize": 64,
+        "echoMode": true
+      },
+      "markdownContent": "### Understanding the Hardware Serial Buffer\n\nThe ATmega328P microcontroller contains a dedicated hardware UART peripheral linked to a **64-byte circular FIFO (First-In, First-Out) buffer** in RAM.\n\n```cpp\n// Monster Lab - Hardware Serial Echo Diagnostic\nvoid setup() {\n  Serial.begin(9600); // Initializes Pin 0 (RX) and Pin 1 (TX)\n  while (!Serial) { ; }\n  Serial.println(\"========================================\");\n  Serial.println(\"HARDWARE SERIAL BUFFER DIAGNOSTIC READY\");\n  Serial.println(\"Type characters into Serial Monitor and hit Send.\");\n  Serial.println(\"========================================\");\n}\n\nvoid loop() {\n  // Check how many bytes are currently waiting in the 64-byte ring buffer\n  int bytesAvailable = Serial.available();\n\n  if (bytesAvailable > 0) {\n    Serial.print(\"Buffer contains \");\n    Serial.print(bytesAvailable);\n    Serial.print(\" bytes. Echoing: '\");\n\n    // Read one byte out of the FIFO buffer\n    char inChar = (char)Serial.read();\n    Serial.print(inChar);\n    Serial.println(\"'\");\n  }\n}\n```\n\n### Code Breakdown:\n1. `Serial.available()`: Returns the number of bytes queued in the 64-byte hardware FIFO buffer waiting to be read.\n2. `Serial.read()`: Pulls the oldest byte from the buffer and frees up a slot.\n3. **Ring Buffer Overflow Warning:** If 65 bytes arrive before `Serial.read()` is called, new incoming bytes are silently dropped!"
+    },
+    {
+      "stepId": "l11_03_s04",
+      "title": "Crossed Lines & Pin Conflicts Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your grasp of UART line polarity, common ground requirements, and hardware pin conflicts.",
+      "interactiveConfig": {
+        "question": "What happens if two microcontrollers have their TX pins connected directly together and their RX pins connected together?",
+        "options": [
+          "Neither device can receive any communication because both transmitter outputs drive against each other while both receivers listen to an idle line",
+          "The devices automatically negotiate a shared clock frequency",
+          "Communication speed doubles to 19200 baud"
+        ],
+        "correctIndex": 0,
+        "explanation": "TX is an output and RX is an input. Connecting TX-to-TX pits two voltage drivers against each other, while RX-to-RX leaves both inputs with nothing transmitting to them.",
+        "questions": [
+          {
+            "question": "What happens if two microcontrollers have their TX pins connected directly together and their RX pins connected together?",
+            "options": [
+              "Neither device can receive any communication because both transmitter outputs drive against each other while both receivers listen to an idle line",
+              "The devices automatically negotiate a shared clock frequency",
+              "Communication speed doubles to 19200 baud"
+            ],
+            "correctIndex": 0,
+            "explanation": "TX is an output and RX is an input. Connecting TX-to-TX pits two voltage drivers against each other, while RX-to-RX leaves both inputs with nothing transmitting to them."
+          },
+          {
+            "question": "Why is a common Ground (GND) wire required in addition to TX and RX signal lines?",
+            "options": [
+              "To establish a shared 0V reference so both devices measure HIGH and LOW logic voltages accurately",
+              "To provide mechanical support for the jumper wires",
+              "To convert alternating current into direct current"
+            ],
+            "correctIndex": 0,
+            "explanation": "Voltage is relative. Without a shared 0V ground reference, the transmitter's voltage levels cannot be reliably measured by the receiver."
+          },
+          {
+            "question": "If an external Bluetooth or GPS module must use Hardware Pins 0 and 1, what must you do whenever you upload a new sketch from the Arduino IDE?",
+            "options": [
+              "Temporarily disconnect the wires from Pins 0 and 1 during upload to prevent USB communication conflicts",
+              "Increase the computer monitor brightness",
+              "Press the reset button continuously during compilation"
+            ],
+            "correctIndex": 0,
+            "explanation": "Disconnecting Pins 0 and 1 during sketch flashing prevents the external module from interfering with the USB bootloader upload sequence."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

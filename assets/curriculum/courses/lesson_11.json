@@ -1,0 +1,22 @@
+{
+  "id": "lesson_11",
+  "title": "Lesson 11 — Serial UART & Wireless Telemetry",
+  "summary": "Cut the USB tether with asynchronous serial UART, baud rate timing, logic level shifting, and Bluetooth wireless robot telemetry.",
+  "lessonIds": [
+    "l11_01",
+    "l11_02",
+    "l11_03",
+    "l11_04",
+    "l11_05",
+    "l11_06",
+    "l11_07",
+    "l11_08"
+  ],
+  "isOptional": false,
+  "placementLessonId": null,
+  "prerequisites": [
+    "lesson_10"
+  ],
+  "xpReward": 100,
+  "estimatedMinutes": 50
+}

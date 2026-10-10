@@ -1,0 +1,122 @@
+{
+  "id": "l09_05",
+  "title": "The I2C Hardware Bus Scanner Sketch (Wire.h)",
+  "summary": "Build and execute an industrial-grade diagnostic I2C bus scanner sketch to detect, verify, and map all active peripheral addresses.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_09",
+  "sortOrder": 5,
+  "isOptional": false,
+  "prerequisites": [
+    "l09_04"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_07",
+    "comp_10"
+  ],
+  "steps": [
+    {
+      "stepId": "l09_05_s01",
+      "title": "The Hardware Detective: The I2C Bus Scanner",
+      "type": "story",
+      "markdownContent": "### The Engineer's Golden Diagnostic Rule\nWhenever you construct a multi-device embedded circuit on a breadboard, **never jump straight into uploading your complex final application code**!\n\nWhy? Because if a jumper wire is in the wrong breadboard hole, an address is mistyped in your sketch, or a sensor backpack is hardwired to an alternate address (like `0x3F` instead of `0x27`), your application code will freeze or silently fail. You will waste hours guessing whether the problem is a software bug, a burnt component, or a bad wire.\n\nProfessional robotics engineers always deploy a **Hardware Bus Scanner** first. Think of an I2C scanner like sonar sweeping across an ocean: it systematically pings every valid 7-bit address from `1` to `126` (`0x01` through `0x7E`).\n\n```\nI2C SCANNER RADAR SWEEP (Pinging 7-Bit Address Space):\nController broadcasts: 0x01? -> No reply (NACK)\nController broadcasts: 0x02? -> No reply (NACK)\n...\nController broadcasts: 0x27? -> [PULLS SDA LOW: ACK!] -> Device Discovered: 16x2 LCD!\n...\nController broadcasts: 0x57? -> [PULLS SDA LOW: ACK!] -> Device Discovered: AT24C32 EEPROM!\nController broadcasts: 0x68? -> [PULLS SDA LOW: ACK!] -> Device Discovered: DS3231 RTC!\nSweep Complete: 3 Devices Discovered on Bus.\n```\n\n### The Mystery of the Third Device: Address 0x57!\nWhen you scan your bus with both the LCD (`comp_07`) and DS3231 RTC (`comp_10`) connected, you might expect to see exactly two devices: `0x27` and `0x68`. But the scanner will frequently report **three devices**: `0x27`, `0x57`, and `0x68`!\n\nWho is `0x57`? Look closely at your DS3231 breakout board: next to the clock chip sits a tiny 8-pin **AT24C32 EEPROM** non-volatile memory chip! The manufacturer included it so you can log sensor data offline. The scanner uncovers the hidden silicon automatically!",
+      "quickCheck": [
+        {
+          "questionId": "q_l09_05_s01_1",
+          "question": "How does an I2C bus scanner sketch determine whether a device is physically present at a specific address?",
+          "options": [
+            "It calls Wire.endTransmission() and checks if the return code is 0 (ACK bit received on clock pulse 9)",
+            "It reads the barcode sticker on the back of the module using an optical laser",
+            "It measures the temperature of the ATmega328P microcontroller"
+          ],
+          "correctIndex": 0,
+          "explanation": "When the scanner addresses a device, a functioning peripheral pulls SDA LOW on the 9th clock pulse to send an ACK. Wire.endTransmission() returns 0 when this ACK is detected.",
+          "warmupExplanation": "Recall the ACK/NACK handshake from Course 8: an ACK pulse (0) confirms a device heard its address."
+        },
+        {
+          "questionId": "q_l09_05_s01_2",
+          "question": "Why does a DS3231 RTC breakout module often show TWO responding addresses (0x68 and 0x57) during an I2C bus scan?",
+          "options": [
+            "The breakout board includes an onboard AT24C32 EEPROM memory chip at address 0x57 in addition to the DS3231 RTC at 0x68",
+            "The DS3231 clock is divided into morning and evening addresses",
+            "The Arduino Uno creates a duplicate mirror address to double clock speed"
+          ],
+          "correctIndex": 0,
+          "explanation": "Most standard DS3231 breakout modules include an onboard AT24C32 I2C EEPROM chip at address 0x57 alongside the DS3231 RTC chip at address 0x68.",
+          "warmupExplanation": "Many breakout boards package companion chips (like non-volatile EEPROM memory) onto the same PCB."
+        }
+      ]
+    },
+    {
+      "stepId": "l09_05_s02",
+      "title": "The Anatomy of an I2C Address Ping & Return Codes",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "i2cAddressScanner",
+      "markdownContent": "### The Transmission Cycle of a Scanner Ping\n\nWhen `Wire.beginTransmission(address)` and `Wire.endTransmission()` execute, the ATmega328P hardware executes a complete bus probe:\n\n```\nSCL: ──┐   ┌───┐   ┌───┐   ┌───┐   ┌───┐   ┌───┐   ┌───┐   ┌───┐   ┌───┐   ┌───┐\n       │   │ 1 │   │ 2 │   │ 3 │   │ 4 │   │ 5 │   │ 6 │   │ 7 │   │ 8 │   │ 9 │ (ACK Clock)\n       └───┘   └───┘   └───┘   └───┘   └───┘   └───┘   └───┘   └───┘   └───┘   └───┘\nSDA: ──┐   [Bit6]  [Bit5]  [Bit4]  [Bit3]  [Bit2]  [Bit1]  [Bit0]  [R/W=0] ┌─────── (Released by MCU)\n       └─── (7-Bit Target Address: e.g. 0x27)                              └───▼─── (PULLED LOW BY TARGET!)\n      START                                                                  ACK\n```\n\n### Wire.endTransmission() Return Codes:\n- **`0` = Success (ACK Received):** The target recognized its address and pulled SDA LOW during clock cycle 9. A working device is present!\n- **`1` = Data Too Long:** Data exceeded the internal 32-byte `Wire` buffer.\n- **`2` = Address NACK (No Device):** Nobody pulled SDA LOW during clock cycle 9 (the line stayed passively HIGH). No device exists at this address.\n- **`3` = Data NACK:** Device accepted its address but refused subsequent data bytes.\n- **`4` = Other Error:** Bus arbitration lost, line held low by hardware fault, or SDA/SCL shorted to Ground or VCC.\n\n### The 7-Bit Address Space Boundaries\nAddresses `0x00` through `0x07` and `0x78` through `0x7F` are reserved by the official Philips/NXP I2C specification for special functions (general calls, 10-bit addressing, high-speed mode). The scanner safely sweeps **`0x01` through `0x7E`** (1 to 126 in decimal).",
+      "interactiveConfig": {
+        "title": "I2C Address Scanner Simulator",
+        "description": "Probe the bus across 127 addresses to identify connected hardware devices."
+      }
+    },
+    {
+      "stepId": "l09_05_s03",
+      "title": "Authoring the Multi-Device Bus Scanner Sketch",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "i2cAddressScanner",
+      "markdownContent": "### The Industrial Bus Diagnostic Sketch\n\nHere is a complete, production-grade bus scanner sketch with formatted hexadecimal reporting and automatic peripheral identification:\n\n```cpp\n#include <Wire.h>\n\nvoid setup() {\n  Wire.begin();\n  Serial.begin(9600);\n  while (!Serial); // Wait for Serial Monitor connection\n  \n  Serial.println(\"\\n==============================================\");\n  Serial.println(\"   MONSTER LAB - I2C HARDWARE BUS SCANNER     \");\n  Serial.println(\"==============================================\");\n}\n\nvoid loop() {\n  byte error, address;\n  int nDevices = 0;\n  \n  Serial.println(\"Scanning I2C 7-bit address space (0x01 to 0x7E)...\");\n  \n  for (address = 1; address < 127; address++) {\n    // Transmit to target address with Write bit (0)\n    Wire.beginTransmission(address);\n    error = Wire.endTransmission();\n    \n    if (error == 0) {\n      Serial.print(\" [!] Device found at address 0x\");\n      if (address < 16) Serial.print('0');\n      Serial.print(address, HEX);\n      Serial.print(\" (Dec: \");\n      Serial.print(address);\n      Serial.print(\") - \");\n      \n      // Identify common Monster Lab components\n      if (address == 0x27 || address == 0x3F) {\n        Serial.println(\"16x2 Character LCD Backpack (PCF8574)\");\n      } else if (address == 0x68) {\n        Serial.println(\"DS3231 Precision Real-Time Clock\");\n      } else if (address == 0x57) {\n        Serial.println(\"AT24C32 I2C EEPROM (on RTC module)\");\n      } else {\n        Serial.println(\"Unknown Smart Peripheral\");\n      }\n      nDevices++;\n    } else if (error == 4) {\n      Serial.print(\" [X] Hardware bus error at address 0x\");\n      if (address < 16) Serial.print('0');\n      Serial.println(address, HEX);\n    }\n  }\n  \n  if (nDevices == 0) {\n    Serial.println(\"\\nNo I2C devices found! Check power, ground, and SDA/SCL.\");\n  } else {\n    Serial.print(\"\\nScan complete. Total active devices: \");\n    Serial.println(nDevices);\n  }\n  \n  Serial.println(\"Rescanning in 5 seconds...\\n\");\n  delay(5000);\n}\n```\n\n### Code Deconstruction:\n- `Wire.beginTransmission(address)`: Formats the 8-bit frame: `(address << 1) | 0`.\n- `Wire.endTransmission()`: Transmits the frame and listens for the 9th clock ACK pulse.\n- `Serial.print(address, HEX)`: Formats the numeric address into standard hex notation with leading zero padding for numbers less than 16.",
+      "interactiveConfig": {
+        "codeSnippet": "for (address = 1; address < 127; address++) {\n  Wire.beginTransmission(address);\n  if (Wire.endTransmission() == 0) {\n    Serial.print(\"Device found: 0x\");\n    Serial.println(address, HEX);\n  }\n}"
+      }
+    },
+    {
+      "stepId": "l09_05_s04",
+      "title": "Bus Scanner Diagnostics Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your mastery of I2C bus scanner routines, status return codes, and address mapping.",
+      "interactiveConfig": {
+        "question": "What does a return value of 0 from Wire.endTransmission() signify during an address scan?",
+        "options": [
+          "The addressed peripheral successfully pulled SDA LOW during the 9th clock cycle (ACK received)",
+          "The bus suffered a fatal short circuit to ground",
+          "The Arduino has run out of dynamic RAM memory"
+        ],
+        "correctIndex": 0,
+        "explanation": "Return code 0 indicates success: the target device acknowledged its address by asserting an ACK on the 9th clock pulse.",
+        "questions": [
+          {
+            "question": "What does a return value of 0 from Wire.endTransmission() signify during an address scan?",
+            "options": [
+              "The addressed peripheral successfully pulled SDA LOW during the 9th clock cycle (ACK received)",
+              "The bus suffered a fatal short circuit to ground",
+              "The Arduino has run out of dynamic RAM memory"
+            ],
+            "correctIndex": 0,
+            "explanation": "Return code 0 indicates success: the target device acknowledged its address by asserting an ACK on the 9th clock pulse."
+          },
+          {
+            "question": "What does return code 2 from Wire.endTransmission() indicate when scanning address 0x40?",
+            "options": [
+              "Address NACK: no device on the bus acknowledged address 0x40",
+              "The device at address 0x40 is transmitting streaming video",
+              "Address 0x40 contains a memory overflow"
+            ],
+            "correctIndex": 0,
+            "explanation": "Return code 2 indicates an Address NACK: no device recognized the address, so the SDA line remained passively pulled HIGH by the pull-up resistor."
+          },
+          {
+            "question": "Why is running an I2C scanner the recommended first step whenever assembling a multi-device breadboard?",
+            "options": [
+              "It isolates physical wiring, power, and addressing errors from high-level software application bugs",
+              "It uploads firmware into peripheral sensor microchips",
+              "It increases the USB voltage from 5V to 12V"
+            ],
+            "correctIndex": 0,
+            "explanation": "Running a scanner verifies physical electrical continuity, confirms power and ground rails, and proves the hardware addresses independently of complex application libraries."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

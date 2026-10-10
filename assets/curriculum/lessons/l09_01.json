@@ -1,0 +1,142 @@
+{
+  "id": "l09_01",
+  "title": "Beyond Single Peripherals: Multi-Device I2C",
+  "summary": "Discover why complex robotics telemetry systems connect multiple smart peripherals across a single shared two-wire communication bus.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_09",
+  "sortOrder": 1,
+  "isOptional": false,
+  "prerequisites": [
+    "l08_10"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_07"
+  ],
+  "steps": [
+    {
+      "stepId": "l09_01_s01",
+      "title": "The Multi-Device Telemetry Challenge",
+      "type": "story",
+      "markdownContent": "### The Autonomous Incubator Dilemma\nWelcome back, Lead Engineer! In Course 8, you unlocked the magic of the 2-wire serial bus by commanding a single 16x2 character display (`comp_07`) over I2C. But real-world monster engineering demands far more than a simple text monitor!\n\nImagine you are building an **Autonomous Monster Egg Incubator**. To ensure your creature hatches safely, your system must simultaneously:\n1. Track exact calendar time and incubation days so warmth stays consistent for 72 straight hours.\n2. Read multi-point environmental temperature and humidity sensors inside the nesting chamber.\n3. Monitor atmospheric pressure to detect approaching storms.\n4. Display live status metrics continuously on a character LCD for lab technicians.\n\n```\nPOINT-TO-POINT PIN NIGHTMARE (Exhausts Arduino Uno GPIO):\n16x2 Display (Parallel): 6 Pins\nClock Module (SPI):      4 Pins\nTemp/Humidity Sensor:    2 Pins\nPressure Sensor (SPI):   4 Pins\nTotal GPIO Pins Needed: 16 Pins (Arduino Out of Pins!)\n\nSHARED I2C BUS (Elegant, Scalable Architecture):\nAll 4 Smart Peripherals Share: 2 Pins (SDA & SCL)!\nRemaining GPIO Pins for Motors, Heaters, & LEDs: 18 Pins Free!\n```\n\n### The Shared Highway Philosophy\nHow can four completely different devices share the exact same two wires without packet collisions or data corruption? The secret lies in **7-bit digital addressing** and **time-division bus arbitration**.\n\nThe Arduino Uno acts as the bus **Controller (Master)**. Like a teacher leading a classroom, the controller addresses one device at a time. When it calls address `0x27`, only the LCD listens and acknowledges; all other peripherals remain silent and ignore the data stream until a STOP condition releases the bus!",
+      "quickCheck": [
+        {
+          "questionId": "q_l09_01_s01_1",
+          "question": "What electrical advantage allows an Arduino Uno to communicate with multiple smart sensors using only pins A4 and A5?",
+          "options": [
+            "I2C is a shared parallel bus where each peripheral listens for its unique 7-bit digital address",
+            "The Arduino Uno rapidly swaps physical wire connections inside the header sockets",
+            "Analog pins A4 and A5 deliver 50 volts to force all devices into high-speed mode"
+          ],
+          "correctIndex": 0,
+          "explanation": "Because I2C is a shared bus, each peripheral has a unique 7-bit address. Devices share the exact same SDA and SCL lines and only respond when their specific address is called.",
+          "warmupExplanation": "Remember from Course 8: a communication bus allows many devices to share a two-lane digital highway instead of using separate dedicated wires."
+        },
+        {
+          "questionId": "q_l09_01_s01_2",
+          "question": "Why can't complex robotics builds use dedicated point-to-point GPIO wires for every individual sensor and display?",
+          "options": [
+            "The microcontroller has a limited number of I/O pins, leading to pin starvation as peripherals increase",
+            "Connecting more than three wires causes the microcontroller firmware to erase itself",
+            "Digital input pins permanently lose electrical conductivity after 100 read cycles"
+          ],
+          "correctIndex": 0,
+          "explanation": "The Arduino Uno has only 14 digital pins and 6 analog pins. Wiring multiple parallel displays and SPI sensors quickly consumes all available pins.",
+          "warmupExplanation": "Think back to the pin starvation bottleneck introduced in Course 8: point-to-point wiring uses up pins too quickly."
+        }
+      ]
+    },
+    {
+      "stepId": "l09_01_s02",
+      "title": "Multi-Target Bus Architecture & Time-Division Polling",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### The I2C Communication Sequence\n\nOn an active multi-device I2C bus, data transactions follow an exact sequential dance governed by the Arduino Uno Controller:\n\n```\n[ Arduino Uno Controller (A4=SDA, A5=SCL) ]\n                    │                   │\n                    ├─── SDA Bus ───────┼──────────────┬──────────────┐\n                    └─── SCL Bus ───────┼──────────────┼──────────────┤\n                                        ▼              ▼              ▼\n                                  [ I2C LCD ]    [ I2C RTC ]    [ I2C Sensor ]\n                                   Addr: 0x27     Addr: 0x68     Addr: 0x76\n\nTRANSACTION 1 (Target: LCD 0x27):\n[START] ──► [Addr: 0x27 + Write] ──► [ACK from LCD] ──► [Data: 'EGG TEMP OK'] ──► [STOP]\n\nTRANSACTION 2 (Target: RTC 0x68):\n[START] ──► [Addr: 0x68 + Read]  ──► [ACK from RTC] ──► [Data: 14:32:05 Secs] ──► [STOP]\n```\n\n### Time-Division Multiplexing\nNotice that the Arduino **never talks to two peripherals at the exact same microsecond**:\n1. The Controller generates a **START condition** (pulling SDA LOW while SCL is HIGH).\n2. The Controller clocks out the 7-bit target address plus a Read/Write bit.\n3. The targeted peripheral detects its address and pulls SDA LOW on clock pulse 9 (**ACK**).\n4. Information bytes are streamed between the Controller and that specific peripheral.\n5. The Controller generates a **STOP condition** (releasing SDA HIGH while SCL is HIGH), releasing the bus back to IDLE.\n6. A fraction of a millisecond later, the Controller begins a brand new session with a different device!",
+      "interactiveConfig": {
+        "nodes": [
+          {
+            "id": "node_controller",
+            "label": "Arduino Uno\n(Bus Controller)",
+            "icon": "memory",
+            "role": "Generates SCL clock pulses and initiates all communication frames targeting specific peripherals.",
+            "color": "#00E5FF"
+          },
+          {
+            "id": "node_lcd",
+            "label": "16x2 LCD Backpack\n(Address: 0x27)",
+            "icon": "display",
+            "role": "Listens on SDA/SCL. Receives display commands and ASCII text bytes when addressed.",
+            "color": "#76FF03"
+          },
+          {
+            "id": "node_rtc",
+            "label": "DS3231 Precision RTC\n(Address: 0x68)",
+            "icon": "timer",
+            "role": "Provides battery-backed calendar time, seconds, and internal temperature readings.",
+            "color": "#FFB300"
+          }
+        ]
+      }
+    },
+    {
+      "stepId": "l09_01_s03",
+      "title": "Multi-Peripheral State Polling Loop",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "markdownContent": "### Multi-Device Coordination Firmware\n\nTo manage multiple I2C peripherals cleanly in C++, robotics firmware uses non-blocking polling loops with `millis()` rather than blocking delays. Examine this architectural skeleton:\n\n```cpp\n#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n\n// Hardware Addresses on Shared Bus\nconst byte LCD_ADDR = 0x27;\nconst byte RTC_ADDR = 0x68;\n\nLiquidCrystal_I2C lcd(LCD_ADDR, 16, 2);\nunsigned long lastPollTime = 0;\nconst unsigned long POLL_INTERVAL_MS = 1000;\n\nvoid setup() {\n  Wire.begin();        // Join I2C bus as Controller\n  Serial.begin(9600);\n  \n  lcd.init();\n  lcd.backlight();\n  lcd.setCursor(0, 0);\n  lcd.print(\"MONSTER LAB BUS\");\n  lcd.setCursor(0, 1);\n  lcd.print(\"MULTI-DEVICE OK\");\n}\n\nvoid loop() {\n  // Non-blocking timer: poll every 1000ms\n  if (millis() - lastPollTime >= POLL_INTERVAL_MS) {\n    lastPollTime = millis();\n    \n    // 1. Transaction A: Ping RTC at 0x68\n    Wire.beginTransmission(RTC_ADDR);\n    byte rtcStatus = Wire.endTransmission();\n    \n    // 2. Transaction B: Update LCD at 0x27\n    lcd.setCursor(0, 1);\n    if (rtcStatus == 0) {\n      lcd.print(\"RTC ONLINE 0x68 \");\n    } else {\n      lcd.print(\"RTC OFFLINE ERR \");\n    }\n  }\n}\n```\n\n### Code Deconstruction:\n- `Wire.begin()`: Initializes the ATmega328P Two-Wire Interface (TWI) hardware on pins A4 and A5.\n- `Wire.beginTransmission(RTC_ADDR)`: Prepares the internal hardware buffer with the 7-bit target address (`0x68`).\n- `Wire.endTransmission()`: Executes the complete I2C frame over SDA/SCL, sending START, address, and reading the target ACK.\n- `millis() - lastPollTime`: Ensures transactions happen at measured intervals without freezing CPU execution.",
+      "interactiveConfig": {
+        "codeSnippet": "Wire.beginTransmission(RTC_ADDR);\nbyte rtcStatus = Wire.endTransmission();\nlcd.setCursor(0, 1);\nlcd.print(rtcStatus == 0 ? \"RTC ONLINE \" : \"RTC OFFLINE\");"
+      }
+    },
+    {
+      "stepId": "l09_01_s04",
+      "title": "Multi-Device I2C Foundations Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Prove your understanding of multi-device bus topology, addressing, and sequential transaction polling.",
+      "interactiveConfig": {
+        "question": "How do multiple devices share the same SDA and SCL wires without corrupting each other's data packets?",
+        "options": [
+          "Each device has a unique 7-bit address and only responds when addressed by the controller during its specific transaction",
+          "All devices broadcast continuously and the Arduino filters messages by wire color",
+          "Only one peripheral device can be physically wired to the breadboard at any time"
+        ],
+        "correctIndex": 0,
+        "explanation": "Every I2C device listens for its unique 7-bit address. When the controller broadcasts an address frame, only the matching peripheral sends an ACK and participates in data transfer.",
+        "questions": [
+          {
+            "question": "How do multiple devices share the same SDA and SCL wires without corrupting each other's data packets?",
+            "options": [
+              "Each device has a unique 7-bit address and only responds when addressed by the controller during its specific transaction",
+              "All devices broadcast continuously and the Arduino filters messages by wire color",
+              "Only one peripheral device can be physically wired to the breadboard at any time"
+            ],
+            "correctIndex": 0,
+            "explanation": "Every I2C device listens for its unique 7-bit address. When the controller broadcasts an address frame, only the matching peripheral sends an ACK and participates in data transfer."
+          },
+          {
+            "question": "What frames the beginning and end of each individual communication session on an I2C bus?",
+            "options": [
+              "A START condition at the beginning and a STOP condition at the conclusion of the transaction",
+              "An analog voltage pulse exceeding 12 volts",
+              "A high-frequency radio chime sent over USB"
+            ],
+            "correctIndex": 0,
+            "explanation": "Every I2C transaction begins with a START condition (SDA dropping LOW while SCL is HIGH) and ends with a STOP condition (SDA rising HIGH while SCL is HIGH)."
+          },
+          {
+            "question": "Why is non-blocking millis() timing preferred over delay() when coordinating multiple I2C peripherals?",
+            "options": [
+              "millis() allows the microcontroller to monitor inputs and coordinate multi-device polling schedules without halting code execution",
+              "delay() causes the I2C pull-up resistors to lose electrical resistance",
+              "The Wire library is completely disabled whenever delay() is called"
+            ],
+            "correctIndex": 0,
+            "explanation": "Using millis() keeps the loop() running continuously, enabling timely polling of multiple sensors and displays without locking up the CPU."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

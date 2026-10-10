@@ -1,0 +1,122 @@
+{
+  "id": "l09_07",
+  "title": "Address Collisions & Solder-Bridge Address Modding",
+  "summary": "Understand bus contention caused by address collisions and learn how to modify hardware addresses using PCB solder jumpers.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_09",
+  "sortOrder": 7,
+  "isOptional": false,
+  "prerequisites": [
+    "l09_06"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_07",
+    "comp_10"
+  ],
+  "steps": [
+    {
+      "stepId": "l09_07_s01",
+      "title": "The Twin Identity Crisis: Address Collisions",
+      "type": "story",
+      "markdownContent": "### The Dual Display Problem\nImagine you are designing the command cockpit for an advanced monster exploration robot. You need two separate screens:\n1. **Screen 1 (Primary Mission HUD):** Displays monster battery, navigation heading, and speed.\n2. **Screen 2 (Life Support Monitor):** Displays habitat temperature, oxygen levels, and hatch countdown.\n\nYou grab two identical 16x2 LCD displays (`comp_07`) from your lab kit and wire them in parallel to your breadboard SDA and SCL rails. You power on the Arduino, upload your code, and... **disaster strikes!**\n\nBoth screens display garbled hieroglyphics, or the Arduino completely freezes! What happened?\n\n### The Address Collision Hazard\nBoth LCD backpacks came from the factory pre-configured to the exact same I2C address: **`0x27`**.\n\nWhen the Arduino controller broadcasts address `0x27` onto the bus:\n1. **Both displays** recognize the address and pull the SDA line LOW to acknowledge.\n2. When the Arduino begins writing or reading data bytes, both backpack chips attempt to drive and sample the bus simultaneously.\n3. This condition is called **Bus Contention (an Address Collision)**. Data packets clash, signals corrupt each other, and neither display can understand the instructions!\n\n```\nADDRESS COLLISION (Both Peripherals Hardwired to 0x27):\nArduino: \"Calling 0x27!\" ──► [ LCD Display 1 (0x27) Pulls SDA LOW ]\n                         └──► [ LCD Display 2 (0x27) Pulls SDA LOW ]\n                         ===> BUS CONTENTION! Packets Scrambled!\n\nTHE SOLUTION (Hardware Solder Jumper Modding):\nModify Display 2 Address Jumper A0: 0x27 ──► 0x26!\nArduino: \"Calling 0x27...\" ──► Only Display 1 replies! Clean data!\nArduino: \"Calling 0x26...\" ──► Only Display 2 replies! Clean data!\n```",
+      "quickCheck": [
+        {
+          "questionId": "q_l09_07_s01_1",
+          "question": "What electrical problem occurs when two identical breakout modules configured to address 0x27 share the same I2C bus?",
+          "options": [
+            "An address collision occurs: both devices attempt to drive the SDA line simultaneously, corrupting packets and locking up the bus",
+            "The Arduino Uno automatically detects the duplicate and renames one device over the air",
+            "Both displays double their maximum font size automatically"
+          ],
+          "correctIndex": 0,
+          "explanation": "Because both devices match the same 7-bit address frame, both attempt to acknowledge and drive the bus at once, causing bus contention and packet corruption.",
+          "warmupExplanation": "Think of two people in the same room sharing the same name: when you call that name, both answer at once and talk over each other."
+        },
+        {
+          "questionId": "q_l09_07_s01_2",
+          "question": "How can an engineer resolve an address collision between two identical I2C breakout boards on the same bus?",
+          "options": [
+            "By modifying hardware address solder jumpers (A0, A1, A2) on one of the boards to change its binary address bits",
+            "By connecting one board to an analog input and the other to digital pin 13",
+            "By painting the second board with conductive paint"
+          ],
+          "correctIndex": 0,
+          "explanation": "Most I2C breakout boards include address configuration pads (A0, A1, A2) that allow you to change the low-order address bits by bridging solder pads.",
+          "warmupExplanation": "Breakout boards provide address solder pads specifically so multiple identical boards can coexist on the same bus."
+        }
+      ]
+    },
+    {
+      "stepId": "l09_07_s02",
+      "title": "Address Decoding Math & The 3-Bit Solder Jumper Truth Table",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "i2cDaisyChainSimulator",
+      "markdownContent": "### The 7-Bit Address Anatomy of the PCF8574\n\nTurn over your 16x2 LCD backpack. Next to the main black chip, you will see three pairs of shiny silver solder pads labeled **A0, A1, and A2**.\n\nThe PCF8574 I/O expander uses a 7-bit binary address structured into two parts:\n\n```\nPCF8574 7-BIT BINARY ADDRESS FORMAT:\n┌───┬───┬───┬───┬────┬────┬────┐\n│ 0 │ 1 │ 0 │ 0 │ A2 │ A1 │ A0 │\n└───┴───┴───┴───┴────┴────┴────┘\n└─── Fixed ────┘└── User-Modifiable ──┘\n   by Silicon       via Solder Pads\n```\n\n- **Fixed Upper Bits (`0 1 0 0`):** Hardwired into the silicon die at the factory.\n- **Lower Bits (`A2`, `A1`, `A0`):** Connected to the physical solder pads. Internal pull-up resistors hold each pad at binary `1` (HIGH) by default when unbridged.\n\n### The Solder Jumper Configuration Truth Table:\nBridging a pad with a tiny drop of solder ties that pin to Ground (binary `0`):\n\n```\n┌──────────┬──────────┬──────────┬──────────────┬─────────────┐\n│ A2 Pad   │ A1 Pad   │ A0 Pad   │ Binary Addr  │ Hex Address │\n├──────────┼──────────┼──────────┼──────────────┼─────────────┤\n│ Open (1) │ Open (1) │ Open (1) │ 0100 111     │ 0x27 (Default)│\n│ Open (1) │ Open (1) │ Solder(0)│ 0100 110     │ 0x26        │\n│ Open (1) │ Solder(0)│ Open (1) │ 0100 101     │ 0x25        │\n│ Open (1) │ Solder(0)│ Solder(0)│ 0100 100     │ 0x24        │\n│ Solder(0)│ Open (1) │ Open (1) │ 0100 011     │ 0x23        │\n│ Solder(0)│ Open (1) │ Solder(0)│ 0100 010     │ 0x22        │\n│ Solder(0)│ Solder(0)│ Open (1) │ 0100 001     │ 0x21        │\n│ Solder(0)│ Solder(0)│ Solder(0)│ 0100 000     │ 0x20        │\n└──────────┴──────────┴──────────┴──────────────┴─────────────┘\n```\n\nWith 3 binary address pads, you can configure up to **$2^3 = 8$ unique addresses** (`0x20` through `0x27`). That means you can run up to **eight independent 16x2 LCD screens** simultaneously using only the two Uno I2C pins (A4 and A5)!",
+      "interactiveConfig": {
+        "title": "I2C Address Collision & Solder-Bridge Simulator",
+        "description": "Simulate adding duplicate peripherals and bridging solder jumpers to resolve address conflicts."
+      }
+    },
+    {
+      "stepId": "l09_07_s03",
+      "title": "Multi-Display Dual-Address Firmware Control",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "i2cDaisyChainSimulator",
+      "markdownContent": "### Dual-LCD Master Firmware\n\nOnce you have bridged pad `A0` on your second display (changing its address to `0x26`), you can instantiate two independent `LiquidCrystal_I2C` objects in your Arduino sketch:\n\n```cpp\n#include <Wire.h>\n#include <LiquidCrystal_I2C.h>\n\n// Primary Display: Factory Default Address\nLiquidCrystal_I2C lcdPrimary(0x27, 16, 2);\n\n// Secondary Display: Jumper A0 Bridged to Ground\nLiquidCrystal_I2C lcdSecondary(0x26, 16, 2);\n\nint missionSeconds = 0;\nfloat robotBattery = 12.6;\n\nvoid setup() {\n  Wire.begin();\n  \n  // Initialize Primary Display (0x27)\n  lcdPrimary.init();\n  lcdPrimary.backlight();\n  lcdPrimary.setCursor(0, 0);\n  lcdPrimary.print(\"MISSION HUD #1\");\n  lcdPrimary.setCursor(0, 1);\n  lcdPrimary.print(\"ADDR: 0x27 OK\");\n  \n  // Initialize Secondary Display (0x26)\n  lcdSecondary.init();\n  lcdSecondary.backlight();\n  lcdSecondary.setCursor(0, 0);\n  lcdSecondary.print(\"TELEMETRY HUD #2\");\n  lcdSecondary.setCursor(0, 1);\n  lcdSecondary.print(\"ADDR: 0x26 OK\");\n  \n  delay(2000);\n  lcdPrimary.clear();\n  lcdSecondary.clear();\n}\n\nvoid loop() {\n  missionSeconds++;\n  robotBattery -= 0.01; // Simulate battery drain\n  \n  // Update Screen 1: Mission Clock\n  lcdPrimary.setCursor(0, 0);\n  lcdPrimary.print(\"MISSION CLOCK:\");\n  lcdPrimary.setCursor(0, 1);\n  lcdPrimary.print(\"ELAPSED: \");\n  lcdPrimary.print(missionSeconds);\n  lcdPrimary.print(\"s   \");\n  \n  // Update Screen 2: Robot Power Telemetry\n  lcdSecondary.setCursor(0, 0);\n  lcdSecondary.print(\"POWER SYSTEM:\");\n  lcdSecondary.setCursor(0, 1);\n  lcdSecondary.print(\"BATT: \");\n  lcdSecondary.print(robotBattery, 2);\n  lcdSecondary.print(\"V  \");\n  \n  delay(1000);\n}\n```\n\n### Code Deconstruction:\n- `lcdPrimary(0x27, 16, 2)` & `lcdSecondary(0x26, 16, 2)`: Creates two distinct C++ driver instances targeting different physical devices on the exact same two wires.\n- Zero address collisions occur because each transaction targets its own verified 7-bit address.",
+      "interactiveConfig": {
+        "codeSnippet": "LiquidCrystal_I2C lcdPrimary(0x27, 16, 2);\nLiquidCrystal_I2C lcdSecondary(0x26, 16, 2);\nlcdPrimary.print(\"HUD 1 (0x27)\");\nlcdSecondary.print(\"HUD 2 (0x26)\");"
+      }
+    },
+    {
+      "stepId": "l09_07_s04",
+      "title": "Address Collision & Modding Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your mastery of address collisions, binary address decoding, and hardware solder-bridge modification.",
+      "interactiveConfig": {
+        "question": "Why do two devices sharing the identical I2C address cause a communication crash?",
+        "options": [
+          "Both devices attempt to acknowledge and drive the SDA line simultaneously, corrupting data packets",
+          "The Arduino Uno will instantly cut all power to the breadboard",
+          "The microcontroller will automatically delete its operating program"
+        ],
+        "correctIndex": 0,
+        "explanation": "Because both devices listen for the same address, both attempt to assert signals onto the open-drain SDA line at the same time, corrupting transmitted bytes.",
+        "questions": [
+          {
+            "question": "Why do two devices sharing the identical I2C address cause a communication crash?",
+            "options": [
+              "Both devices attempt to acknowledge and drive the SDA line simultaneously, corrupting data packets",
+              "The Arduino Uno will instantly cut all power to the breadboard",
+              "The microcontroller will automatically delete its operating program"
+            ],
+            "correctIndex": 0,
+            "explanation": "Because both devices listen for the same address, both attempt to assert signals onto the open-drain SDA line at the same time, corrupting transmitted bytes."
+          },
+          {
+            "question": "On a PCF8574 LCD backpack with default address 0x27, what new address is created by bridging solder pad A0 to Ground?",
+            "options": [
+              "0x26",
+              "0x28",
+              "0x00"
+            ],
+            "correctIndex": 0,
+            "explanation": "Default address 0x27 is binary 0100 111. Bridging A0 pulls bit 0 to Ground (0), resulting in binary 0100 110, which is hexadecimal 0x26."
+          },
+          {
+            "question": "How many total identical PCF8574 breakout boards can theoretically share a single I2C bus using their 3 address jumper pads?",
+            "options": [
+              "Up to 8 devices (2^3 = 8 unique addresses from 0x20 to 0x27)",
+              "Only 2 devices",
+              "Up to 256 devices"
+            ],
+            "correctIndex": 0,
+            "explanation": "Three binary jumper pads provide 2^3 = 8 unique binary combinations, allowing up to 8 identical boards to operate on the same bus without conflict."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

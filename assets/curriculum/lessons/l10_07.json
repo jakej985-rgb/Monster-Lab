@@ -1,0 +1,116 @@
+{
+  "id": "l10_07",
+  "title": "The <SPI.h> Library & Multi-Device Chip Selects",
+  "summary": "Arbitrate multiple SPI peripherals on shared MOSI, MISO, and SCK lines using independent Chip Select pins.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_10",
+  "sortOrder": 7,
+  "isOptional": false,
+  "prerequisites": [
+    "l10_06"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_15",
+    "comp_23"
+  ],
+  "steps": [
+    {
+      "stepId": "l10_07_s01",
+      "title": "Orchestrating the Dual-Device Bus",
+      "type": "story",
+      "markdownContent": "### The Ultimate Bus Coexistence Challenge\nUp to this point, you have tested the **MAX7219 8x8 LED Matrix** (`comp_15`) and the **RC522 RFID Reader** (`comp_23`) individually. Now comes the true test of an embedded robotics engineer: **connecting both devices to the same SPI bus at the exact same time!**\n\n```\nArduino Uno (Master)\n  Pin 11 (MOSI) ──┬─────────────────────────────► MAX7219 DIN\n                  └─────────────────────────────► RC522 MOSI\n  Pin 12 (MISO) ◄───────────────────────────────  RC522 MISO (MAX7219 has no MISO!)\n  Pin 13 (SCK)  ──┬─────────────────────────────► MAX7219 CLK\n                  └─────────────────────────────► RC522 SCK\n  Pin 10 (CS1)  ────────────────────────────────► MAX7219 CS (Display Select)\n  Pin 8  (CS2)  ────────────────────────────────► RC522 SDA  (RFID Select)\n  Pin 9  (RST)  ────────────────────────────────► RC522 RST  (RFID Reset)\n```\n\n### The Two Golden Rules of Multi-Device SPI\n1. **Shared Highways:** Pins 11 (MOSI) and 13 (SCK) branch off in parallel to both the display and the RFID reader. Pin 12 (MISO) connects directly to the RFID reader (the MAX7219 is write-only and does not use MISO).\n2. **Private Door-Knockers:** Never tie CS pins together! Pin 10 independently controls the MAX7219 display, and Pin 8 independently controls the RC522 reader. By keeping one CS HIGH while the other is LOW, the Arduino switches conversations instantly without cross-talk!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l10_07_s01_q1",
+          "question": "When connecting both the MAX7219 LED matrix and the RC522 RFID reader to an Arduino Uno, which pins must they share in parallel?",
+          "options": [
+            "Pin 11 (MOSI) and Pin 13 (SCK)",
+            "They cannot share any pins; they require 8 completely independent pins",
+            "Analog pins A4 and A5"
+          ],
+          "correctIndex": 0,
+          "explanation": "MOSI (Pin 11) and SCK (Pin 13) form the shared high-speed data and clock highways used by both peripherals.",
+          "warmupExplanation": "Remember: in an SPI bus, clock (SCK) and outward data (MOSI) are shared across all connected devices."
+        },
+        {
+          "questionId": "qc_l10_07_s01_q2",
+          "question": "Why is the MAX7219 display able to share the bus without connecting to Pin 12 (MISO)?",
+          "options": [
+            "The MAX7219 is a write-only display that receives pixel data but never transmits bytes back to the Arduino",
+            "Because MISO only works with motors",
+            "Because Pin 12 cannot carry electricity"
+          ],
+          "correctIndex": 0,
+          "explanation": "Display drivers like the MAX7219 are write-only devices, leaving the MISO return line completely free for input sensors like the RC522.",
+          "warmupExplanation": "You look at a display, but a display doesn't need to report readings back to you: data flows one way from Uno to screen."
+        }
+      ]
+    },
+    {
+      "stepId": "l10_07_s02",
+      "title": "Breadboard Bus Distribution Schematic",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "chipSelectArbitrator",
+      "markdownContent": "### Dual-Voltage Power Distribution Architecture\nNotice the crucial power difference between our two components:\n- **MAX7219 LED Matrix:** Requires **+5V** to drive 64 bright LEDs.\n- **RC522 RFID Reader:** Requires **+3.3V ONLY**!\n\n```\nPOWER DISTRIBUTION:\n  Uno 5V   ──► Breadboard Red Rail (+) ──► MAX7219 VCC (5V)\n  Uno 3.3V ──────────────────────────────► RC522 VCC (3.3V DIRECT!)\n  Uno GND  ──► Breadboard Blue Rail (-)─┬► MAX7219 GND\n                                        └► RC522 GND\n\nSPI SIGNAL DISTRIBUTION:\n  Uno Pin 11 (MOSI) ──► Breadboard Row 25 ─┬► MAX7219 DIN\n                                           └► RC522 MOSI\n  Uno Pin 13 (SCK)  ──► Breadboard Row 26 ─┬► MAX7219 CLK\n                                           └► RC522 SCK\n  Uno Pin 12 (MISO) ───────────────────────► RC522 MISO\n  Uno Pin 10 (CS1)  ───────────────────────► MAX7219 CS\n  Uno Pin 8  (CS2)  ───────────────────────► RC522 SDA (CS)\n  Uno Pin 9  (RST)  ───────────────────────► RC522 RST\n```\n\n### Interactive Arbitrator Lab\nTest bus arbitration in the simulator below. Toggle between CS1 and CS2 to verify that activating one peripheral automatically holds the other in tri-state standby!",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "l10_07_s03",
+      "title": "Dual-Peripheral Bus Arbitration Sketch",
+      "type": "codeExperiment",
+      "markdownContent": "### The Multi-Device Orchestration Sketch\nHere is the complete Arduino sketch that arbitrates between the MAX7219 LED matrix and the RC522 RFID reader on a shared hardware SPI bus:\n\n```cpp\n#include <SPI.h>\n#include <MFRC522.h>\n\n// Dedicated Chip Select pins\nconst int CS_MATRIX = 10; // Pin 10: MAX7219 Display Select\nconst int CS_RFID   = 8;  // Pin 8:  RC522 RFID Select\nconst int RST_RFID  = 9;  // Pin 9:  RC522 Reset\n\nMFRC522 rfid(CS_RFID, RST_RFID);\n\n// Helper to write to MAX7219\nvoid writeMatrix(byte reg, byte data) {\n  digitalWrite(CS_RFID, HIGH);   // 1. Ensure RFID is asleep\n  digitalWrite(CS_MATRIX, LOW);  // 2. Select MAX7219\n  SPI.transfer(reg);\n  SPI.transfer(data);\n  digitalWrite(CS_MATRIX, HIGH); // 3. Deselect and latch\n}\n\n// Clear all 8 rows of matrix\nvoid clearMatrix() {\n  for (byte i = 1; i <= 8; i++) {\n    writeMatrix(i, 0x00);\n  }\n}\n\nvoid setup() {\n  Serial.begin(9600);\n  while (!Serial);\n\n  // CRITICAL: Configure both CS pins as OUTPUT and HIGH before SPI.begin()!\n  pinMode(CS_MATRIX, OUTPUT);\n  pinMode(CS_RFID, OUTPUT);\n  digitalWrite(CS_MATRIX, HIGH);\n  digitalWrite(CS_RFID, HIGH);\n\n  // Initialize hardware SPI bus\n  SPI.begin();\n\n  // Initialize MAX7219\n  writeMatrix(0x0C, 0x01); // Normal operation\n  writeMatrix(0x09, 0x00); // Raw matrix mode\n  writeMatrix(0x0B, 0x07); // Scan all 8 rows\n  writeMatrix(0x0A, 0x03); // Low-medium brightness\n  clearMatrix();\n\n  // Initialize RC522 RFID reader\n  rfid.PCD_Init();\n  Serial.println(\"Dual SPI Bus Operational: MAX7219 + RC522!\");\n}\n\nvoid loop() {\n  // 1. Check for RFID card presence\n  if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {\n    Serial.println(\"Badge detected! Illuminating Matrix Eye...\");\n\n    // Draw an open eye on the matrix\n    writeMatrix(4, B00111100);\n    writeMatrix(5, B00111100);\n\n    rfid.PICC_HaltA();\n    delay(1000);\n    clearMatrix();\n  }\n  delay(100);\n}\n```\n\n### Code Breakdown:\n- `pinMode(..., OUTPUT)` and `digitalWrite(..., HIGH)` for both CS pins before `SPI.begin()`: Guarantees that neither chip pulls lines during initialization.\n- Both devices coexist on Pins 11 and 13 seamlessly because only one Chip Select pin is asserted LOW during any transfer!",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "l10_07_s04",
+      "title": "Multi-Device SPI Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your mastery of multi-device SPI bus sharing, chip select arbitration, and power safety.",
+      "interactiveConfig": {
+        "question": "How do you ensure the RC522 RFID reader does not interfere with transmissions to the MAX7219 LED matrix?",
+        "options": [
+          "Hold the RC522's Chip Select pin HIGH while pulling the MAX7219's Chip Select pin LOW",
+          "Unplug the RFID module's ground wire before updating the screen",
+          "Set the microcontroller clock frequency to zero"
+        ],
+        "correctIndex": 0,
+        "explanation": "Holding the RC522 CS pin HIGH places its MISO output into high-impedance (Hi-Z) standby, preventing any interference.",
+        "questions": [
+          {
+            "question": "How do you ensure the RC522 RFID reader does not interfere with transmissions to the MAX7219 LED matrix?",
+            "options": [
+              "Hold the RC522's Chip Select pin HIGH while pulling the MAX7219's Chip Select pin LOW",
+              "Unplug the RFID module's ground wire before updating the screen",
+              "Set the microcontroller clock frequency to zero"
+            ],
+            "correctIndex": 0,
+            "explanation": "Holding the RC522 CS pin HIGH places its MISO output into high-impedance (Hi-Z) standby, preventing any interference."
+          },
+          {
+            "question": "Why is it dangerous to connect the RC522 VCC pin to the breadboard +5V power rail?",
+            "options": [
+              "The RC522 is strictly a 3.3V component; 5V will permanently burn out its silicon radio circuitry",
+              "5V will cause the breadboard wires to turn blue",
+              "The LEDs on the MAX7219 will dim slightly"
+            ],
+            "correctIndex": 0,
+            "explanation": "The MFRC522 IC is rated for 3.3V maximum supply voltage. Over-voltage damages the sensitive RF transceiver circuits."
+          },
+          {
+            "question": "Why must an Arduino engineer configure all CS pins to OUTPUT and HIGH during the early lines of setup()?",
+            "options": [
+              "To keep all connected peripherals in high-impedance standby until the microcontroller is ready to speak to them",
+              "To clear out remaining electrical charge from previous days",
+              "Because inputs cannot be connected to digital pins"
+            ],
+            "correctIndex": 0,
+            "explanation": "Setting CS pins HIGH immediately puts all peripherals into dormant standby, avoiding spurious bus contention during bootup."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

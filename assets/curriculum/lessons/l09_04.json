@@ -1,0 +1,125 @@
+{
+  "id": "l09_04",
+  "title": "Breadboard Bus Architecture & Parallel Rails",
+  "summary": "Design clean, low-noise parallel breadboard power and I2C signal distribution rails for multiple simultaneous peripherals.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_09",
+  "sortOrder": 4,
+  "isOptional": false,
+  "prerequisites": [
+    "l09_03"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_07",
+    "comp_10"
+  ],
+  "steps": [
+    {
+      "stepId": "l09_04_s01",
+      "title": "The Tangle of Wires: Clean Bus Distribution",
+      "type": "story",
+      "markdownContent": "### The Two-Wire Bottleneck on the Workbench\nLook closely at your Arduino Uno R3. Notice anything frustrating?\n\nThere is only **ONE header socket labeled A4 (SDA)**, and only **ONE header socket labeled A5 (SCL)**! (Even though the board has duplicate SDA/SCL pins above the AREF pin, they are internally connected to the exact same copper traces.)\n\nNow look at your components bench: you have your 16x2 Character LCD (`comp_07`) and your DS3231 Real-Time Clock (`comp_10`). Both modules have their own SDA and SCL wires. How do we physically connect two devices to one Arduino pin?\n\n> **⚠️ THE BENCH TRAP: Never Jam Two Wires in One Socket!**\n> Beginners often try to force two jumper wire pins into a single female header socket on the Arduino. **Never do this!** It bends and loosens the internal phosphor-bronze spring clips, causing intermittent electrical connections that will freeze your I2C bus intermittently!\n\n### The Solution: Breadboard Distribution Rails\nIn professional robotics builds, we use the solderless breadboard as an electrical **distribution hub**. By designating dedicated terminal strips on the breadboard as our shared communication highway, 2, 5, or 10 peripherals can tap into the exact same SDA and SCL signals cleanly and securely!",
+      "quickCheck": [
+        {
+          "questionId": "q_l09_04_s01_1",
+          "question": "Why should you never force two jumper wire pins into a single Arduino Uno header socket?",
+          "options": [
+            "It permanently stretches and damages the internal spring contacts, causing intermittent loose connections and bus lockups",
+            "It triples the voltage of the USB port and blows the computer fuse",
+            "It causes the ATmega328P to delete its bootloader instantly"
+          ],
+          "correctIndex": 0,
+          "explanation": "Header sockets are precision metal clips designed for a single standard 0.6mm square or round pin. Forcing two pins bends the spring clips permanently, creating loose, intermittent connections.",
+          "warmupExplanation": "Remember hardware lab safety from Lesson 2A: use breadboard rows to branch wires safely rather than jamming headers."
+        },
+        {
+          "questionId": "q_l09_04_s01_2",
+          "question": "How does an electrical breadboard enable multiple I2C devices to connect to the Uno's SDA and SCL pins in parallel?",
+          "options": [
+            "Breadboard rows feature connected internal metal spring clips that allow multiple jumper wires to share the same electrical node",
+            "The breadboard uses Wi-Fi to link sensor signals without copper contact",
+            "The breadboard steps up the frequency of the I2C clock to 10 GHz"
+          ],
+          "correctIndex": 0,
+          "explanation": "Each numbered 5-hole row on a breadboard is electrically connected internally, turning each row into a shared multi-contact electrical node.",
+          "warmupExplanation": "Recall the internal anatomy of a breadboard from Lesson 5: every 5-hole tie-point strip is a single continuous conductor."
+        }
+      ]
+    },
+    {
+      "stepId": "l09_04_s02",
+      "title": "Breadboard Bus Rail Architecture & Ground Planes",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "i2cDaisyChainSimulator",
+      "markdownContent": "### The Professional Bus Distribution Layout\n\nFollow this clean, systematic layout on your breadboard to connect both the 16x2 LCD (`comp_07`) and DS3231 RTC (`comp_10`):\n\n```\n                                BREADBOARD POWER & BUS HIGHWAY\n                     ┌────────────────────────────────────────────────────────┐\nArduino 5V  ────────►│ (+) RED POWER RAIL (+5V DC)                            │\nArduino GND ────────►│ (-) BLUE GROUND RAIL (Common 0V Reference Plane)       │\n                     └────────────────────────────────────────────────────────┘\n                                       │                     │\n                                       ▼                     ▼\n                                   [ LCD VCC/GND ]       [ RTC VCC/GND ]\n\n                     BREADBOARD SIGNAL DISTRIBUTION ROWS (Center Section):\n                     ┌────────────────────────────────────────────────────────┐\nArduino A4  ────────►│ ROW 20: [A4 In]───[LCD SDA]───[RTC SDA]───[Open]───[Open]│ (SDA Highway)\nArduino A5  ────────►│ ROW 21: [A5 In]───[LCD SCL]───[RTC SCL]───[Open]───[Open]│ (SCL Highway)\n                     └────────────────────────────────────────────────────────┘\n```\n\n### Wiring Step-by-Step:\n1. **Power Off:** Always disconnect USB power before wiring!\n2. **Power Backbone:**\n   - Uno `5V` -> Breadboard `(+)` Red Rail.\n   - Uno `GND` -> Breadboard `(-)` Blue Rail.\n3. **LCD Connections (`comp_07`):**\n   - LCD `VCC` -> Breadboard `(+)` Rail.\n   - LCD `GND` -> Breadboard `(-)` Rail.\n   - LCD `SDA` -> Breadboard Row 20.\n   - LCD `SCL` -> Breadboard Row 21.\n4. **RTC Connections (`comp_10`):**\n   - RTC `VCC` -> Breadboard `(+)` Rail.\n   - RTC `GND` -> Breadboard `(-)` Rail.\n   - RTC `SDA` -> Breadboard Row 20 (Sharing the SDA Highway!).\n   - RTC `SCL` -> Breadboard Row 21 (Sharing the SCL Highway!).\n\n### Best Practices for Bus Signal Integrity\n- **Keep Wires Short:** Long jumper wires (> 20 cm) act as antennas and introduce stray capacitance.\n- **Color Code Wires:** Red = 5V, Black = GND, Blue = SDA, Yellow/Green = SCL.",
+      "interactiveConfig": {
+        "title": "Breadboard Multi-Device Bus Simulator",
+        "devices": [
+          { "name": "16x2 LCD Display", "address": "0x27", "connected": true },
+          { "name": "DS3231 RTC Clock", "address": "0x68", "connected": true }
+        ]
+      }
+    },
+    {
+      "stepId": "l09_04_s03",
+      "title": "Verifying Dual-Device Parallel Electrical Bus Continuity",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "i2cDaisyChainSimulator",
+      "markdownContent": "### Dual-Peripheral Electrical Ping Verification\n\nBefore running full graphics and clock libraries, let's run an electrical health-check sketch. This program verifies that both devices are receiving power, sharing ground, and acknowledging their addresses over the breadboard rails:\n\n```cpp\n#include <Wire.h>\n\nconst byte LCD_ADDRESS = 0x27; // PCF8574 Backpack\nconst byte RTC_ADDRESS = 0x68; // DS3231 Real-Time Clock\n\nvoid setup() {\n  Wire.begin();\n  Serial.begin(9600);\n  while (!Serial); // Wait for Serial Monitor\n  \n  Serial.println(\"========================================\");\n  Serial.println(\"   DUAL-DEVICE BUS CONTINUITY CHECKER   \");\n  Serial.println(\"========================================\");\n  \n  checkPeripheral(\"16x2 Character LCD\", LCD_ADDRESS);\n  checkPeripheral(\"DS3231 Real-Time Clock\", RTC_ADDRESS);\n  \n  Serial.println(\"\\nAll bus rails checked! Ready for telemetry.\");\n}\n\nvoid checkPeripheral(const char* name, byte address) {\n  Serial.print(\"Probing \");\n  Serial.print(name);\n  Serial.print(\" at 0x\");\n  if (address < 16) Serial.print('0');\n  Serial.print(address, HEX);\n  Serial.print(\"... \");\n  \n  Wire.beginTransmission(address);\n  byte status = Wire.endTransmission();\n  \n  if (status == 0) {\n    Serial.println(\"[OK] - Acknowledged! Electrical continuity confirmed.\");\n  } else if (status == 2) {\n    Serial.println(\"[NACK] - Address not found. Check SDA/SCL breadboard rows!\");\n  } else if (status == 4) {\n    Serial.println(\"[BUS ERROR] - Hardware contention or short circuit!\");\n  } else {\n    Serial.print(\"[FAIL] - Code: \");\n    Serial.println(status);\n  }\n}\n\nvoid loop() {\n  // Run once in setup; idle in loop\n}\n```\n\n### Code Deconstruction:\n- `Wire.beginTransmission(address)`: Sends the target address byte across Row 20 (SDA) and Row 21 (SCL).\n- `Wire.endTransmission()`: If the device is properly powered and wired in parallel, its internal FET pulls Row 20 LOW on clock 9, returning code `0`.\n- Error handling: Returns code `2` (Address NACK) if a jumper wire in Row 20 or Row 21 is unplugged.",
+      "interactiveConfig": {
+        "codeSnippet": "Wire.beginTransmission(LCD_ADDRESS);\nbyte lcdOk = Wire.endTransmission();\nWire.beginTransmission(RTC_ADDRESS);\nbyte rtcOk = Wire.endTransmission();"
+      }
+    },
+    {
+      "stepId": "l09_04_s04",
+      "title": "Breadboard Bus Distribution Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your understanding of breadboard bus topologies, parallel tie points, and common ground integrity.",
+      "interactiveConfig": {
+        "question": "How are the SDA and SCL pins of multiple I2C devices wired relative to the Arduino Uno?",
+        "options": [
+          "In parallel: all device SDA pins connect to the shared SDA bus row, and all SCL pins connect to the shared SCL bus row",
+          "In series: the SDA output of the LCD connects into the power input of the RTC",
+          "Separately: each device requires its own unique analog pin on the Uno"
+        ],
+        "correctIndex": 0,
+        "explanation": "I2C is a parallel bus: all peripheral SDA pins connect in parallel to the shared SDA line (A4), and all SCL pins connect in parallel to the shared SCL line (A5).",
+        "questions": [
+          {
+            "question": "How are the SDA and SCL pins of multiple I2C devices wired relative to the Arduino Uno?",
+            "options": [
+              "In parallel: all device SDA pins connect to the shared SDA bus row, and all SCL pins connect to the shared SCL bus row",
+              "In series: the SDA output of the LCD connects into the power input of the RTC",
+              "Separately: each device requires its own unique analog pin on the Uno"
+            ],
+            "correctIndex": 0,
+            "explanation": "I2C is a parallel bus: all peripheral SDA pins connect in parallel to the shared SDA line (A4), and all SCL pins connect in parallel to the shared SCL line (A5)."
+          },
+          {
+            "question": "Why is a shared Common Ground (GND) rail mandatory between the Arduino and all breadboard modules?",
+            "options": [
+              "Ground provides the universal 0V reference point required to measure whether signal lines are HIGH or LOW",
+              "Ground is only needed if the circuit uses more than 10 jumper wires",
+              "Ground makes the USB cable transfer code faster"
+            ],
+            "correctIndex": 0,
+            "explanation": "Voltage is an electrical potential difference relative to Ground. Without a solid, shared Ground return path, digital logic levels become undefined and corrupted."
+          },
+          {
+            "question": "Why is keeping jumper wire lengths under 20 cm recommended for high-speed I2C buses?",
+            "options": [
+              "Shorter wires minimize parasitic capacitance and reduce electromagnetic interference on open-drain signals",
+              "Long wires lose all direct current electricity after 30 cm",
+              "Wire plastic insulation degrades when carrying serial data packets"
+            ],
+            "correctIndex": 0,
+            "explanation": "Long wires introduce unwanted stray capacitance and pick up ambient noise, which slows down open-drain rise times and risks packet corruption."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

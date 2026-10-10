@@ -1,7 +1,7 @@
 {
   "id": "lesson_01",
-  "title": "Lesson 1 \u2014 Arduino Fundamentals",
-  "summary": "Discover the brain of your robot! Learn what microcontrollers do, explore the pins, and understand how power flows.",
+  "title": "Lesson 1 — Arduino Fundamentals",
+  "summary": "Discover the brain of your robot! Explore the Arduino Uno, Nano, Mega, and ESP IoT families, master pin functions, voltage safety, and understand circuits.",
   "lessonIds": [
     "l01_01",
     "l01_02",
@@ -14,11 +14,15 @@
     "l01_09",
     "l01_10",
     "l01_11",
-    "l01_12"
+    "l01_12",
+    "l01_13",
+    "l01_14",
+    "l01_15",
+    "l01_16"
   ],
   "isOptional": false,
   "placementLessonId": null,
   "prerequisites": [],
   "xpReward": 100,
-  "estimatedMinutes": 60
+  "estimatedMinutes": 80
 }

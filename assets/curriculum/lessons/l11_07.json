@@ -1,0 +1,171 @@
+{
+  "id": "l11_07",
+  "title": "Bidirectional Wireless Terminal & Smartphone Command Parsing",
+  "summary": "Build an interactive wireless command interpreter that parses single-character and string commands sent from a smartphone.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_11",
+  "sortOrder": 7,
+  "isOptional": false,
+  "prerequisites": [
+    "l11_06"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_29"
+  ],
+  "steps": [
+    {
+      "stepId": "l11_07_s01",
+      "title": "Talking to Monsters Over the Air",
+      "type": "story",
+      "markdownContent": "### From Raw Bytes to Robotic Intelligence\nIn the previous mission, you built a transparent pipe: characters typed on your smartphone echoed onto your computer monitor. But a robot that merely echoes text is just a parrot!\n\nTo control a physical machine, your firmware must **parse** incoming commands:\n- When you press **'F'**, the robot should engage forward thrusters.\n- When you press **'S'**, the robot should slam on emergency brakes.\n- When you press **'?'**, the robot should query its sensors and reply: *'BATT=94%, TEMP=23.1C, RANGE=CLEAR'*!\n\n```\n[ Smartphone Button 'F' ] \u2500\u2500\u25ba (Bluetooth RF) \u2500\u2500\u25ba [ Parser: switch(cmd) ] \u2500\u2500\u25ba [ Motors FORWARD ]\n                                                                           \u2502\n[ Smartphone Screen ]    \u25c4\u2500\u2500 (Bluetooth RF) \u25c4\u2500\u2500 [ \"ACK: FORWARD\" ] \u25c4\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n```\n\n### The Importance of Acknowledgments (ACK):\nWireless airwaves are full of interference: microwave ovens, Wi-Fi routers, and concrete walls can drop radio packets. In professional robotics, every command sent by an operator requires an **Acknowledgment (ACK)** response from the rover. If the operator's app doesn't receive an ACK within 200 milliseconds, it knows the packet was lost!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l11_07_s01_q1",
+          "question": "What is command parsing in embedded robotics firmware?",
+          "options": [
+            "Interpreting incoming serial characters and executing specific actions or state transitions based on defined protocol rules",
+            "Translating C++ code into machine assembly during compilation",
+            "Measuring the chemical composition of battery electrolytes"
+          ],
+          "correctIndex": 0,
+          "explanation": "Command parsing evaluates received data streams (e.g. 'F', 'S', '?') and maps them to physical motor or diagnostic routines.",
+          "warmupExplanation": "Parsing is like reading instructions: the robot receives letters and translates them into physical actions."
+        },
+        {
+          "questionId": "qc_l11_07_s01_q2",
+          "question": "Why should a wireless robot send an acknowledgment ('ACK') back to the operator after executing a command?",
+          "options": [
+            "To confirm over the air that the packet arrived intact and the command was executed successfully",
+            "To prevent the microcontroller from overheating",
+            "Because the Bluetooth radio requires continuous transmission to stay paired"
+          ],
+          "correctIndex": 0,
+          "explanation": "Acknowledgments give the operator certainty that the radio link is working and that the remote robot actually heard the command.",
+          "warmupExplanation": "When you give someone directions, you wait for them to say 'Got it!' before moving on. That is what an ACK does."
+        }
+      ]
+    },
+    {
+      "stepId": "l11_07_s02",
+      "title": "Finite State Parsing: Characters, Delimiters & Buffers",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "interactiveConfig": {
+        "nodes": [
+          {
+            "id": "rx_byte",
+            "label": "btSerial.read()",
+            "type": "input"
+          },
+          {
+            "id": "filter",
+            "label": "Filter \\r and \\n",
+            "type": "process"
+          },
+          {
+            "id": "switch_state",
+            "label": "Switch Statement (Command Dispatch)",
+            "type": "process"
+          },
+          {
+            "id": "actuator",
+            "label": "Hardware Action (LED/Motor)",
+            "type": "output"
+          },
+          {
+            "id": "ack_reply",
+            "label": "btSerial.println(\"ACK\")",
+            "type": "output"
+          }
+        ],
+        "connections": [
+          {
+            "from": "rx_byte",
+            "to": "filter",
+            "label": "Raw Character"
+          },
+          {
+            "from": "filter",
+            "to": "switch_state",
+            "label": "Clean Command"
+          },
+          {
+            "from": "switch_state",
+            "to": "actuator",
+            "label": "'F' or 'S' Trigger"
+          },
+          {
+            "from": "switch_state",
+            "to": "ack_reply",
+            "label": "Status Telemetry"
+          }
+        ]
+      },
+      "markdownContent": "### Single-Byte vs Multi-Byte Protocols\n\nWhen designing wireless robot protocols, engineers choose between two primary architectures:\n\n1. **Single-Byte Command Protocols:**\n   - Super low latency (< 1 millisecond execution).\n   - Minimal RAM overhead: no buffering needed.\n   - Uses a straightforward `switch (cmd)` statement.\n   - Perfect for real-time directional steering (`F`, `B`, `L`, `R`, `S`).\n\n2. **Delimited String Protocols (e.g. `SPEED:180\\n`):**\n   - Requires accumulating characters into a `char buffer[32]` array until a newline arrives.\n   - Supports variable parameters and numerical data.\n\n```\nINCOMING BYTE STREAM:  'F'  \u2500\u2500\u25ba  Execute Forward  \u2500\u2500\u25ba  Transmit \"ACK: FORWARD\\n\"\n                       '\\r' \u2500\u2500\u25ba  Ignore Carriage Return\n                       '\\n' \u2500\u2500\u25ba  Ignore Line Feed\n                       '?'  \u2500\u2500\u25ba  Format Telemetry \u2500\u2500\u25ba  Transmit \"STATUS: OK, BATT: 89%\\n\"\n```\n\n### The Carriage Return Trap:\nSmartphone Bluetooth terminal apps often automatically append a **Carriage Return (`\\r`, ASCII 13)** and **Line Feed (`\\n`, ASCII 10)** whenever you send a message. If your code does not filter these out, your `default:` branch will trigger an 'Unknown Command' error on every single button press!"
+    },
+    {
+      "stepId": "l11_07_s03",
+      "title": "Smartphone Command Parser & Telemetry Reporter Sketch",
+      "type": "codeExperiment",
+      "interactiveConfig": {
+        "commands": {
+          "F": "Forward / Engage System",
+          "S": "Stop / Halt System",
+          "?": "Query Telemetry Status"
+        }
+      },
+      "markdownContent": "### The Wireless Command Center Sketch\n\nThis sketch parses single-character steering and diagnostic commands over Bluetooth, toggles the onboard Pin 13 LED to simulate motor activation, and dispatches formatted telemetry responses back to your phone.\n\n```cpp\n// Monster Lab - Smartphone Wireless Command Center\n#include <SoftwareSerial.h>\n\n// Pin 10 = RX, Pin 11 = TX (via voltage divider)\nSoftwareSerial bt(10, 11);\nconst int STATUS_LED = 13;\nbool systemActive = false;\n\nvoid setup() {\n  Serial.begin(9600); // USB Debug Console\n  bt.begin(9600);     // Wireless Bluetooth Link\n\n  pinMode(STATUS_LED, OUTPUT);\n  digitalWrite(STATUS_LED, LOW);\n\n  Serial.println(\"# WIRELESS COMMAND CENTER ONLINE\");\n  bt.println(\"====================================\");\n  bt.println(\"ROBOT ONLINE: Send F, S, or ?\");\n  bt.println(\"====================================\");\n}\n\nvoid loop() {\n  // Check if phone sent a wireless command\n  if (bt.available()) {\n    char cmd = bt.read();\n\n    switch (cmd) {\n      case 'F':\n      case 'f': // Case-insensitive\n        systemActive = true;\n        digitalWrite(STATUS_LED, HIGH);\n        bt.println(\"ACK: MOTORS_ENGAGED [FORWARD]\");\n        Serial.println(\"Command Executed: FORWARD (LED ON)\");\n        break;\n\n      case 'S':\n      case 's':\n        systemActive = false;\n        digitalWrite(STATUS_LED, LOW);\n        bt.println(\"ACK: MOTORS_HALTED [STOPPED]\");\n        Serial.println(\"Command Executed: STOP (LED OFF)\");\n        break;\n\n      case '?': // Telemetry Query\n        bt.print(\"TELEMETRY: STATE=\");\n        bt.print(systemActive ? \"ACTIVE\" : \"STANDBY\");\n        bt.println(\", BATT=92%, TEMP=24.2C\");\n        Serial.println(\"Telemetry report dispatched to smartphone\");\n        break;\n\n      case '\\r':\n      case '\\n':\n        // Silently ignore terminal line terminator bytes\n        break;\n\n      default:\n        bt.print(\"ERR: UNKNOWN_CMD ['\");\n        bt.print(cmd);\n        bt.println(\"']\");\n        Serial.print(\"Ignored invalid byte: \");\n        Serial.println((int)cmd);\n        break;\n    }\n  }\n}\n```\n\n### Code Breakdown:\n1. `case 'F': case 'f':`: Handles both upper and lowercase inputs gracefully.\n2. `case '\\r': case '\\n': break;`: Prevents smartphone terminal line feeds from triggering error messages.\n3. `bt.println(\"ACK: ...\")`: Immediately confirms execution back to the mobile screen."
+    },
+    {
+      "stepId": "l11_07_s04",
+      "title": "Wireless Command Parsing Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your grasp of serial command parsing, delimiter filtering, and interactive telemetry feedback.",
+      "interactiveConfig": {
+        "question": "When parsing single-character commands from a mobile terminal app, why does the code include explicit cases for '\\r' and '\\n'?",
+        "options": [
+          "Smartphone terminal apps append Carriage Return and Line Feed bytes to each sent line; ignoring them prevents false 'Unknown Command' errors",
+          "Carriage returns are used to calibrate the microcontroller clock speed",
+          "Line feeds cause the Bluetooth radio to disconnect immediately"
+        ],
+        "correctIndex": 0,
+        "explanation": "Terminal apps standardly send \\r and \\n when the user taps Send. Without filtering these characters, your code would treat them as invalid commands.",
+        "questions": [
+          {
+            "question": "When parsing single-character commands from a mobile terminal app, why does the code include explicit cases for '\\r' and '\\n'?",
+            "options": [
+              "Smartphone terminal apps append Carriage Return and Line Feed bytes to each sent line; ignoring them prevents false 'Unknown Command' errors",
+              "Carriage returns are used to calibrate the microcontroller clock speed",
+              "Line feeds cause the Bluetooth radio to disconnect immediately"
+            ],
+            "correctIndex": 0,
+            "explanation": "Smartphone terminal apps append Carriage Return and Line Feed bytes to each sent line; ignoring them prevents false 'Unknown Command' errors."
+          },
+          {
+            "question": "What is the primary architectural advantage of single-character commands over full-string sentences in mobile robotics?",
+            "options": [
+              "They execute immediately with virtually zero latency and require no memory buffers or string concatenation",
+              "They allow the robot to operate without batteries",
+              "They increase the physical range of the Bluetooth antenna"
+            ],
+            "correctIndex": 0,
+            "explanation": "Single-byte commands take 1 byte of transfer time and can be dispatched instantaneously via switch(cmd) without string parsing overhead."
+          },
+          {
+            "question": "If a smartphone sends commands faster than the Arduino code processes them, where do the unread bytes wait?",
+            "options": [
+              "In the 64-byte circular FIFO serial buffer in Arduino RAM",
+              "In the phone's camera memory",
+              "They are permanently lost into the airwaves"
+            ],
+            "correctIndex": 0,
+            "explanation": "Arduino's serial library maintains a 64-byte ring buffer in RAM that holds incoming bytes until Serial.read() extracts them."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

@@ -1,0 +1,121 @@
+{
+  "id": "l09_02",
+  "title": "Open-Drain Physics & Pull-Up Waveform Rise Times",
+  "summary": "Master the electrical physics of open-drain MOSFET switches, bus capacitance, RC time constants, and signal rise times.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_09",
+  "sortOrder": 2,
+  "isOptional": false,
+  "prerequisites": [
+    "l09_01"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_07"
+  ],
+  "steps": [
+    {
+      "stepId": "l09_02_s01",
+      "title": "The Ghost in the Bus: Sluggish Rise Times",
+      "type": "story",
+      "markdownContent": "### The Push-Pull Short Circuit Hazard\nIn standard digital electronics, microcontroller output pins use a **push-pull** transistor pair: one transistor pushes the pin up to +5V (HIGH), and another pulls the pin down to 0V (LOW). But imagine what would happen if two devices shared a push-pull wire and one pushed +5V while the other pulled 0V: a dead short circuit carrying destructive current!\n\nTo prevent this hazard, I2C uses an **open-drain** (or open-collector) architecture. Connected devices **never push voltage HIGH**. Instead, each device has an internal N-channel MOSFET switch that can only pull the wire down to Ground (0V / LOW).\n\n```\nOPEN-DRAIN BUS ARCHITECTURE:\n                  +5V Power Rail\n                        │\n                  ┌─────┴─────┐\n                 ┌┴┐         ┌┴┐\n                 │ │4.7kΩ    │ │4.7kΩ   External Pull-Up Resistors\n                 └┬┘         └┬┘        (Passively pull lines HIGH)\n                  │           │\nSDA Bus Line ─────┴───────────┼──────────┬──────────────┐\n                              │          │              │\nSCL Bus Line ─────────────────┴──────────┼──────────────┼──────────────┐\n                                         ▼              ▼              ▼\n                                   [ Arduino ]    [ I2C LCD ]    [ I2C RTC ]\n                                   Internal FET   Internal FET   Internal FET\n                                   (Pulls to GND) (Pulls to GND) (Pulls to GND)\n```\n\n### The RC Time Constant & Parasitic Capacitance\nWhen all devices release the bus, how does the voltage return to +5V? External **pull-up resistors** (typically 4.7 kΩ) gently pull the line back up to +5V.\n\nHowever, every centimeter of jumper wire and breadboard track has tiny physical **parasitic capacitance** ($C_{bus}$). When the transistors turn off, the pull-up resistor ($R_p$) must charge up that capacitance like filling a bucket through a straw! If the pull-up resistor is too weak (e.g. 100 kΩ), the voltage rises sluggishly, rounding off digital square waves into distorted curves that cause corrupted communication packets!",
+      "quickCheck": [
+        {
+          "questionId": "q_l09_02_s01_1",
+          "question": "In an open-drain I2C bus architecture, how do the SDA and SCL lines return to a HIGH (+5V) state?",
+          "options": [
+            "External pull-up resistors passively pull the lines to +5V when all connected transistors release the bus",
+            "The Arduino Uno switches its power pin to push high current down the wire",
+            "Static electricity from the surrounding air charges the copper traces"
+          ],
+          "correctIndex": 0,
+          "explanation": "Open-drain transistors only pull lines to Ground (LOW). When all transistors turn off, external pull-up resistors passively pull the voltage back up to +5V.",
+          "warmupExplanation": "Recall the pull-up resistor principle from Lesson 5 and Course 8: resistors hold open lines at a stable HIGH voltage until actively pulled LOW."
+        },
+        {
+          "questionId": "q_l09_02_s01_2",
+          "question": "What happens to digital clock and data pulses if the pull-up resistance is excessively high (e.g. 100 kΩ) on a bus with high wire capacitance?",
+          "options": [
+            "The signal rise time becomes sluggish and rounded, causing missed bits and transmission corruption",
+            "The Arduino Uno CPU clock frequency increases to 100 MHz",
+            "The breadboard power supply converts to alternating current"
+          ],
+          "correctIndex": 0,
+          "explanation": "High pull-up resistance combined with bus capacitance creates a long RC time constant. The voltage rises too slowly, rounding off square waves and preventing the receiver from detecting HIGH bits.",
+          "warmupExplanation": "An RC circuit takes time to charge. A larger resistance means less current flows to charge the capacitance, making the voltage rise sluggish."
+        }
+      ]
+    },
+    {
+      "stepId": "l09_02_s02",
+      "title": "Open-Drain Physics & The RC Rise Time Equation",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "i2cPullupChecker",
+      "markdownContent": "### The Waveform Rise Time Equation\n\nWhen a transistor releases an open-drain line, the voltage rises exponentially according to the RC charge curve:\n\n$$V(t) = V_{CC} \\left(1 - e^{-t / (R_p \\cdot C_{bus})}\\right)$$\n\nIn the official I2C specification, **Rise Time ($t_r$)** is measured as the time required for the signal to climb from 30% of $V_{CC}$ (1.5V) to 70% of $V_{CC}$ (3.5V):\n\n$$t_r \\approx 0.8473 \\times R_p \\times C_{bus}$$\n\n```\nIDEAL SQUARE WAVE (Proper 4.7 kΩ Pull-Up):\n5V │      ┌──────┐      ┌──────┐\n   │      │      │      │      │      Sharp vertical rise (< 300 ns)\n0V └──────┘      └──────┘      └────► Fast, crisp bit sampling!\n\nSLUGGISH ROUNDED WAVE (Weak 100 kΩ Pull-Up):\n5V │       .---─┐        .---─┐\n   │     /      │      /      │       Slow curved rise (> 2000 ns)\n0V └────'       └─────'       └─────► Fails HIGH threshold in time! Bit corrupted!\n\nMISSING PULL-UP (Floating / Clamped to 0V):\n5V │\n   │\n0V └────────────────────────────────► Bus locked LOW! Total communication failure!\n```\n\n### The Pull-Up Resistor Sizing Trade-Off\n- **Too High ($> 10\\text{ k}\\Omega$):** Sluggish rise times, rounded waveforms, fails at 400 kHz fast mode.\n- **Too Low ($< 1\\text{ k}\\Omega$):** Excessive current sink ($I = V/R > 3\\text{ mA}$), overwhelming peripheral transistors and generating heat.\n- **The Goldilocks Value:** **4.7 kΩ** (or 2.2 kΩ for long cables and high bus capacitance) balances rapid rise times with safe low-power sinking!",
+      "interactiveConfig": {
+        "title": "I2C Waveform Rise Time & Pull-Up Checker",
+        "description": "Switch between Proper (4.7kΩ), Missing, and Weak (100kΩ) pull-up resistors to observe oscilloscope rise-time waveforms."
+      }
+    },
+    {
+      "stepId": "l09_02_s03",
+      "title": "Simulating and Measuring Bus Rise Time Margins",
+      "type": "codeExperiment",
+      "interactiveWidgetType": "i2cPullupChecker",
+      "markdownContent": "### Diagnostic Sketch: Testing Bus Integrity and Clock Speeds\n\nArduino's `<Wire.h>` library enables the ATmega328P internal ~20-50 kΩ pull-ups by default, but these are **far too weak** for a multi-device bus! You must always ensure external 4.7 kΩ pull-ups are installed.\n\nThis sketch configures the Two-Wire Interface hardware clock prescaler and baud rate register (`TWBR`) to test standard mode (100 kHz) and fast mode (400 kHz):\n\n```cpp\n#include <Wire.h>\n\n// Hardware TWI Bit-Rate Register calculation:\n// SCL Frequency = F_CPU / (16 + 2 * TWBR * Prescaler)\n// For 16 MHz CPU and Prescaler = 1:\n// 100 kHz: TWBR = 72\n// 400 kHz: TWBR = 12\n\nvoid setup() {\n  Wire.begin();\n  Serial.begin(9600);\n  Serial.println(\"--- I2C BUS RISE TIME & SPEED TEST ---\");\n  \n  // Test 1: Standard 100 kHz Mode\n  Wire.setClock(100000);\n  Serial.println(\"Testing 100 kHz Bus Frequency...\");\n  testDeviceResponse(0x27);\n  \n  delay(500);\n  \n  // Test 2: Fast 400 kHz Mode (Requires sharp rise times!)\n  Wire.setClock(400000);\n  Serial.println(\"Testing 400 kHz Fast Mode...\");\n  testDeviceResponse(0x27);\n}\n\nvoid testDeviceResponse(byte addr) {\n  Wire.beginTransmission(addr);\n  byte err = Wire.endTransmission();\n  \n  if (err == 0) {\n    Serial.println(\"-> SUCCESS: Crisp signal edges detected (ACK received).\");\n  } else {\n    Serial.println(\"-> ERROR: Bit edge rounded or timeout. Check pull-ups!\");\n  }\n}\n\nvoid loop() {\n  // Idle test bench\n}\n```\n\n### Code Deconstruction:\n- `Wire.setClock(400000)`: Sets the SCL clock frequency to 400 kHz (Fast Mode). At this speed, sluggish rise times will immediately cause bit transmission failures.\n- `Wire.beginTransmission(addr)`: Prepares the hardware start frame.\n- `Wire.endTransmission()`: Returns `0` if the target's open-drain transistor pulled SDA LOW on clock pulse 9, confirming clear signal edges.",
+      "interactiveConfig": {
+        "codeSnippet": "Wire.setClock(400000);\nWire.beginTransmission(0x27);\nbyte err = Wire.endTransmission();\nif (err != 0) Serial.println(\"Rise-time error!\");"
+      }
+    },
+    {
+      "stepId": "l09_02_s04",
+      "title": "Open-Drain & Rise Time Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your mastery of open-drain electronics, pull-up resistor sizing, and waveform rise-time physics.",
+      "interactiveConfig": {
+        "question": "Why is an open-drain bus architecture strictly required when multiple I2C devices share signal wires?",
+        "options": [
+          "It prevents short circuits between power and ground because devices can only pull lines LOW and never drive them HIGH",
+          "It eliminates the need for any electrical power in connected sensors",
+          "It allows the Arduino Uno to output alternating current audio signals"
+        ],
+        "correctIndex": 0,
+        "explanation": "Because devices only pull lines to Ground and rely on passive resistors to pull lines to +5V, two devices asserting the bus at the same time cannot cause a direct short circuit between 5V and Ground.",
+        "questions": [
+          {
+            "question": "Why is an open-drain bus architecture strictly required when multiple I2C devices share signal wires?",
+            "options": [
+              "It prevents short circuits between power and ground because devices can only pull lines LOW and never drive them HIGH",
+              "It eliminates the need for any electrical power in connected sensors",
+              "It allows the Arduino Uno to output alternating current audio signals"
+            ],
+            "correctIndex": 0,
+            "explanation": "Because devices only pull lines to Ground and rely on passive resistors to pull lines to +5V, two devices asserting the bus at the same time cannot cause a direct short circuit between 5V and Ground."
+          },
+          {
+            "question": "What primary physical factor causes digital square waves to become rounded and sluggish on an I2C bus?",
+            "options": [
+              "The RC time constant formed by the pull-up resistance and the stray capacitance of wires and breadboard tracks",
+              "The type of solder used on the microcontroller pins",
+              "Using blue jumper wires instead of yellow wires"
+            ],
+            "correctIndex": 0,
+            "explanation": "Every wire and trace has parasitic capacitance. When the open-drain transistor turns off, the pull-up resistor must charge this capacitance, creating an exponential rise curve governed by the RC time constant."
+          },
+          {
+            "question": "Why is a 4.7 kΩ pull-up resistor considered optimal for standard 5V I2C networks?",
+            "options": [
+              "It provides fast enough rise times for clean square waves while limiting sink current to safe levels (approx 1 mA)",
+              "It converts the 5V signals to 120V household electricity",
+              "It blocks radio frequencies from entering the USB cable"
+            ],
+            "correctIndex": 0,
+            "explanation": "A 4.7 kΩ resistor balances speed and power: it charges typical bus capacitance quickly enough for crisp signals while drawing only about 1.06 mA when pulled LOW to Ground."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

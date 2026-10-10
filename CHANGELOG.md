@@ -6,6 +6,11 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.1.11+21] - 2026-10-09
+- Course 1 microcontroller family expansion (Uno, Nano, Mega, ESP8266, ESP32, 5V vs 3.3V logic safety).
+- Conversion of lessons 09, 10, 11, and 12 into full modular course folders (Course 9 Advanced I2C, Course 10 SPI, Course 11 UART/Bluetooth, Course 12 Motors/H-Bridges).
+- Thorough pedagogical prerequisite coverage introducing all components before wiring or experiments.
+
 ## [0.1.10+20] - 2026-10-09
 
 ### Overview & Release Highlights

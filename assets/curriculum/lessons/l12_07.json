@@ -1,0 +1,122 @@
+{
+  "id": "l12_07",
+  "title": "External Power Isolation, Decoupling Capacitors & Common Ground",
+  "summary": "Isolate noisy actuator power from sensitive microcontroller logic using external batteries, common ground reference, and decoupling capacitors.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_12",
+  "sortOrder": 7,
+  "isOptional": false,
+  "prerequisites": [
+    "l12_06"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_33",
+    "comp_36",
+    "comp_l293d",
+    "comp_power_supply"
+  ],
+  "steps": [
+    {
+      "stepId": "l12_07_s01",
+      "title": "The Curse of the Brownout Crash",
+      "type": "story",
+      "markdownContent": "### The Mystery of the Rebooting Microcontroller\n\nHave you ever built a robotic circuit with perfect code, only to observe this frustrating bug: the moment your motor starts spinning or your servo kicks into gear, the Arduino suddenly freezes, blinks its bootloader LED, and reboots from line 1 of `setup()`?\n\nYou have encountered an embedded engineer's rite of passage: the **Brownout Reset**!\n\nIn this mission, we introduce `comp_power_supply` (9V 1A DC Power Supply Adapter / Battery Pack).\n\n```\nTHE BROWNOUT COLLAPSE:\n1. Motor / Servo starts rotating -> Draws sudden 1.5A surge from Arduino 5V rail.\n2. Arduino onboard 5V regulator (rated max 500mA) collapses under load.\n3. 5V rail plunges to 3.8V!\n4. ATmega328P internal Brownout Detector (BOD) triggers hardware RESET.\n5. Arduino reboots -> Motor turns off -> Voltage recovers -> Motor restarts -> INFINITE REBOOT LOOP!\n```\n\n### The Root Cause: Starving the Processor\nThe Arduino Uno's onboard 5V regulator (NCP1117) is designed for microchips and modest sensors, not brute mechanical muscle. When a high-current motor starts up or stalls, it pulls more current than the regulator can provide. The supply voltage sags below the microcontroller's minimum operating threshold, resetting the CPU.\n\n### The Professional Engineering Solutions:\n1. **Power Isolation:** Power logic from USB/5V, and power hungry motors from a dedicated external power supply (`comp_power_supply`, 6V\u20139V battery pack).\n2. **Common Ground:** Tie the external battery ground and Arduino ground together so control signals share an identical 0V reference!\n3. **Decoupling & Bulk Capacitors:** Install electrolytic and ceramic capacitors to buffer sudden current surges and swallow high-frequency brush electrical noise.",
+      "quickCheck": [
+        {
+          "questionId": "q_l12_07_s01_1",
+          "question": "What causes an Arduino to experience an unexpected Brownout Reset when a motor starts spinning?",
+          "options": [
+            "The motor's startup current surge causes the 5V power rail to sag below the microcontroller's minimum operating voltage",
+            "The motor magnetic field erases the flash memory",
+            "The Arduino runs out of loop() iterations"
+          ],
+          "correctIndex": 0,
+          "explanation": "Sudden motor startup current overloads the 5V regulator, causing supply voltage to dip below the reset threshold and restarting the microcontroller.",
+          "warmupExplanation": "A big thirsty motor drinks all the electrical juice, starving the microcontroller brain of voltage!"
+        },
+        {
+          "questionId": "q_l12_07_s01_2",
+          "question": "Why MUST an external motor battery pack and the Arduino share a Common Ground connection?",
+          "options": [
+            "To establish a shared 0V reference so digital control signals (HIGH/LOW) can be accurately measured by the driver IC",
+            "To allow battery voltage to charge the computer through the USB cable",
+            "Because motors can only rotate if grounded to the Earth's soil"
+          ],
+          "correctIndex": 0,
+          "explanation": "Voltage is a difference between two points. Without a common ground reference, the driver IC cannot detect whether an input signal is 0V or 5V.",
+          "warmupExplanation": "Both circuits must agree on what zero volts is\u2014otherwise signals float in the air like gibberish!"
+        }
+      ]
+    },
+    {
+      "stepId": "l12_07_s02",
+      "title": "Dual Power Rail Schematic & Decoupling Capacitor Filtering",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "externalMotorPowerLab",
+      "interactiveConfig": {
+        "simulation": "externalMotorPowerLab"
+      },
+      "markdownContent": "### Dual-Rail Electrical Architecture & Filtering\n\nTo achieve rock-solid reliability, wire your high-power robotic bench using this dual-rail topology:\n\n```\n           [ Arduino Uno ]                     [ External 9V Supply ]\n            (5V Logic)                         (comp_power_supply)\n               \u2502                                      \u2502\n               \u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500 5V Logic \u2500\u2500\u2500\u2500\u2500\u2510               \u251c\u2500\u2500\u2500\u2500\u2500\u2500 +9V Motor Rail\n               \u2502                      \u2502               \u2502       (VCC2 / Pin 8)\n               \u2502                      \u25bc               \u2502               \u2502\n               \u2502               L293D Pin 16           \u2502               \u25bc\n               \u2502                (VCC1 Logic)          \u2502         \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n               \u2502                                      \u2502         \u2502 100\u00b5F Bulk\u2502\n               \u2502                                      \u2502         \u2502 Capacitor \u2502\n               \u2502                                      \u2502         \u2514\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2518\n               \u2502                                      \u2502               \u2502\n      Arduino GND \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500 Battery GND\n      (0V Ref)                        \u2502                                   (0V Ref)\n                                      \u25bc\n                           COMMON GROUND HIGHWAY (0V)\n                           (Pins 4, 5, 12, 13 of L293D)\n```\n\n### The Two Capacitor Defenses:\n1. **Bulk Reservoir Capacitor (100 \u00b5F to 470 \u00b5F Electrolytic):** Placed in parallel across the external 9V rail right next to the driver IC. When the motor abruptly demands a 1A burst of current, the capacitor acts like a local water tower, supplying instantaneous charge before the battery rail can sag.\n2. **High-Frequency Decoupling Snubber (0.1 \u00b5F / 100 nF Ceramic):** Soldered directly across the two terminals of the DC motor. As the motor's mechanical metal brushes scrape past the commutator segments, tiny electrical sparks create high-frequency electromagnetic interference (EMI) that can corrupt microchip memory. The 0.1\u00b5F ceramic capacitor shorts these high-frequency sparks directly to ground!"
+    },
+    {
+      "stepId": "l12_07_s03",
+      "title": "Power-Aware Actuator Sequencing & Voltage Telemetry",
+      "type": "codeExperiment",
+      "interactiveConfig": {
+        "codeSnippet": "#include <Servo.h>\n\nServo panServo;\nconst int motorSpeedPin = 9;\nconst int motorIn1 = 8;\nconst int motorIn2 = 7;\nconst int servoPin = 10;\n\nvoid setup() {\n  pinMode(motorSpeedPin, OUTPUT);\n  pinMode(motorIn1, OUTPUT);\n  pinMode(motorIn2, OUTPUT);\n  panServo.attach(servoPin);\n  Serial.begin(9600);\n  Serial.println(F(\"--- Power-Aware Actuator Sequencing Ready ---\"));\n}\n\nvoid runStaggeredManeuver() {\n  // Step 1: Position servo while motor is idle (minimizes peak combined surge)\n  Serial.println(F(\"Phase 1: Aiming servo steering to 45 degrees...\"));\n  panServo.write(45);\n  delay(400); // Wait for servo movement to finish\n\n  // Step 2: Ramp motor after servo has reached resting position\n  Serial.println(F(\"Phase 2: Ramping drive motor to 200 PWM...\"));\n  digitalWrite(motorIn1, HIGH);\n  digitalWrite(motorIn2, LOW);\n  for (int s = 70; s <= 200; s += 10) {\n    analogWrite(motorSpeedPin, s);\n    delay(20);\n  }\n}"
+      },
+      "markdownContent": "### Power-Aware Actuator Sequencing Sketch\n\nIn battery-powered robotics, intelligent software coordinates with hardware power limits. The following sketch demonstrates **staggered actuator sequencing**\u2014avoiding simultaneous peak current draws from both the DC drive motor and the steering servo.\n\n```cpp\n#include <Servo.h>\n\nServo panServo;\nconst int motorSpeedPin = 9;  // L293D Enable 1 (PWM)\nconst int motorIn1      = 8;  // L293D Input 1\nconst int motorIn2      = 7;  // L293D Input 2\nconst int servoPin      = 10; // SG90 Servo Signal\n\nvoid setup() {\n  pinMode(motorSpeedPin, OUTPUT);\n  pinMode(motorIn1, OUTPUT);\n  pinMode(motorIn2, OUTPUT);\n  \n  // Attach steering servo to Pin 10\n  panServo.attach(servoPin);\n  panServo.write(90); // Center neutral\n\n  // Ensure DC motor is stopped initially\n  analogWrite(motorSpeedPin, 0);\n  digitalWrite(motorIn1, LOW);\n  digitalWrite(motorIn2, LOW);\n\n  Serial.begin(9600);\n  Serial.println(F(\"--- Power-Aware Actuator Sequencing Ready ---\"));\n}\n\nvoid runStaggeredManeuver() {\n  // Phase 1: Reposition steering servo while DC motor current is zero\n  Serial.println(F(\"PHASE 1: Steering servo pivoting to 45 deg (Motor OFF)\"));\n  panServo.write(45);\n  delay(400); // Allow servo to reach target position and settle current\n\n  // Phase 2: Smoothly ramp DC motor forward while servo is stationary\n  Serial.println(F(\"PHASE 2: Ramping DC motor forward (Servo steady)\"));\n  digitalWrite(motorIn1, HIGH);\n  digitalWrite(motorIn2, LOW);\n  for (int spd = 70; spd <= 200; spd += 10) {\n    analogWrite(motorSpeedPin, spd);\n    delay(25); // Gradual ramp prevents battery voltage dip\n  }\n  delay(1500); // Cruise forward\n\n  // Phase 3: Decelerate DC motor to halt before changing steering\n  Serial.println(F(\"PHASE 3: Decelerating DC motor to stop\"));\n  for (int spd = 200; spd >= 0; spd -= 10) {\n    analogWrite(motorSpeedPin, spd);\n    delay(20);\n  }\n  analogWrite(motorSpeedPin, 0);\n  delay(300);\n\n  // Phase 4: Center steering servo\n  Serial.println(F(\"PHASE 4: Re-centering steering to 90 deg\"));\n  panServo.write(90);\n  delay(400);\n}\n\nvoid loop() {\n  runStaggeredManeuver();\n  delay(2000);\n}\n```\n\n### Code Breakdown:\n- `panServo.write(45)` followed by `delay(400)`: Completes servo rotation and allows its motor current to return to its idle hold state (~10mA) before activating the DC motor.\n- `for (int spd = 70; spd <= 200; spd += 10)`: Smooth acceleration limits battery inrush surge to under 300mA.\n- Staggered timing guarantees that the DC motor's startup inrush and the servo's startup inrush NEVER collide, preventing power brownout dips!"
+    },
+    {
+      "stepId": "l12_07_s04",
+      "title": "Power Isolation & Decoupling Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your mastery of external power supplies, common ground referencing, and decoupling capacitors.",
+      "interactiveConfig": {
+        "question": "What would happen if you connected an external 9V battery to power the L293D motor rail, but forgot to connect the battery GND to Arduino GND?",
+        "options": [
+          "The motor driver inputs float without a common 0V reference, causing erratic, unpredictable, or completely non-responsive motor behavior",
+          "The Arduino would run at double battery voltage",
+          "The motor would rotate backwards automatically"
+        ],
+        "correctIndex": 0,
+        "explanation": "Without a common ground connection, the Arduino and motor driver do not share a 0V reference, so control signals float without a return path.",
+        "questions": [
+          {
+            "question": "What would happen if you connected an external 9V battery to power the L293D motor rail, but forgot to connect the battery GND to Arduino GND?",
+            "options": [
+              "The motor driver inputs float without a common 0V reference, causing erratic, unpredictable, or completely non-responsive motor behavior",
+              "The Arduino would run at double battery voltage",
+              "The motor would rotate backwards automatically"
+            ],
+            "correctIndex": 0,
+            "explanation": "Without a common ground connection, the Arduino and motor driver do not share a 0V reference, so control signals float without a return path."
+          },
+          {
+            "question": "What is the primary role of a 100\u00b5F electrolytic capacitor placed across the motor power rails?",
+            "options": [
+              "It acts as a local energy reservoir, supplying instantaneous surge current to smooth out voltage dips during motor startup",
+              "It increases the top speed of the motor by 500%",
+              "It replaces the need for a battery"
+            ],
+            "correctIndex": 0,
+            "explanation": "Bulk electrolytic capacitors store charge locally, buffering current spikes and preventing power rail voltage sags when motors energize."
+          },
+          {
+            "question": "Why is a 0.1\u00b5F ceramic capacitor often soldered directly across the terminals of a toy DC motor?",
+            "options": [
+              "To suppress high-frequency electromagnetic interference (EMI) sparks caused by mechanical commutator brushes",
+              "To convert DC voltage into 3-phase AC voltage",
+              "To make the motor waterproof"
+            ],
+            "correctIndex": 0,
+            "explanation": "Commutator brushes create tiny electrical arcs that generate high-frequency radio frequency noise; a 0.1\u00b5F ceramic capacitor shunts this noise directly."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

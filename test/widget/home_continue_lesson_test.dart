@@ -54,12 +54,15 @@ void main() {
     testWidgets(
         'When Lesson 1 is completed, advances to next lesson as UP NEXT',
         (tester) async {
+      final l01SubLessons = [
+        for (int i = 1; i <= 16; i++) '"l01_${i.toString().padLeft(2, '0')}"'
+      ];
       SharedPreferences.setMockInitialValues({
         'monster_lab_active_profile_id': 'prof_1',
         'monster_lab_profiles':
             '[{"id":"prof_1","nickname":"Sparky","avatarId":"monster_spark","ageBracket":"ages10_12","createdAt":"2026-01-01T00:00:00.000Z","lastActiveAt":"2026-01-01T00:00:00.000Z","settings":{}}]',
         'monster_lab_progress_prof_1':
-            '{"learnerId":"prof_1","totalXp":100,"completedLessonIds":["lesson_01"],"completedProjectIds":[],"discoveredComponentIds":[],"solvedChallengeIds":[],"unlockedBadgeIds":[],"stepProgress":{},"lastSessionDate":"2026-01-01T00:00:00.000Z"}',
+            '{"learnerId":"prof_1","totalXp":100,"completedLessonIds":["lesson_01",${l01SubLessons.join(',')}],"completedCourseIds":["lesson_01"],"completedProjectIds":[],"discoveredComponentIds":[],"solvedChallengeIds":[],"unlockedBadgeIds":[],"stepProgress":{},"lastSessionDate":"2026-01-01T00:00:00.000Z"}',
       });
       final storageService = await StorageService.init();
 
@@ -88,10 +91,10 @@ void main() {
     });
 
     testWidgets(
-        'When all sub-lessons l01_01..l01_12 and course lesson_01 are completed without legacy ID, advances to next lesson',
+        'When all sub-lessons l01_01..l01_16 and course lesson_01 are completed without legacy ID, advances to next lesson',
         (tester) async {
       final l01SubLessons = [
-        for (int i = 1; i <= 12; i++) '"l01_${i.toString().padLeft(2, '0')}"'
+        for (int i = 1; i <= 16; i++) '"l01_${i.toString().padLeft(2, '0')}"'
       ];
       SharedPreferences.setMockInitialValues({
         'monster_lab_active_profile_id': 'prof_1',

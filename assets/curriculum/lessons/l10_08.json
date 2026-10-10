@@ -1,0 +1,116 @@
+{
+  "id": "l10_08",
+  "title": "High-Speed SPI Data Stream Challenge",
+  "summary": "Unite the MAX7219 LED Matrix and RC522 RFID Reader in an interactive badge access terminal running at megahertz speeds.",
+  "tier": "engineer",
+  "estimatedMinutes": 15,
+  "courseId": "lesson_10",
+  "sortOrder": 8,
+  "isOptional": false,
+  "prerequisites": [
+    "l10_07"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_15",
+    "comp_23"
+  ],
+  "steps": [
+    {
+      "stepId": "l10_08_s01",
+      "title": "Capstone Mission: The Monster Security Vault",
+      "type": "story",
+      "markdownContent": "### The Security Gate Challenge\nWelcome to your final engineering challenge of Course 10! The high-security Monster Lab Vault holds rare cybernetic monster prototypes. Your mission is to construct an **Automated High-Speed RFID Security Terminal**:\n\n```\n                                  HIGH-SPEED BUS (8 MHz)\n[ Arduino Uno Brain ] ═══ MOSI / SCK ═══╦═══► [ MAX7219 8x8 Matrix Display ]\n          ║                             ║     (Animated Radar Scan / Face Icons)\n          ║                             ╚═══► [ RC522 13.56MHz RFID Reader ]\n     CS1 (Pin 10) ──────────────────────────► (Continuous Contactless Polling)\n     CS2 (Pin 8)  ──────────────────────────►\n```\n\n### The Operational Requirements:\n1. **High-Speed Idle Radar:** While waiting for an operator, the 8x8 LED Matrix displays a smooth scanning radar line sweeping back and forth at 30+ frames per second.\n2. **Contactless Polling:** The Arduino queries the RC522 transceiver on every loop cycle without stalling the display animation.\n3. **Authorization & Feedback:**\n   - **Authorized Tag Scanned:** The terminal instantly flashes an animated green Checkmark (or Monster Grin) on the matrix and unlocks access!\n   - **Unknown Tag Scanned:** The terminal flashes an alarm 'X' on the matrix, signaling an unauthorized intruder!\n\nBoth devices must share Pins 11, 12, and 13 with zero bus contention and zero animation stuttering!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l10_08_s01_q1",
+          "question": "Why is high-speed SPI essential for running smooth LED matrix animations while simultaneously polling an RFID reader?",
+          "options": [
+            "SPI transfers complete in microseconds, allowing the CPU to update display frames and poll radio registers without perceptible delay",
+            "SPI uses radioactive isotopes that speed up light waves",
+            "Because I2C cannot display pictures"
+          ],
+          "correctIndex": 0,
+          "explanation": "Because SPI operates at up to 8 MHz, each multi-byte transfer takes only microseconds, allowing seamless interleaved multitasking.",
+          "warmupExplanation": "Fast data transfers mean less time waiting on the bus, leaving more processor cycles for responsive animations."
+        },
+        {
+          "questionId": "qc_l10_08_s01_q2",
+          "question": "How does non-blocking firmware maintain smooth graphics while waiting for an RFID card?",
+          "options": [
+            "By using millis() timers and quick non-blocking status checks instead of long delay() pauses",
+            "By running two separate Arduino Uno boards soldered together",
+            "By reducing battery voltage to 1.5 volts"
+          ],
+          "correctIndex": 0,
+          "explanation": "Non-blocking programming checks card presence every few milliseconds without freezing the microcontroller loop.",
+          "warmupExplanation": "Recall the non-blocking timer principles from earlier coding courses: delay() freezes everything, while millis() keeps animations alive."
+        }
+      ]
+    },
+    {
+      "stepId": "l10_08_s02",
+      "title": "State Machine & Real-Time SPI Arbitration",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "spiFullDuplexVisualizer",
+      "markdownContent": "### The Security Gate State Machine\nTo orchestrate this capstone system cleanly, our sketch implements a finite state machine:\n\n```\n              ┌──────────────────────────────────────────────┐\n              │            STATE_IDLE_RADAR                  │\n              │  - Sweep radar column across 8x8 matrix      │\n              │  - Poll RC522: PICC_IsNewCardPresent()?      │\n              └──────────────────────┬───────────────────────┘\n                                     │ Card Detected!\n                                     ▼\n                      [ Compare UID to Master Key ]\n                       │                         │\n          Match UID    │                         │ Unknown UID\n                       ▼                         ▼\n        ┌─────────────────────────┐   ┌─────────────────────────┐\n        │    STATE_ACCESS_GRANTED │   │    STATE_ACCESS_DENIED  │\n        │ - Display Checkmark     │   │ - Flash Alarm 'X'       │\n        │ - Hold for 2 seconds    │   │ - Hold for 2 seconds    │\n        └────────────┬────────────┘   └────────────┬────────────┘\n                     │                             │\n                     └───────────────┬─────────────┘\n                                     ▼\n                         Return to STATE_IDLE_RADAR\n```\n\n### Bus Arbitration in Real Time\nWhenever the state machine transitions between displaying icons on the MAX7219 and interrogating the RC522:\n1. Dedicated CS pins (`CS_MATRIX` on Pin 10, `CS_RFID` on Pin 8) guarantee strict electrical isolation.\n2. The RC522's MISO pin remains in tri-state (Hi-Z) during all matrix updates.\n3. The MAX7219 ignores all clock pulses while `CS_MATRIX` is held HIGH.\n\n### Interactive Full-Duplex Visualizer\nStep through the shift-register clock ticks below to review how high-speed hardware SPI transfers exchange data cleanly across shared bus lines!",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "l10_08_s03",
+      "title": "The High-Speed Access Gate Firmware",
+      "type": "codeExperiment",
+      "markdownContent": "### Complete Capstone Project Sketch\nUpload this complete firmware sketch to your Arduino Uno to activate the high-speed Monster Security Gate!\n\n```cpp\n#include <SPI.h>\n#include <MFRC522.h>\n\n// Hardware Pin Assignments\nconst int CS_MATRIX = 10; // MAX7219 Chip Select\nconst int CS_RFID   = 8;  // RC522 Chip Select (SDA)\nconst int RST_RFID  = 9;  // RC522 Reset\n\nMFRC522 rfid(CS_RFID, RST_RFID);\n\n// State Machine Definitions\nenum GateState { STATE_IDLE, STATE_GRANTED, STATE_DENIED };\nGateState currentState = STATE_IDLE;\nunsigned long stateTimer = 0;\n\n// Animation Variables for Idle Radar\nunsigned long lastAnimTime = 0;\nint radarCol = 0;\nint radarDir = 1;\n\n// Graphic Bitmaps (8x8)\nconst byte iconCheckmark[8] = {\n  B00000000, B00000001, B00000011, B00010110,\n  B00111100, B00111000, B00110000, B00000000\n};\n\nconst byte iconCross[8] = {\n  B10000001, B01000010, B00100100, B00011000,\n  B00011000, B00100100, B01000010, B10000001\n};\n\n// Low-level MAX7219 register writer\nvoid writeMatrix(byte reg, byte data) {\n  digitalWrite(CS_RFID, HIGH);   // Isolate RFID\n  digitalWrite(CS_MATRIX, LOW);  // Assert Matrix CS\n  SPI.transfer(reg);\n  SPI.transfer(data);\n  digitalWrite(CS_MATRIX, HIGH); // Latch data\n}\n\nvoid drawBitmap(const byte bitmap[8]) {\n  for (byte i = 0; i < 8; i++) {\n    writeMatrix(i + 1, bitmap[i]);\n  }\n}\n\nvoid clearMatrix() {\n  for (byte i = 1; i <= 8; i++) {\n    writeMatrix(i, 0x00);\n  }\n}\n\nvoid setup() {\n  Serial.begin(9600);\n  while (!Serial);\n\n  // Initialize CS lines\n  pinMode(CS_MATRIX, OUTPUT);\n  pinMode(CS_RFID, OUTPUT);\n  digitalWrite(CS_MATRIX, HIGH);\n  digitalWrite(CS_RFID, HIGH);\n\n  // Initialize SPI bus\n  SPI.begin();\n\n  // Initialize MAX7219\n  writeMatrix(0x0C, 0x01); // Wake from shutdown\n  writeMatrix(0x09, 0x00); // Raw matrix mode\n  writeMatrix(0x0B, 0x07); // Scan all 8 rows\n  writeMatrix(0x0A, 0x04); // Intensity\n  clearMatrix();\n\n  // Initialize RFID\n  rfid.PCD_Init();\n  Serial.println(\"MONSTER LAB: High-Speed Access Gate Online!\");\n}\n\nvoid loop() {\n  unsigned long now = millis();\n\n  if (currentState == STATE_IDLE) {\n    // 1. Update radar animation every 60ms\n    if (now - lastAnimTime > 60) {\n      lastAnimTime = now;\n      byte colMask = (1 << radarCol);\n      for (byte r = 1; r <= 8; r++) {\n        writeMatrix(r, colMask);\n      }\n      radarCol += radarDir;\n      if (radarCol >= 7 || radarCol <= 0) radarDir = -radarDir;\n    }\n\n    // 2. Poll for RFID card\n    if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial()) {\n      Serial.print(\"Card Detected! UID: \");\n      for (byte i = 0; i < rfid.uid.size; i++) {\n        Serial.print(rfid.uid.uidByte[i], HEX);\n        Serial.print(\" \");\n      }\n      Serial.println();\n\n      // Simple authorized check: tag first byte == 0xDE or 0x4B\n      bool isAuthorized = (rfid.uid.uidByte[0] == 0xDE || rfid.uid.uidByte[0] == 0x4B);\n\n      if (isAuthorized) {\n        Serial.println(\"ACCESS GRANTED! Welcome, Monster Engineer!\");\n        drawBitmap(iconCheckmark);\n        currentState = STATE_GRANTED;\n      } else {\n        Serial.println(\"ACCESS DENIED! Unauthorized tag detected!\");\n        drawBitmap(iconCross);\n        currentState = STATE_DENIED;\n      }\n      stateTimer = now;\n      rfid.PICC_HaltA();\n    }\n  }\n  else if (currentState == STATE_GRANTED || currentState == STATE_DENIED) {\n    // Hold feedback icon for 2 seconds, then return to radar\n    if (now - stateTimer > 2000) {\n      clearMatrix();\n      currentState = STATE_IDLE;\n      Serial.println(\"Terminal returned to IDLE radar mode.\");\n    }\n  }\n}\n```\n\n### Engineering Review:\n- Both peripherals share Pins 11 (MOSI) and 13 (SCK) flawlessly.\n- Notice how clean the Serial Monitor output is and how quickly the MAX7219 switches from the radar animation to the checkmark icon when a card is tapped!",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "l10_08_s04",
+      "title": "High-Speed SPI Mastery Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your comprehensive mastery of high-speed SPI bus architectures, multi-peripheral systems, and real-time robotics.",
+      "interactiveConfig": {
+        "question": "What allows the MAX7219 LED Matrix and RC522 RFID Reader to share Pins 11 and 13 without bus conflict?",
+        "options": [
+          "Independent Chip Select (CS) lines ensure only one peripheral is actively communicating on the bus at any given instant",
+          "They take turns based on how bright the room is",
+          "They use two different kinds of electricity"
+        ],
+        "correctIndex": 0,
+        "explanation": "Dedicated CS lines isolate each chip: the non-selected peripheral ignores SCK clock pulses and holds its MISO pin in high-impedance mode.",
+        "questions": [
+          {
+            "question": "What allows the MAX7219 LED Matrix and RC522 RFID Reader to share Pins 11 and 13 without bus conflict?",
+            "options": [
+              "Independent Chip Select (CS) lines ensure only one peripheral is actively communicating on the bus at any given instant",
+              "They take turns based on how bright the room is",
+              "They use two different kinds of electricity"
+            ],
+            "correctIndex": 0,
+            "explanation": "Dedicated CS lines isolate each chip: the non-selected peripheral ignores SCK clock pulses and holds its MISO pin in high-impedance mode."
+          },
+          {
+            "question": "Why is it important to avoid long delay() statements when running multi-peripheral SPI systems?",
+            "options": [
+              "Long delay() calls freeze the processor, preventing timely sensor polling and causing display animations to stutter",
+              "delay() calls decrease the life of the LED matrix",
+              "delay() converts the SPI protocol into I2C"
+            ],
+            "correctIndex": 0,
+            "explanation": "Non-blocking code using millis() allows microcontrollers to interleave high-speed screen refreshes and sensor checks smoothly."
+          },
+          {
+            "question": "Which combination of attributes correctly characterizes the SPI protocol?",
+            "options": [
+              "4-wire synchronous, push-pull drivers, dedicated Chip Select per device, full-duplex transmission reaching multi-megahertz speeds",
+              "2-wire open-drain with pull-up resistors and 7-bit addressing",
+              "Single-wire asynchronous pulse-width modulated interface"
+            ],
+            "correctIndex": 0,
+            "explanation": "SPI is a 4-wire synchronous full-duplex protocol with push-pull drivers and dedicated chip select lines that enable multi-megahertz speeds."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 15
+}

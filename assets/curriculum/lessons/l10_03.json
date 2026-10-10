@@ -1,0 +1,114 @@
+{
+  "id": "l10_03",
+  "title": "Full-Duplex Bitstreams & Clock Polarity/Phase (CPOL/CPHA)",
+  "summary": "Understand how SPI simultaneously exchanges bits in both directions and master the four SPI clock modes.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_10",
+  "sortOrder": 3,
+  "isOptional": false,
+  "prerequisites": [
+    "l10_02"
+  ],
+  "componentIds": [
+    "comp_uno"
+  ],
+  "steps": [
+    {
+      "stepId": "l10_03_s01",
+      "title": "The Circular Ring of Bits",
+      "type": "story",
+      "markdownContent": "### Simultaneous Conversation: Full-Duplex Physics\nImagine two walkie-talkies: when one person talks, the other must listen. That is **half-duplex** (how I2C works). But what if two people talk and listen at the exact same instant through two separate telephone lines? That is **full-duplex**!\n\nSPI is fundamentally a full-duplex protocol. Every single time the Arduino master clocks out a bit over MOSI, the target peripheral clocks back a bit over MISO during that exact same clock pulse!\n\n```\n   MASTER SHIFT REGISTER (Uno)               TARGET SHIFT REGISTER (Device)\n  ┌───┬───┬───┬───┬───┬───┬───┬───┐         ┌───┬───┬───┬───┬───┬───┬───┬───┐\n  │ 7 │ 6 │ 5 │ 4 │ 3 │ 2 │ 1 │ 0 │──MOSI──►│ 7 │ 6 │ 5 │ 4 │ 3 │ 2 │ 1 │ 0 │\n  └───┴───┴───┴───┴───┴───┴───┴───┘         └───┴───┴───┴───┴───┴───┴───┴───┘\n    ▲                                                                   │\n    └─────────────────────────────MISO──────────────────────────────────┘\n```\n\n### The Shift Register Conveyor Belt\nThink of SPI as two 8-bit shift registers linked head-to-tail like a bicycle chain:\n1. On each tick of the SCK clock line, both registers shift their contents by one bit.\n2. Bit 7 of the Master shifts out onto MOSI and enters Bit 0 of the Slave.\n3. Simultaneously, Bit 7 of the Slave shifts out onto MISO and enters Bit 0 of the Master.\n4. After exactly **8 clock pulses**, the two chips have completely swapped their 8-bit bytes!\n\n> **The Engineering Implication:** You cannot \"just read\" or \"just write\" in SPI. To read a byte from a sensor, you must send a dummy byte (like `0x00` or `0xFF`) to pump the clock!",
+      "quickCheck": [
+        {
+          "questionId": "qc_l10_03_s01_q1",
+          "question": "What does the term 'Full-Duplex' signify in SPI communication?",
+          "options": [
+            "Data bits are transmitted and received simultaneously on the exact same clock pulse",
+            "Only one device can transmit while the other listens",
+            "Data is transmitted twice for error checking"
+          ],
+          "correctIndex": 0,
+          "explanation": "In full-duplex SPI, outward transmission on MOSI and inward reception on MISO occur concurrently on every clock edge.",
+          "warmupExplanation": "Half-duplex is like a one-lane bridge; full-duplex is like a dual-lane highway with simultaneous two-way traffic."
+        },
+        {
+          "questionId": "qc_l10_03_s01_q2",
+          "question": "Why must an Arduino transmit a byte over SPI even when it only wants to read data from a peripheral sensor?",
+          "options": [
+            "Because the Arduino must generate SCK clock pulses to shift the sensor's bits out of its shift register",
+            "To heat up the sensor's internal silicon",
+            "To reset the Arduino's power supply"
+          ],
+          "correctIndex": 0,
+          "explanation": "The Arduino is the SPI master that drives the SCK line. Shifting a dummy byte out generates the 8 clock pulses needed to shift the sensor's byte in.",
+          "warmupExplanation": "Think of a water pump: you have to turn the crank (generate clock pulses) to bring water up from the well."
+        }
+      ]
+    },
+    {
+      "stepId": "l10_03_s02",
+      "title": "Clock Polarity (CPOL) and Clock Phase (CPHA)",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "spiClockPolarityPhaseLab",
+      "markdownContent": "### The 4 SPI Modes: CPOL and CPHA\nUnlike I2C, SPI has no universal standard for clock timing. Different peripheral chips expect the clock to idle differently and latch data on different edges. These settings are configured using **CPOL** and **CPHA**:\n\n```\nCPOL (Clock Polarity): Defines the idle voltage level of SCK when no data is being transferred.\n  • CPOL = 0: SCK idles LOW  (0V)\n  • CPOL = 1: SCK idles HIGH (+5V)\n\nCPHA (Clock Phase): Defines which clock edge captures/samples the data bit.\n  • CPHA = 0: Data is sampled on the LEADING edge (1st clock edge)\n  • CPHA = 1: Data is sampled on the TRAILING edge (2nd clock edge)\n```\n\n### The SPI Mode Matrix\nCombining these two parameters produces the **4 SPI Modes**:\n\n| SPI Mode | CPOL (Idle Level) | CPHA (Sample Edge) | Clock Description |\n| :--- | :--- | :--- | :--- |\n| **Mode 0** (`SPI_MODE0`) | 0 (LOW) | 0 (Leading) | Idles LOW; samples on rising edge (most common!) |\n| **Mode 1** (`SPI_MODE1`) | 0 (LOW) | 1 (Trailing) | Idles LOW; samples on falling edge |\n| **Mode 2** (`SPI_MODE2`) | 1 (HIGH) | 0 (Leading) | Idles HIGH; samples on falling edge |\n| **Mode 3** (`SPI_MODE3`) | 1 (HIGH) | 1 (Trailing) | Idles HIGH; samples on rising edge |\n\n> **Pro-Tip:** Over 90% of Arduino SPI modules (including the MAX7219 and RC522) use **Mode 0** or **Mode 3**.\n\n### Interactive Timing Lab: Clock Polarity & Phase\nExperiment with the 4 SPI modes below to see how clock idle voltages and sampling edges change digital timing waveforms!",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "l10_03_s03",
+      "title": "Configuring SPI Transactions in C++",
+      "type": "codeExperiment",
+      "markdownContent": "### The Modern `SPISettings` API\nIn modern Arduino firmware, you configure speed, bit order, and SPI mode using `SPISettings` and safe transactions:\n\n```cpp\n#include <SPI.h>\n\nconst int CHIP_SELECT = 10;\n\n// Configure SPI transaction parameters:\n// 1. Clock speed: 4 MHz (4000000 Hz)\n// 2. Bit order: MSBFIRST (Most Significant Bit First)\n// 3. Mode: SPI_MODE0 (CPOL=0, CPHA=0)\nSPISettings sensorSettings(4000000, MSBFIRST, SPI_MODE0);\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(CHIP_SELECT, OUTPUT);\n  digitalWrite(CHIP_SELECT, HIGH);\n\n  SPI.begin();\n  Serial.println(\"SPI Master Configured with SPISettings.\");\n}\n\nbyte readSensorRegister(byte regAddress) {\n  // 1. Lock bus and apply hardware settings\n  SPI.beginTransaction(sensorSettings);\n  digitalWrite(CHIP_SELECT, LOW); // Assert CS\n\n  // 2. Transmit register address; ignore return byte during address phase\n  SPI.transfer(regAddress);\n\n  // 3. Transmit dummy byte 0x00 to pump SCK clock pulses and receive data!\n  byte sensorData = SPI.transfer(0x00);\n\n  // 4. Release peripheral and release bus lock\n  digitalWrite(CHIP_SELECT, HIGH); // De-assert CS\n  SPI.endTransaction();\n\n  return sensorData;\n}\n\nvoid loop() {\n  byte status = readSensorRegister(0x05); // Read register 0x05\n  Serial.print(\"Sensor Reg 0x05 Value: 0x\");\n  Serial.println(status, HEX);\n  delay(1000);\n}\n```\n\n### Code Breakdown:\n- `SPI.beginTransaction(sensorSettings)`: Configures the ATmega328P SPI hardware registers to the exact speed and mode needed, protecting against interrupts.\n- `SPI.transfer(0x00)`: The dummy byte! Shifting out `0x00` generates 8 clock pulses so the peripheral can shift its data byte into the Arduino over MISO.\n- `SPI.endTransaction()`: Releases the bus settings so other SPI devices using different modes or clock speeds can run cleanly.",
+      "interactiveConfig": {}
+    },
+    {
+      "stepId": "l10_03_s04",
+      "title": "Full-Duplex & SPI Modes Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Test your mastery of full-duplex exchange, clock polarity, clock phase, and the SPISettings API.",
+      "interactiveConfig": {
+        "question": "In SPI Mode 0 (SPI_MODE0), what are the Clock Polarity (CPOL) and Clock Phase (CPHA) values?",
+        "options": [
+          "CPOL = 0 (idles LOW), CPHA = 0 (samples on leading/rising edge)",
+          "CPOL = 1 (idles HIGH), CPHA = 1 (samples on trailing edge)",
+          "CPOL = 0 (idles LOW), CPHA = 1 (samples on trailing edge)"
+        ],
+        "correctIndex": 0,
+        "explanation": "SPI Mode 0 specifies CPOL=0 (clock sits LOW when idle) and CPHA=0 (data is sampled on the first/leading rising edge).",
+        "questions": [
+          {
+            "question": "In SPI Mode 0 (SPI_MODE0), what are the Clock Polarity (CPOL) and Clock Phase (CPHA) values?",
+            "options": [
+              "CPOL = 0 (idles LOW), CPHA = 0 (samples on leading/rising edge)",
+              "CPOL = 1 (idles HIGH), CPHA = 1 (samples on trailing edge)",
+              "CPOL = 0 (idles LOW), CPHA = 1 (samples on trailing edge)"
+            ],
+            "correctIndex": 0,
+            "explanation": "SPI Mode 0 specifies CPOL=0 (clock sits LOW when idle) and CPHA=0 (data is sampled on the first/leading rising edge)."
+          },
+          {
+            "question": "What is the purpose of transmitting a 'dummy byte' (e.g. 0x00 or 0xFF) when reading from an SPI sensor?",
+            "options": [
+              "To generate the necessary SCK clock pulses that shift the peripheral's response byte into the master's shift register",
+              "To clear the microcontroller's RAM memory",
+              "To test whether the breadboard power rail has enough current"
+            ],
+            "correctIndex": 0,
+            "explanation": "Because SPI clocking is driven exclusively by the master, sending a byte is required to pump the clock ticks that shift the incoming data across MISO."
+          },
+          {
+            "question": "Why is using SPI.beginTransaction(settings) and SPI.endTransaction() best practice in modern Arduino development?",
+            "options": [
+              "It dynamically configures clock speed, bit order, and SPI mode per device while protecting transfers against interrupt corruption",
+              "It automatically solders the jumper wires to the board",
+              "It increases the Uno's supply voltage from 5V to 12V"
+            ],
+            "correctIndex": 0,
+            "explanation": "SPI transactions ensure different SPI devices with conflicting speeds or modes (Mode 0 vs Mode 3) share the bus reliably without corrupting each other."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}

@@ -1,0 +1,120 @@
+{
+  "id": "l12_04",
+  "title": "The L293D Dual Motor Driver IC",
+  "summary": "Meet the industry-standard L293D 16-pin motor driver integrated circuit: pinout architecture, dual channels, and internal clamp diode protection.",
+  "tier": "engineer",
+  "estimatedMinutes": 10,
+  "courseId": "lesson_12",
+  "sortOrder": 4,
+  "isOptional": false,
+  "prerequisites": [
+    "l12_03"
+  ],
+  "componentIds": [
+    "comp_uno",
+    "comp_33",
+    "comp_l293d"
+  ],
+  "steps": [
+    {
+      "stepId": "l12_04_s01",
+      "title": "Introducing the L293D: Integrated Actuator Power",
+      "type": "story",
+      "markdownContent": "### The Clutter Problem: Discrete vs Integrated H-Bridges\n\nIn Lesson 3, you saw that building an H-Bridge requires four transistors, four base resistors, and four external flyback diodes. For two motors (like a two-wheeled rover), you would need **8 transistors and 8 diodes**\u2014a rat's nest of 30+ jumper wires covering your breadboard!\n\nTo solve this, semiconductor engineers created the **L293D Dual H-Bridge Motor Driver IC** (`comp_l293d`).\n\n```\n                    \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500 U \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n      1,2EN (PWM) \u2500\u2500\u2524  1           16 \u251c\u2500\u2500 VCC1 (+5V Logic)\n     1A (Input 1) \u2500\u2500\u2524  2           15 \u251c\u2500\u2500 4A (Input 4)\n    1Y (Output 1) \u2500\u2500\u2524  3           14 \u251c\u2500\u2500 4Y (Output 4)\n              GND \u2500\u2500\u2524  4           13 \u251c\u2500\u2500 GND (Heat Sink)\n              GND \u2500\u2500\u2524  5           12 \u251c\u2500\u2500 GND (Heat Sink)\n    2Y (Output 2) \u2500\u2500\u2524  6           11 \u251c\u2500\u2500 3Y (Output 3)\n     2A (Input 2) \u2500\u2500\u2524  7           10 \u251c\u2500\u2500 3A (Input 3)\n VCC2 (Motor V+)  \u2500\u2500\u2524  8            9 \u251c\u2500\u2500 3,4EN (PWM Ch 2)\n                    \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n                     L293D (16-Pin DIP)\n```\n\n### What Makes the L293D Special?\n1. **Dual H-Bridges:** It contains two completely independent full H-Bridge circuits in a single 16-pin dual in-line package (DIP). It can drive two DC motors bidirectionally or one bipolar stepper motor!\n2. **Built-in Clamping Diodes:** The **\"D\"** in L293D stands for integrated internal **flyback clamping diodes**! All eight required flyback diodes are manufactured right inside the silicon die, protecting against inductive kickback spikes without extra components.\n3. **Dual Power Supplies:** It features two separate power inputs:\n   - **$V_{CC1}$ (Pin 16):** 5V Logic supply from the Arduino to power internal gates.\n   - **$V_{CC2}$ (Pin 8):** Motor supply voltage (from **4.5V up to 36V**) supplied from an external battery pack.\n4. **Current Capacity:** Delivers up to **600 mA continuous output current** per channel (with 1.2A peak output current).",
+      "quickCheck": [
+        {
+          "questionId": "q_l12_04_s01_1",
+          "question": "What does the 'D' designation signify in the L293D motor driver chip?",
+          "options": [
+            "It contains integrated internal flyback clamping diodes across each output channel",
+            "It only functions with Digital pin 0",
+            "It requires Direct sunlight to operate"
+          ],
+          "correctIndex": 0,
+          "explanation": "The 'D' variant of the L293 series features built-in internal flyback clamping diodes across all output channels for inductive spike protection.",
+          "warmupExplanation": "The letter D stands for Diodes! The chip has protective flyback diodes built right into the silicon."
+        },
+        {
+          "questionId": "q_l12_04_s01_2",
+          "question": "Why does the L293D have two separate power pins, VCC1 and VCC2?",
+          "options": [
+            "VCC1 powers 5V internal logic gates, while VCC2 supplies external high-current power for the motors",
+            "VCC1 is for positive numbers and VCC2 is for negative numbers",
+            "VCC2 is an emergency backup when VCC1 is disconnected"
+          ],
+          "correctIndex": 0,
+          "explanation": "VCC1 (pin 16) powers the internal 5V logic circuitry, while VCC2 (pin 8) delivers isolated, high-current power (4.5V-36V) to drive the motors.",
+          "warmupExplanation": "One pin feeds the chip's brain (5V logic), while the other pin feeds the motor's muscle (external battery)."
+        }
+      ]
+    },
+    {
+      "stepId": "l12_04_s02",
+      "title": "L293D 16-Pin DIP Anatomy & Wiring Architecture",
+      "type": "visualExplanation",
+      "interactiveWidgetType": "visualFlowDiagram",
+      "interactiveConfig": {
+        "title": "L293D Channel 1 Wiring Blueprint"
+      },
+      "markdownContent": "### Hardware Tour: Wiring Channel 1 of the L293D\n\nLocate the semicircular **notch** at the top of the L293D chip. Pin 1 is directly to the left of the notch, and numbering proceeds counter-clockwise around the chip from 1 to 16.\n\n```\nArduino Uno                     L293D 16-Pin DIP IC              Actuator / Power\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500                     \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500              \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nPin 9 (PWM)   \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba  Pin 1  (1,2EN - Speed)\nPin 8 (Dir A) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba  Pin 2  (1A - Input 1)\n                                Pin 3  (1Y - Output 1) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba  Motor Terminal (+)\nGND           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba  Pins 4, 5, 12, 13 (GND) \u2500\u2500\u2500\u2500\u2500\u25ba  Common Ground\n                                Pin 6  (2Y - Output 2) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba  Motor Terminal (-)\nPin 7 (Dir B) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba  Pin 7  (2A - Input 2)\n                                Pin 8  (VCC2 - Motor V+) \u2500\u2500\u2500\u2500\u2500\u25ba  External 6V-9V Battery (+)\n5V Logic      \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba  Pin 16 (VCC1 - Logic)\n```\n\n### Channel 1 Control Truth Table:\n- **Enable 1 (Pin 1 = HIGH):** Channel 1 outputs are active.\n  - `Input 1 (HIGH)` & `Input 2 (LOW)`: Motor spins **Forward**.\n  - `Input 1 (LOW)` & `Input 2 (HIGH)`: Motor spins **Reverse**.\n  - `Input 1 (LOW)` & `Input 2 (LOW)`: Motor **Coasts** to a stop.\n  - `Input 1 (HIGH)` & `Input 2 (HIGH)`: Motor **Dynamic Brakes** (outputs shorted high).\n- **Enable 1 (Pin 1 = LOW):** Channel 1 is completely disabled; motor floats into high impedance regardless of Input 1 and 2 states!\n\n### Thermal Dissipation: Center Heat Sink Pins\nPins 4, 5, 12, and 13 are internally bonded directly to the copper leadframe of the chip. They serve as both electrical Grounds and **thermal heatsinks**. Always tie all four ground pins directly to your circuit's ground plane to keep the IC cool!"
+    },
+    {
+      "stepId": "l12_04_s03",
+      "title": "L293D Direction Sequencing & Truth Table Code",
+      "type": "codeExperiment",
+      "interactiveConfig": {
+        "codeSnippet": "const int enablePin = 9; // PWM Speed\nconst int in1Pin = 8;    // Direction Leg A\nconst int in2Pin = 7;    // Direction Leg B\n\nvoid setup() {\n  pinMode(enablePin, OUTPUT);\n  pinMode(in1Pin, OUTPUT);\n  pinMode(in2Pin, OUTPUT);\n  stopMotor();\n  Serial.begin(9600);\n  Serial.println(F(\"--- L293D Direction Controller Ready ---\"));\n}\n\nvoid driveForward() {\n  digitalWrite(in1Pin, HIGH);\n  digitalWrite(in2Pin, LOW);\n  digitalWrite(enablePin, HIGH);\n}\n\nvoid driveReverse() {\n  digitalWrite(in1Pin, LOW);\n  digitalWrite(in2Pin, HIGH);\n  digitalWrite(enablePin, HIGH);\n}\n\nvoid stopMotor() {\n  digitalWrite(in1Pin, LOW);\n  digitalWrite(in2Pin, LOW);\n  digitalWrite(enablePin, LOW);\n}"
+      },
+      "markdownContent": "### Bidirectional Control with the L293D\n\nLet's test all four states of the L293D Channel 1 driver using Arduino digital pins 7, 8, and 9.\n\n```cpp\n// L293D Dual H-Bridge Motor Control Sketch\n// Channel 1 wired to DC Motor A\nconst int enablePin = 9; // Pin 1 on L293D (1,2EN)\nconst int in1Pin    = 8; // Pin 2 on L293D (1A)\nconst int in2Pin    = 7; // Pin 7 on L293D (2A)\n\nvoid setup() {\n  pinMode(enablePin, OUTPUT);\n  pinMode(in1Pin, OUTPUT);\n  pinMode(in2Pin, OUTPUT);\n\n  // Safety initial condition: motor de-energized\n  stopMotor();\n\n  Serial.begin(9600);\n  Serial.println(F(\"--- L293D Direction Controller Ready ---\"));\n}\n\nvoid driveForward() {\n  digitalWrite(in1Pin, HIGH);\n  digitalWrite(in2Pin, LOW);\n  digitalWrite(enablePin, HIGH); // Enable Channel 1\n  Serial.println(F(\"MOTOR: Forward (IN1=HIGH, IN2=LOW)\"));\n}\n\nvoid driveReverse() {\n  digitalWrite(in1Pin, LOW);\n  digitalWrite(in2Pin, HIGH);\n  digitalWrite(enablePin, HIGH); // Enable Channel 1\n  Serial.println(F(\"MOTOR: Reverse (IN1=LOW, IN2=HIGH)\"));\n}\n\nvoid brakeMotor() {\n  // Active dynamic brake: short both motor terminals to HIGH\n  digitalWrite(in1Pin, HIGH);\n  digitalWrite(in2Pin, HIGH);\n  digitalWrite(enablePin, HIGH);\n  Serial.println(F(\"MOTOR: Dynamic Brake (IN1=HIGH, IN2=HIGH)\"));\n}\n\nvoid stopMotor() {\n  // Coast to stop: disable H-Bridge outputs\n  digitalWrite(in1Pin, LOW);\n  digitalWrite(in2Pin, LOW);\n  digitalWrite(enablePin, LOW);\n  Serial.println(F(\"MOTOR: Stopped / Coasting\"));\n}\n\nvoid loop() {\n  driveForward();\n  delay(2000);\n\n  brakeMotor();\n  delay(1000);\n\n  driveReverse();\n  delay(2000);\n\n  stopMotor();\n  delay(1000);\n}\n```\n\n### Code Breakdown:\n- `pinMode()` calls configure Pins 7, 8, and 9 as outputs to drive the L293D inputs.\n- `driveForward()` sets `in1Pin = HIGH` and `in2Pin = LOW`, connecting motor terminal 1 to VCC2 and terminal 2 to GND.\n- `driveReverse()` swaps the logic levels (`in1Pin = LOW`, `in2Pin = HIGH`), reversing voltage polarity across the motor.\n- `brakeMotor()` sets both inputs HIGH with enable active, creating a regenerative electrical brake that halts rotation quickly."
+    },
+    {
+      "stepId": "l12_04_s04",
+      "title": "L293D Pinout & Operation Checkpoint",
+      "type": "quizCheckpoint",
+      "markdownContent": "Confirm your mastery of L293D pinouts, power rail connections, and logic truth tables.",
+      "interactiveConfig": {
+        "question": "Where should Pin 16 (VCC1) and Pin 8 (VCC2) of the L293D be connected for a 9V motor system?",
+        "options": [
+          "Pin 16 connects to Arduino 5V for logic; Pin 8 connects to the external 9V battery rail for motor power",
+          "Pin 16 connects to GND; Pin 8 connects to 5V",
+          "Both Pin 16 and Pin 8 must be connected together to an analog pin"
+        ],
+        "correctIndex": 0,
+        "explanation": "Pin 16 (VCC1) requires 5V to power internal logic circuits, while Pin 8 (VCC2) receives high-voltage motor power (e.g. 9V) from an external battery.",
+        "questions": [
+          {
+            "question": "Where should Pin 16 (VCC1) and Pin 8 (VCC2) of the L293D be connected for a 9V motor system?",
+            "options": [
+              "Pin 16 connects to Arduino 5V for logic; Pin 8 connects to the external 9V battery rail for motor power",
+              "Pin 16 connects to GND; Pin 8 connects to 5V",
+              "Both Pin 16 and Pin 8 must be connected together to an analog pin"
+            ],
+            "correctIndex": 0,
+            "explanation": "Pin 16 (VCC1) requires 5V to power internal logic circuits, while Pin 8 (VCC2) receives high-voltage motor power (e.g. 9V) from an external battery."
+          },
+          {
+            "question": "What occurs if Pin 1 (1,2EN) is held LOW (0V) on the L293D driver?",
+            "options": [
+              "Channel 1 outputs enter high-impedance mode, cutting power to the motor regardless of input pin states",
+              "The motor runs at double speed in reverse",
+              "The Arduino resets immediately"
+            ],
+            "correctIndex": 0,
+            "explanation": "When an Enable pin is LOW, the corresponding H-bridge channel is disabled and its outputs float in high-impedance mode."
+          },
+          {
+            "question": "Which pins on the L293D act as both common ground and internal silicon heatsinking?",
+            "options": [
+              "Pins 4, 5, 12, and 13 (the central ground pins connected to the PCB ground plane)",
+              "Pins 1 and 9",
+              "Pins 8 and 16"
+            ],
+            "correctIndex": 0,
+            "explanation": "Pins 4, 5, 12, and 13 are internally connected to the central leadframe to conduct heat away from the driver switches into the ground plane."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10
+}
