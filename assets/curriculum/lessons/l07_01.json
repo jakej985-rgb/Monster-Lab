@@ -8,7 +8,7 @@
   "sortOrder": 1,
   "isOptional": false,
   "prerequisites": [
-    "l06_11"
+    "l05_16"
   ],
   "componentIds": [
     "comp_uno",

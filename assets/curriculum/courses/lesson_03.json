@@ -1,6 +1,6 @@
 {
   "id": "lesson_03",
-  "title": "Lesson 3 \u2014 Libraries: Power Up Your Code",
+  "title": "Lesson 7 \u2014 Libraries: Power Up Your Code",
   "summary": "Understand why libraries exist before technical C++ details, and learn to find, install, and modify example code.",
   "lessonIds": [
     "l03_01",
@@ -16,7 +16,7 @@
   "isOptional": false,
   "placementLessonId": null,
   "prerequisites": [
-    "lesson_2b"
+    "lesson_07"
   ],
   "xpReward": 100,
   "estimatedMinutes": 45

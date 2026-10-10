@@ -12,7 +12,8 @@
   ],
   "componentIds": [
     "comp_uno",
-    "comp_20"
+    "comp_20",
+    "comp_breadboard"
   ],
   "steps": [
     {

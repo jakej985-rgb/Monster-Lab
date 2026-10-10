@@ -17,7 +17,7 @@
   "isOptional": false,
   "placementLessonId": null,
   "prerequisites": [
-    "lesson_07"
+    "lesson_03"
   ],
   "xpReward": 100,
   "estimatedMinutes": 50

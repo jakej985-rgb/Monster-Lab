@@ -1,7 +1,7 @@
 {
   "id": "lesson_06",
-  "title": "Lesson 6 \u2014 Circuits, Breadboards & First Builds",
-  "summary": "Build physical circuits on breadboards, use protective resistors, wire LEDs, and connect distance sensors.",
+  "title": "Lesson 3 \u2014 Circuits, Breadboards & First Builds",
+  "summary": "Build physical circuits on breadboards, use protective resistors, wire LEDs, and master circuit diagnostics.",
   "lessonIds": [
     "l06_01",
     "l06_02",
@@ -18,7 +18,7 @@
   "isOptional": false,
   "placementLessonId": null,
   "prerequisites": [
-    "lesson_05"
+    "lesson_2b"
   ],
   "xpReward": 100,
   "estimatedMinutes": 55

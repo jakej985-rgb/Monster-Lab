@@ -6,6 +6,18 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.1.10+20] - 2026-10-09
+
+### Overview & Release Highlights
+Release v0.1.10 implements the Phase 27 Curriculum Diagnostic Audit and Sequence Realignment, resolving prerequisite dependencies and improving the pedagogical flow.
+
+### 📚 Curriculum & Pedagogy
+- **Phase 27 Realignment**: Reordered lessons in the curriculum manifest and updated tests to reflect the new sequence.
+  - *What Changed*: Adjusted `prerequisites` in lessons (e.g., `l07_01.json`, `l08_01.json`, etc.), reordered courses in `manifest.json`.
+  - *Why*: To ensure concepts are introduced logically based on the Phase 27 prerequisite audit findings.
+  - *Impact*: Learners will experience a smoother progression with foundational concepts properly preceding advanced topics.
+
+
 ## [0.1.9+19] - 2026-10-09
 
 ### Overview & Release Highlights

@@ -1,6 +1,6 @@
 {
   "id": "lesson_05",
-  "title": "Lesson 5 \u2014 Switches, Buttons & Potentiometers: Physical Inputs",
+  "title": "Lesson 5 \u2014 Switches, Buttons & Potentiometers",
   "summary": "Combine digital switches, pushbuttons with pull-up resistors, and rotary potentiometers to command hardware.",
   "lessonIds": [
     "l05_01",

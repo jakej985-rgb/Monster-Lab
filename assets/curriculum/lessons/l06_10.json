@@ -12,19 +12,18 @@
   ],
   "componentIds": [
     "comp_uno",
-    "comp_breadboard",
-    "comp_01"
+    "comp_breadboard"
   ],
   "steps": [
     {
       "stepId": "l06_10_s01",
       "title": "Sensor + Output Mini Project",
       "type": "story",
-      "markdownContent": "# Sensor + Output Mini Project: Monster Proximity Sentry\n\nNow we unite everything you have mastered into a full Cyber-Physical System:\n**Sensory Input ➔ Microcontroller Decision Logic ➔ Physical Output Action**!\n\n### The Robotic Mission\nYour monster sentry will guard your desk. When an intruder's hand gets closer than **20 centimeters**, the sentry sounds an alarm by flashing the Pin 9 LED rapidly! When clear, the sentry stays peaceful.\n\n### System Circuit Checklist:\n1. **Breadboard Power Rails**: 5V to red rail, GND to blue rail.\n2. **Ultrasonic Sensor**: VCC to 5V rail, GND to GND rail, Trig to Pin 12, Echo to Pin 11.\n3. **Warning LED Circuit**: Digital Pin 9 ➔ 220Ω resistor ➔ LED Anode (+) ➔ LED Cathode (-) ➔ GND rail.\n\n### Upload the Sentry Firmware:\n```cpp\nconst int trigPin = 12;\nconst int echoPin = 11;\nconst int alertLed = 9;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(trigPin, OUTPUT);\n  pinMode(echoPin, INPUT);\n  pinMode(alertLed, OUTPUT);\n}\n\nvoid loop() {\n  // 1. Emit ultrasonic trigger\n  digitalWrite(trigPin, LOW);\n  delayMicroseconds(2);\n  digitalWrite(trigPin, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(trigPin, LOW);\n\n  // 2. Measure echo and compute distance\n  long duration = pulseIn(echoPin, HIGH);\n  int distance = duration * 0.034 / 2;\n\n  Serial.print(\"Distance: \");\n  Serial.print(distance);\n  Serial.println(\" cm\");\n\n  // 3. Autonomous Decision Pipeline\n  if (distance > 0 && distance < 20) {\n    // Intruder in security zone! Rapid strobe alarm!\n    digitalWrite(alertLed, HIGH);\n    delay(100);\n    digitalWrite(alertLed, LOW);\n    delay(100);\n  } else {\n    // Perimeter secure: quiet mode\n    digitalWrite(alertLed, LOW);\n    delay(250);\n  }\n}\n```\n\n### Test the System:\nWave your hand in front of the sensor. When you cross inside 20 cm, the alarm fires! You have built a complete, intelligent automated robotic sentry!",
+      "markdownContent": "# Sensor + Output Mini Project: Monster Proximity Sentry\n\nNow we unite everything you have mastered into a full Cyber-Physical System:\n**Sensory Input \u2794 Microcontroller Decision Logic \u2794 Physical Output Action**!\n\n### The Robotic Mission\nYour monster sentry will guard your desk. When an intruder's hand gets closer than **20 centimeters**, the sentry sounds an alarm by flashing the Pin 9 LED rapidly! When clear, the sentry stays peaceful.\n\n### System Circuit Checklist:\n1. **Breadboard Power Rails**: 5V to red rail, GND to blue rail.\n2. **Ultrasonic Sensor**: VCC to 5V rail, GND to GND rail, Trig to Pin 12, Echo to Pin 11.\n3. **Warning LED Circuit**: Digital Pin 9 \u2794 220\u03a9 resistor \u2794 LED Anode (+) \u2794 LED Cathode (-) \u2794 GND rail.\n\n### Upload the Sentry Firmware:\n```cpp\nconst int trigPin = 12;\nconst int echoPin = 11;\nconst int alertLed = 9;\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(trigPin, OUTPUT);\n  pinMode(echoPin, INPUT);\n  pinMode(alertLed, OUTPUT);\n}\n\nvoid loop() {\n  // 1. Emit ultrasonic trigger\n  digitalWrite(trigPin, LOW);\n  delayMicroseconds(2);\n  digitalWrite(trigPin, HIGH);\n  delayMicroseconds(10);\n  digitalWrite(trigPin, LOW);\n\n  // 2. Measure echo and compute distance\n  long duration = pulseIn(echoPin, HIGH);\n  int distance = duration * 0.034 / 2;\n\n  Serial.print(\"Distance: \");\n  Serial.print(distance);\n  Serial.println(\" cm\");\n\n  // 3. Autonomous Decision Pipeline\n  if (distance > 0 && distance < 20) {\n    // Intruder in security zone! Rapid strobe alarm!\n    digitalWrite(alertLed, HIGH);\n    delay(100);\n    digitalWrite(alertLed, LOW);\n    delay(100);\n  } else {\n    // Perimeter secure: quiet mode\n    digitalWrite(alertLed, LOW);\n    delay(250);\n  }\n}\n```\n\n### Test the System:\nWave your hand in front of the sensor. When you cross inside 20 cm, the alarm fires! You have built a complete, intelligent automated robotic sentry!",
       "quickCheck": [
         {
           "questionId": "q_l06_s10_01",
-          "question": "In our Monster Sentry project, what role does the ultrasonic sensor play in the Input → Decision → Output pipeline?",
+          "question": "In our Monster Sentry project, what role does the ultrasonic sensor play in the Input \u2192 Decision \u2192 Output pipeline?",
           "options": [
             "It acts as the visual Output displaying the warning signal",
             "It computes the mathematical code logic in its own microprocessor",
@@ -55,7 +54,7 @@
       "title": "The Cyber-Physical Feedback Loop",
       "type": "visualExplanation",
       "interactiveWidgetType": "visualFlowDiagram",
-      "markdownContent": "### The Universal Robotics Pipeline: Sense ➔ Think ➔ Act\n\nEvery advanced autonomous machine—from Mars rovers to self-driving cars—operates on this closed-loop cycle:\n\n1. **SENSE (Input Telemetry)**:\n   - Physical environment: An intruder's hand approaches.\n   - Sensor hardware: HC-SR04 emits 40 kHz ultrasound and measures echo pulse duration.\n   - Conversion: Code computes distance $d = \\text{duration} \\times 0.034 / 2$.\n2. **THINK (Decision Logic)**:\n   - The microcontroller CPU evaluates conditional logic:\n     ```cpp\n     if (distance > 0 && distance < 20) { ... }\n     ```\n   - If an obstacle is detected within 20 cm, enter alert state; otherwise, remain in standby state.\n3. **ACT (Physical Output Action)**:\n   - Microcontroller writes `digitalWrite(alertLed, HIGH)` to command the breadboard LED.\n   - Photons illuminate, warning the intruder!\n\nTrace the interactive cyber-physical loop in the flow diagram below!"
+      "markdownContent": "### The Universal Robotics Pipeline: Sense \u2794 Think \u2794 Act\n\nEvery advanced autonomous machine\u2014from Mars rovers to self-driving cars\u2014operates on this closed-loop cycle:\n\n1. **SENSE (Input Telemetry)**:\n   - Physical environment: An intruder's hand approaches.\n   - Sensor hardware: HC-SR04 emits 40 kHz ultrasound and measures echo pulse duration.\n   - Conversion: Code computes distance $d = \\text{duration} \\times 0.034 / 2$.\n2. **THINK (Decision Logic)**:\n   - The microcontroller CPU evaluates conditional logic:\n     ```cpp\n     if (distance > 0 && distance < 20) { ... }\n     ```\n   - If an obstacle is detected within 20 cm, enter alert state; otherwise, remain in standby state.\n3. **ACT (Physical Output Action)**:\n   - Microcontroller writes `digitalWrite(alertLed, HIGH)` to command the breadboard LED.\n   - Photons illuminate, warning the intruder!\n\nTrace the interactive cyber-physical loop in the flow diagram below!"
     },
     {
       "stepId": "l06_10_s03",
@@ -90,11 +89,11 @@
             "explanation": "When pulseIn times out (no echo detected), it returns 0; filtering for distance > 0 avoids triggering false alarm strobes."
           },
           {
-            "question": "In the 'Sense ➔ Think ➔ Act' robotics pipeline, which component performs the 'Think' role in our monster sentry?",
+            "question": "In the 'Sense \u2794 Think \u2794 Act' robotics pipeline, which component performs the 'Think' role in our monster sentry?",
             "options": [
               "The Arduino ATmega328P microcontroller running C++ conditional if/else code",
               "The ultrasonic metal cylinders",
-              "The 220Ω resistor"
+              "The 220\u03a9 resistor"
             ],
             "correctIndex": 0,
             "explanation": "The microcontroller executes your C++ decision logic, evaluating incoming telemetry to decide when to activate outputs."

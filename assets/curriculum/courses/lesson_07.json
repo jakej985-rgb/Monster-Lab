@@ -1,6 +1,6 @@
 {
   "id": "lesson_07",
-  "title": "Lesson 7 \u2014 Sensors & Reading the Real World",
+  "title": "Lesson 6 \u2014 Sensors & Reading the Real World",
   "summary": "Turn the real world into data! Learn digital and analog sensors, calibrate thresholds, and command outputs.",
   "lessonIds": [
     "l07_01",
@@ -18,7 +18,7 @@
   "isOptional": false,
   "placementLessonId": null,
   "prerequisites": [
-    "lesson_06"
+    "lesson_05"
   ],
   "xpReward": 100,
   "estimatedMinutes": 55

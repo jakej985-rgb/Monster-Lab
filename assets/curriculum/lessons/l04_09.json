@@ -11,7 +11,8 @@
     "l04_08"
   ],
   "componentIds": [
-    "comp_uno"
+    "comp_uno",
+    "comp_breadboard"
   ],
   "steps": [
     {

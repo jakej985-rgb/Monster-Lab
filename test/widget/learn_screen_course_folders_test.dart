@@ -72,17 +72,15 @@ void main() {
       expect(find.text('Coding Foundations'), findsOneWidget);
       expect(find.text('Lesson 2A — Meet Monster Lab'), findsOneWidget);
       expect(find.text('Lesson 2B — Arduino IDE Walkthrough'), findsOneWidget);
-      expect(find.text('Lesson 3 — Libraries: Power Up Your Code'),
+      expect(find.text('Lesson 3 — Circuits, Breadboards & First Builds'),
           findsOneWidget);
       expect(find.text('Lesson 4 — PWM & RGB LEDs: Colors and Brightness'),
           findsOneWidget);
-      expect(
-          find.text(
-              'Lesson 5 — Switches, Buttons & Potentiometers: Physical Inputs'),
+      expect(find.text('Lesson 5 — Switches, Buttons & Potentiometers'),
           findsOneWidget);
-      expect(find.text('Lesson 6 — Circuits, Breadboards & First Builds'),
+      expect(find.text('Lesson 6 — Sensors & Reading the Real World'),
           findsOneWidget);
-      expect(find.text('Lesson 7 — Sensors & Reading the Real World'),
+      expect(find.text('Lesson 7 — Libraries: Power Up Your Code'),
           findsOneWidget);
       expect(find.text('Lesson 8 — I2C & Connected Devices'), findsOneWidget);
 

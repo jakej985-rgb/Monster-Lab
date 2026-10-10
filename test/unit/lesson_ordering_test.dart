@@ -71,12 +71,32 @@ void main() {
       expect(l2bSlice.first, equals('l2b_01'));
       expect(l2bSlice.last, equals('l2b_08'));
 
-      // Next are Lesson 3 sub-lessons (9)
-      final l03Slice = orderedIds.sublist(36, 45);
+      // Next are Course lesson_06 (Circuits & Breadboards) sub-lessons (11)
+      final l06Slice = orderedIds.sublist(36, 47);
+      expect(l06Slice.first, equals('l06_01'));
+      expect(l06Slice.last, equals('l06_11'));
+
+      // Next are Course lesson_04 (PWM & RGB LEDs) sub-lessons (10)
+      final l04Slice = orderedIds.sublist(47, 57);
+      expect(l04Slice.first, equals('l04_01'));
+      expect(l04Slice.last, equals('l04_10'));
+
+      // Next are Course lesson_05 (Buttons & Potentiometers) sub-lessons (16)
+      final l05Slice = orderedIds.sublist(57, 73);
+      expect(l05Slice.first, equals('l05_01'));
+      expect(l05Slice.last, equals('l05_16'));
+
+      // Next are Course lesson_07 (Sensors & Real World) sub-lessons (11)
+      final l07Slice = orderedIds.sublist(73, 84);
+      expect(l07Slice.first, equals('l07_01'));
+      expect(l07Slice.last, equals('l07_11'));
+
+      // Next are Course lesson_03 (Libraries) sub-lessons (9)
+      final l03Slice = orderedIds.sublist(84, 93);
       expect(l03Slice.first, equals('l03_01'));
       expect(l03Slice.last, equals('l03_09'));
 
-      // Next are Lesson 8 sub-lessons (10)
+      // Next are Course lesson_08 (I2C) sub-lessons (10)
       final l08Slice = orderedIds.sublist(93, 103);
       expect(l08Slice.first, equals('l08_01'));
       expect(l08Slice.last, equals('l08_10'));
