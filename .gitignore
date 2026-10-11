@@ -43,3 +43,6 @@ coverage/
 *.exe
 # Widget Preview related
 .widget_preview/
+
+# Generated reports
+reports/

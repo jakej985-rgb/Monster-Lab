@@ -26,7 +26,10 @@ class MonsterCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final cardColor = color ?? theme.cardTheme.color ?? AppColors.surfaceLight;
+    final isDark = theme.brightness == Brightness.dark;
+    final cardColor = color ??
+        theme.cardTheme.color ??
+        (isDark ? AppColors.surfaceDark : AppColors.surfaceLight);
 
     Widget card = Container(
       decoration: BoxDecoration(

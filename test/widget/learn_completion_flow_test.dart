@@ -50,14 +50,28 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Advance through all steps
-      while (find.text('Next Step').evaluate().isNotEmpty) {
+      // Advance through first 3 steps
+      for (int i = 0; i < 3; i++) {
         await tester.ensureVisible(find.text('Next Step'));
         await tester.tap(find.text('Next Step'));
         await tester.pumpAndSettle();
       }
 
-      // Step N -> Complete Lesson
+      // Step 4 (Quiz): Must answer quiz before completing
+      final opt1 = find.text(
+          'It acts as the robot brain, reading sensors and commanding outputs');
+      expect(opt1, findsWidgets);
+      await tester.ensureVisible(opt1.first);
+      await tester.tap(opt1.first);
+      await tester.pumpAndSettle();
+
+      final submitBtn1 = find.text('Submit Answer');
+      expect(submitBtn1, findsOneWidget);
+      await tester.ensureVisible(submitBtn1);
+      await tester.tap(submitBtn1);
+      await tester.pumpAndSettle();
+
+      // Step 4 -> Complete Lesson
       final completeButton = find.text('Complete Lesson (+10 XP)');
       await tester.ensureVisible(completeButton);
       expect(completeButton, findsOneWidget);
@@ -96,12 +110,26 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Advance through steps
-      while (find.text('Next Step').evaluate().isNotEmpty) {
+      // Advance through first 3 steps
+      for (int i = 0; i < 3; i++) {
         await tester.ensureVisible(find.text('Next Step'));
         await tester.tap(find.text('Next Step'));
         await tester.pumpAndSettle();
       }
+
+      // Step 4 (Quiz): Answer quiz
+      final opt2 = find.text(
+          'It acts as the robot brain, reading sensors and commanding outputs');
+      expect(opt2, findsWidgets);
+      await tester.ensureVisible(opt2.first);
+      await tester.tap(opt2.first);
+      await tester.pumpAndSettle();
+
+      final submitBtn2 = find.text('Submit Answer');
+      expect(submitBtn2, findsOneWidget);
+      await tester.ensureVisible(submitBtn2);
+      await tester.tap(submitBtn2);
+      await tester.pumpAndSettle();
 
       // Complete Lesson
       final completeButton = find.text('Complete Lesson (+10 XP)');
@@ -118,8 +146,9 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify progress persisted in storage
+      // 10 XP from checkpoint answer + 10 XP from lesson completion = 20 XP
       final progress = localDataSource.getProgress('learner_test_1');
-      expect(progress.totalXp, equals(10));
+      expect(progress.totalXp, equals(20));
       expect(progress.completedLessonIds, contains('l01_01'));
     });
 
@@ -154,12 +183,26 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Advance through steps
-      while (find.text('Next Step').evaluate().isNotEmpty) {
+      // Advance through first 3 steps
+      for (int i = 0; i < 3; i++) {
         await tester.ensureVisible(find.text('Next Step'));
         await tester.tap(find.text('Next Step'));
         await tester.pumpAndSettle();
       }
+
+      // Step 4 (Quiz): Answer quiz
+      final opt3 = find.text(
+          'It acts as the robot brain, reading sensors and commanding outputs');
+      expect(opt3, findsWidgets);
+      await tester.ensureVisible(opt3.first);
+      await tester.tap(opt3.first);
+      await tester.pumpAndSettle();
+
+      final submitBtn3 = find.text('Submit Answer');
+      expect(submitBtn3, findsOneWidget);
+      await tester.ensureVisible(submitBtn3);
+      await tester.tap(submitBtn3);
+      await tester.pumpAndSettle();
 
       // Complete Lesson replay
       final replayButton = find.text('Complete Lesson (+10 XP)');
@@ -270,12 +313,26 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Advance through steps of l01_16
-      while (find.text('Next Step').evaluate().isNotEmpty) {
+      // Advance through first 3 steps of l01_16 (story, visualExplanation, physicalTask)
+      for (int i = 0; i < 3; i++) {
         await tester.ensureVisible(find.text('Next Step'));
         await tester.tap(find.text('Next Step'));
         await tester.pumpAndSettle();
       }
+
+      // Step 4 is quiz checkpoint: answer quiz before completing
+      final qOption = find.text(
+          'A microcontroller development board that acts as a robot brain');
+      expect(qOption, findsWidgets);
+      await tester.ensureVisible(qOption.first);
+      await tester.tap(qOption.first);
+      await tester.pumpAndSettle();
+
+      final submitBtn = find.text('Submit Answer');
+      expect(submitBtn, findsOneWidget);
+      await tester.ensureVisible(submitBtn);
+      await tester.tap(submitBtn);
+      await tester.pumpAndSettle();
 
       // Complete last sub-lesson (l01_16 has 25 XP reward)
       final completeButton = find.text('Complete Lesson (+25 XP)');
@@ -289,11 +346,11 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify that course 'lesson_01' was completed and awarded +100 XP
-      // Total XP should be 150 (pre) + 25 (lesson) + 100 (course) = 275
+      // Total XP should be 150 (pre) + 10 (checkpoint) + 25 (lesson) + 100 (course) = 285
       final updated = localDataSource.getProgress('learner_course_completion');
       expect(updated.completedLessonIds, contains('l01_16'));
       expect(updated.completedCourseIds, contains('lesson_01'));
-      expect(updated.totalXp, equals(275));
+      expect(updated.totalXp, equals(285));
     });
   });
 }

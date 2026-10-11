@@ -6,6 +6,42 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.1.12+22] - 2026-10-11
+
+### Overview & Release Highlights
+Release **v0.1.12** introduces universal lesson completion gating with automated scroll-to-activity assistance, dark theme contrast enhancements on card surfaces, multi-viewport Flutter widget previews for dual mobile and desktop form factors, updated completion flow test verification, and offline dual-viewport HTML/PDF lesson curriculum exporters.
+
+---
+
+### 🎓 Pedagogical & Learning Experience
+- **Universal Lesson Completion Gating & Docked Action Bar**:
+  - *What Changed*: In `LessonDetailScreen`, enforced mandatory activity completion checks across all interactive step types (quiz checkpoints, physical hardware tasks, simulators, and code blocks) before permitting progression or completion. Implemented auto-scrolling with user-friendly guidance banners directly targeting incomplete activities when 'Next Step' is pressed prematurely. Positioned a docked action bar beneath step content.
+  - *Why*: To uphold pedagogical mastery and ensure learners thoroughly engage with hands-on challenges and checkpoints rather than bypassing learning requirements.
+  - *User Impact*: Learners receive clear, immediate feedback on missing activities and smoothly scroll to incomplete tasks; checkpoint XP (+10 XP) and lesson completion rewards are awarded consistently and persist reliably.
+
+### 🎨 UI & Accessibility
+- **Dark Theme Contrast Fallback on MonsterCard**:
+  - *What Changed*: Updated fallback background color resolution in `MonsterCard` to evaluate theme brightness, selecting `AppColors.surfaceDark` when running in dark theme instead of defaulting to light surface values.
+  - *Why*: Fixed visual contrast issues where card surfaces in dark mode could appear washed out or display improper text-to-surface contrast ratios.
+  - *User Impact*: Crisp, high-contrast visual presentation across all card containers in dark mode, satisfying WCAG AA legibility guidelines.
+
+### 🧪 Developer Toolchains & Widget Previews
+- **Dual Form Factor Flutter Widget Previews**:
+  - *What Changed*: Added `lib/presentation/features/learn/previews/lesson_previews.dart` with `@Preview` decorators and configurable containers simulating both mobile (390x844) and desktop (1024x768) environments across multiple step types (story, visual explanation, physical tasks, and quiz checkpoints).
+  - *Why*: Provides developer and designer toolchains with instantaneous visual inspection and verification of lesson layouts without running full device emulators.
+  - *Developer Impact*: Accelerates UI component review and layout regression testing across form factors.
+
+- **In-App Dual-Viewport Lesson Renderer & PDF Exporter Scripts**:
+  - *What Changed*: Added `scripts/render_in_app_lesson.py` and `scripts/generate_lesson_pdf.py` for automated headless rendering and PDF export of curriculum lessons, along with gitignore protections for generated report artifacts in `reports/`.
+  - *Why*: Supports educators and curriculum developers with printable, offline lesson plans matching the exact in-app presentation.
+  - *Developer Impact*: Enables reproducible, batch generation of curriculum documentation without bloating git repository history.
+
+### 🧪 Automated Testing & Verification
+- **Completion Flow & XP Verification Suite**:
+  - *What Changed*: Updated `test/widget/learn_completion_flow_test.dart` to simulate prerequisite quiz submissions on completion steps and verify multi-tier XP accrual (individual checkpoint XP + lesson completion XP + course milestone XP).
+  - *Why*: Ensures full test coverage reflecting the newly enforced universal completion gating logic.
+  - *Developer Impact*: Complete 263-test automated test suite passing cleanly with zero regressions.
+
 ## [0.1.11+21] - 2026-10-09
 - Course 1 microcontroller family expansion (Uno, Nano, Mega, ESP8266, ESP32, 5V vs 3.3V logic safety).
 - Conversion of lessons 09, 10, 11, and 12 into full modular course folders (Course 9 Advanced I2C, Course 10 SPI, Course 11 UART/Bluetooth, Course 12 Motors/H-Bridges).

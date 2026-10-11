@@ -31,7 +31,16 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
   int _currentStepIndex = 0;
   final Set<String> _checkedPhysicalTasks = {};
   final Set<String> _awardedCheckpointKeys = {};
+  final Set<String> _completedQuizSteps = {};
+  final ScrollController _scrollController = ScrollController();
+  final GlobalKey _interactiveKey = GlobalKey();
   bool _isCompleting = false;
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   void _showCompletionDialog(BuildContext context, Lesson lesson,
       {required bool isFirstCompletion}) {
@@ -100,6 +109,49 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
         ],
       ),
     );
+  }
+
+  bool _isCurrentStepComplete(LessonStep currentStep) {
+    if (currentStep.type == StepType.quizCheckpoint &&
+        currentStep.interactiveConfig != null) {
+      final stepKey = '${widget.lessonId}_step_$_currentStepIndex';
+      if (!_completedQuizSteps.contains(stepKey)) {
+        return false;
+      }
+    }
+    if (currentStep.type == StepType.physicalTask &&
+        currentStep.interactiveWidgetType == null) {
+      final taskKey = '${widget.lessonId}_step_$_currentStepIndex';
+      if (!_checkedPhysicalTasks.contains(taskKey)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  void _scrollToIncompleteActivity(String reason) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(reason),
+        backgroundColor: AppColors.energyAmber,
+        duration: const Duration(seconds: 3),
+      ),
+    );
+
+    if (_interactiveKey.currentContext != null) {
+      Scrollable.ensureVisible(
+        _interactiveKey.currentContext!,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   @override
@@ -263,6 +315,7 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                     // Main Interactive Content Area
                     Expanded(
                       child: ListView(
+                        controller: _scrollController,
                         children: [
                           // Story / Explanation Markdown Card
                           MonsterCard(
@@ -288,11 +341,14 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                           // Interactive Activities & Simulators (routed via ActivityRegistry with legacy fallback)
                           if (ActivityRegistry.hasActivity(
                               currentStep.interactiveWidgetType)) ...[
-                            ActivityRegistry.buildActivity(
-                              context: context,
-                              activityType: currentStep.interactiveWidgetType,
-                              config: currentStep.interactiveConfig,
-                            )!,
+                            KeyedSubtree(
+                              key: _interactiveKey,
+                              child: ActivityRegistry.buildActivity(
+                                context: context,
+                                activityType: currentStep.interactiveWidgetType,
+                                config: currentStep.interactiveConfig,
+                              )!,
+                            ),
                             const SizedBox(height: 16),
                           ] else ...[
                             // Legacy fallback when interactiveWidgetType is not set
@@ -330,68 +386,85 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                           // Physical Task Checklist (only when no interactive widget handles this step)
                           if (currentStep.type == StepType.physicalTask &&
                               currentStep.interactiveWidgetType == null) ...[
-                            _buildPhysicalTaskChecklist(currentStep),
+                            KeyedSubtree(
+                              key: _interactiveKey,
+                              child: _buildPhysicalTaskChecklist(currentStep),
+                            ),
                             const SizedBox(height: 16),
                           ],
 
                           // Quiz Checkpoint
                           if (currentStep.type == StepType.quizCheckpoint &&
                               currentStep.interactiveConfig != null) ...[
-                            QuizCheckpointWidget(
-                              key: ValueKey(
-                                  '${widget.lessonId}_quiz_${currentStep.stepId}'),
-                              question:
-                                  currentStep.interactiveConfig!['question']
-                                          as String? ??
-                                      'Checkpoint Question',
-                              options: List<String>.from(currentStep
-                                      .interactiveConfig!['options'] as List? ??
-                                  ['True', 'False']),
-                              correctIndex:
-                                  currentStep.interactiveConfig!['correctIndex']
-                                          as int? ??
-                                      0,
-                              questions: (currentStep
-                                      .interactiveConfig!['questions'] as List?)
-                                  ?.map((q) =>
-                                      Map<String, dynamic>.from(q as Map))
-                                  .toList(),
-                              explanation: currentStep
-                                  .interactiveConfig!['explanation'] as String?,
-                              onAnswerSubmitted: (isCorrect) async {
-                                final checkpointKey =
-                                    '${widget.lessonId}_step_$_currentStepIndex';
-                                final progress = activeProgress ??
-                                    (activeProfile != null
-                                        ? await ref
-                                            .read(progressRepositoryProvider)
-                                            .getProgress(activeProfile.id)
-                                        : null);
-                                final isAlreadyCompleted = progress
-                                        ?.completedLessonIds
-                                        .contains(widget.lessonId) ??
-                                    false;
-                                if (isCorrect &&
-                                    activeProfile != null &&
-                                    !isAlreadyCompleted &&
-                                    !_awardedCheckpointKeys
-                                        .contains(checkpointKey)) {
-                                  _awardedCheckpointKeys.add(checkpointKey);
-                                  await ref
-                                      .read(activeProgressProvider.notifier)
-                                      .addXp(10);
-                                }
-                              },
+                            KeyedSubtree(
+                              key: _interactiveKey,
+                              child: QuizCheckpointWidget(
+                                key: ValueKey(
+                                    '${widget.lessonId}_quiz_${currentStep.stepId}'),
+                                question:
+                                    currentStep.interactiveConfig!['question']
+                                            as String? ??
+                                        'Checkpoint Question',
+                                options: List<String>.from(
+                                    currentStep.interactiveConfig!['options']
+                                            as List? ??
+                                        ['True', 'False']),
+                                correctIndex: currentStep
+                                            .interactiveConfig!['correctIndex']
+                                        as int? ??
+                                    0,
+                                questions:
+                                    (currentStep.interactiveConfig!['questions']
+                                            as List?)
+                                        ?.map((q) =>
+                                            Map<String, dynamic>.from(q as Map))
+                                        .toList(),
+                                explanation: currentStep
+                                        .interactiveConfig!['explanation']
+                                    as String?,
+                                onAnswerSubmitted: (isCorrect) async {
+                                  final stepKey =
+                                      '${widget.lessonId}_step_$_currentStepIndex';
+                                  setState(() {
+                                    _completedQuizSteps.add(stepKey);
+                                  });
+
+                                  final checkpointKey =
+                                      '${widget.lessonId}_step_$_currentStepIndex';
+                                  final progress = activeProgress ??
+                                      (activeProfile != null
+                                          ? await ref
+                                              .read(progressRepositoryProvider)
+                                              .getProgress(activeProfile.id)
+                                          : null);
+                                  final isAlreadyCompleted = progress
+                                          ?.completedLessonIds
+                                          .contains(widget.lessonId) ??
+                                      false;
+                                  if (isCorrect &&
+                                      activeProfile != null &&
+                                      !isAlreadyCompleted &&
+                                      !_awardedCheckpointKeys
+                                          .contains(checkpointKey)) {
+                                    _awardedCheckpointKeys.add(checkpointKey);
+                                    await ref
+                                        .read(activeProgressProvider.notifier)
+                                        .addXp(10);
+                                  }
+                                },
+                              ),
                             ),
                             const SizedBox(height: 16),
                           ],
+
+                          const SizedBox(height: 16),
                         ],
                       ),
                     ),
 
                     const SizedBox(height: 12),
 
-                    // Navigation Button
+                    // Docked Action Bar: Placed after lesson text and interactives
                     LessonActionBar(
                       enabled: !_isCompleting,
                       label: _currentStepIndex < steps.length - 1
@@ -405,8 +478,32 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                       onPressed: _isCompleting
                           ? null
                           : () async {
+                              if (!_isCurrentStepComplete(currentStep)) {
+                                if (currentStep.type ==
+                                    StepType.quizCheckpoint) {
+                                  _scrollToIncompleteActivity(
+                                      'Please complete the checkpoint quiz before moving forward!');
+                                } else if (currentStep.type ==
+                                    StepType.physicalTask) {
+                                  _scrollToIncompleteActivity(
+                                      'Please check off the physical hardware task before continuing!');
+                                } else {
+                                  _scrollToIncompleteActivity(
+                                      'Please complete the activity on this step first!');
+                                }
+                                return;
+                              }
+
                               if (_currentStepIndex < steps.length - 1) {
-                                setState(() => _currentStepIndex++);
+                                setState(() {
+                                  _currentStepIndex++;
+                                });
+                                WidgetsBinding.instance
+                                    .addPostFrameCallback((_) {
+                                  if (_scrollController.hasClients) {
+                                    _scrollController.jumpTo(0);
+                                  }
+                                });
                               } else {
                                 if (_isCompleting) return;
                                 setState(() => _isCompleting = true);
