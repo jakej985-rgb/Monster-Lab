@@ -59,12 +59,12 @@
     },
     {
       "stepId": "cf_01_s04",
-      "title": "Deconstruct a Program",
+      "title": "Active Challenge: Robot Instructions & Ambiguity",
       "type": "codeExperiment",
       "interactiveWidgetType": "codeDeconstruction",
-      "markdownContent": "Let's look at a simple program and break it down into statements.",
+      "markdownContent": "### Active Challenge: Order the Robot Steps!\nImagine commanding a Monster Lab robot to grab a battery and return it to the charging bay:\n\n1. `robot.moveForward(3);` // Step 3 meters\n2. `robot.lowerArm();`\n3. `robot.closeGripper();`\n4. `robot.turnAround(180);`\n5. `robot.moveForward(3);`\n6. `robot.openGripper();`\n\n#### Ambiguity Check 🕵️:\nWhat happens if instruction 2 says simply \"Grab it\" instead of `lowerArm()` followed by `closeGripper()`? A human might guess what to do, but a computer has no intuition—ambiguous instructions cause execution errors or crashes!\n\nTrace each line of the snippet below and predict what happens if lines 1 and 3 are swapped:",
       "interactiveConfig": {
-        "codeSnippet": "digitalWrite(13, HIGH);\ndelay(1000);\ndigitalWrite(13, LOW);"
+        "codeSnippet": "digitalWrite(13, HIGH); // Turn LED ON\ndelay(1000);            // Wait 1 second\ndigitalWrite(13, LOW);  // Turn LED OFF"
       }
     },
     {

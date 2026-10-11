@@ -6,6 +6,31 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.1.13+23] - 2026-10-11
+
+### Overview & Release Highlights
+Release **v0.1.13** enhances curriculum precision across Coding Foundations and core electronics courses, clarifies execution models and ADC quantization physics, enriches active code ambiguity challenges, and upgrades the automated lesson PDF exporter with dual learner and educator modes for printable classroom worksheets.
+
+---
+
+### 🎓 Pedagogical & Curriculum Enhancements
+- **Execution Model & Hardware Precision in Lessons**:
+  - *What Changed*: Refined explanatory text across lessons (`l01`, `l05`, `l06`, `l10`, `l11`, `l12`, and `cf_*`) to emphasize exact computer execution over anthropomorphic models (clarifying that microcontrollers execute deterministic code instructions rather than "thinking"). Enriched ADC explanations in Lesson 05 to emphasize 1,024 discrete quantization steps, ADC reference voltage ($V_{ref}$), and supply rail drift.
+  - *Why*: Eliminates misconceptions among beginning learners regarding program execution flow and physical voltage-to-integer conversion.
+  - *User Impact*: Learners build rigorous mental models of computer architecture, binary quantization, and sensor telemetry.
+
+- **Active Challenges & Ambiguity Tracing in Coding Foundations**:
+  - *What Changed*: Enhanced step content in `cf_01` through `cf_06` with hands-on robot instruction sequencing challenges, ambiguity checks, and code trace exercises.
+  - *Why*: Strengthens computational thinking by demonstrating why computers cannot infer vague directions and require unambiguous, ordered statements.
+  - *User Impact*: Greater learner engagement and intuitive understanding of sequential execution and debugging.
+
+### 🛠️ Tooling & Educator Resources
+- **Dual-Mode Lesson PDF & HTML Worksheet Exporter**:
+  - *What Changed*: Upgraded `scripts/generate_lesson_pdf.py` with `--mode learner|educator` support. Learner mode generates printable hands-on experiment worksheets with prediction/observation/explanation prompts and blank checkpoint answer blanks, while educator mode prints complete answer keys with detailed explanations and warmup hints.
+  - *Why*: Provides classrooms, STEM camps, and parents with flexible, offline-ready printable curriculum materials.
+  - *Developer/Educator Impact*: Zero-dependency offline lesson sheet export with automated formatting and clean distinction between student challenges and educator keys.
+
+
 ## [0.1.12+22] - 2026-10-11
 
 ### Overview & Release Highlights

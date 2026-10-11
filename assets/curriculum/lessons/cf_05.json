@@ -66,12 +66,12 @@
     },
     {
       "stepId": "cf_05_s05",
-      "title": "Predict Loop Behavior",
+      "title": "Predict & Trace Loop Iterations (Off-by-One Guard)",
       "type": "codeExperiment",
       "interactiveWidgetType": "engineeringPrediction",
-      "markdownContent": "How many times will this loop run?",
+      "markdownContent": "### Tracing Loop Iterations & Off-by-One Traps 🔄\nTrace the counter `i` through every iteration:\n\n```cpp\nint count = 0;\nfor (int i = 0; i < 3; i++) {\n  count = count + 1;\n}\n```\n\n| Iteration | Check (`i < 3`) | Action | Step End (`i++`) |\n| :--- | :--- | :--- | :--- |\n| 1 | `0 < 3` (True) | `count` becomes 1 | `i` becomes 1 |\n| 2 | `1 < 3` (True) | `count` becomes 2 | `i` becomes 2 |\n| 3 | `2 < 3` (True) | `count` becomes 3 | `i` becomes 3 |\n| Exit | `3 < 3` (False) | Loop terminates! | Final `i` is 3, `count` is 3 |\n\n> **The Off-by-One Trap**: Notice that with `i = 0` and `i < 3`, the loop runs **exactly 3 times** (for 0, 1, 2). If you wrote `i <= 3`, it would run **4 times**!",
       "interactiveConfig": {
-        "codeSnippet": "for (int i = 1; i <= 3; i++) {\n  blink();\n}"
+        "codeSnippet": "int count = 0;\nfor (int i = 0; i < 3; i++) {\n  count = count + 1;\n}"
       }
     },
     {

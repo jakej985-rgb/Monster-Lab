@@ -16,7 +16,7 @@
       "stepId": "l01_s01",
       "title": "What Is Arduino?",
       "type": "story",
-      "markdownContent": "Welcome to the Monster Lab! 🤖\n\nEvery monster robot needs a brain to explore the world. That brain is the **Arduino Uno**!\n\nThe Arduino is a friendly little computer board that connects a robot's **senses** to its **actions**:\n- When you press a button or wave your hand, the Arduino notices.\n- It thinks about what happened using your instructions.\n- Then it commands lights to glow, buzzers to beep, or wheels to roll!\n\n```\nSense (Input) ➔ Think (Arduino) ➔ Act (Output)\n```\n\nLet's get ready to explore how this amazing little board brings machines to life!",
+      "markdownContent": "Welcome to the Monster Lab! 🤖\n\nEvery monster robot needs a control center to explore the world. That control center is the **Arduino Uno**!\n\nWe often call it the robot's \"brain\", but the Arduino doesn't think or guess on its own—it follows the exact instructions in your program step by step to link a robot's **senses** to its **actions**:\n- When a sensor detects something (like a pressed button), the Arduino reads the electrical signal.\n- It executes your uploaded program to evaluate what happened.\n- Then it commands output parts: lighting up an LED, sounding a buzzer, or spinning a motor!\n\n```\nSense (Input) ➔ Execute Code (Arduino) ➔ Act (Output)\n```\n\nLet's get ready to explore how this amazing little board brings machines to life!",
       "quickCheck": [
         {
           "questionId": "l01_s01_q1",

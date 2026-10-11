@@ -66,12 +66,12 @@
     },
     {
       "stepId": "cf_03_s05",
-      "title": "Predict Output",
+      "title": "Predict Output: Trace Both Branches",
       "type": "codeExperiment",
       "interactiveWidgetType": "engineeringPrediction",
-      "markdownContent": "Predict the output of this if/else chain.",
+      "markdownContent": "### The #1 Rookie Bug: `=` vs `==`\n- Single `=` is **Assignment** (`speed = 10;` puts 10 in the box).\n- Double `==` is **Comparison** (`speed == 10` asks: \"Is speed equal to 10?\").\n\n#### Trace Both Branches Challenge:\nPredict what happens to Pin 13 under two different sensor scenarios:\n- **Scenario A:** `temperature = 30;` (Is 30 > 25? Yes ➔ `if` branch runs, Pin 13 turns `HIGH`).\n- **Scenario B:** `temperature = 20;` (Is 20 > 25? No ➔ `else` branch runs, Pin 13 turns `LOW`).",
       "interactiveConfig": {
-        "codeSnippet": "int temp = 30;\nif (temp > 25) {\n  digitalWrite(13, HIGH);\n} else {\n  digitalWrite(13, LOW);\n}"
+        "codeSnippet": "int temperature = 30;\n\n// Decision Gate\nif (temperature > 25) {\n  digitalWrite(13, HIGH); // Alarm ON\n} else {\n  digitalWrite(13, LOW);  // Alarm OFF\n}"
       }
     },
     {

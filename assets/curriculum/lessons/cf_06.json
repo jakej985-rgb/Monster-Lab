@@ -16,7 +16,7 @@
       "stepId": "cf_06_s01",
       "title": "Arduino Sketch Structure",
       "type": "story",
-      "markdownContent": "An Arduino sketch has a specific structure. It starts with `#include` for libraries, then global variables.",
+      "markdownContent": "An Arduino sketch is written in C++. The two mandatory building blocks required in every sketch are `setup()` and `loop()`. Libraries (`#include`) and global variable declarations at the top are optional—you only include them when your sketch needs external drivers or shared data storage!",
       "quickCheck": [
         {
           "questionId": "qc_cf_06_s01_q1",

@@ -68,12 +68,12 @@
     },
     {
       "stepId": "cf_02_s05",
-      "title": "Predict the Variable Value",
+      "title": "Predict & Trace Variable Values",
       "type": "codeExperiment",
       "interactiveWidgetType": "engineeringPrediction",
-      "markdownContent": "What is the value of `x` after these assignments?",
+      "markdownContent": "### Variable Trace Table 📊\nTrace the state of memory step by step:\n\n```cpp\nint score = 10;   // Line 1: Declare & initialize\nscore = score + 5; // Line 2: Read current (10), add 5, reassign\nscore = score * 2; // Line 3: Read current (15), multiply by 2\n```\n\n| Line | Action | Memory (`score`) | Explanation |\n| :--- | :--- | :--- | :--- |\n| 1 | Declaration | `10` | Box created with initial value 10 |\n| 2 | Reassignment | `15` | Old value 10 + 5 = 15 stored back in box |\n| 3 | Reassignment | `30` | Old value 15 * 2 = 30 stored back in box |\n\nWhat is the final value of `score` after all three statements execute?",
       "interactiveConfig": {
-        "codeSnippet": "int x = 5;\nx = x + 3;"
+        "codeSnippet": "int score = 10;\nscore = score + 5;\nscore = score * 2;"
       }
     },
     {

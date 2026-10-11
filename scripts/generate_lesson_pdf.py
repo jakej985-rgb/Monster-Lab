@@ -3,7 +3,7 @@ import os
 import sys
 import subprocess
 
-def render_lesson_to_html(lesson_data, output_html_path):
+def render_lesson_to_html(lesson_data, output_html_path, mode="learner"):
     title = lesson_data.get("title", "Untitled Lesson")
     lesson_id = lesson_data.get("id", "")
     summary = lesson_data.get("summary", "")
@@ -64,7 +64,8 @@ def render_lesson_to_html(lesson_data, output_html_path):
         qc_html = ""
         quick_checks = step.get("quickCheck", [])
         if quick_checks:
-            qc_html += "<div class='quick-check-box'><div class='box-badge'>Diagnostic Pre-Test (QuickCheck)</div>"
+            badge_title = "Diagnostic Pre-Test (QuickCheck)" if mode == "educator" else "Check Your Understanding"
+            qc_html += f"<div class='quick-check-box'><div class='box-badge'>{badge_title}</div>"
             for q_idx, qc in enumerate(quick_checks, 1):
                 q_text = qc.get("question", "")
                 options = qc.get("options", [])
@@ -72,19 +73,29 @@ def render_lesson_to_html(lesson_data, output_html_path):
                 explanation = qc.get("explanation", "")
                 warmup = qc.get("warmupExplanation", "")
                 
-                opt_items = "".join([
-                    f"<li class='option {'correct' if opt_i == correct_idx else ''}'>"
-                    f"<span class='radio-mark'>{'●' if opt_i == correct_idx else '○'}</span> {opt}"
-                    f"{' <span class=\"correct-tag\">[CORRECT ANSWER]</span>' if opt_i == correct_idx else ''}</li>"
-                    for opt_i, opt in enumerate(options)
-                ])
+                if mode == "educator":
+                    opt_items = "".join([
+                        f"<li class='option {'correct' if opt_i == correct_idx else ''}'>"
+                        f"<span class='radio-mark'>{'●' if opt_i == correct_idx else '○'}</span> {opt}"
+                        f"{' <span class=\"correct-tag\">[CORRECT ANSWER]</span>' if opt_i == correct_idx else ''}</li>"
+                        for opt_i, opt in enumerate(options)
+                    ])
+                    exp_section = f"""
+                    <div class='qc-exp'><strong>Why:</strong> {explanation}</div>
+                    {f"<div class='qc-warmup'><strong>Hint/Warmup:</strong> {warmup}</div>" if warmup else ""}
+                    """
+                else:
+                    opt_items = "".join([
+                        f"<li class='option'><span class='radio-mark'>○</span> [ ] {opt}</li>"
+                        for opt in options
+                    ])
+                    exp_section = "<div class='qc-exp student-prompt'><em>Select your answer above before continuing to the next step.</em></div>"
 
                 qc_html += f"""
                 <div class='qc-item'>
                     <div class='qc-q'><strong>Q{q_idx}:</strong> {q_text}</div>
                     <ul class='qc-options'>{opt_items}</ul>
-                    <div class='qc-exp'><strong>Why:</strong> {explanation}</div>
-                    {f"<div class='qc-warmup'><strong>Hint/Warmup:</strong> {warmup}</div>" if warmup else ""}
+                    {exp_section}
                 </div>
                 """
             qc_html += "</div>"
@@ -93,33 +104,51 @@ def render_lesson_to_html(lesson_data, output_html_path):
         interactive_config = step.get("interactiveConfig", {})
         config_html = ""
         if widget_type:
-            config_html += f"""
+            printable_task = f"""
             <div class='widget-box'>
-                <div class='widget-badge'>Interactive Flutter Simulator / Widget</div>
-                <div class='widget-name'><strong>Widget Name:</strong> <code>{widget_type}</code></div>
-                <div class='widget-json'><pre>{json.dumps(interactive_config, indent=2) if interactive_config else 'Configured via default simulator state'}</pre></div>
+                <div class='widget-badge'>Hands-On Experiment Sheet (Interactive Simulation)</div>
+                <div class='widget-name'><strong>Simulated Lab Activity:</strong> <code>{widget_type}</code></div>
+                <div class='printable-activity'>
+                    <p><strong>Learner Action:</strong> Open this activity in the Monster Lab app or breadboard workstation. Complete the physical/simulated steps:</p>
+                    <ol>
+                        <li><strong>Predict:</strong> What outcome do you expect to observe before turning power on or sliding controls?</li>
+                        <li><strong>Observe & Record:</strong> Note the telemetry, indicator states, or component response: ________________________</li>
+                        <li><strong>Explain:</strong> Why did the circuit or code behave this way? _________________________________________</li>
+                    </ol>
+                </div>
             </div>
             """
+            config_html += printable_task
         elif interactive_config and "questions" in interactive_config:
             quiz_questions = interactive_config.get("questions", [])
-            config_html += "<div class='quiz-box'><div class='box-badge'>Step 4: Checkpoint Assessment Quiz</div>"
+            badge_title = "Step 4: Checkpoint Assessment Key" if mode == "educator" else "Step 4: Mastery Checkpoint Quiz"
+            config_html += f"<div class='quiz-box'><div class='box-badge'>{badge_title}</div>"
             for q_idx, q in enumerate(quiz_questions, 1):
                 q_text = q.get("question", "")
                 options = q.get("options", [])
                 correct_idx = q.get("correctIndex", 0)
                 explanation = q.get("explanation", "")
                 
-                opt_items = "".join([
-                    f"<li class='option {'correct' if opt_i == correct_idx else ''}'>"
-                    f"<span class='radio-mark'>{'●' if opt_i == correct_idx else '○'}</span> {opt}"
-                    f"{' <span class=\"correct-tag\">[CORRECT ANSWER]</span>' if opt_i == correct_idx else ''}</li>"
-                    for opt_i, opt in enumerate(options)
-                ])
+                if mode == "educator":
+                    opt_items = "".join([
+                        f"<li class='option {'correct' if opt_i == correct_idx else ''}'>"
+                        f"<span class='radio-mark'>{'●' if opt_i == correct_idx else '○'}</span> {opt}"
+                        f"{' <span class=\"correct-tag\">[CORRECT ANSWER]</span>' if opt_i == correct_idx else ''}</li>"
+                        for opt_i, opt in enumerate(options)
+                    ])
+                    exp_section = f"<div class='qc-exp'><strong>Explanation:</strong> {explanation}</div>"
+                else:
+                    opt_items = "".join([
+                        f"<li class='option'><span class='radio-mark'>○</span> [ ] {opt}</li>"
+                        for opt in options
+                    ])
+                    exp_section = ""
+
                 config_html += f"""
                 <div class='quiz-item'>
                     <div class='qc-q'><strong>Question {q_idx}:</strong> {q_text}</div>
                     <ul class='qc-options'>{opt_items}</ul>
-                    <div class='qc-exp'><strong>Explanation:</strong> {explanation}</div>
+                    {exp_section}
                 </div>
                 """
             config_html += "</div>"
@@ -397,10 +426,16 @@ def export_pdf(html_path, pdf_path):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python3 generate_lesson_pdf.py <lesson_id>")
+        print("Usage: python3 generate_lesson_pdf.py <lesson_id> [--mode learner|educator]")
         sys.exit(1)
 
     lesson_id = sys.argv[1]
+    mode = "learner"
+    if "--mode" in sys.argv:
+        mode_idx = sys.argv.index("--mode")
+        if mode_idx + 1 < len(sys.argv):
+            mode = sys.argv[mode_idx + 1]
+
     lesson_path = f"assets/curriculum/lessons/{lesson_id}.json"
     if not os.path.exists(lesson_path):
         print(f"File not found: {lesson_path}")
@@ -410,9 +445,10 @@ if __name__ == "__main__":
         data = json.load(f)
 
     os.makedirs("reports/lessons_pdf", exist_ok=True)
-    html_path = f"reports/lessons_pdf/{lesson_id}.html"
-    pdf_path = f"reports/lessons_pdf/{lesson_id}.pdf"
+    suffix = "_educator" if mode == "educator" else ""
+    html_path = f"reports/lessons_pdf/{lesson_id}{suffix}.html"
+    pdf_path = f"reports/lessons_pdf/{lesson_id}{suffix}.pdf"
 
-    render_lesson_to_html(data, html_path)
+    render_lesson_to_html(data, html_path, mode=mode)
     export_pdf(html_path, pdf_path)
-    print(f"Successfully generated PDF: {pdf_path}")
+    print(f"Successfully generated PDF ({mode} mode): {pdf_path}")
