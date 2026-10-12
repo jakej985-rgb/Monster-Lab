@@ -11936,7 +11936,7 @@ class AssetCurriculumDataSource {
               "Pins only produce cold air"
             ],
             "correctIndex": 0,
-            "explanation": "Arduino pins max out at 40mA. Spinning motors draw hundreds of milliamps and need a motor driver (like L293D)!",
+            "explanation": "Arduino pins are limited to 20 mA continuous (40 mA absolute max). In contrast, motor operating and stall currents easily exceed GPIO limits and need a motor driver (like L293D)!",
             "warmupExplanation": "An Arduino pin is like an AAA battery trying to launch a real rocket\u2014it needs a motor driver helper to supply muscle power."
           },
           {

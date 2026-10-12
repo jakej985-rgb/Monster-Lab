@@ -88,7 +88,41 @@
             "example": "Arduino prints UID HEX to Serial Monitor",
             "color": "#00E676"
           }
-        ]
+        ],
+        "printableActivity": {
+          "title": "Laboratory Investigation Sheet: 13.56 MHz RFID Data Exchange",
+          "simulationName": "visualFlowDiagram (RFID Coupling & SPI Pipeline)",
+          "instructions": "Step through each stage in the Monster Lab RFID simulator. Trace magnetic field induction, tag energy harvesting, subcarrier load modulation, and SPI byte transfer:",
+          "table": {
+            "headers": [
+              "Stage",
+              "What I Observed",
+              "What it Means"
+            ],
+            "rows": [
+              [
+                "Stage 1: 13.56 MHz RF Field Emission",
+                "&nbsp;",
+                "Reader coil oscillates continuously to form near-field magnetic coupling"
+              ],
+              [
+                "Stage 2: Tag Energy Harvesting",
+                "&nbsp;",
+                "Faraday induction generates power in the passive card with zero batteries required"
+              ],
+              [
+                "Stage 3: Load Modulation (Tag to Reader)",
+                "&nbsp;",
+                "Tag modulates antenna impedance to reflect data back through tiny reader current shifts"
+              ],
+              [
+                "Stage 4: SPI Transfer (RC522 to Uno)",
+                "&nbsp;",
+                "MFRC522 demodulates subcarrier; transfers 4-byte UID (DE AD BE EF) at 3.3V logic"
+              ]
+            ]
+          }
+        }
       }
     },
     {

@@ -54,7 +54,6 @@
       "stepId": "l06_04_s02",
       "title": "Ohm's Law & Current-Limiting Physics",
       "type": "visualExplanation",
-      "interactiveWidgetType": "resistorOhmLawSimulator",
       "markdownContent": "### The Mathematics of Circuit Protection: Ohm's Law\n\nIn 1827, physicist Georg Ohm discovered the fundamental relationship in electrical circuits:\n\n$$V = I \\times R \\quad \\iff \\quad I = \\frac{V}{R}$$\n\n- **$V$ (Voltage in Volts)**: The electrical push across the resistor ($V_R = V_S - V_F$).\n- **$I$ (Current in Amperes / Milliamperes)**: The rate of electron flow.\n- **$R$ (Resistance in Ohms $\\Omega$)**: The restriction holding current back.\n\n### The Worked Example (5.0V Supply + Red LED Assumptions):\n1. Assumed Red LED forward voltage: **$V_F = 2.0\\text{V}$**.\n2. In a 5.0V circuit, the voltage dropped across the series resistor is:\n   $$V_{\\text{resistor}} = 5.0\\text{V} - 2.0\\text{V} = 3.0\\text{V}$$\n3. With the kit's **220$\\Omega$** resistor in series, the estimated current is:\n   $$I = \\frac{3.0\\text{V}}{220\\,\\Omega} \\approx 0.0136\\text{ A} = 13.6\\text{ mA}$$\n4. Under these specified conditions (5.0V supply, 2.0V $V_F$), 13.6 mA provides bright light while remaining well within LED and GPIO safe operating thresholds.\n\n### The 0 Ohm Case (Idealized Model vs Physical Circuit):\nIn an idealized mathematical model ($I = V / R$), dividing by $0\\,\\Omega$ would approach infinity. In a physical circuit, actual current does not reach infinity—it is constrained by the resistance of the power supply, output driver transistors, wiring, and internal component impedance. The $0\\,\\Omega$ setting in the simulator represents an unsafe operating condition rather than a precise real-world current prediction. Without a current-limiting resistor, current quickly exceeds safe ratings, leading to thermal overload and irreversible component damage.\n\nUse the Ohm's Law simulator below to inspect safe current vs simulated burnout conditions under these stated parameters."
     },
     {
@@ -62,6 +61,53 @@
       "title": "Resistor Ohm's Law Simulator Lab",
       "type": "codeExperiment",
       "interactiveWidgetType": "resistorOhmLawSimulator",
+      "interactiveConfig": {
+        "printableActivity": {
+          "title": "Laboratory Investigation Sheet: Ohm's Law & Resistor Selection",
+          "simulationName": "resistorOhmLawSimulator",
+          "instructions": "Run the 5-step investigation in the Monster Lab simulator (5.0V Supply, Red LED $V_F = 2.0\\text{V}$). Test each resistance preset and record your observations:",
+          "table": {
+            "headers": [
+              "Investigation Stage / Preset",
+              "Predicted Current & Status",
+              "Observed Current & Circuit State",
+              "Physical Rationale / Meaning"
+            ],
+            "rows": [
+              [
+                "Step 1: Starting Baseline (Power OFF)",
+                "0 mA (De-energized circuit)",
+                "&nbsp;",
+                "Pre-power safety check confirmed before applying voltage"
+              ],
+              [
+                "Step 2: 220 Ω Preset ($V_R = 3.0\\text{V}$)",
+                "~13.6 mA (Safe target current)",
+                "&nbsp;",
+                "Optimal brightness without exceeding LED or GPIO limits"
+              ],
+              [
+                "Step 3: 10k Ω Preset ($10{,}000\\,\\Omega$)",
+                "~0.3 mA (Sub-milliamp flow)",
+                "&nbsp;",
+                "High resistance restricts electron rate; LED glows dimly"
+              ],
+              [
+                "Step 4: 0 Ω Boundary Condition",
+                "Severe Overcurrent Hazard",
+                "&nbsp;",
+                "Without series resistance, diode current surges past $V_F$ to burnout"
+              ],
+              [
+                "Step 5: Physical Hardware ID",
+                "Color: Red-Red-Brown-Gold",
+                "&nbsp;",
+                "2 – 2 – ×10 = 220 Ω with ±5% gold tolerance band"
+              ]
+            ]
+          }
+        }
+      },
       "markdownContent": "### Hands-On Active Learning Task 🔬\n\nPerform this step-by-step investigation using the simulator controls:\n\n1. **Starting Setup & Pre-Power Check:**\n   - Note the simulator starting assumptions: **5.0V Supply**, **Red LED ($V_F = 2.0\\text{V}$)**.\n   - Confirm that power is initially OFF before selecting presets.\n2. **Predict, Observe & Explain 220 Ω Preset:**\n   - **Predict:** What current do you expect with a 220Ω resistor limiting a 3.0V drop ($I = 3.0\\text{V} / 220\\,\\Omega$)?\n   - Select **220 Ω**: Record the result (**~13.6 mA**, **TARGET OPERATING CURRENT**).\n   - **Explain:** Why does this current produce bright, reliable light without exceeding component ratings?\n3. **Predict, Observe & Explain 10k Ω Preset:**\n   - **Predict:** Will increasing resistance to 10,000Ω make the LED brighter or dimmer?\n   - Select **10k Ω**: Record the result (**0.3 mA**, **LOW CURRENT / DIM**).\n   - **Explain:** How does a larger resistance restrict electron flow according to Ohm's Law?\n4. **Predict, Observe & Explain the 0 Ω Boundary Condition:**\n   - **Predict:** What happens if there is no resistance at all between 5V and the diode?\n   - Select **0 Ω**: Observe the **BURNOUT HAZARD** indicator, demonstrating why operating an LED without a series resistor risks permanent hardware destruction.\n   - **Explain:** Why is a series resistor necessary in any voltage-driven circuit where diode current surges past $V_F$?\n5. **Hardware Identification:**\n   - Locate a 220Ω resistor from your kit. Verify its color bands: **Red (2) – Red (2) – Brown (×10) – Gold (±5%)**."
     },
     {

@@ -57,6 +57,7 @@ def render_lesson_to_html(lesson_data, output_html_path, mode="learner"):
     brand_title = "Monster Lab • Educator Key & Lesson Review" if mode == "educator" else "Monster Lab • Student Lab Handout"
 
     step_html = ""
+    rendered_widgets = set()
     for idx, step in enumerate(steps, 1):
         step_id = step.get("stepId", f"s{idx}")
         step_title = step.get("title", f"Step {idx}")
@@ -148,70 +149,60 @@ def render_lesson_to_html(lesson_data, output_html_path, mode="learner"):
             qc_html += "</div>"
 
         # Interactive config / Quiz questions
-        interactive_config = step.get("interactiveConfig", {})
+        interactive_config = step.get("interactiveConfig", {}) or {}
         config_html = ""
-        if widget_type:
-            # Check if markdownContent already has a structured hands-on investigation task
-            has_structured_task = any(marker in markdown_content.lower() for marker in [
-                "hands-on active learning task",
-                "hands-on simulation task",
-                "predict, observe",
-                "structured investigation",
-                "step-by-step investigation"
-            ])
 
-            if has_structured_task:
-                printable_task = f"""
-                <div class='widget-box'>
-                    <div class='widget-badge'>Laboratory Investigation Sheet (Monster Lab In-App Simulator)</div>
-                    <div class='widget-name'><strong>Interactive Simulation:</strong> <code>{widget_type}</code></div>
-                    <div class='printable-activity'>
-                        <p><strong>Investigation Log:</strong> Complete the numbered investigation steps detailed above in the Monster Lab app, then record your observations and analysis below:</p>
-                        <div class='activity-log-table'>
-                            <table style='width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 6px;'>
-                                <thead>
-                                    <tr style='background: #e2e8f0; text-align: left;'>
-                                        <th style='padding: 4px 6px; border: 1px solid #cbd5e1; width: 25%;'>Test Condition / Step</th>
-                                        <th style='padding: 4px 6px; border: 1px solid #cbd5e1; width: 35%;'>Predicted Value / State</th>
-                                        <th style='padding: 4px 6px; border: 1px solid #cbd5e1; width: 40%;'>Observed Measurement & Verification</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td style='padding: 6px; border: 1px solid #cbd5e1;'>Trial 1 / Baseline:</td>
-                                        <td style='padding: 6px; border: 1px solid #cbd5e1;'>&nbsp;</td>
-                                        <td style='padding: 6px; border: 1px solid #cbd5e1;'>&nbsp;</td>
-                                    </tr>
-                                    <tr>
-                                        <td style='padding: 6px; border: 1px solid #cbd5e1;'>Trial 2 / Comparison:</td>
-                                        <td style='padding: 6px; border: 1px solid #cbd5e1;'>&nbsp;</td>
-                                        <td style='padding: 6px; border: 1px solid #cbd5e1;'>&nbsp;</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+        # Check for explicitly structured printableActivity
+        printable_act = interactive_config.get("printableActivity") or step.get("printableActivity")
+
+        sim_key = widget_type or (printable_act.get("simulationName") if printable_act else None)
+        if printable_act and (sim_key not in rendered_widgets or not sim_key):
+            if sim_key:
+                rendered_widgets.add(sim_key)
+            p_title = printable_act.get("title", "Laboratory Investigation Sheet")
+            p_sim_name = printable_act.get("simulationName", widget_type or "Interactive Simulation")
+            p_instructions = printable_act.get("instructions", "")
+            p_table = printable_act.get("table", {})
+            p_headers = p_table.get("headers", [])
+            p_rows = p_table.get("rows", [])
+
+            table_html = ""
+            if p_headers and p_rows:
+                header_cols = "".join([f"<th style='padding: 6px; border: 1px solid #cbd5e1;'>{render_latex_to_html(h)}</th>" for h in p_headers])
+                body_rows = ""
+                for row in p_rows:
+                    row_cols = "".join([f"<td style='padding: 6px; border: 1px solid #cbd5e1;'>{render_latex_to_html(col)}</td>" for col in row])
+                    body_rows += f"<tr>{row_cols}</tr>"
+                table_html = f"""
+                <div class='activity-log-table' style='margin-top: 8px;'>
+                    <table style='width: 100%; border-collapse: collapse; font-size: 11px;'>
+                        <thead>
+                            <tr style='background: #e2e8f0; text-align: left;'>
+                                {header_cols}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {body_rows}
+                        </tbody>
+                    </table>
                 </div>
                 """
-            else:
-                printable_task = f"""
-                <div class='widget-box'>
-                    <div class='widget-badge'>Hands-On Experiment Sheet (Monster Lab In-App Simulator)</div>
-                    <div class='widget-name'><strong>Interactive Simulation:</strong> <code>{widget_type}</code></div>
-                    <div class='printable-activity'>
-                        <p><strong>Learner Action:</strong> Open this interactive simulation directly in the Monster Lab app. Follow the guided stages:</p>
-                        <ol>
-                            <li><strong>Predict:</strong> What circuit state, telemetry value, or waveform do you expect to observe before running?</li>
-                            <li><strong>Observe &amp; Record:</strong> Note the virtual readings, sensor telemetry, and indicator states: ________________________</li>
-                            <li><strong>Analyze:</strong> How does the observed behavior confirm the underlying electrical and computing principles? _________________________________________</li>
-                        </ol>
-                    </div>
+
+            config_html += f"""
+            <div class='widget-box'>
+                <div class='widget-badge'>{p_title} (Monster Lab In-App Simulator)</div>
+                <div class='widget-name'><strong>Interactive Simulation:</strong> <code>{p_sim_name}</code></div>
+                <div class='printable-activity'>
+                    <p><strong>Investigation Task:</strong> {render_latex_to_html(p_instructions)}</p>
+                    {table_html}
                 </div>
-                """
-            config_html += printable_task
-        elif interactive_config and "questions" in interactive_config:
+            </div>
+            """
+
+        # Quiz checkpoint questions
+        if interactive_config and "questions" in interactive_config:
             quiz_questions = interactive_config.get("questions", [])
-            badge_title = "Step 4: Checkpoint Assessment Key" if mode == "educator" else "Step 4: Mastery Checkpoint Quiz"
+            badge_title = f"Step {idx}: Checkpoint Assessment Key" if mode == "educator" else f"Step {idx}: Mastery Checkpoint Quiz"
             config_html += f"<div class='quiz-box'><div class='box-badge'>{badge_title}</div>"
             for q_idx, q in enumerate(quiz_questions, 1):
                 q_text = render_latex_to_html(q.get("question", ""))
