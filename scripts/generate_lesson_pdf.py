@@ -13,6 +13,7 @@ def render_lesson_to_html(lesson_data, output_html_path, mode="learner"):
     prereqs = ", ".join(lesson_data.get("prerequisites", [])) or "None (First Lesson)"
     components = ", ".join(lesson_data.get("componentIds", [])) or "None"
     steps = lesson_data.get("steps", [])
+    brand_title = "Monster Lab • Educator Key & Lesson Review" if mode == "educator" else "Monster Lab • Student Lab Handout"
 
     step_html = ""
     for idx, step in enumerate(steps, 1):
@@ -176,48 +177,48 @@ def render_lesson_to_html(lesson_data, output_html_path, mode="learner"):
 <style>
   @page {{
     size: A4;
-    margin: 1.5cm;
+    margin: 1.2cm;
   }}
   body {{
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     color: #1a1a2e;
     background: #ffffff;
-    line-height: 1.5;
-    font-size: 13px;
+    line-height: 1.45;
+    font-size: 12.5px;
     margin: 0;
     padding: 0;
   }}
   .header {{
     border-bottom: 2px solid #6366f1;
-    padding-bottom: 12px;
-    margin-bottom: 20px;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
   }}
   .brand-title {{
-    font-size: 11px;
+    font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 2px;
     color: #6366f1;
     font-weight: 800;
   }}
   .lesson-title {{
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 800;
     color: #0f172a;
-    margin: 4px 0 8px 0;
+    margin: 2px 0 4px 0;
   }}
   .summary {{
-    font-size: 14px;
+    font-size: 12.5px;
     color: #475569;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
   }}
   .meta-grid {{
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     background: #f8fafc;
     border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 8px 12px;
-    font-size: 11px;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 10px;
   }}
   .meta-item strong {{
     display: block;
@@ -227,10 +228,15 @@ def render_lesson_to_html(lesson_data, output_html_path, mode="learner"):
   }}
   .step-container {{
     border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    margin-bottom: 18px;
+    border-radius: 6px;
+    margin-bottom: 14px;
     page-break-inside: avoid;
+    break-inside: avoid;
     background: #ffffff;
+  }}
+  h3, h4 {{
+    page-break-after: avoid;
+    break-after: avoid;
   }}
   .step-header {{
     background: #f1f5f9;
@@ -316,10 +322,13 @@ def render_lesson_to_html(lesson_data, output_html_path, mode="learner"):
   .quiz-box .box-badge {{
     color: #7c3aed;
   }}
-  .widget-box .box-badge {{
-    color: #2563eb;
+  .quick-check-box, .quiz-box, .widget-box, .printable-activity {{
+    page-break-inside: avoid;
+    break-inside: avoid;
   }}
   .qc-item, .quiz-item {{
+    page-break-inside: avoid;
+    break-inside: avoid;
     margin-bottom: 8px;
     padding-bottom: 8px;
     border-bottom: 1px dashed #cbd5e1;
@@ -390,7 +399,7 @@ def render_lesson_to_html(lesson_data, output_html_path, mode="learner"):
 <body>
 
 <div class="header">
-  <div class="brand-title">Monster Lab • STEM Curriculum Dossier</div>
+  <div class="brand-title">{brand_title}</div>
   <div class="lesson-title">{title}</div>
   <div class="summary">{summary}</div>
   <div class="meta-grid">

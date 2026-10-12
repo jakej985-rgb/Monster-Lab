@@ -6,6 +6,45 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.1.14+24] - 2026-10-11
+
+### Overview & Release Highlights
+Release **v0.1.14** finalizes core curriculum precision improvements across analog-to-digital conversion, safe component boundary definitions, level-shifting wiring for 3.3V SPI peripherals, and inductive kickback recirculation loops. Additionally, it optimizes the automated lesson PDF exporter with page-break protection and dynamic document branding, and reconciles the lesson dependency map with all 14 course manifests and 20 projects.
+
+---
+
+### 🎓 Pedagogical & Curriculum Enhancements
+- **Analog-to-Digital Conversion Physics & ADC Precision (`l01_02.json`)**:
+  - *What Changed*: Refined the analog pins diagram and step descriptions to explicitly detail discrete 10-bit ADC conversion (0–1023 integer range corresponding to 0–5V) rather than generic continuous voltage descriptions.
+  - *Why*: Eliminates early learner confusion between continuous analog signals and digitized values read by the microcontroller.
+  - *User Impact*: Learners establish clear foundations for sensor telemetry and quantization before writing analog sensing code.
+
+- **Component Safe Operating Parameters & Structured Simulation (`l06_04.json`)**:
+  - *What Changed*: Removed misleading statements regarding "very low internal resistance", qualified 100% safe component operational thresholds, and added a structured active simulation task.
+  - *Why*: Prevents misconception about component impedance and ensures students understand safe voltage and current limits.
+  - *User Impact*: Clearer safety guidelines and hands-on simulation tasks that reinforce safe experimentation habits.
+
+- **RC522 3.3V Logic Level Shifting Guidance (`l10_06.json`, `l10_07.json`)**:
+  - *What Changed*: Added explicit step-by-step wiring instructions guiding learners through logic level shifting for 5V Arduino Uno signals connected to the 3.3V RC522 RFID reader.
+  - *Why*: Protects sensitive 3.3V inputs from 5V logic signals and prevents component degradation or malfunction.
+  - *User Impact*: Learners successfully wire RFID peripherals without risking hardware damage.
+
+- **Flyback Diode Recirculation & Inductive Clamping (`l12_02.json`)**:
+  - *What Changed*: Corrected open-switch current descriptions, articulated the coil recirculation loop and diode clamping with valid LaTeX escapes, provided a complete C++ sketch block, and introduced a 3-step active investigation simulation.
+  - *Why*: Clarifies electromagnetic induction and flyback voltage spike suppression using physically accurate circuit mechanics.
+  - *User Impact*: Students gain accurate mental models for motor/relay switching and inductive spike protection.
+
+- **Curriculum Dependency Map Reconciliation (`audit/04_lesson_dependency_map.md`)**:
+  - *What Changed*: Fully reconciled prerequisite and follow-up lesson chains across all 14 course manifests and 20 projects.
+  - *Why*: Ensures strict curriculum progression integrity and prevents broken prerequisite links.
+  - *Developer/Educator Impact*: Complete audit alignment guaranteeing deterministic lesson progression and track consistency.
+
+### 🛠️ Tooling & Educator Resources
+- **Automated Lesson PDF Exporter Improvements (`scripts/generate_lesson_pdf.py`)**:
+  - *What Changed*: Streamlined header layout to a compact footprint, added CSS `page-break-inside: avoid` / `break-inside: avoid` to prevent question splits across page breaks, and implemented dynamic branding distinguishing "Monster Lab • Student Lab Handout" from "Monster Lab • Educator Key & Lesson Review".
+  - *Why*: Produces polished, publication-ready classroom printouts that fit neatly onto standard pages without mid-question page breaks.
+  - *Educator Impact*: High-quality printable handouts and keys ready for classroom distribution and lab exercises.
+
 ## [0.1.13+23] - 2026-10-11
 
 ### Overview & Release Highlights
