@@ -6,6 +6,39 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.2.1+26] - 2026-10-11
+
+### Overview & Release Highlights
+Release **v0.2.1** refines curriculum simulation fidelity, printable worksheet ergonomics, and automated release tooling. Key enhancements include simulation-tailored printable activity worksheets for LED resistor labs, RFID SPI buses, and DC motor drivers, removal of generic fallback worksheet templates in favor of bespoke classroom recording sheets, decoupling checkpoint quiz badges to prevent print collisions, and qualification of microcontroller GPIO current constraints.
+
+---
+
+### 🎓 Curriculum & Simulation Worksheets
+- **Bespoke In-App Simulation Printable Worksheets (`l06_04.json`, `l10_06.json`, `l12_02.json`)**:
+  - *What Changed*: Authored structured `printableActivity` objects with custom task instructions, apparatus listings, and bespoke table headers tailored to the specific in-app simulators:
+    - *LED Current Limiter*: Hands-on recording table for 220 Ω, 10 kΩ, and 0 Ω boundary states with observation fields for brightness, current draw, and component thermal/burnout risks.
+    - *RFID SPI Bus Architecture*: Step-by-step MOSI/MISO/SCK/SS telemetry signal logging table with tag UID capture and validation notes.
+    - *DC Motor Driver & Flyback Protection*: Transistor saturation and inductive kickback table recording base bias pin logic, flyback diode presence, and motor shaft status.
+  - *Why*: Replaces synthetic or generic three-box 'Predict / Observe / Analyze' templates with authentic laboratory worksheets matching student simulator steps.
+  - *User Impact*: Students and educators receive clear, reproducible recording tables in physical handouts that directly align with interactive screen exercises.
+
+- **GPIO Current Limits & Motor Driver Load Qualification (`l12_01.json`, `l12_02.json`, `asset_curriculum_datasource.dart`)**:
+  - *What Changed*: Explicitly clarified microcontroller GPIO pin source/sink current ceilings (e.g. 20–40 mA max on standard ATmega/ESP GPIOs) versus DC motor stall currents (often 500 mA–1.5 A+), reinforcing why external driver circuits (transistors/MOSFETs/H-bridges) and flyback diodes are physically mandatory.
+  - *Why*: Eliminates ambiguities regarding whether microcontrollers can directly power motors and prevents physical hardware damage during breadboard assembly.
+  - *User Impact*: Clearer electrical safety understanding for learners transitioning between simulation and physical hardware.
+
+### 📄 Exporter & Printable PDF Polish
+- **Decoupled Checkpoint Quiz & Badge Layout (`scripts/generate_lesson_pdf.py`)**:
+  - *What Changed*: Decoupled checkpoint quiz card rendering to avoid overlapping step badges, improved table layout width allocation, and removed brittle phrase-matching heuristics that previously attempted to reconstruct worksheet columns.
+  - *Why*: Guarantees clean, publication-grade formatting in both Educator and Student printable modes without text collisions or truncated tables.
+  - *User Impact*: Printable lesson sheets have crisp alignment, correct column distribution, and clean page breaks.
+
+### 🛠️ Developer Tooling & Automation
+- **Semantic Bump Calculation & Pubspec Synchronization (`scripts/generate_release_changelog.py`)**:
+  - *What Changed*: Implemented `--bump auto|major|minor|patch` semantic level evaluation from conventional git commit messages and automated bidirectional synchronization with `pubspec.yaml` and `CHANGELOG.md`.
+  - *Why*: Streamlines release cadence gating and prevents version drift across repository metadata files.
+  - *User Impact*: Automated CI/CD and release pipelines generate comprehensive, context-rich changelogs with zero manual formatting overhead.
+
 ## [0.2.0+25] - 2026-10-11
 
 ### Overview & Major Milestone Highlights
