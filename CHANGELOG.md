@@ -6,10 +6,40 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.2.0+25] - 2026-10-11
+
+### Overview & Major Milestone Highlights
+Release **v0.2.0** marks the milestone completion of Monster Lab's comprehensive curriculum expansion and interactive learning platform. Monster Lab now delivers 14 complete courses with 139 interactive lessons, universal step and activity completion gating, dual-viewport simulation, high-fidelity printable teacher/student lesson exporters, and complete test verification.
+
+---
+
+### 🚀 Milestone Capabilities & Enhancements
+
+- **Full 14-Course / 139-Lesson Curriculum Expansion & Master Dependency Mapping**:
+  - *Curriculum Breadth*: 14 fully authored courses spanning 139 lessons, 38 components, 20 projects, 24 challenges, and 20 badges.
+  - *Dependency Architecture*: Fully reconciled prerequisite and track progression mapping (`audit/04_lesson_dependency_map.md`) ensuring deterministic unlocking and scaffolded learning paths.
+  - *Physical & Simulation Parity*: Complete coverage across breadboard electronics, microcontroller coding, sensors, actuators, serial protocols, and robotics.
+
+- **Universal Step & Activity Completion Gating**:
+  - *Engagement Verification*: Universal activity completion gating requiring students to complete interactive simulations, code experiments, and mastery checkpoints before unlocking sequential steps.
+  - *Offline State Persistence*: Deterministic progress tracking stored locally via SharedPreferences with zero cloud reliance or external data leakage.
+
+- **Dual-Viewport In-App Simulator & Interactive Widget Previews**:
+  - *Dual Form-Factor Support*: Responsive support for mobile (390px portrait) and desktop/tablet (720px/1024px landscape) layouts.
+  - *Interactive Previews*: In-app preview system and visual simulator for all interactive widgets and circuits, complete with real-time waveform inspection, component telemetry, and state animation.
+
+- **High-Fidelity Lesson Exporters (Educator & Learner Modes)**:
+  - *Classroom Printables*: Automated lesson PDF exporter producing professional educator keys with solution rationales and clean student lab handouts with observation log tables.
+  - *Typography & Rendering*: Full LaTeX math Unicode parsing, pre-wrapped syntax-highlighted code blocks, page-break boundary protection, and visual schematic previews.
+
+- **Quality Assurance & Zero-Regression Test Suite**:
+  - *Test Coverage*: 263/263 passing unit and integration tests across state management, curriculum validation, and widget interactions.
+  - *Compliance & Safety*: 100% COPPA/FERPA compliance with zero network telemetry and fully self-contained offline assets.
+
 ## [0.1.14+24] - 2026-10-11
 
 ### Overview & Release Highlights
-Release **v0.1.14** finalizes core curriculum precision improvements across analog-to-digital conversion, safe component boundary definitions, level-shifting wiring for 3.3V SPI peripherals, and inductive kickback recirculation loops. Additionally, it optimizes the automated lesson PDF exporter with page-break protection and dynamic document branding, and reconciles the lesson dependency map with all 14 course manifests and 20 projects.
+Release **v0.1.14** finalizes core curriculum precision improvements across analog-to-digital conversion, semiconductor diode protection thresholds, level-shifting wiring for 3.3V SPI peripherals, inductive kickback recirculation loops, and self-contained in-app interactive pedagogy. Additionally, it overhauls the automated lesson PDF exporter with LaTeX math unicode rendering, code block wrapping, blank first page elimination, clean student/educator separation, and updated offline preview bundles.
 
 ---
 
@@ -19,20 +49,20 @@ Release **v0.1.14** finalizes core curriculum precision improvements across anal
   - *Why*: Eliminates early learner confusion between continuous analog signals and digitized values read by the microcontroller.
   - *User Impact*: Learners establish clear foundations for sensor telemetry and quantization before writing analog sensing code.
 
-- **Component Safe Operating Parameters & Structured Simulation (`l06_04.json`)**:
-  - *What Changed*: Removed misleading statements regarding "very low internal resistance", qualified 100% safe component operational thresholds, and added a structured active simulation task.
-  - *Why*: Prevents misconception about component impedance and ensures students understand safe voltage and current limits.
+- **Component Safe Operating Parameters & Resistor Protection Rule (`l06_04.json`, `l01_07.json`)**:
+  - *What Changed*: Replaced fixed current targets with qualified safe operating ranges; clarified that in physical circuits, current does not reach infinity without a resistor but is bounded by source, switch, and wiring impedance; and updated course cross-references. Added structured hands-on simulation tasks with dedicated laboratory recording logs comparing $220\,\Omega$, $10\,\text{k}\Omega$, and $0\,\Omega$ boundary conditions.
+  - *Why*: Prevents misconceptions about semiconductor impedance and infinite current, grounds current limiting in Ohm's law, and avoids misleading learners with fixed numeric current assumptions.
   - *User Impact*: Clearer safety guidelines and hands-on simulation tasks that reinforce safe experimentation habits.
 
-- **RC522 3.3V Logic Level Shifting Guidance (`l10_06.json`, `l10_07.json`)**:
-  - *What Changed*: Added explicit step-by-step wiring instructions guiding learners through logic level shifting for 5V Arduino Uno signals connected to the 3.3V RC522 RFID reader.
-  - *Why*: Protects sensitive 3.3V inputs from 5V logic signals and prevents component degradation or malfunction.
-  - *User Impact*: Learners successfully wire RFID peripherals without risking hardware damage.
+- **RC522 3.3V Logic Level Shifting, Custom Flow Stages & Self-Contained App Pedagogy (`l10_06.json`, `l10_07.json`)**:
+  - *What Changed*: Added explicit step-by-step wiring instructions guiding learners through logic level shifting for 5V Arduino Uno signals connected to the 3.3V RC522 RFID reader. Configured interactive visual flow diagram nodes specific to 13.56 MHz RFID electromagnetic physics (RF field emission, inductive coupling, load modulation, and SPI transfer). Structured steps to center around Monster Lab's in-app virtual card/fob simulation and serial UID decoding, framing physical breadboard assembly as an optional hardware extension without third-party workstation prerequisites.
+  - *Why*: Protects sensitive 3.3V inputs from 5V logic signals, ensures all lessons are fully self-contained within the Monster Lab offline app, and provides bespoke interactive flow diagrams.
+  - *User Impact*: Learners can complete the lesson purely in-app or successfully wire physical RFID peripherals without risking hardware damage.
 
 - **Flyback Diode Recirculation & Inductive Clamping (`l12_02.json`)**:
-  - *What Changed*: Corrected open-switch current descriptions, articulated the coil recirculation loop and diode clamping with valid LaTeX escapes, provided a complete C++ sketch block, and introduced a 3-step active investigation simulation.
-  - *Why*: Clarifies electromagnetic induction and flyback voltage spike suppression using physically accurate circuit mechanics.
-  - *User Impact*: Students gain accurate mental models for motor/relay switching and inductive spike protection.
+  - *What Changed*: Replaced misleading open-switch current claims with accurate descriptions of coil magnetic energy dissipation through an antiparallel flyback diode. Clarified that Arduino GPIO pins can never drive DC motors directly (20 mA limit vs motor inrush/stall currents), provided an external MOSFET/transistor driver schematic with common ground, labeled sketches for simulation only, and structured a 5-step active in-app simulation task.
+  - *Why*: Teaches physically accurate circuit mechanics for inductive kickback suppression and motor driving safety.
+  - *User Impact*: Students gain accurate mental models for motor/relay switching and transient spike protection.
 
 - **Curriculum Dependency Map Reconciliation (`audit/04_lesson_dependency_map.md`)**:
   - *What Changed*: Fully reconciled prerequisite and follow-up lesson chains across all 14 course manifests and 20 projects.
@@ -40,9 +70,9 @@ Release **v0.1.14** finalizes core curriculum precision improvements across anal
   - *Developer/Educator Impact*: Complete audit alignment guaranteeing deterministic lesson progression and track consistency.
 
 ### 🛠️ Tooling & Educator Resources
-- **Automated Lesson PDF Exporter Improvements (`scripts/generate_lesson_pdf.py`)**:
-  - *What Changed*: Streamlined header layout to a compact footprint, added CSS `page-break-inside: avoid` / `break-inside: avoid` to prevent question splits across page breaks, and implemented dynamic branding distinguishing "Monster Lab • Student Lab Handout" from "Monster Lab • Educator Key & Lesson Review".
-  - *Why*: Produces polished, publication-ready classroom printouts that fit neatly onto standard pages without mid-question page breaks.
+- **Automated Lesson PDF Exporter Polish (`scripts/generate_lesson_pdf.py`)**:
+  - *What Changed*: Eliminated blank page 1 defects by removing unneeded container break constraints while preserving header and question integrity (`break-after: avoid`). Implemented clean LaTeX math rendering to styled HTML and unicode symbols ($\Omega$, $\approx$, $\le$, $\frac{1}{2}$, superscripts, subscripts), added `pre-wrap` and `break-word` styling to prevent code clipping, eliminated redundant generic prediction prompts by detecting structured markdown tasks and emitting clean laboratory observation tables, and strictly suppressed answer keys and `[CORRECT ANSWER]` tags from student handouts (`--mode learner`).
+  - *Why*: Produces polished, publication-ready classroom printouts that fit neatly onto standard pages without mid-question page breaks, raw LaTeX markup, or duplicate boilerplate prompts.
   - *Educator Impact*: High-quality printable handouts and keys ready for classroom distribution and lab exercises.
 
 ## [0.1.13+23] - 2026-10-11

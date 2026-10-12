@@ -2,6 +2,47 @@ import json
 import os
 import sys
 import subprocess
+import re
+
+def render_latex_to_html(text):
+    if not text:
+        return ""
+
+    def replace_math_expr(expr):
+        expr = expr.strip()
+        expr = re.sub(r"\\text\{([^}]+)\}", r"\1", expr)
+        expr = re.sub(r"\\mathbf\{([^}]+)\}", r"<strong>\1</strong>", expr)
+        expr = re.sub(r"\\frac\{1\}\{2\}", "½", expr)
+        expr = re.sub(r"\\frac\{([^}]+)\}\{([^}]+)\}", r"(\1 / \2)", expr)
+        expr = re.sub(r"\\left\(", "(", expr)
+        expr = re.sub(r"\\right\)", ")", expr)
+        expr = re.sub(r"\\times", "×", expr)
+        expr = re.sub(r"\\approx", "≈", expr)
+        expr = re.sub(r"\\le", "≤", expr)
+        expr = re.sub(r"\\ge", "≥", expr)
+        expr = re.sub(r"\\Omega", "Ω", expr)
+        expr = re.sub(r"\\mu", "µ", expr)
+        expr = re.sub(r"\\pi", "π", expr)
+        expr = re.sub(r"\\implies", "⇒", expr)
+        expr = re.sub(r"\\,", " ", expr)
+        expr = re.sub(r"\\%", "%", expr)
+        expr = re.sub(r"\{([0-9,]+)\}", r"\1", expr)
+        expr = re.sub(r"([A-Za-z0-9\(\)]+)\^\{?([0-9a-zA-Z\+\-]+)\}?", r"\1<sup>\2</sup>", expr)
+        expr = re.sub(r"([A-Za-z]+)_\{?([0-9a-zA-Z\+\-]+)\}?", r"\1<sub>\2</sub>", expr)
+        return expr
+
+    def replace_block(match):
+        inner = replace_math_expr(match.group(1))
+        return f"<div class=\"math-block\">{inner}</div>"
+
+    def replace_inline(match):
+        inner = replace_math_expr(match.group(1))
+        return f"<span class=\"math-inline\">{inner}</span>"
+
+    text = re.sub(r"\$\$(.+?)\$\$", replace_block, text, flags=re.DOTALL)
+    text = re.sub(r"(?<!\$)\$([^\$\n]+?)\$(?!\$)", replace_inline, text)
+    return text
+
 
 def render_lesson_to_html(lesson_data, output_html_path, mode="learner"):
     title = lesson_data.get("title", "Untitled Lesson")
@@ -38,12 +79,16 @@ def render_lesson_to_html(lesson_data, output_html_path, mode="learner"):
                     in_code_block = True
                     code_buf = []
                 continue
-            
+
             if in_code_block:
                 code_buf.append(line.replace("<", "&lt;").replace(">", "&gt;"))
                 continue
 
-            if line.startswith("### "):
+            if line.startswith("# "):
+                formatted_content.append(f"<h2>{line[2:]}</h2>")
+            elif line.startswith("## "):
+                formatted_content.append(f"<h3>{line[3:]}</h3>")
+            elif line.startswith("### "):
                 formatted_content.append(f"<h3>{line[4:]}</h3>")
             elif line.startswith("#### "):
                 formatted_content.append(f"<h4>{line[5:]}</h4>")
@@ -58,8 +103,9 @@ def render_lesson_to_html(lesson_data, output_html_path, mode="learner"):
 
         parsed_body = "\n".join(formatted_content)
         # bold replacement
-        import re
         parsed_body = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', parsed_body)
+        # LaTeX math replacement
+        parsed_body = render_latex_to_html(parsed_body)
 
         # Quick check questions if any
         qc_html = ""
@@ -68,12 +114,12 @@ def render_lesson_to_html(lesson_data, output_html_path, mode="learner"):
             badge_title = "Diagnostic Pre-Test (QuickCheck)" if mode == "educator" else "Check Your Understanding"
             qc_html += f"<div class='quick-check-box'><div class='box-badge'>{badge_title}</div>"
             for q_idx, qc in enumerate(quick_checks, 1):
-                q_text = qc.get("question", "")
-                options = qc.get("options", [])
+                q_text = render_latex_to_html(qc.get("question", ""))
+                options = [render_latex_to_html(opt) for opt in qc.get("options", [])]
                 correct_idx = qc.get("correctIndex", 0)
-                explanation = qc.get("explanation", "")
-                warmup = qc.get("warmupExplanation", "")
-                
+                explanation = render_latex_to_html(qc.get("explanation", ""))
+                warmup = render_latex_to_html(qc.get("warmupExplanation", ""))
+
                 if mode == "educator":
                     opt_items = "".join([
                         f"<li class='option {'correct' if opt_i == correct_idx else ''}'>"
@@ -105,31 +151,74 @@ def render_lesson_to_html(lesson_data, output_html_path, mode="learner"):
         interactive_config = step.get("interactiveConfig", {})
         config_html = ""
         if widget_type:
-            printable_task = f"""
-            <div class='widget-box'>
-                <div class='widget-badge'>Hands-On Experiment Sheet (Interactive Simulation)</div>
-                <div class='widget-name'><strong>Simulated Lab Activity:</strong> <code>{widget_type}</code></div>
-                <div class='printable-activity'>
-                    <p><strong>Learner Action:</strong> Open this activity in the Monster Lab app or breadboard workstation. Complete the physical/simulated steps:</p>
-                    <ol>
-                        <li><strong>Predict:</strong> What outcome do you expect to observe before turning power on or sliding controls?</li>
-                        <li><strong>Observe & Record:</strong> Note the telemetry, indicator states, or component response: ________________________</li>
-                        <li><strong>Explain:</strong> Why did the circuit or code behave this way? _________________________________________</li>
-                    </ol>
+            # Check if markdownContent already has a structured hands-on investigation task
+            has_structured_task = any(marker in markdown_content.lower() for marker in [
+                "hands-on active learning task",
+                "hands-on simulation task",
+                "predict, observe",
+                "structured investigation",
+                "step-by-step investigation"
+            ])
+
+            if has_structured_task:
+                printable_task = f"""
+                <div class='widget-box'>
+                    <div class='widget-badge'>Laboratory Investigation Sheet (Monster Lab In-App Simulator)</div>
+                    <div class='widget-name'><strong>Interactive Simulation:</strong> <code>{widget_type}</code></div>
+                    <div class='printable-activity'>
+                        <p><strong>Investigation Log:</strong> Complete the numbered investigation steps detailed above in the Monster Lab app, then record your observations and analysis below:</p>
+                        <div class='activity-log-table'>
+                            <table style='width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 6px;'>
+                                <thead>
+                                    <tr style='background: #e2e8f0; text-align: left;'>
+                                        <th style='padding: 4px 6px; border: 1px solid #cbd5e1; width: 25%;'>Test Condition / Step</th>
+                                        <th style='padding: 4px 6px; border: 1px solid #cbd5e1; width: 35%;'>Predicted Value / State</th>
+                                        <th style='padding: 4px 6px; border: 1px solid #cbd5e1; width: 40%;'>Observed Measurement & Verification</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style='padding: 6px; border: 1px solid #cbd5e1;'>Trial 1 / Baseline:</td>
+                                        <td style='padding: 6px; border: 1px solid #cbd5e1;'>&nbsp;</td>
+                                        <td style='padding: 6px; border: 1px solid #cbd5e1;'>&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td style='padding: 6px; border: 1px solid #cbd5e1;'>Trial 2 / Comparison:</td>
+                                        <td style='padding: 6px; border: 1px solid #cbd5e1;'>&nbsp;</td>
+                                        <td style='padding: 6px; border: 1px solid #cbd5e1;'>&nbsp;</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            """
+                """
+            else:
+                printable_task = f"""
+                <div class='widget-box'>
+                    <div class='widget-badge'>Hands-On Experiment Sheet (Monster Lab In-App Simulator)</div>
+                    <div class='widget-name'><strong>Interactive Simulation:</strong> <code>{widget_type}</code></div>
+                    <div class='printable-activity'>
+                        <p><strong>Learner Action:</strong> Open this interactive simulation directly in the Monster Lab app. Follow the guided stages:</p>
+                        <ol>
+                            <li><strong>Predict:</strong> What circuit state, telemetry value, or waveform do you expect to observe before running?</li>
+                            <li><strong>Observe &amp; Record:</strong> Note the virtual readings, sensor telemetry, and indicator states: ________________________</li>
+                            <li><strong>Analyze:</strong> How does the observed behavior confirm the underlying electrical and computing principles? _________________________________________</li>
+                        </ol>
+                    </div>
+                </div>
+                """
             config_html += printable_task
         elif interactive_config and "questions" in interactive_config:
             quiz_questions = interactive_config.get("questions", [])
             badge_title = "Step 4: Checkpoint Assessment Key" if mode == "educator" else "Step 4: Mastery Checkpoint Quiz"
             config_html += f"<div class='quiz-box'><div class='box-badge'>{badge_title}</div>"
             for q_idx, q in enumerate(quiz_questions, 1):
-                q_text = q.get("question", "")
-                options = q.get("options", [])
+                q_text = render_latex_to_html(q.get("question", ""))
+                options = [render_latex_to_html(opt) for opt in q.get("options", [])]
                 correct_idx = q.get("correctIndex", 0)
-                explanation = q.get("explanation", "")
-                
+                explanation = render_latex_to_html(q.get("explanation", ""))
+
                 if mode == "educator":
                     opt_items = "".join([
                         f"<li class='option {'correct' if opt_i == correct_idx else ''}'>"
@@ -230,8 +319,6 @@ def render_lesson_to_html(lesson_data, output_html_path, mode="learner"):
     border: 1px solid #e2e8f0;
     border-radius: 6px;
     margin-bottom: 14px;
-    page-break-inside: avoid;
-    break-inside: avoid;
     background: #ffffff;
   }}
   h3, h4 {{
@@ -245,6 +332,8 @@ def render_lesson_to_html(lesson_data, output_html_path, mode="learner"):
     display: flex;
     align-items: center;
     gap: 10px;
+    page-break-after: avoid;
+    break-after: avoid;
   }}
   .step-number {{
     background: #6366f1;
@@ -278,9 +367,33 @@ def render_lesson_to_html(lesson_data, output_html_path, mode="learner"):
     padding: 10px 14px;
     border-radius: 6px;
     font-family: 'JetBrains Mono', Consolas, 'Courier New', monospace;
-    font-size: 11px;
-    overflow-x: auto;
+    font-size: 10px;
     line-height: 1.4;
+    white-space: pre-wrap;
+    word-break: break-word;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }}
+  .math-block {{
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: 6px 12px;
+    margin: 8px 0;
+    text-align: center;
+    font-family: 'Cambria Math', 'KaTeX_Math', 'Times New Roman', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1e293b;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }}
+  .math-inline {{
+    font-family: 'Cambria Math', 'KaTeX_Math', 'Times New Roman', serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #1e293b;
+    padding: 0 2px;
   }}
   .callout {{
     border-left: 4px solid #6366f1;
@@ -289,6 +402,8 @@ def render_lesson_to_html(lesson_data, output_html_path, mode="learner"):
     margin: 8px 0;
     font-style: italic;
     color: #334155;
+    page-break-inside: avoid;
+    break-inside: avoid;
   }}
   .quick-check-box {{
     background: #f0fdf4;
@@ -393,6 +508,8 @@ def render_lesson_to_html(lesson_data, output_html_path, mode="learner"):
     border-radius: 4px;
     font-size: 10px;
     margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
   }}
 </style>
 </head>
