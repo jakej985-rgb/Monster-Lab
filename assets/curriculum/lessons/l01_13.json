@@ -3,7 +3,7 @@
   "title": "The Arduino Family: Uno, Nano, and Mega",
   "summary": "Discover the different members of the Arduino board family: the standard Uno, breadboard-friendly Nano, and the pin-packed Mega 2560.",
   "tier": "rookie",
-  "estimatedMinutes": 10,
+  "estimatedMinutes": 5,
   "courseId": "lesson_01",
   "sortOrder": 13,
   "isOptional": false,
@@ -20,7 +20,7 @@
       "stepId": "l01_13_s01",
       "title": "Meet the Arduino Family",
       "type": "story",
-      "markdownContent": "### One Brain Does Not Fit All Robots! 🤖\n\nYou've already met the **Arduino Uno**, the flagship robot brain in Monster Lab. But what if you are designing a tiny robotic beetle that needs to be as small as a coin? Or a giant six-legged spider robot with 18 joint motors, 6 distance sensors, and a navigation compass?\n\nThat is why the Arduino ecosystem created a whole family of specialized boards:\n\n1. **Arduino Uno**: The reliable classroom standard. Big, easy to handle, with shield expansion headers.\n2. **Arduino Nano**: A pint-sized version of the Uno that plugs directly into a solderless breadboard.\n3. **Arduino Mega 2560**: The giant powerhouse with four times more pins and memory for heavy robotics!\n\nAll three run on the same basic software language and 5-Volt logic, so code you learn for the Uno runs seamlessly on the Nano and Mega too!",
+      "markdownContent": "The Uno is a handy starter board. The Nano is smaller. The Mega has more pins. Choose by project size and the connections you need—not by the biggest number alone.",
       "quickCheck": [
         {
           "questionId": "l01_13_s01_q1",
@@ -53,7 +53,7 @@
       "title": "Comparing Board Architectures",
       "type": "visualExplanation",
       "interactiveWidgetType": "arduinoFamilyComparison",
-      "markdownContent": "### The Three Arduino Titans: Side-by-Side 📊\n\nTake a look at how the Uno, Nano, and Mega compare in size, pins, and memory:\n\n```\n┌────────────────────┬─────────────────┬─────────────────┬──────────────────────┐\n│ Specification      │ Arduino Uno R3  │ Arduino Nano V3 │ Arduino Mega 2560 R3 │\n├────────────────────┼─────────────────┼─────────────────┼──────────────────────┤\n│ Microcontroller    │ ATmega328P      │ ATmega328P      │ ATmega2560           │\n│ Operating Voltage  │ 5V              │ 5V              │ 5V                   │\n│ Digital I/O Pins   │ 14 (6 PWM)      │ 14 (6 PWM)      │ 54 (15 PWM)          │\n│ Analog Inputs      │ 6 (A0–A5)       │ 8 (A0–A7)       │ 16 (A0–A15)          │\n│ Flash Memory       │ 32 KB           │ 32 KB           │ 256 KB (8x bigger!)  │\n│ Breadboard-Ready?  │ No (Needs wires)│ Yes! Plugs right│ No (Too wide)        │\n│ Best Project Use   │ Learning, Labs  │ Compact Rovers  │ Multi-Motor Spiders  │\n└────────────────────┴─────────────────┴─────────────────┴──────────────────────┘\n```\n\n#### Why the Nano is Breadboard Magic:\nNotice the pins on the bottom of the Nano. You can press the Nano directly into the center divider of a breadboard! This eliminates loose jumper wires between the board and your breadboard rows.\n\n#### Why the Mega is the Heavy-Lifter:\nWith 54 digital pins and 16 analog pins, you can connect an LCD display, keypad, 8 ultrasonic sensors, and 4 motors without running out of pins!",
+      "markdownContent": "Different board versions can have different features. Check the board label and pin map before connecting parts.",
       "interactiveConfig": {
         "boards": [
           {
@@ -87,12 +87,24 @@
       "stepId": "l01_13_s03",
       "title": "Hands-On: Choosing the Right Board",
       "type": "codeExperiment",
-      "markdownContent": "### The Board Selection Laboratory 🧪\n\nEvery great roboticist analyzes the bill of materials before picking their microcontroller board. Let's see how changing our project goals changes our board choice!\n\n```cpp\n// Monster Lab Board Decision Algorithm\nvoid setup() {\n  Serial.begin(9600);\n  \n  int requiredMotors = 6;       // 6 DC motors (2 pins each = 12 pins)\n  int requiredSensors = 8;      // 8 Analog distance sensors\n  int requiredServos = 4;       // 4 PWM steering servos\n  \n  int totalDigitalNeeded = (requiredMotors * 2) + requiredServos; // 16 digital pins!\n  int totalAnalogNeeded = requiredSensors;                        // 8 analog pins!\n  \n  Serial.print(\"Digital Pins Needed: \");\n  Serial.println(totalDigitalNeeded);\n  Serial.print(\"Analog Pins Needed: \");\n  Serial.println(totalAnalogNeeded);\n  \n  if (totalDigitalNeeded > 14 || totalAnalogNeeded > 6) {\n    Serial.println(\"Verdict: Arduino Uno lacks enough pins. Deploy the Arduino Mega 2560!\");\n  } else {\n    Serial.println(\"Verdict: Arduino Uno or Nano handles this with ease!\");\n  }\n}\n\nvoid loop() {\n  // Idle\n}\n```\n\n#### Engineering Reflection:\n1. If you reduce the project to 1 motor and 1 light sensor, which board would fit neatly inside a tiny robot shell? (The **Arduino Nano**!)\n2. If you need 20 pushbuttons for an escape room puzzle console, which board has enough pins without special multiplexer chips? (The **Arduino Mega**!)",
+      "markdownContent": "Choose a board for each robot mission. Count the connections you need, then use the board-choice simulator. Servos and motors may need extra driver parts.",
       "interactiveConfig": {
         "testCases": [
-          { "motors": 1, "sensors": 1, "recommended": "Arduino Nano" },
-          { "motors": 6, "sensors": 8, "recommended": "Arduino Mega 2560" },
-          { "motors": 2, "sensors": 2, "recommended": "Arduino Uno" }
+          {
+            "motors": 1,
+            "sensors": 1,
+            "recommended": "Arduino Nano"
+          },
+          {
+            "motors": 6,
+            "sensors": 8,
+            "recommended": "Arduino Mega 2560"
+          },
+          {
+            "motors": 2,
+            "sensors": 2,
+            "recommended": "Arduino Uno"
+          }
         ]
       }
     },
@@ -120,30 +132,23 @@
             ],
             "correctIndex": 0,
             "explanation": "The Arduino Nano has a compact dual-inline package (DIP) pinout that presses right into breadboard sockets."
-          },
-          {
-            "question": "If your robot needs 30 individual digital sensor pins, which Arduino board has enough pins built in?",
-            "options": [
-              "Arduino Mega 2560 (54 digital pins)",
-              "Arduino Uno (14 digital pins)",
-              "Arduino Nano (14 digital pins)"
-            ],
-            "correctIndex": 0,
-            "explanation": "The Arduino Mega 2560 features 54 digital I/O pins, making it ideal for massive robotics projects."
-          },
-          {
-            "question": "What microcontroller chip powers both the Arduino Uno and the Arduino Nano?",
-            "options": [
-              "ATmega328P",
-              "Intel Core i9",
-              "Motorola 68000"
-            ],
-            "correctIndex": 0,
-            "explanation": "Both the Uno and Nano share the exact same 8-bit ATmega328P microcontroller running at 16 MHz."
           }
         ]
       }
     }
   ],
-  "xpReward": 10
+  "xpReward": 10,
+  "learningGoal": "Choose an Arduino board that fits a project’s size and connections.",
+  "vocabulary": [
+    {
+      "term": "Board",
+      "pronunciation": "bord",
+      "meaning": "The circuit board that holds a microcontroller and connectors."
+    },
+    {
+      "term": "Compare",
+      "pronunciation": "kum-PAIR",
+      "meaning": "Look at how things are alike and different."
+    }
+  ]
 }

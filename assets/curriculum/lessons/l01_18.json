@@ -1,0 +1,116 @@
+{
+  "id": "l01_18",
+  "title": "Course 1 Post-Test: Show What You Know",
+  "summary": "Use what you learned about boards, signals, circuits, and safe connections. Take your time and show how much you remember.",
+  "tier": "rookie",
+  "estimatedMinutes": 8,
+  "courseId": "lesson_01",
+  "sortOrder": 18,
+  "isOptional": false,
+  "prerequisites": [
+    "l01_17"
+  ],
+  "componentIds": [],
+  "steps": [
+    {
+      "stepId": "l01_18_s01",
+      "title": "Course 1 Knowledge Check",
+      "type": "quizCheckpoint",
+      "markdownContent": "Answer each question to finish Course 1. Think about the ideas you practiced in the lessons.",
+      "interactiveConfig": {
+        "question": "What does a microcontroller board do in a robot?",
+        "options": [
+          "Reads inputs and controls outputs using code",
+          "Stores the robot’s wheels",
+          "Makes electricity from sunlight"
+        ],
+        "correctIndex": 0,
+        "explanation": "The board runs code that reads inputs and controls outputs.",
+        "questions": [
+          {
+            "question": "What does a microcontroller board do in a robot?",
+            "options": [
+              "Reads inputs and controls outputs using code",
+              "Stores the robot’s wheels",
+              "Makes electricity from sunlight"
+            ],
+            "correctIndex": 0,
+            "explanation": "The board runs code that reads inputs and controls outputs."
+          },
+          {
+            "question": "A sensor detects a button press. What is the button press?",
+            "options": [
+              "An input",
+              "An output",
+              "A power source"
+            ],
+            "correctIndex": 0,
+            "explanation": "A button gives the board information, so it is an input."
+          },
+          {
+            "question": "Which pin type is best for reading a simple HIGH or LOW signal?",
+            "options": [
+              "Digital pin",
+              "Analog pin",
+              "Ground pin"
+            ],
+            "correctIndex": 0,
+            "explanation": "Digital pins read or send HIGH and LOW signals."
+          },
+          {
+            "question": "What does an analog input help a board measure?",
+            "options": [
+              "A range of changing values",
+              "Only two states: on or off",
+              "The board’s name"
+            ],
+            "correctIndex": 0,
+            "explanation": "Analog inputs can read a range of values, such as a changing sensor level."
+          },
+          {
+            "question": "Why does an LED need a resistor in its circuit?",
+            "options": [
+              "To limit current and help protect the LED",
+              "To make the LED read a button",
+              "To store the program"
+            ],
+            "correctIndex": 0,
+            "explanation": "A resistor limits current so too much current does not damage the LED."
+          },
+          {
+            "question": "Why do circuit parts need a shared ground?",
+            "options": [
+              "It gives current a common return path",
+              "It makes the board wireless",
+              "It raises every signal to 5 volts"
+            ],
+            "correctIndex": 0,
+            "explanation": "A shared ground gives the circuit a common reference and return path."
+          },
+          {
+            "question": "How should you connect a 5V signal to a 3.3V-only input?",
+            "options": [
+              "Use suitable level protection, such as a level shifter",
+              "Connect it directly every time",
+              "Remove the ground wire"
+            ],
+            "correctIndex": 0,
+            "explanation": "A 5V signal can damage a 3.3V-only input; use suitable level protection."
+          },
+          {
+            "question": "In a simple robot system, what usually happens after an input is read?",
+            "options": [
+              "Code decides what to do, then an output responds",
+              "The board forgets the input",
+              "The sensor becomes the battery"
+            ],
+            "correctIndex": 0,
+            "explanation": "The board reads an input, uses code to decide, and controls an output."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 25,
+  "learningGoal": "Show that you can use Course 1 ideas about boards, inputs, outputs, circuits, and safety."
+}

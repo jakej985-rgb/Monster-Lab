@@ -8,6 +8,7 @@ class QuizCheckpointWidget extends StatefulWidget {
   final List<String> options;
   final int correctIndex;
   final ValueChanged<bool> onAnswerSubmitted;
+  final VoidCallback? onDeckComplete;
   final List<Map<String, dynamic>>? questions;
   final String? explanation;
 
@@ -17,6 +18,7 @@ class QuizCheckpointWidget extends StatefulWidget {
     required this.options,
     required this.correctIndex,
     required this.onAnswerSubmitted,
+    this.onDeckComplete,
     this.questions,
     this.explanation,
   });
@@ -85,6 +87,7 @@ class _QuizCheckpointWidgetState extends State<QuizCheckpointWidget> {
         _isDeckComplete = true;
       });
       widget.onAnswerSubmitted(true);
+      widget.onDeckComplete?.call();
     }
   }
 

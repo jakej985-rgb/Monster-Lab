@@ -8,7 +8,7 @@
     "monsterMaster"
   ],
   "counts": {
-    "lessons": 139,
+    "lessons": 141,
     "components": 54,
     "projects": 20,
     "challenges": 24,
@@ -171,7 +171,9 @@
     "l12_05",
     "l12_06",
     "l12_07",
-    "l12_08"
+    "l12_08",
+    "l01_17",
+    "l01_18"
   ],
   "components": [
     "comp_01",

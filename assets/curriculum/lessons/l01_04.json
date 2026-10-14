@@ -3,7 +3,7 @@
   "title": "Inputs and Outputs",
   "summary": "Robots interact with the world through two main kinds of parts: Inputs and Outputs.",
   "tier": "rookie",
-  "estimatedMinutes": 10,
+  "estimatedMinutes": 5,
   "courseId": "lesson_01",
   "sortOrder": 4,
   "isOptional": false,
@@ -18,7 +18,7 @@
       "stepId": "l01_s04",
       "title": "Inputs and Outputs",
       "type": "story",
-      "markdownContent": "Robots interact with the world through two main kinds of parts: **Inputs** and **Outputs**.\n\n### 1. Inputs (The Senses) 👀\nInputs bring information **IN** from the physical world to the Arduino:\n- **Pushbutton**: Senses when your finger presses down.\n- **Light Sensor**: Measures how bright or dark the room is.\n- **Distance Sensor**: Measures how far away an obstacle is.\n\n### 2. Outputs (The Muscles and Voice) 💡\nOutputs send actions **OUT** into the physical world from the Arduino:\n- **LED Light**: Shines bright colors.\n- **Buzzer**: Makes musical beeps and siren sounds.\n- **Motor**: Spins wheels and waves robotic arms.\n\n```\nWorld ➔ [Input / Sense] ➔ Arduino Brain ➔ [Output / Action] ➔ World\n```\n\nLet's explore how these signals travel between the outside world and your robot's brain!",
+      "markdownContent": "Inputs help a robot notice the world: a button or light sensor. Outputs let it respond: an LED, buzzer, or motor. A motor needs a driver; never power it from an Arduino pin.",
       "quickCheck": [
         {
           "questionId": "l01_s04_q1",
@@ -50,14 +50,14 @@
       "stepId": "l01_04_s02",
       "title": "Senses vs. Muscles Architecture",
       "type": "visualExplanation",
-      "markdownContent": "### How Information Travels In and Out 🔄\n\nThink of your own body compared to a monster robot:\n\n```\n┌────────────────────────────────────────────────────────┐\n│ HUMAN BODY             SIGNAL PATH        ROBOT SYSTEM │\n├────────────────────────────────────────────────────────┤\n│ Eyes, Ears, Touch  ──> [ INPUT  ]  ──>    Sensors      │\n│  (Senses reality)      Information In      (Buttons)   │\n│                                                        │\n│ Human Brain        ──> [ THINK  ]  ──>    Arduino Uno  │\n│  (Makes choices)       Processing Code     (ATmega328P)│\n│                                                        │\n│ Muscles, Voice     ──> [ OUTPUT ]  ──>    Actuators    │\n│  (Takes action)        Actions Out         (LEDs, Motor│\n└────────────────────────────────────────────────────────┘\n```\n\n#### The Two Golden Questions:\nWhenever you hold a new electronic part, ask these two questions:\n1. **Does it send information INTO the Arduino?** ➔ That's an **INPUT** (Sensors, buttons, dials, switches).\n2. **Does the Arduino send a command OUT to make it do something?** ➔ That's an **OUTPUT** (Lights, speakers, displays, motors)."
+      "markdownContent": "Ask: does this part send information to the board, or receive a command from it? That tells you whether it is an input or output."
     },
     {
       "stepId": "l01_04_s03",
       "title": "Sort the Senses and Muscles",
       "type": "physicalTask",
       "interactiveWidgetType": "inputOutputClassification",
-      "markdownContent": "### Component Detective: Input or Output? 🔍\n\nCategorize each hardware module as an **INPUT** (senses information and sends it in) or an **OUTPUT** (receives commands to produce physical effects)!\n\nLook at the icon and description, then tap the matching button to test your classification skills!"
+      "markdownContent": "Sort the parts into inputs and outputs. Then explain one choice in your own words."
     },
     {
       "stepId": "l01_04_s04",
@@ -83,30 +83,23 @@
             ],
             "correctIndex": 0,
             "explanation": "Sensors measure the world and deliver data into the Arduino, making them inputs."
-          },
-          {
-            "question": "A piezo buzzer makes a chirping alarm sound. Is it an input or an output?",
-            "options": [
-              "An Output (acts in the world by making sound)",
-              "An Input (hears sounds from the room)",
-              "A battery holder"
-            ],
-            "correctIndex": 0,
-            "explanation": "Because the buzzer converts electrical commands into sound waves in the room, it is an output!"
-          },
-          {
-            "question": "Why does a robot need both inputs and outputs to be truly smart?",
-            "options": [
-              "Inputs let it know what is happening, and outputs let it react to it",
-              "Outputs let it paint itself, and inputs make it heavier",
-              "So it can use up all the pins on the board"
-            ],
-            "correctIndex": 0,
-            "explanation": "Without inputs, a robot is blind; without outputs, it cannot move or communicate!"
           }
         ]
       }
     }
   ],
-  "xpReward": 10
+  "xpReward": 10,
+  "learningGoal": "Sort common robot parts into inputs and outputs.",
+  "vocabulary": [
+    {
+      "term": "Input",
+      "pronunciation": "IN-put",
+      "meaning": "Information going into the Arduino."
+    },
+    {
+      "term": "Output",
+      "pronunciation": "OUT-put",
+      "meaning": "A signal or action coming out of the Arduino."
+    }
+  ]
 }

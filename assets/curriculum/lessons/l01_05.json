@@ -3,7 +3,7 @@
   "title": "Digital vs Analog",
   "summary": "Electronic signals talk to the Arduino in two different ways:",
   "tier": "rookie",
-  "estimatedMinutes": 10,
+  "estimatedMinutes": 5,
   "courseId": "lesson_01",
   "sortOrder": 5,
   "isOptional": false,
@@ -18,7 +18,7 @@
       "stepId": "l01_s05",
       "title": "Digital vs Analog",
       "type": "story",
-      "markdownContent": "Electronic signals talk to the Arduino in two different ways:\n\n### 1. Digital Signals: Two Clear Choices 💡\nDigital is like a standard light switch. It is either completely **ON** or completely **OFF**:\n- **HIGH**: Full power (+5 Volts) ➔ ON!\n- **LOW**: Zero power (0 Volts) ➔ OFF!\nThere is no halfway state in digital logic.\n\n### 2. Analog Signals: A Continuous Physical Spectrum 🎚️\nIn nature, signals are continuously variable: sound waves, room temperatures, and dial positions change smoothly.\n- The physical voltage can be any level between 0.0 Volts and 5.0 Volts (e.g. 1.23V, 2.84V).\n- The Arduino uses an on-board **ADC (Analog-to-Digital Converter)** to sample and **quantize** this continuous voltage into **1,024 discrete integer steps** (from **0 to 1023**).\n- Note: An ADC count is not an infinite smooth line—it is a discrete digital count representing a measured voltage bracket! (And to output pseudo-analog brightness, the Arduino uses rapid ON/OFF switching called **PWM**, not true variable DC voltage).\n\nLet's explore how the Arduino handles these two different types of signals!",
+      "markdownContent": "A button can give a digital HIGH or LOW reading. A knob can give changing voltages that the Uno measures as numbers. The voltage is smooth; the ADC reading is a set of steps.",
       "quickCheck": [
         {
           "questionId": "l01_s05_q1",
@@ -50,14 +50,14 @@
       "stepId": "l01_05_s02",
       "title": "HIGH/LOW vs. Continuous Waves",
       "type": "visualExplanation",
-      "markdownContent": "### Visualizing Digital vs. Analog Signals 📈\n\nLook at how these two signals appear on an engineer's oscilloscope screen:\n\n```\nDIGITAL SIGNAL (Square Wave)\n+5V (HIGH) ──┐        ┌────────┐\n             │        │        │\n 0V (LOW)    └────────┘        └────────> Time\n             Only 2 States: ON or OFF!\n\nANALOG SIGNAL (Continuous Wave)\n+5V          /\\        .-.\n            /  \\      /   \\\n           /    \\    /     \\\n 0V ──────'      '--'       '───────────> Time\n     Infinite Smooth Values from 0 to 1023!\n```\n\n#### Why Both Matter in Robotics:\n| Signal Type | Arduino Voltage Range | Numerical Value in Code | Everyday Example |\n| :--- | :--- | :--- | :--- |\n| **Digital** | 0V or 5V | `LOW` (0) or `HIGH` (1) | Light switch, push button, coin slot |\n| **Analog** | 0.0V to 5.0V | `0` to `1023` (10-bit ADC) | Volume knob, thermometer, light sensor |\n\n> **Pro Tip**: The Arduino has a special translator called an **ADC** (Analog-to-Digital Converter) that slices smooth voltages from 0V to 5V into 1,024 tiny stair-steps (0 to 1023)!"
+      "markdownContent": "The Uno’s analog input turns a voltage into a number from 0 to 1023. Digital HIGH is a recognized logic state; it is not a promise that the pin is exactly 5 volts."
     },
     {
       "stepId": "l01_05_s03",
       "title": "Interactive Signal Inspector & Prediction",
       "type": "physicalTask",
       "interactiveWidgetType": "arduinoBoardInspector",
-      "markdownContent": "### Flip the Switch & Turn the Dial! 🎛️\n\nUse the interactive inspector below to test both signal worlds:\n1. **Digital Switch (Pin 13)**: Flip between `LOW` (0.0V) and `HIGH` (5.0V). Notice there is no middle ground!\n2. **Analog Slider (Pin A0)**: Slide the voltage smoothly from 0.0V up to 5.0V and observe the raw reading change from `0` to `1023`.\n3. **Engineering Prediction**: Predict what happens to the sensor reading as a knob rotates smoothly!"
+      "markdownContent": "Flip the virtual switch and move the slider. Predict how the reading changes before you test it."
     },
     {
       "stepId": "l01_05_s04",
@@ -65,48 +65,41 @@
       "type": "quizCheckpoint",
       "markdownContent": "Test your mastery of digital switches and analog waves!",
       "interactiveConfig": {
-        "question": "What voltage does HIGH represent on a standard 5V Arduino Uno digital pin?",
+        "question": "What does the Uno do with a changing voltage on an analog input?",
         "options": [
-          "+5 Volts",
-          "0 Volts",
-          "1,000,000 Volts"
+          "Turns it into a number",
+          "Makes it wireless",
+          "Uses it to power a motor"
         ],
         "correctIndex": 0,
-        "explanation": "On a 5V Arduino Uno, HIGH connects the pin to full positive supply voltage (+5V).",
+        "explanation": "The Uno measures the voltage and reports a number from 0 to 1023.",
         "questions": [
           {
-            "question": "What voltage does HIGH represent on a standard 5V Arduino Uno digital pin?",
+            "question": "What does the Uno do with a changing voltage on an analog input?",
             "options": [
-              "+5 Volts",
-              "0 Volts",
-              "1,000,000 Volts"
+              "Turns it into a number",
+              "Makes it wireless",
+              "Uses it to power a motor"
             ],
             "correctIndex": 0,
-            "explanation": "On a 5V Arduino Uno, HIGH connects the pin to full positive supply voltage (+5V)."
-          },
-          {
-            "question": "What is the numerical range of numbers an Arduino analog input pin reads?",
-            "options": [
-              "0 to 1023",
-              "Only 0 or 1",
-              "-5 to +5"
-            ],
-            "correctIndex": 0,
-            "explanation": "The Uno's 10-bit analog converter divides voltages between 0V and 5V into 1024 discrete steps (0 through 1023)."
-          },
-          {
-            "question": "A light sensor detects daylight gradually changing from morning sunrise to noon. Is this signal digital or analog?",
-            "options": [
-              "Analog (changes smoothly across many levels)",
-              "Digital (only on or off)",
-              "Neither"
-            ],
-            "correctIndex": 0,
-            "explanation": "Because brightness increases smoothly throughout the morning, it is an analog signal!"
+            "explanation": "The Uno measures the voltage and reports a number from 0 to 1023."
           }
         ]
       }
     }
   ],
-  "xpReward": 10
+  "xpReward": 10,
+  "learningGoal": "Tell a two-state digital signal from a changing analog signal.",
+  "vocabulary": [
+    {
+      "term": "Digital",
+      "pronunciation": "DIJ-ih-tul",
+      "meaning": "A signal read as one of a few choices, such as HIGH or LOW."
+    },
+    {
+      "term": "Analog",
+      "pronunciation": "AN-uh-log",
+      "meaning": "A measurement that can change across a range."
+    }
+  ]
 }

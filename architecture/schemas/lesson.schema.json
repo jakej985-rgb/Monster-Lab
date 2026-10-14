@@ -2,41 +2,132 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "LessonSchema",
   "type": "object",
-  "required": ["id", "title", "summary", "tier", "estimatedMinutes", "prerequisites", "componentIds", "steps", "xpReward"],
+  "required": [
+    "id",
+    "title",
+    "summary",
+    "tier",
+    "estimatedMinutes",
+    "prerequisites",
+    "componentIds",
+    "steps",
+    "xpReward"
+  ],
   "properties": {
-    "id": { "type": "string", "pattern": "^lesson_[0-9]{2,3}$" },
-    "title": { "type": "string", "minLength": 3 },
-    "summary": { "type": "string" },
-    "tier": { "type": "string", "enum": ["rookie", "builder", "engineer", "monsterMaster"] },
-    "estimatedMinutes": { "type": "integer", "minimum": 5, "maximum": 120 },
+    "id": {
+      "type": "string",
+      "pattern": "^lesson_[0-9]{2,3}$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 3
+    },
+    "summary": {
+      "type": "string"
+    },
+    "tier": {
+      "type": "string",
+      "enum": [
+        "rookie",
+        "builder",
+        "engineer",
+        "monsterMaster"
+      ]
+    },
+    "estimatedMinutes": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 120
+    },
     "prerequisites": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     },
     "componentIds": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     },
     "steps": {
       "type": "array",
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["stepId", "title", "type", "markdownContent"],
+        "required": [
+          "stepId",
+          "title",
+          "type",
+          "markdownContent"
+        ],
         "properties": {
-          "stepId": { "type": "string" },
-          "title": { "type": "string" },
+          "stepId": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
           "type": {
             "type": "string",
-            "enum": ["story", "visualExplanation", "physicalTask", "interactiveWiring", "codeExperiment", "quizCheckpoint"]
+            "enum": [
+              "story",
+              "visualExplanation",
+              "physicalTask",
+              "interactiveWiring",
+              "codeExperiment",
+              "quizCheckpoint"
+            ]
           },
-          "markdownContent": { "type": "string" },
-          "illustrationAsset": { "type": "string" },
-          "interactiveWidgetType": { "type": "string" },
-          "interactiveConfig": { "type": "object" }
+          "markdownContent": {
+            "type": "string"
+          },
+          "illustrationAsset": {
+            "type": "string"
+          },
+          "interactiveWidgetType": {
+            "type": "string"
+          },
+          "interactiveConfig": {
+            "type": "object"
+          }
         }
       }
     },
-    "xpReward": { "type": "integer", "minimum": 10 }
+    "xpReward": {
+      "type": "integer",
+      "minimum": 10
+    },
+    "learningGoal": {
+      "type": "string",
+      "minLength": 5
+    },
+    "vocabulary": {
+      "type": "array",
+      "maxItems": 2,
+      "items": {
+        "type": "object",
+        "required": [
+          "term",
+          "pronunciation",
+          "meaning"
+        ],
+        "properties": {
+          "term": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pronunciation": {
+            "type": "string",
+            "minLength": 1
+          },
+          "meaning": {
+            "type": "string",
+            "minLength": 5
+          }
+        }
+      }
+    }
   }
 }

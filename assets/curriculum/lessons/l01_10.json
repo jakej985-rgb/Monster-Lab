@@ -3,7 +3,7 @@
   "title": "Your First Engineering Experiment",
   "summary": "Great engineers don't just guess what happens—they use the Scientific Engineering Method:",
   "tier": "rookie",
-  "estimatedMinutes": 10,
+  "estimatedMinutes": 8,
   "courseId": "lesson_01",
   "sortOrder": 10,
   "isOptional": false,
@@ -18,7 +18,7 @@
       "stepId": "l01_s10",
       "title": "Your First Engineering Experiment",
       "type": "story",
-      "markdownContent": "Great engineers don't just guess what happens—they use the **Scientific Engineering Method**:\n\n```\n1. Read Code ➔ 2. Predict Outcome ➔ 3. Upload & Test ➔ 4. Observe ➔ 5. Verify\n```\n\n### The Prediction Challenge:\nLook at your Arduino Uno. There is a tiny amber LED labeled **'L'** connected directly to **Pin 13**.\n\nImagine our code changes from `HIGH` to `LOW`:\n```cpp\ndigitalWrite(13, LOW);\n```\n\nBefore testing, ask yourself:\n- What pin is being commanded? (Pin 13!)\n- What state is being sent? (`LOW` means 0 Volts / power OFF!)\n- What do you predict the LED will do?\n\nLet's see how forming hypotheses helps us become true engineering scientists!",
+      "markdownContent": "Engineers test ideas. First predict what will happen. Then run one test, watch closely, and compare the result with your prediction.",
       "quickCheck": [
         {
           "questionId": "l01_s10_q1",
@@ -50,14 +50,14 @@
       "stepId": "l01_10_s02",
       "title": "The Scientific Engineering Method",
       "type": "visualExplanation",
-      "markdownContent": "### The 5-Step Engineering Experiment Cycle 🔬\n\nIn the Monster Lab, we test hypotheses just like NASA engineers and rocket scientists:\n\n```\n┌────────────────────────────────────────────────────────┐\n│             THE ENGINEERING METHOD CYCLE               │\n│                                                        │\n│   [ 1. READ CODE ] ──────> [ 2. FORM PREDICTION ]      │\n│   Understand pins           Hypothesize what will      │\n│   and states commanded      happen BEFORE testing      │\n│                                      │                 │\n│                                      ▼                 │\n│   [ 4. OBSERVE REALITY ] <-- [ 3. EXECUTE TEST ]       │\n│   Watch status LEDs,         Upload sketch, supply     │\n│   measure with probes        power to circuit          │\n│            │                                           │\n│            ▼                                           │\n│   [ 5. COMPARE & VERIFY ]                              │\n│   Did observation match hypothesis? Log findings!      │\n└────────────────────────────────────────────────────────┘\n```\n\n#### Why Predicting Matters:\n- If you test without predicting, you won't know if a surprise outcome is a clever feature or a hidden bug!\n- When observation matches prediction, your understanding is verified!\n- When observation differs, you just discovered an opportunity to learn something new!"
+      "markdownContent": "A fair test changes one thing at a time. Write or say: “I thought ___. I tried ___. I noticed ___.”"
     },
     {
       "stepId": "l01_10_s03",
       "title": "Formulate Your Prediction & Test",
       "type": "physicalTask",
       "interactiveWidgetType": "engineeringPrediction",
-      "markdownContent": "### Laboratory Bench: Pin 13 LED Experiment! 🧪\n\nFollow the scientific method on your workbench:\n1. Review the commanded statement: `digitalWrite(13, LOW);`\n2. Select your scientific hypothesis: What will the amber LED labeled **'L'** do?\n3. Execute the virtual test to trigger the command.\n4. Observe the simulated hardware and confirm your finding!"
+      "markdownContent": "Predict what the L light will do, run the virtual test, and compare what happened with your prediction."
     },
     {
       "stepId": "l01_10_s04",
@@ -83,30 +83,23 @@
             ],
             "correctIndex": 0,
             "explanation": "Predicting outcome requires analyzing how code and circuit interface together, enabling meaningful verification."
-          },
-          {
-            "question": "If your observation does NOT match your prediction, what should you do?",
-            "options": [
-              "Investigate step-by-step to diagnose the discrepancy without panic",
-              "Abandon the project immediately",
-              "Pretend you never ran the experiment"
-            ],
-            "correctIndex": 0,
-            "explanation": "Unexpected outcomes are the heartbeat of engineering discovery! Treat every mismatch as a fun detective puzzle."
-          },
-          {
-            "question": "What is the primary purpose of keeping an engineering notebook?",
-            "options": [
-              "To document code snippets, circuit designs, hypotheses, and experimental results",
-              "To draw silly doodles only",
-              "To make your backpack heavier"
-            ],
-            "correctIndex": 0,
-            "explanation": "Engineering logs document progress, record troubleshooting steps, and prevent repeating old mistakes."
           }
         ]
       }
     }
   ],
-  "xpReward": 10
+  "xpReward": 10,
+  "learningGoal": "Make a prediction, test it, and describe what happened.",
+  "vocabulary": [
+    {
+      "term": "Predict",
+      "pronunciation": "pree-DIKT",
+      "meaning": "Say what you think will happen before a test."
+    },
+    {
+      "term": "Observe",
+      "pronunciation": "ub-ZURV",
+      "meaning": "Carefully notice and record what happens."
+    }
+  ]
 }

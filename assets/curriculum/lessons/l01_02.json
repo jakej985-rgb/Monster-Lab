@@ -3,7 +3,7 @@
   "title": "Meet the Arduino Uno",
   "summary": "Pick up your Arduino Uno board and hold it gently by its edges, just like holding a tasty cracker!",
   "tier": "rookie",
-  "estimatedMinutes": 10,
+  "estimatedMinutes": 5,
   "courseId": "lesson_01",
   "sortOrder": 2,
   "isOptional": false,
@@ -18,7 +18,7 @@
       "stepId": "l01_s02",
       "title": "Meet the Arduino Uno",
       "type": "physicalTask",
-      "markdownContent": "Pick up your **Arduino Uno** board and hold it gently by its edges, just like holding a tasty cracker! 🍪\n\n> [!IMPORTANT]\n> **The #1 Golden Hardware Rule: ALWAYS UNPLUG BEFORE REWIRING!**\n> Whenever you insert, remove, or adjust jumper wires and electronic components, disconnect the USB cable first! Moving wires on a powered circuit can cause accidental metal-to-metal shorts that blow out the microcontroller or trip your computer's USB port.\n\n> [!TIP]\n> **ESD (Static Electricity) Protection:** Touch an unpainted metal object (like a table leg or computer case) before picking up circuit boards to safely discharge any static electricity built up on your clothes or carpet.\n\nLook closely at the board. Notice these important landmarks:\n1. **USB Port**: The shiny silver metal box. This is where you plug in the cable to send code and power from your computer!\n2. **Power Jack**: The round black socket. You can plug in a battery pack here when your robot is on the move.\n3. **Reset Button**: The small push button in the corner. Pressing it restarts your program from the very beginning.\n4. **Built-in LED**: A tiny light labeled **'L'** right on the board next to Pin 13.\n5. **Pin Headers**: The long rows of black plastic sockets with little holes along the edges.",
+      "markdownContent": "Look at your board, then match the USB port, reset button, digital pins, and analog pins to their labels.",
       "quickCheck": [
         {
           "questionId": "l01_s02_q1",
@@ -50,7 +50,7 @@
       "stepId": "l01_02_s02",
       "title": "Board Architecture & Key Landmarks",
       "type": "visualExplanation",
-      "markdownContent": "### Exploring the Arduino Uno Hardware Map 🗺️\n\nTake a close look at your board. Every component has an important job:\n\n```\n┌────────────────────────────────────────────────────────┐\n│ [USB Port]                [Digital Pins 0 - 13]        │\n│  Silver Box               Header along the top edge    │\n│                                                        │\n│ [Reset Btn]   [ATmega328P Chip]           ['L' LED]    │\n│  Tiny button   Big black rectangle         On Pin 13   │\n│                                                        │\n│ [DC Jack]     [Power Header]    [Analog Pins A0 - A5]  │\n│  Round socket  5V, 3.3V, GND     10-bit ADC sensor in  │\n└────────────────────────────────────────────────────────┘\n```\n\n#### Why Are These Landmarks Special?\n- **USB Port (Silver Box)**: Delivers 5V electricity and sends compiled code into the board's flash memory.\n- **DC Barrel Jack (Black Socket)**: Allows untethered battery power (7V–12V) so your robot can zoom around without a computer cable.\n- **ATmega328P Microcontroller**: The big rectangular black chip with metal legs. This is the master processor holding your program!\n- **Pin Headers**: The socket rows where jumper wires connect your external buttons, buzzers, and LEDs."
+      "markdownContent": "USB connects the board to a computer. Reset restarts the program. The L light is built in. Pin headers connect wires and parts."
     },
     {
       "stepId": "l01_02_s03",
@@ -83,30 +83,23 @@
             ],
             "correctIndex": 0,
             "explanation": "The silver USB port connects to your computer to transfer program code and supply 5V power."
-          },
-          {
-            "question": "What happens when you press the small Reset button?",
-            "options": [
-              "It restarts your program from the very beginning",
-              "It permanently deletes your code forever",
-              "It turns the board into an ice cube"
-            ],
-            "correctIndex": 0,
-            "explanation": "The Reset button reboots the microcontroller chip, restarting your sketch from line 1."
-          },
-          {
-            "question": "Which digital pin is directly connected to the built-in test LED labeled 'L'?",
-            "options": [
-              "Digital Pin 13",
-              "Digital Pin 0",
-              "Analog Pin A5"
-            ],
-            "correctIndex": 0,
-            "explanation": "Digital Pin 13 is wired directly to the on-board amber test LED labeled 'L'!"
           }
         ]
       }
     }
   ],
-  "xpReward": 10
+  "xpReward": 10,
+  "learningGoal": "Find the main parts of an Arduino Uno board.",
+  "vocabulary": [
+    {
+      "term": "Microcontroller",
+      "pronunciation": "MY-kroh-kun-TROH-ler",
+      "meaning": "A tiny computer chip that follows a program."
+    },
+    {
+      "term": "Reset",
+      "pronunciation": "ree-SET",
+      "meaning": "Start the program again from the beginning."
+    }
+  ]
 }

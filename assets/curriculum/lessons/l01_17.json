@@ -1,0 +1,154 @@
+{
+  "id": "l01_17",
+  "title": "Course 1 Vocabulary Check",
+  "summary": "Match the key words from Course 1 to their meanings. This quick check helps you warm up your memory before the final knowledge test.",
+  "tier": "rookie",
+  "estimatedMinutes": 8,
+  "courseId": "lesson_01",
+  "sortOrder": 17,
+  "isOptional": false,
+  "prerequisites": [
+    "l01_16"
+  ],
+  "componentIds": [],
+  "steps": [
+    {
+      "stepId": "l01_17_s01",
+      "title": "Vocabulary Match",
+      "type": "physicalTask",
+      "interactiveWidgetType": "vocabularyMatch",
+      "markdownContent": "Match each word to its meaning. You will see up to four words at a time. Drag a word to its meaning, or tap a word and then tap its match.",
+      "interactiveConfig": {
+        "title": "Course 1 Vocabulary Check",
+        "items": [
+          {
+            "term": "Sensor",
+            "meaning": "A part that notices something, like light or a button press."
+          },
+          {
+            "term": "Program",
+            "meaning": "Instructions that tell a computer what to do."
+          },
+          {
+            "term": "Microcontroller",
+            "meaning": "A tiny computer chip that follows a program."
+          },
+          {
+            "term": "Reset",
+            "meaning": "Start the program again from the beginning."
+          },
+          {
+            "term": "Processor",
+            "meaning": "The part of the chip that follows instructions."
+          },
+          {
+            "term": "Memory",
+            "meaning": "A place where a computer keeps code or information."
+          },
+          {
+            "term": "Input",
+            "meaning": "Information going into the Arduino."
+          },
+          {
+            "term": "Output",
+            "meaning": "A signal or action coming out of the Arduino."
+          },
+          {
+            "term": "Digital",
+            "meaning": "A signal read as one of a few choices, such as HIGH or LOW."
+          },
+          {
+            "term": "Analog",
+            "meaning": "A measurement that can change across a range."
+          },
+          {
+            "term": "Pin",
+            "meaning": "A connection point for a wire or part."
+          },
+          {
+            "term": "PWM",
+            "meaning": "Fast on/off pulses that can control effects like LED brightness."
+          },
+          {
+            "term": "Circuit",
+            "meaning": "A complete path that lets electricity flow."
+          },
+          {
+            "term": "Ground",
+            "meaning": "The circuit’s shared reference and return connection."
+          },
+          {
+            "term": "Condition",
+            "meaning": "A question the code checks before choosing an action."
+          },
+          {
+            "term": "If/else",
+            "meaning": "Code that chooses what to do for two different cases."
+          },
+          {
+            "term": "Upload",
+            "meaning": "Send a program from a computer to the board."
+          },
+          {
+            "term": "Predict",
+            "meaning": "Say what you think will happen before a test."
+          },
+          {
+            "term": "Observe",
+            "meaning": "Carefully notice and record what happens."
+          },
+          {
+            "term": "Troubleshoot",
+            "meaning": "Check clues to find and fix a problem."
+          },
+          {
+            "term": "Mismatch",
+            "meaning": "Two things that should agree but do not."
+          },
+          {
+            "term": "Current",
+            "meaning": "The flow of electric charge."
+          },
+          {
+            "term": "Short circuit",
+            "meaning": "An unintended path that can let too much current flow."
+          },
+          {
+            "term": "Board",
+            "meaning": "The circuit board that holds a microcontroller and connectors."
+          },
+          {
+            "term": "Compare",
+            "meaning": "Look at how things are alike and different."
+          },
+          {
+            "term": "Wireless",
+            "meaning": "Sending information without a cable."
+          },
+          {
+            "term": "Wi-Fi",
+            "meaning": "A way for devices to connect to a network without wires."
+          },
+          {
+            "term": "Voltage",
+            "meaning": "The electrical push measured in volts."
+          },
+          {
+            "term": "Level shifter",
+            "meaning": "A part that changes a signal voltage to a safer level."
+          },
+          {
+            "term": "Review",
+            "meaning": "Look again at ideas you have already learned."
+          },
+          {
+            "term": "Challenge",
+            "meaning": "A task that lets you use what you know."
+          }
+        ]
+      }
+    }
+  ],
+  "xpReward": 10,
+  "learningGoal": "Recall the important words from Course 1."
+}

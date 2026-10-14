@@ -60,6 +60,7 @@ import '../widgets/inductive_kickback_simulator_widget.dart';
 import '../widgets/h_bridge_direction_switch_widget.dart';
 import '../widgets/servo_pulse_width_modulator_widget.dart';
 import '../widgets/external_motor_power_lab_widget.dart';
+import '../widgets/vocabulary_match_widget.dart';
 
 typedef ActivityWidgetBuilder = Widget Function(
   BuildContext context,
@@ -80,6 +81,8 @@ class ActivityRegistry {
         InteractiveBoardInspectorWidget(config: config, onComplete: onComplete),
     'boardLabelDragDrop': (context, config, onComplete) =>
         BoardLabelDragDropWidget(config: config, onComplete: onComplete),
+    'vocabularyMatch': (context, config, onComplete) =>
+        VocabularyMatchWidget(config: config, onComplete: onComplete),
     'groundTroubleshooting': (context, config, onComplete) =>
         GroundTroubleshootingWidget(config: config, onComplete: onComplete),
     'decisionSimulator': (context, config, onComplete) =>

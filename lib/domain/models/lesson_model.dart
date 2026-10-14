@@ -100,11 +100,38 @@ class LessonStep {
       };
 }
 
+class LessonVocabulary {
+  final String term;
+  final String pronunciation;
+  final String meaning;
+
+  const LessonVocabulary({
+    required this.term,
+    required this.pronunciation,
+    required this.meaning,
+  });
+
+  factory LessonVocabulary.fromJson(Map<String, dynamic> json) =>
+      LessonVocabulary(
+        term: json['term'] as String,
+        pronunciation: json['pronunciation'] as String,
+        meaning: json['meaning'] as String,
+      );
+
+  Map<String, dynamic> toJson() => {
+        'term': term,
+        'pronunciation': pronunciation,
+        'meaning': meaning,
+      };
+}
+
 class Lesson {
   final String id;
   final String? courseId;
   final String title;
   final String summary;
+  final String? learningGoal;
+  final List<LessonVocabulary> vocabulary;
   final DifficultyTier tier;
   final int estimatedMinutes;
   final int sortOrder;
@@ -119,6 +146,8 @@ class Lesson {
     this.courseId,
     required this.title,
     required this.summary,
+    this.learningGoal,
+    this.vocabulary = const [],
     required this.tier,
     required this.estimatedMinutes,
     this.sortOrder = 0,
@@ -135,6 +164,10 @@ class Lesson {
       courseId: json['courseId'] as String?,
       title: json['title'] as String,
       summary: json['summary'] as String,
+      learningGoal: json['learningGoal'] as String?,
+      vocabulary: (json['vocabulary'] as List? ?? const [])
+          .map((item) => LessonVocabulary.fromJson(item as Map<String, dynamic>))
+          .toList(),
       tier: DifficultyTier.values.byName(json['tier'] as String),
       estimatedMinutes: json['estimatedMinutes'] as int,
       sortOrder: json['sortOrder'] as int? ?? 0,
@@ -153,6 +186,9 @@ class Lesson {
         'courseId': courseId,
         'title': title,
         'summary': summary,
+        if (learningGoal != null) 'learningGoal': learningGoal,
+        if (vocabulary.isNotEmpty)
+          'vocabulary': vocabulary.map((item) => item.toJson()).toList(),
         'tier': tier.name,
         'estimatedMinutes': estimatedMinutes,
         'sortOrder': sortOrder,

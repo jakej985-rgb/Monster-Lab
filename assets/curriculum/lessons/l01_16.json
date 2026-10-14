@@ -3,7 +3,7 @@
   "title": "Course 1 Review & Microcontroller Master Challenge",
   "summary": "You have completed your comprehensive tour of the microcontroller universe! Put on your detective hat and prove your skills in the Grand Capstone Exam.",
   "tier": "rookie",
-  "estimatedMinutes": 10,
+  "estimatedMinutes": 8,
   "courseId": "lesson_01",
   "sortOrder": 16,
   "isOptional": false,
@@ -22,7 +22,7 @@
       "stepId": "l01_16_s01",
       "title": "Course 1 Master Recap",
       "type": "story",
-      "markdownContent": "Hooray! 🎉 You have completed your tour of the entire microcontroller universe!\n\nLet's review the big ideas you mastered:\n- The **Arduino Uno** is a microcontroller development board that serves as the brain of your robot.\n- The **Arduino Family** includes the compact breadboard-friendly **Nano** and the 54-pin powerhouse **Mega 2560**.\n- The **IoT Revolution** introduced the **ESP8266** and dual-core 240 MHz **ESP32** with built-in Wi-Fi and Bluetooth.\n- **Logic Voltages**: Classic Arduinos run at **5V**, while modern IoT chips run at **3.3V**. Always protect 3.3V inputs with level shifters or voltage dividers!\n- **Inputs** gather senses from the world; **Outputs** perform physical actions.\n- **Digital** signals have two states (HIGH/LOW); **Analog** signals cover a smooth continuous range.\n- Circuits require a complete loop from **Power (+5V)** through components and back to **Ground (GND)**.\n\nPut on your detective hat and get ready to prove your skills in the Grand Monster Lab Challenge!",
+      "markdownContent": "You have explored boards, signals, circuits, code, and safety. Now use those ideas to help a robot choose a board and respond to an input.",
       "quickCheck": [
         {
           "questionId": "l01_16_s01_q1",
@@ -54,9 +54,15 @@
       "stepId": "l01_16_s02",
       "title": "Grand Monster Lab Architecture Review",
       "type": "visualExplanation",
-      "markdownContent": "### Master Review: The Pillars of Microcontroller Engineering 🏛️\n\nYou've learned everything needed to bring machines to life! Here is your quick-reference sheet:\n\n```\n┌────────────────────────────────────────────────────────────────────────┐\n│                        COURSE 1 CHEAT SHEET                            │\n├────────────────────────────────────────────────────────────────────────┤\n│ 1. THE BRAIN:      Microcontroller CPU & Flash memory (Uno/Nano/Mega)  │\n│ 2. WIRELESS IOT:   ESP8266 (WiFi) & ESP32 (WiFi + Bluetooth BLE)      │\n│ 3. VOLTAGES:       5V (Arduino classic) vs 3.3V (IoT chips & sensors)  │\n│ 4. INPUTS:         Sensors that bring information IN (Buttons, Light)  │\n│ 5. OUTPUTS:        Actuators that send actions OUT (LEDs, Motors)      │\n│ 6. DIGITAL:        Two discrete states: HIGH or LOW                    │\n│ 7. ANALOG:         Continuous voltages: 0V to 5V (Reads 0 to 1023)     │\n│ 8. CIRCUITS:       Unbroken loops: Power (+5V) ➔ Load ➔ Ground (GND)   │\n└────────────────────────────────────────────────────────────────────────┘\n```\n\n#### The Engineer's Mindset:\n- Plan before you build.\n- Predict before you test.\n- Check power, pin match, and ground when bugs arise.",
+      "markdownContent": "Remember the path: input → code → output. Check power and ground, then make sure your parts are safe for the board.",
       "interactiveConfig": {
-        "boardsCovered": ["comp_uno", "comp_nano", "comp_mega", "comp_esp32", "comp_esp8266"]
+        "boardsCovered": [
+          "comp_uno",
+          "comp_nano",
+          "comp_mega",
+          "comp_esp32",
+          "comp_esp8266"
+        ]
       }
     },
     {
@@ -64,7 +70,7 @@
       "title": "Mini Capstone Inspection Challenge",
       "type": "physicalTask",
       "interactiveWidgetType": "boardLabelDragDrop",
-      "markdownContent": "### Capstone Bench Challenge: Complete Board Inspection! 🏆\n\nBefore you take your final graduation exam, prove that you can identify every key system on your Arduino board without hesitation!\n\nDrag each landmark badge to its matching system on the Arduino Uno!",
+      "markdownContent": "Complete the board-inspection challenge. Explain one choice, then answer a short review question about a skill you practiced.",
       "interactiveConfig": {
         "targets": [
           {
@@ -114,50 +120,23 @@
             ],
             "correctIndex": 0,
             "explanation": "The Arduino Uno is a microcontroller development board that acts as the brain for your robot projects."
-          },
-          {
-            "question": "Which Arduino board plugs directly into a solderless breadboard?",
-            "options": [
-              "Arduino Nano",
-              "Arduino Uno",
-              "Arduino Mega"
-            ],
-            "correctIndex": 0,
-            "explanation": "The Arduino Nano has DIP header pins on the bottom, allowing it to press directly into breadboards."
-          },
-          {
-            "question": "What built-in features make the ESP32 ideal for modern IoT robotics?",
-            "options": [
-              "Dual-core high speed processor with built-in Wi-Fi and Bluetooth",
-              "It runs on steam power",
-              "It produces cold water"
-            ],
-            "correctIndex": 0,
-            "explanation": "The ESP32 features dual 240 MHz cores along with 2.4 GHz Wi-Fi and Bluetooth wireless radios."
-          },
-          {
-            "question": "Why should you NOT connect a 5V output pin directly to a 3.3V microcontroller input?",
-            "options": [
-              "The excess voltage can damage or destroy the sensitive 3.3V chip",
-              "Because 5V is too quiet",
-              "Because the wires will change color"
-            ],
-            "correctIndex": 0,
-            "explanation": "3.3V chips cannot tolerate 5V input pressures and require voltage dividers or level shifters for protection."
-          },
-          {
-            "question": "What does GND stand for in an electronic circuit?",
-            "options": [
-              "Ground — the safe return path for electric current",
-              "Green Night Light",
-              "Giant Number Dial"
-            ],
-            "correctIndex": 0,
-            "explanation": "Ground (GND) is the 0V reference point and the essential return path for electrical current."
           }
         ]
       }
     }
   ],
-  "xpReward": 25
+  "xpReward": 25,
+  "learningGoal": "Use course ideas to inspect a board and explain a simple design choice.",
+  "vocabulary": [
+    {
+      "term": "Review",
+      "pronunciation": "ree-VYOO",
+      "meaning": "Look again at ideas you have already learned."
+    },
+    {
+      "term": "Challenge",
+      "pronunciation": "CHAL-inj",
+      "meaning": "A task that lets you use what you know."
+    }
+  ]
 }

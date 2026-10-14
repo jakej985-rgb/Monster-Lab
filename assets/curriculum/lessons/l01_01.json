@@ -3,7 +3,7 @@
   "title": "What Is Arduino?",
   "summary": "Every monster robot needs a brain to explore the world.",
   "tier": "rookie",
-  "estimatedMinutes": 10,
+  "estimatedMinutes": 5,
   "courseId": "lesson_01",
   "sortOrder": 1,
   "isOptional": false,
@@ -16,7 +16,7 @@
       "stepId": "l01_s01",
       "title": "What Is Arduino?",
       "type": "story",
-      "markdownContent": "Welcome to the Monster Lab! 🤖\n\nEvery monster robot needs a control center to explore the world. That control center is the **Arduino Uno**!\n\nWe often call it the robot's \"brain\", but the Arduino doesn't think or guess on its own—it follows the exact instructions in your program step by step to link a robot's **senses** to its **actions**:\n- When a sensor detects something (like a pressed button), the Arduino reads the electrical signal.\n- It executes your uploaded program to evaluate what happened.\n- Then it commands output parts: lighting up an LED, sounding a buzzer, or spinning a motor!\n\n```\nSense (Input) ➔ Execute Code (Arduino) ➔ Act (Output)\n```\n\nLet's get ready to explore how this amazing little board brings machines to life!",
+      "markdownContent": "Meet your robot’s control board! It follows your program: a sensor notices something, the board follows the instructions, and an output responds. Sense → Decide → Act!",
       "quickCheck": [
         {
           "questionId": "l01_s01_q1",
@@ -48,14 +48,14 @@
       "stepId": "l01_01_s02",
       "title": "The Robot Signal Flow",
       "type": "visualExplanation",
-      "markdownContent": "### How Signals Travel Through Monster Brains ⚡\n\nEvery smart robot in the Monster Lab follows the **Robot Sense-Think-Act Loop**:\n\n```\n┌─────────────────┐       ┌─────────────────┐       ┌─────────────────┐\n│  1. SENSE       │ ────> │  2. THINK       │ ────> │  3. ACT         │\n│  (Inputs)       │       │  (Arduino Brain)│       │  (Outputs)      │\n│  Buttons, Light │       │  Runs Your Code │       │  LEDs, Motors   │\n└─────────────────┘       └─────────────────┘       └─────────────────┘\n```\n\n#### What Happens in the Loop?\n1. **Sense (Input)**: Sensors measure the world (a hand waving, a button pressed, or darkness falling).\n2. **Think (Arduino Brain)**: The microcontroller reads those signals and follows your program instructions.\n3. **Act (Output)**: The brain commands hardware parts to shine lights, play sounds, or turn wheels!\n\n> **Monster Lab Golden Rule**: The Arduino never gets tired! It runs this loop thousands of times every single second to keep your robot aware of everything around it."
+      "markdownContent": "A button or light sensor is an input. The Arduino follows code. An LED or buzzer is an output. The board follows the program; it does not guess."
     },
     {
       "stepId": "l01_01_s03",
       "title": "Test the Brain's Signal Pulse",
       "type": "codeExperiment",
       "interactiveWidgetType": "visualFlowDiagram",
-      "markdownContent": "### Send a Pulse Through the Robot Brain! 🚀\n\nLet's watch a real signal pulse travel through the complete 4-stage system:\n1. **SENSE**: Sensor gathers data from the outside world.\n2. **TRANSMIT**: Wires send electrical signals into Arduino pins.\n3. **DECIDE**: Your code decides what action to take.\n4. **ACT**: Actuators create motion, light, or sound!\n\nTap each stage below to learn its job, then hit **Test Signal Pulse ➔** to see electricity rush through the circuit!"
+      "markdownContent": "Put the stages in order: sense, decide, act. Then tap Test Signal Pulse and follow the robot’s message from sensor to output."
     },
     {
       "stepId": "l01_01_s04",
@@ -81,30 +81,23 @@
             ],
             "correctIndex": 0,
             "explanation": "The Arduino is the electronic brain that connects senses to physical actions!"
-          },
-          {
-            "question": "What are the three steps in the robot decision loop?",
-            "options": [
-              "Sense (Input) ➔ Think (Arduino) ➔ Act (Output)",
-              "Sleep ➔ Eat ➔ Nap",
-              "Spin ➔ Drop ➔ Disappear"
-            ],
-            "correctIndex": 0,
-            "explanation": "Robots sense physical signals, think using program code, and act using output parts!"
-          },
-          {
-            "question": "How often does an Arduino check its sensor inputs?",
-            "options": [
-              "Thousands of times every second without stopping",
-              "Only once every year",
-              "Only when you shake it"
-            ],
-            "correctIndex": 0,
-            "explanation": "The microcontroller operates at 16 million clock cycles per second, repeating loops thousands of times a second!"
           }
         ]
       }
     }
   ],
-  "xpReward": 10
+  "xpReward": 10,
+  "learningGoal": "Trace how a robot senses something, follows code, and acts.",
+  "vocabulary": [
+    {
+      "term": "Sensor",
+      "pronunciation": "SEN-sor",
+      "meaning": "A part that notices something, like light or a button press."
+    },
+    {
+      "term": "Program",
+      "pronunciation": "PROH-gram",
+      "meaning": "Instructions that tell a computer what to do."
+    }
+  ]
 }

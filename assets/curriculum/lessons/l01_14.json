@@ -3,7 +3,7 @@
   "title": "The IoT Revolution: ESP8266 and ESP32",
   "summary": "Explore the wireless powerhouses: the ESP8266 WiFi module and the dual-core ESP32 with built-in Bluetooth and high-speed processing.",
   "tier": "rookie",
-  "estimatedMinutes": 10,
+  "estimatedMinutes": 5,
   "courseId": "lesson_01",
   "sortOrder": 14,
   "isOptional": false,
@@ -20,18 +20,18 @@
       "stepId": "l01_14_s01",
       "title": "Cutting the Cable: The Wireless Revolution",
       "type": "story",
-      "markdownContent": "### Robots Want to Talk to the Cloud! 🌐\n\nTraditional Arduino boards like the Uno, Nano, and Mega are brilliant at reading physical pins, but they cannot talk to the internet or connect to a smartphone on their own. They don't have built-in radios!\n\nWhen engineers wanted smart weather stations, robotic plant waters, and internet-connected monster rovers, a company named **Espressif** caused an earthquake in the electronics world with two revolutionary chips:\n\n1. **ESP8266**: The chip that started the DIY Internet-of-Things (IoT) revolution. It packed a 32-bit processor and a full **Wi-Fi radio** onto a module that cost less than a cup of coffee!\n2. **ESP32**: The modern super-microcontroller! It features **two processor cores** running at up to 240 MHz (15 times faster than an Arduino Uno!), plus **both Wi-Fi and Bluetooth** built right into silicon!\n\nLet's see how these wireless chips transformed modern robotics and smart devices!",
+      "markdownContent": "Some ESP boards have Wi-Fi built in. ESP32 boards may also support Bluetooth. Features and pins vary by board, so check its pin map before wiring.",
       "quickCheck": [
         {
           "questionId": "l01_14_s01_q1",
-          "question": "What special superpower do ESP chips have that a standard Arduino Uno lacks?",
+          "question": "What wireless feature is built into many ESP boards?",
           "options": [
-            "Built-in wireless radios like Wi-Fi and Bluetooth",
-            "They can fly through the air on their own",
-            "They don't need electricity"
+            "Wi-Fi",
+            "A bigger battery",
+            "A screen"
           ],
           "correctIndex": 0,
-          "explanation": "ESP8266 and ESP32 boards have built-in Wi-Fi and Bluetooth transceivers, enabling IoT cloud connectivity!",
+          "explanation": "Many ESP boards include Wi-Fi. Features vary by board.",
           "warmupExplanation": "A standard Arduino Uno needs external add-on shields for wireless, while ESP chips have radios built right inside the chip."
         },
         {
@@ -53,7 +53,7 @@
       "title": "ESP8266 vs. ESP32: Inside the Silicon",
       "type": "visualExplanation",
       "interactiveWidgetType": "espChipComparison",
-      "markdownContent": "### Meet the IoT Microcontroller Heavyweights 📡\n\nTake a look at how the classic ESP8266 and the advanced ESP32 compare:\n\n```\n┌────────────────────┬─────────────────────┬──────────────────────────┐\n│ Feature            │ ESP8266 / ESP-01    │ ESP32 NodeMCU / DevKit   │\n├────────────────────┼─────────────────────┼──────────────────────────┤\n│ CPU Processor      │ Single-Core 80 MHz  │ Dual-Core 240 MHz (Xtensa)│\n│ Wi-Fi Wireless     │ 2.4 GHz 802.11 b/g/n│ 2.4 GHz 802.11 b/g/n      │\n│ Bluetooth          │ None                │ Bluetooth 4.2 BR/EDR & BLE│\n│ GPIO Pins          │ 8 to 17 pins        │ Up to 36 pins             │\n│ Touch Sensors      │ None                │ 10 Capacitive Touch Pins │\n│ Analog Converters  │ 1 pin (10-bit ADC)  │ 18 pins (12-bit ADC) + DAC│\n│ Best Monster Uses  │ Simple Wi-Fi Sensors│ Camera robots, BLE Remotes│\n└────────────────────┴─────────────────────┴──────────────────────────┘\n```\n\n#### The ESP-01: Tiny Wi-Fi Dongle\nYou might also see the **ESP-01** module (`comp_esp01`). It is a miniature 8-pin breakout board featuring the ESP8266. You can wire it as a serial Wi-Fi modem to an Arduino Uno to give your Uno internet access without replacing your main board!",
+      "markdownContent": "An ESP board can connect a project to a network. You do not need to memorize chip speeds or pin counts yet.",
       "interactiveConfig": {
         "chips": [
           {
@@ -79,7 +79,7 @@
       "stepId": "l01_14_s03",
       "title": "IoT Code Architecture: Connecting to Wi-Fi",
       "type": "codeExperiment",
-      "markdownContent": "### How ESP Microcontrollers Talk to Networks 🌐\n\nOne of the most exciting moments in engineering is seeing your microcontroller obtain an IP address and connect to your home router! Here is what real IoT code looks like:\n\n```cpp\n#include <WiFi.h> // ESP32 Wi-Fi library\n\nconst char* ssid = \"MonsterLab_Network\";\nconst char* password = \"SecretBotPass123\";\n\nvoid setup() {\n  Serial.begin(115200); // High-speed baud rate for ESP32!\n  \n  Serial.println(\"Booting ESP32 Wireless Transceiver...\");\n  WiFi.begin(ssid, password);\n  \n  while (WiFi.status() != WL_CONNECTED) {\n    delay(500);\n    Serial.print(\".\");\n  }\n  \n  Serial.println(\"\\nWi-Fi Connected!\");\n  Serial.print(\"Robot IP Address: \");\n  Serial.println(WiFi.localIP());\n}\n\nvoid loop() {\n  // Telemetry stream\n}\n```\n\n#### Why This Matters for Monster Lab:\nOnce connected, your monster can send alerts to a phone, stream sensor readings to a web dashboard, or listen for commands from a web app anywhere in the world!",
+      "markdownContent": "Watch the Wi-Fi connection simulator. In a real project, the board needs the right library, network name, and password. Keep real passwords private.",
       "interactiveConfig": {
         "status": "connected",
         "mockIp": "192.168.1.142"
@@ -109,30 +109,23 @@
             ],
             "correctIndex": 0,
             "explanation": "The ESP32 features integrated 2.4 GHz Wi-Fi and dual-mode Bluetooth (Classic + BLE) on a single silicon chip."
-          },
-          {
-            "question": "What is the primary feature that made the ESP8266 famous among electronics inventors?",
-            "options": [
-              "Providing low-cost Wi-Fi connectivity for smart IoT projects",
-              "Being made of pure solid gold",
-              "Working underwater without a case"
-            ],
-            "correctIndex": 0,
-            "explanation": "The ESP8266 made Wi-Fi connectivity extremely accessible and inexpensive for makers and roboticists worldwide."
-          },
-          {
-            "question": "Why does the ESP32 use a dual-core processor?",
-            "options": [
-              "One core can handle wireless Wi-Fi/Bluetooth networking while the other runs robot sensor and motor code",
-              "So one core can sleep all day",
-              "Because two cores are needed to draw circles"
-            ],
-            "correctIndex": 0,
-            "explanation": "Dual cores allow simultaneous multitasking: one core handles heavy wireless protocol stacks while the other executes time-critical motor loops!"
           }
         ]
       }
     }
   ],
-  "xpReward": 10
+  "xpReward": 10,
+  "learningGoal": "Recognize that ESP boards can add wireless features to a project.",
+  "vocabulary": [
+    {
+      "term": "Wireless",
+      "pronunciation": "WIRE-less",
+      "meaning": "Sending information without a cable."
+    },
+    {
+      "term": "Wi-Fi",
+      "pronunciation": "WHY-fye",
+      "meaning": "A way for devices to connect to a network without wires."
+    }
+  ]
 }

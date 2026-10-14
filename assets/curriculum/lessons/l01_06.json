@@ -3,7 +3,7 @@
   "title": "Meet the Pins",
   "summary": "Look along the top and bottom edges of your Arduino Uno.",
   "tier": "rookie",
-  "estimatedMinutes": 10,
+  "estimatedMinutes": 5,
   "courseId": "lesson_01",
   "sortOrder": 6,
   "isOptional": false,
@@ -18,7 +18,7 @@
       "stepId": "l01_s06",
       "title": "Meet the Pins",
       "type": "story",
-      "markdownContent": "Look along the top and bottom edges of your Arduino Uno. You will see long black rows with little square sockets called **Pin Headers**!\n\nPins are like hands and ears for the Arduino. They let you plug in jumper wires to connect sensors, buttons, and lights.\n\n### 1. Top Header: Digital Pins (0 to 13)\nLook at the numbers printed along the top row: **0, 1, 2, ... all the way to 13**.\n- These pins can be digital inputs or digital outputs.\n- Notice Pin 13: It is wired to the built-in amber light on the board!\n\n### 2. Bottom Right Header: Analog In (A0 to A5)\nLook at the bottom right row labeled **ANALOG IN**:\n- The letter **'A'** stands for **Analog**!\n- Pins **A0, A1, A2, A3, A4, A5** read voltages via the internal ADC from knobs and sensors.\n- **Digital Dual-Use:** On the Uno, pins A0–A5 can also function as standard digital GPIO pins (Pins 14 to 19)!\n\n### 3. Bottom Left Header: Power Pins\nLook at the bottom left row labeled **POWER**:\n- Find **5V** and **3.3V** (power supplies).\n- Find **GND** (Ground).\n\nTouch each header gently with your finger to find Digital Pin 13, Analog Pin A0, and GND!",
+      "markdownContent": "The Uno has digital pins for HIGH/LOW signals, analog pins for measurements, and power pins. Some digital pins have a ~ mark for PWM. Pins 0 and 1 are also used for serial communication.",
       "quickCheck": [
         {
           "questionId": "l01_s06_q1",
@@ -50,14 +50,14 @@
       "stepId": "l01_06_s02",
       "title": "Pin Headers & Specialized Channels",
       "type": "visualExplanation",
-      "markdownContent": "### Pin Architecture: The Neural Pathways 📌\n\nThe Arduino Uno has 28 header pin sockets organized into 3 main groups:\n\n```\n                      [ DIGITAL PINS 0 - 13 ]\n   AREF  GND  13  12  11~ 10~  9~  8    7  6~  5~  4  3~  2  1(TX) 0(RX)\n   ┌──┐ ┌──┐ ┌──┐┌──┐┌──┐┌──┐┌──┐┌──┐  ┌──┐┌──┐┌──┐┌──┐┌──┐┌──┐┌──┐┌──┐\n   └──┘ └──┘ └──┘└──┘└──┘└──┘└──┘└──┘  └──┘└──┘└──┘└──┘└──┘└──┘└──┘└──┘\n\n                 ┌───────────────────────────┐\n                 │       ARDUINO UNO R3      │\n                 └───────────────────────────┘\n\n   ┌──┐ ┌──┐ ┌──┐ ┌──┐ ┌──┐ ┌──┐ ┌──┐  ┌──┐┌──┐┌──┐┌──┐┌──┐┌──┐\n   └──┘ └──┘ └──┘ └──┘ └──┘ └──┘ └──┘  └──┘└──┘└──┘└──┘└──┘└──┘\n   IOREF RESET 3.3V  5V  GND  GND Vin    A0  A1  A2  A3  A4  A5\n             [ POWER HEADER ]              [ ANALOG IN ]\n```\n\n#### Special Pin Powers:\n- **Pins 0 & 1 (RX / TX)**: Serial communication lines that talk to your computer. (Leave them empty when uploading sketches!).\n- **PWM Pins (~3, ~5, ~6, ~9, ~10, ~11)**: Marked with a wavy tilde `~`. These can fake analog voltages using rapid pulsing (dimming LEDs or speeding up motors).\n- **Pin 13 ('L' LED)**: Connected through an internal resistor to the amber test LED.\n- **Analog In (A0–A5)**: Dedicated channels connected to the built-in 10-bit analog-to-digital converter.\n- **Power & Ground**: `5V` (main power), `3.3V` (gentle sensors), and 3 total `GND` return pins!"
+      "markdownContent": "Use the board labels as your map: digital for switches and outputs, analog for changing sensor measurements, power and GND for the circuit."
     },
     {
       "stepId": "l01_06_s03",
       "title": "Pin Inspection & Matching Challenge",
       "type": "physicalTask",
       "interactiveWidgetType": "boardLabelDragDrop",
-      "markdownContent": "### Find the Pins on Your Board! 🔍\n\nTouch each pin header on your physical board, then match the labels in the interactive test below:\n- **Digital Pins (0–13)**: High-speed binary inputs and outputs along the top edge.\n- **Analog Pins (A0–A5)**: Smooth sensor inputs along the bottom right.\n- **5V Power**: Steady power supply pin along the bottom left.\n- **GND Return**: Return ground connections that close the electrical loop.\n\nDrag each badge to its correct pin landmark!",
+      "markdownContent": "Find digital pin 13, analog pin A0, 5V, and GND. Match each label to the right part of the board.",
       "interactiveConfig": {
         "targets": [
           {
@@ -107,30 +107,23 @@
             ],
             "correctIndex": 0,
             "explanation": "The tilde (~) indicates Pulse Width Modulation (PWM) capable pins that can simulate variable analog outputs."
-          },
-          {
-            "question": "How many total Ground (GND) header sockets are on an Arduino Uno board?",
-            "options": [
-              "3 (two on the power header, one next to Pin 13)",
-              "0 (Arduino does not need ground)",
-              "100"
-            ],
-            "correctIndex": 0,
-            "explanation": "The Uno provides 3 convenient GND sockets: two on the bottom power header and one on the top digital header."
-          },
-          {
-            "question": "Which pin header row should you plug a rotary knob sensor into?",
-            "options": [
-              "ANALOG IN (pins A0 to A5)",
-              "USB socket",
-              "DC barrel jack"
-            ],
-            "correctIndex": 0,
-            "explanation": "Rotary potentiometers output variable voltages, so their signal pin connects to Analog In (A0–A5)."
           }
         ]
       }
     }
   ],
-  "xpReward": 10
+  "xpReward": 10,
+  "learningGoal": "Choose a useful Uno pin group for a simple task.",
+  "vocabulary": [
+    {
+      "term": "Pin",
+      "pronunciation": "pin",
+      "meaning": "A connection point for a wire or part."
+    },
+    {
+      "term": "PWM",
+      "pronunciation": "pee-dub-yoo-em",
+      "meaning": "Fast on/off pulses that can control effects like LED brightness."
+    }
+  ]
 }

@@ -3,7 +3,7 @@
   "title": "Power and Ground",
   "summary": "Electricity is like a train on a circular railway track: it must travel in a complete, unbroken loop!",
   "tier": "rookie",
-  "estimatedMinutes": 10,
+  "estimatedMinutes": 8,
   "courseId": "lesson_01",
   "sortOrder": 7,
   "isOptional": false,
@@ -18,7 +18,7 @@
       "stepId": "l01_s07",
       "title": "Power and Ground",
       "type": "story",
-      "markdownContent": "Electricity is like a train on a circular railway track: it must travel in a **complete, unbroken loop**! That loop is called a **circuit**.\n\n### The Core Circuit Highway:\n1. **Power (+5V)**: The starting station where electricity begins its journey with energy.\n2. **Current Guardian (Series Resistor)**: Essential component (such as the 220Ω resistor in your kit) that restricts current to a safe operating level.\n3. **Component (LED)**: Light-emitting diode that glows safely when current is controlled.\n4. **Ground (GND)**: The return station where electricity safely comes home.\n\n```\n+5V Station ➔ Jumper Wire ➔ Resistor (220Ω) ➔ LED Light (Glows!) ➔ Jumper Wire ➔ GND Return Station\n```\n\n> **The Resistor Rule**: Never power an LED directly between a voltage supply and Ground without a suitable series resistor! An LED is a semiconductor diode whose current surges sharply once turned on. In a simple voltage circuit, always include a series resistor to keep current within safe boundaries for both the LED and microcontroller pin ratings (the exact current depends on your supply voltage, LED color, resistor value, and pin limits). Without a protective resistor, excessive current can quickly overheat and permanently damage the LED or output driver. *(You will learn how to calculate exact resistor values using Ohm's Law in the upcoming Circuits & Breadboards course!)*\n\n> **The Golden Ground Rule**: GND is not a trash can where electricity disappears! It is the return path. If the GND wire is disconnected, the train track is broken, the circuit opens, and nothing works!\n\nLet's see what happens when the electricity loop is unbroken, broken, or shorted!",
+      "markdownContent": "A circuit needs a complete path. For this LED activity, use the kit’s resistor in series with the LED. Unplug the board before changing wires.",
       "quickCheck": [
         {
           "questionId": "l01_s07_q1",
@@ -50,14 +50,14 @@
       "stepId": "l01_07_s02",
       "title": "The Closed Electrical Highway",
       "type": "visualExplanation",
-      "markdownContent": "### The Closed Circuit Highway 🛣️\n\nElectricity can never flow down a dead end! It must have a continuous loop:\n\n```\n    ┌─────── [+5V Power Station] ───────┐\n    │  Pushes electrons with 5 Volts     │\n    ▼                                    │\n[ Jumper Wire ]                          │\n    │                                    │\n    ▼                                    │ Complete\n[ LED + Resistor ] (Light shines bright!)│ Loop!\n    │                                    │\n    ▼                                    │\n[ Jumper Wire ]                          │\n    │                                    │\n    ▼                                    │\n    └───────── [GND Return Station] ─────┘\n       Safe return path at 0 Volts\n```\n\n#### The 3 Circuit Conditions:\n1. **Closed Circuit (Good!)**: Power connects through a load (like an LED or motor) to Ground. Electricity flows smoothly and safely.\n2. **Open Circuit (Broken)**: A wire is disconnected or loose. Current drops to 0 mA instantly. The light stays dark.\n3. **Short Circuit (DANGER!)**: Connecting +5V directly to GND with a plain wire and NO resistor or component! Electricity rushes through at maximum speed, heating the wire and tripping the board's protective polyfuse!"
+      "markdownContent": "Follow the path: 5V → resistor → LED → GND. If the path breaks, the LED turns off. A wire straight from 5V to GND makes an unsafe short."
     },
     {
       "stepId": "l01_07_s03",
       "title": "Ground Troubleshooting Lab",
       "type": "physicalTask",
       "interactiveWidgetType": "groundTroubleshooting",
-      "markdownContent": "### Diagnose Ground in the Circuit Lab! 🔬\n\nTest 4 real-world circuit scenarios to see how ground connections affect power flow:\n1. **Complete Circuit**: Normal current flows through LED + resistor to GND.\n2. **Missing Ground (Open)**: Broken return path—zero current flows.\n3. **High Resistance (Loose Wire)**: Current is choked, causing dim and flickering lights.\n4. **Direct Short (DANGER)**: 5V directly to GND without resistance!\n\nTap through the scenarios below to see voltages, currents, and status indicators in action!"
+      "markdownContent": "Build or inspect the LED path. Try the complete circuit, a missing connection, and the short-circuit diagram. Never build a direct 5V-to-GND short."
     },
     {
       "stepId": "l01_07_s04",
@@ -83,30 +83,23 @@
             ],
             "correctIndex": 0,
             "explanation": "Without Ground, there is no return path for current, creating an open circuit where electricity cannot flow."
-          },
-          {
-            "question": "What is a 'short circuit' in electronics?",
-            "options": [
-              "Connecting power directly to ground without a load or resistor to limit current",
-              "A very small jumper wire that is less than one inch long",
-              "A program that has only three lines of code"
-            ],
-            "correctIndex": 0,
-            "explanation": "A short circuit bypasses resistance, allowing dangerously high electrical current to flow directly between power and ground."
-          },
-          {
-            "question": "Why must connected sensors share a common Ground (GND) with the Arduino?",
-            "options": [
-              "So both devices have the same 0V reference point for signals to make sense",
-              "To keep the wires from tangling into knots",
-              "To save electricity from being wasted"
-            ],
-            "correctIndex": 0,
-            "explanation": "A shared Ground establishes a common zero-volt baseline so voltages can be accurately measured."
           }
         ]
       }
     }
   ],
-  "xpReward": 10
+  "xpReward": 10,
+  "learningGoal": "Trace a safe, complete LED circuit from power back to ground.",
+  "vocabulary": [
+    {
+      "term": "Circuit",
+      "pronunciation": "SUR-kit",
+      "meaning": "A complete path that lets electricity flow."
+    },
+    {
+      "term": "Ground",
+      "pronunciation": "ground",
+      "meaning": "The circuit’s shared reference and return connection."
+    }
+  ]
 }

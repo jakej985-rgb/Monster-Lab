@@ -3,7 +3,7 @@
   "title": "Voltage Frontiers: 5V vs. 3.3V Logic Safety",
   "summary": "Master the #1 rule of hardware protection: understanding the difference between 5V and 3.3V logic levels and how to prevent frying sensitive chips.",
   "tier": "rookie",
-  "estimatedMinutes": 10,
+  "estimatedMinutes": 5,
   "courseId": "lesson_01",
   "sortOrder": 15,
   "isOptional": false,
@@ -19,18 +19,18 @@
       "stepId": "l01_15_s01",
       "title": "The Golden Rule of Voltage Protection",
       "type": "story",
-      "markdownContent": "### The #1 Way Beginner Engineers Fry Chips 🔥\n\nThere is one mistake that ruins more microcontroller boards, radios, and sensors than anything else: **Mixing 5-Volt and 3.3-Volt logic levels without protection!**\n\nIn the robotics world, microcontrollers fall into two major electrical kingdoms:\n\n1. **The 5-Volt Kingdom (Classic)**: Arduino Uno, Arduino Nano, Arduino Mega.\n   - A digital `HIGH` signal is **5.0 Volts**.\n2. **The 3.3-Volt Kingdom (Modern / IoT)**: ESP32, ESP8266, Raspberry Pi, Bluetooth modules, SD card readers, and modern digital sensors.\n   - A digital `HIGH` signal is **3.3 Volts**.\n\n```\nArduino Uno Pin (5.0V OUTPUT) ────❌ Direct Wire ────► ESP32 Pin (3.3V INPUT - DANGER!)\n```\n\n> **The Danger Zone**: If you send 5.0 Volts straight into an input pin on a 3.3V chip like an ESP32 or Bluetooth module, the excess electrical pressure will overwhelm the silicon gates and permanently destroy the chip!\n\nLet's learn how master engineers protect their hardware and build safe bridges between 5V and 3.3V boards!",
+      "markdownContent": "Some boards use 5V signals; others use 3.3V. A 5V output can be unsafe for a 3.3V input. Check the labels and use the right protection before connecting them.",
       "quickCheck": [
         {
           "questionId": "l01_15_s01_q1",
-          "question": "What digital voltage does a classic Arduino Uno use for a HIGH signal?",
+          "question": "Which logic-voltage family does the Arduino Uno use?",
           "options": [
-            "5.0 Volts",
-            "3.3 Volts",
-            "120 Volts"
+            "5V logic",
+            "3.3V logic",
+            "120V power"
           ],
           "correctIndex": 0,
-          "explanation": "The Arduino Uno is a 5.0V logic board: LOW is 0V, and HIGH is +5V.",
+          "explanation": "The Uno is designed for 5V logic. A HIGH is a logic state, not a promise of exactly 5V.",
           "warmupExplanation": "The Uno operates on 5V logic, the classic standard for robotics education."
         },
         {
@@ -52,7 +52,7 @@
       "title": "Bridging the Kingdoms: Voltage Shifting",
       "type": "visualExplanation",
       "interactiveWidgetType": "voltageLevelShiftDiagram",
-      "markdownContent": "### How to Safely Bridge 5V and 3.3V Devices 🛡️\n\nWhen your 5V Arduino Uno needs to send messages to a 3.3V device (like an ESP8266 Wi-Fi chip or HC-05 Bluetooth module), you must **step down** the voltage:\n\n#### Technique 1: The Resistor Voltage Divider\nUsing two simple resistors, you can cut 5.0V down to a safe ~3.3V:\n\n```\nArduino Uno (5V TX) ────[ 1kΩ Resistor ]────┬────► 3.3V Device (RX Input)\n                                            │\n                                   [ 2kΩ Resistor ]\n                                            │\nGround (GND) ───────────────────────────────┴────► Common GND (0V)\n```\n- Formula: $V_{out} = V_{in} \\times \\frac{R_2}{R_1 + R_2} = 5.0V \\times \\frac{2000}{1000 + 2000} = 3.33\\text{ Volts}!$\n\n#### Technique 2: Bidirectional Logic Level Shifter Modules\nFor fast two-way communication (like I2C or high-speed SPI), engineers use dedicated level shifter breakout boards with MOSFET transistors. They safely convert 5V down to 3.3V, and boost 3.3V up to 5V in both directions!",
+      "markdownContent": "A level shifter or a correctly wired resistor divider can protect a 3.3V input from a 5V signal. Explore the safe connection in the diagram; detailed resistor math is for a later lesson.",
       "interactiveConfig": {
         "r1Ohms": 1000,
         "r2Ohms": 2000,
@@ -64,7 +64,7 @@
       "stepId": "l01_15_s03",
       "title": "Testing Logic Compatibility in Code",
       "type": "codeExperiment",
-      "markdownContent": "### The Safe Logic Checker Sketch 🔍\n\nCan a 5V Arduino Uno read a 3.3V signal coming FROM a 3.3V sensor? **Yes!**\nOn an Arduino Uno running at 5V, any voltage above **3.0 Volts** is safely recognized as a digital `HIGH`!\n\n```cpp\n// Reading a 3.3V sensor on a 5V Arduino Uno pin\nconst int sensorPin = 2; // Pin 2 configured as input\n\nvoid setup() {\n  Serial.begin(9600);\n  pinMode(sensorPin, INPUT);\n  Serial.println(\"Logic Compatibility Monitor Active\");\n}\n\nvoid loop() {\n  int state = digitalRead(sensorPin);\n  \n  if (state == HIGH) {\n    Serial.println(\"Input is HIGH (3.3V is safely recognized by the 5V Uno!)\");\n  } else {\n    Serial.println(\"Input is LOW (0V Ground)\");\n  }\n  delay(1000);\n}\n```\n\n#### Key Engineering Takeaway:\n- **3.3V Out ➔ 5V In**: Safe! (3.3V is high enough for Uno to register as HIGH).\n- **5V Out ➔ 3.3V In**: **DANGER!** Must use a voltage divider or level shifter!",
+      "markdownContent": "Use the simulator to identify the unsafe connection and choose a safer way to connect the boards.",
       "interactiveConfig": {
         "safeDirection": "3.3V -> 5V",
         "dangerDirection": "5V -> 3.3V (Needs Shifter)"
@@ -94,30 +94,23 @@
             ],
             "correctIndex": 0,
             "explanation": "5V output into a 3.3V input exposes the 3.3V chip to overvoltage, requiring a level shifter or voltage divider."
-          },
-          {
-            "question": "What simple circuit made of two resistors steps a 5V signal down to approximately 3.3V?",
-            "options": [
-              "A voltage divider circuit",
-              "A laser pointer",
-              "A thermal fuse"
-            ],
-            "correctIndex": 0,
-            "explanation": "A voltage divider uses two resistors in series (such as 1kΩ and 2kΩ) to divide the voltage down to safe levels."
-          },
-          {
-            "question": "Can an Arduino Uno running at 5V safely detect a 3.3V HIGH signal from an ESP32 or Bluetooth module?",
-            "options": [
-              "Yes, because 3.3V is above the Uno's 3.0V threshold for digital HIGH",
-              "No, 3.3V registers as negative voltage",
-              "Only if you shake the board"
-            ],
-            "correctIndex": 0,
-            "explanation": "The ATmega328P on the Uno reads anything above ~3.0V as a valid logic HIGH, so 3.3V inputs are completely safe to read!"
           }
         ]
       }
     }
   ],
-  "xpReward": 10
+  "xpReward": 10,
+  "learningGoal": "Identify when a 5V signal needs protection before reaching a 3.3V input.",
+  "vocabulary": [
+    {
+      "term": "Voltage",
+      "pronunciation": "VOHL-tij",
+      "meaning": "The electrical push measured in volts."
+    },
+    {
+      "term": "Level shifter",
+      "pronunciation": "LEV-ul SHIFT-er",
+      "meaning": "A part that changes a signal voltage to a safer level."
+    }
+  ]
 }

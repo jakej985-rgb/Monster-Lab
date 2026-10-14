@@ -120,7 +120,8 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
       }
     }
     if (currentStep.type == StepType.physicalTask &&
-        currentStep.interactiveWidgetType == null) {
+        (currentStep.interactiveWidgetType == null ||
+            currentStep.interactiveWidgetType == 'vocabularyMatch')) {
       final taskKey = '${widget.lessonId}_step_$_currentStepIndex';
       if (!_checkedPhysicalTasks.contains(taskKey)) {
         return false;
@@ -317,6 +318,52 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                       child: ListView(
                         controller: _scrollController,
                         children: [
+                          if (_currentStepIndex == 0 &&
+                              lesson.learningGoal != null)
+                            MonsterCard(
+                              child: Padding(
+                                padding: const EdgeInsets.all(4),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                        'After this lesson, you should be able to…',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleSmall
+                                            ?.copyWith(
+                                                fontWeight: FontWeight.bold)),
+                                    const SizedBox(height: 4),
+                                    Text(lesson.learningGoal!),
+                                    if (lesson.vocabulary.isNotEmpty) ...[
+                                      const SizedBox(height: 10),
+                                      Text('New words',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleSmall
+                                              ?.copyWith(
+                                                  fontWeight: FontWeight.bold)),
+                                      const SizedBox(height: 4),
+                                      for (final word in lesson.vocabulary) ...[
+                                        Text(
+                                            '${word.term}  (${word.pronunciation})',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.copyWith(
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                        Text(word.meaning),
+                                        const SizedBox(height: 4),
+                                      ],
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            ),
+                          if (_currentStepIndex == 0 &&
+                              lesson.learningGoal != null)
+                            const SizedBox(height: 12),
                           // Story / Explanation Markdown Card
                           MonsterCard(
                             child: MonsterMarkdown(
@@ -347,6 +394,15 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                                 context: context,
                                 activityType: currentStep.interactiveWidgetType,
                                 config: currentStep.interactiveConfig,
+                                onComplete: currentStep.interactiveWidgetType ==
+                                        'vocabularyMatch'
+                                    ? () {
+                                        if (mounted) {
+                                          setState(() => _checkedPhysicalTasks.add(
+                                              '${widget.lessonId}_step_$_currentStepIndex'));
+                                        }
+                                      }
+                                    : null,
                               )!,
                             ),
                             const SizedBox(height: 16),
@@ -425,9 +481,11 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                                 onAnswerSubmitted: (isCorrect) async {
                                   final stepKey =
                                       '${widget.lessonId}_step_$_currentStepIndex';
-                                  setState(() {
-                                    _completedQuizSteps.add(stepKey);
-                                  });
+                                  if (widget.lessonId != 'l01_18') {
+                                    setState(() {
+                                      _completedQuizSteps.add(stepKey);
+                                    });
+                                  }
 
                                   final checkpointKey =
                                       '${widget.lessonId}_step_$_currentStepIndex';
@@ -452,6 +510,16 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                                         .addXp(10);
                                   }
                                 },
+                                onDeckComplete: widget.lessonId == 'l01_18'
+                                    ? () {
+                                        if (mounted) {
+                                          setState(() {
+                                            _completedQuizSteps.add(
+                                                '${widget.lessonId}_step_$_currentStepIndex');
+                                          });
+                                        }
+                                      }
+                                    : null,
                               ),
                             ),
                             const SizedBox(height: 16),

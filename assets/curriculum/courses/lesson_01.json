@@ -18,11 +18,13 @@
     "l01_13",
     "l01_14",
     "l01_15",
-    "l01_16"
+    "l01_16",
+    "l01_17",
+    "l01_18"
   ],
   "isOptional": false,
   "placementLessonId": null,
   "prerequisites": [],
   "xpReward": 100,
-  "estimatedMinutes": 80
+  "estimatedMinutes": 108
 }

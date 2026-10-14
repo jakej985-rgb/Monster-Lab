@@ -3,7 +3,7 @@
   "title": "Code to Hardware",
   "summary": "Now let's connect words in code to physical hardware pins!",
   "tier": "rookie",
-  "estimatedMinutes": 10,
+  "estimatedMinutes": 5,
   "courseId": "lesson_01",
   "sortOrder": 9,
   "isOptional": false,
@@ -18,7 +18,7 @@
       "stepId": "l01_s09",
       "title": "Code to Hardware",
       "type": "story",
-      "markdownContent": "Now let's connect words in code to physical hardware pins!\n\nHere is one of the most famous instructions in all of robotics:\n\n```cpp\ndigitalWrite(13, HIGH);\n```\n\nLet's break down what each word tells the Arduino:\n- `digitalWrite`: The action command! Tells the Arduino to send power to a digital pin.\n- `(` and `)`: Parentheses that hold the details.\n- `13`: The target pin! Digital Pin 13 is connected to the built-in amber LED on your board.\n- `,`: A comma that separates the pin number from the state.\n- `HIGH`: Turn power ON (+5 Volts)! (If we wrote `LOW`, it would turn power OFF).\n- `;`: The semicolon! Every statement ends with a semicolon, just like a period ends a sentence.\n\nLet's see how typing letters on a keyboard actually pushes real electricity out of a pin!",
+      "markdownContent": "Code becomes instructions the board can run. On the Uno, the built-in L light is connected to pin 13. A program can tell that output to turn on or off.",
       "quickCheck": [
         {
           "questionId": "l01_s09_q1",
@@ -50,14 +50,14 @@
       "stepId": "l01_09_s02",
       "title": "How Text Turns Into Voltage",
       "type": "visualExplanation",
-      "markdownContent": "### The Code-to-Electricity Pipeline ⚡\n\nHow does English-like code in your editor turn into 5 Volts of physical electricity?\n\n```\n┌─────────────────────────────────┐\n│ 1. Your Sketch (C++ Code)       │\n│    digitalWrite(13, HIGH);      │\n└────────────────┬────────────────┘\n                 │ Compiled into Machine Code\n                 ▼\n┌─────────────────────────────────┐\n│ 2. Flash Memory (Binary Bits)   │\n│    10110001 00001101 00000001   │\n└────────────────┬────────────────┘\n                 │ CPU Fetches & Executes Instruction\n                 ▼\n┌─────────────────────────────────┐\n│ 3. ATmega328P Internal Gate     │\n│    Flips tiny silicon transistor│\n└────────────────┬────────────────┘\n                 │ Connects Pin 13 to +5V Rail\n                 ▼\n┌─────────────────────────────────┐\n│ 4. Physical Header Pin 13       │\n│    +5 Volts rushes out to LED!  │\n└─────────────────────────────────┘\n```\n\n#### Syntax Rules Matter!\n- **Function Name**: `digitalWrite` (notice the capital 'W'—C++ is case sensitive!).\n- **Parameters**: `(13, HIGH)` tells the function **WHERE** (Pin 13) and **WHAT** (HIGH / 5V).\n- **The Semicolon**: `;` marks the end of a command. Forgetting it causes a compilation syntax error!"
+      "markdownContent": "Read the code as a tiny command: choose a pin, choose an output state. The board runs the uploaded program and changes the pin signal."
     },
     {
       "stepId": "l01_09_s03",
       "title": "Code Deconstruction Lab",
       "type": "codeExperiment",
       "interactiveWidgetType": "codeDeconstruction",
-      "markdownContent": "### Deconstruct the Hardware Command! 🧩\n\nTap each token in the code statement below to break down its role in controlling physical hardware:\n- `digitalWrite`: Built-in function verb.\n- `(` and `)`: Parameter wrappers.\n- `13`: Target digital pin on the Uno header.\n- `,`: Parameter separator.\n- `HIGH`: Output state setting pin to +5V.\n- `;`: Statement terminator.\n\nInteract with each piece to see its definition and watch the output state change!"
+      "markdownContent": "Tap the parts of the code to see what each one controls. Then predict what the built-in L light will do."
     },
     {
       "stepId": "l01_09_s04",
@@ -83,30 +83,23 @@
             ],
             "correctIndex": 0,
             "explanation": "In C++, semicolons are mandatory statement terminators. Omitting one stops compilation."
-          },
-          {
-            "question": "Why is digitalWrite written with a capital 'W' instead of all lowercase?",
-            "options": [
-              "C++ is case-sensitive and uses camelCase naming for functions",
-              "Capital letters run faster on the processor",
-              "To make the code take up more space"
-            ],
-            "correctIndex": 0,
-            "explanation": "C++ is strictly case-sensitive. Writing digitalwrite (all lowercase) will result in an unrecognized identifier error."
-          },
-          {
-            "question": "To turn OFF an LED connected to Pin 13, which command should you write?",
-            "options": [
-              "digitalWrite(13, LOW);",
-              "digitalWrite(13, OFF);",
-              "turnOffLed(13);"
-            ],
-            "correctIndex": 0,
-            "explanation": "In Arduino core syntax, LOW sets a pin to 0 Volts, turning off the connected LED."
           }
         ]
       }
     }
   ],
-  "xpReward": 10
+  "xpReward": 10,
+  "learningGoal": "Connect a line of code to the pin or light it controls.",
+  "vocabulary": [
+    {
+      "term": "Upload",
+      "pronunciation": "UP-lohd",
+      "meaning": "Send a program from a computer to the board."
+    },
+    {
+      "term": "Output",
+      "pronunciation": "OUT-put",
+      "meaning": "A signal the board sends to control a part."
+    }
+  ]
 }

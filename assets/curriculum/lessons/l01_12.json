@@ -3,7 +3,7 @@
   "title": "Hardware Safety & Board Care",
   "summary": "Learn essential lab safety rules: avoiding short circuits, proper USB handling, and protecting delicate microcontroller pins.",
   "tier": "rookie",
-  "estimatedMinutes": 10,
+  "estimatedMinutes": 5,
   "courseId": "lesson_01",
   "sortOrder": 12,
   "isOptional": false,
@@ -18,7 +18,7 @@
       "stepId": "l01_12_s01",
       "title": "Lab Safety: Protecting Your Board",
       "type": "story",
-      "markdownContent": "### Welcome to the Hardware Safety Zone! 🛡️\n\nGreat roboticists don't just write amazing code—they take care of their physical gear! A microcontroller board is a delicate precision instrument made of silicon and copper traces.\n\nHere are the three golden rules of hardware care:\n\n1. **Never Wire While Powered**: Always unplug the USB cable BEFORE plugging in or moving jumper wires! A loose wire accidentally brushing against the wrong pin while powered can cause an instantaneous short circuit.\n2. **Avoid Metallic Table Surfaces**: Never place your powered Arduino directly onto a metal tray, aluminum foil, or stray copper wires. The metal on the table will touch the exposed solder joints on the bottom of the board and create accidental shorts.\n3. **Watch Pin Current Limits**: An Arduino pin can supply up to 20 to 40 milliamps (mA)—enough for an LED with a resistor, but NOT enough for a spinning motor or heavy loudspeaker! Always use driver circuits for power-hungry parts.\n\nFollow these simple habits, and your microcontroller boards will last through hundreds of robotics adventures!",
+      "markdownContent": "Before powering a circuit, check the wires, LED direction, and loose metal pieces. Use a resistor with an LED. Ask an adult before changing a powered circuit.",
       "quickCheck": [
         {
           "questionId": "l01_12_s01_q1",
@@ -51,7 +51,7 @@
       "title": "Understanding the Dreaded Short Circuit",
       "type": "visualExplanation",
       "interactiveWidgetType": "shortCircuitSafetyDiagram",
-      "markdownContent": "### What is a Short Circuit? ⚡\n\nNormally, electricity flows from **+5V**, through a component that does work (like an LED or resistor that restricts current), and then back to **GND**.\n\n```\nNormal Circuit:  +5V ────[ Resistor + LED ]────► GND (Safe current: ~15mA)\nShort Circuit:   +5V ──────────────────────────► GND (Dangerous current: >1000mA!)\n```\n\nWhen a wire connects +5V directly to GND with **zero resistance**, current spikes to dangerous levels almost instantly!\n- The wires get hot.\n- The Arduino power regulator overheats.\n- The computer's USB protection chip will shut down the USB port to save your laptop!\n\nIf your computer ever pops up a warning saying *\"USB Device Drawing Too Much Power\"*, immediately unplug the cable and inspect your wiring for an accidental direct connection between +5V and GND!",
+      "markdownContent": "A direct connection between power and ground can damage parts. Arduino pins are for small signals, not motors or other power-hungry parts.",
       "interactiveConfig": {
         "vcc": 5.0,
         "normalResistance": 220,
@@ -62,7 +62,7 @@
       "stepId": "l01_12_s03",
       "title": "Hands-On Safety Pre-Flight Inspection",
       "type": "physicalTask",
-      "markdownContent": "### Bench Pre-Flight Checklist 📋\n\nBefore you power up any circuit, perform the **10-Second Pre-Flight Scan**:\n\n1. **Finger Trace**: Trace your power wire from the 5V pin. Does it go to a component first, or does it accidentally plug straight into GND?\n2. **Polarity Check**: Are polarized parts (like electrolytic capacitors and LEDs) facing the correct way?\n3. **Debris Clearance**: Look underneath the board and breadboard. Are there any stray wire clippings, screws, or staples resting on the workbench?\n\nIf all 3 checks pass, plug in your USB cable with confidence!",
+      "markdownContent": "Do the pre-flight scan: check the power path, part direction, and work area. Choose the safe setup.",
       "interactiveConfig": {
         "checklist": [
           "Power trace verified",
@@ -95,30 +95,23 @@
             ],
             "correctIndex": 0,
             "explanation": "A short circuit creates a zero-resistance path from power to ground, causing high current and heating."
-          },
-          {
-            "question": "What should you do BEFORE inserting or moving jumper wires?",
-            "options": [
-              "Unplug the USB cable to ensure the board is unpowered",
-              "Turn up the volume on your speakers",
-              "Type faster on the keyboard"
-            ],
-            "correctIndex": 0,
-            "explanation": "Disconnecting power before altering circuits prevents sparks, short circuits, and damaged pins."
-          },
-          {
-            "question": "What is the best surface to place an active electronic circuit board on?",
-            "options": [
-              "A non-conductive surface like wood, plastic, or a silicone lab mat",
-              "A sheet of aluminum foil",
-              "A metal baking pan"
-            ],
-            "correctIndex": 0,
-            "explanation": "Non-conductive surfaces like wood or silicone prevent accidental electrical bridges on the underside of circuit boards."
           }
         ]
       }
     }
   ],
-  "xpReward": 10
+  "xpReward": 10,
+  "learningGoal": "Spot unsafe wiring before powering a board.",
+  "vocabulary": [
+    {
+      "term": "Current",
+      "pronunciation": "KUR-unt",
+      "meaning": "The flow of electric charge."
+    },
+    {
+      "term": "Short circuit",
+      "pronunciation": "short SUR-kit",
+      "meaning": "An unintended path that can let too much current flow."
+    }
+  ]
 }

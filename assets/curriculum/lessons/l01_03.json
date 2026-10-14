@@ -3,7 +3,7 @@
   "title": "What Is a Microcontroller?",
   "summary": "Look right at the middle of your Arduino board.",
   "tier": "rookie",
-  "estimatedMinutes": 10,
+  "estimatedMinutes": 5,
   "courseId": "lesson_01",
   "sortOrder": 3,
   "isOptional": false,
@@ -18,7 +18,7 @@
       "stepId": "l01_s03",
       "title": "What Is a Microcontroller?",
       "type": "story",
-      "markdownContent": "Look right at the middle of your Arduino board. Do you see that black rectangular chip with shiny metal legs? That is the **ATmega328P Microcontroller**!\n\n### Chip vs. Board: An Important Difference!\n- **The Microcontroller Chip**: The black silicon integrated circuit (IC) in the center. That is the actual processor, holding the CPU, flash memory, and peripheral registers.\n- **The Development Board (Arduino Uno)**: The blue printed circuit board (PCB) surrounding the chip! It provides the USB interface chip, 5V/3.3V voltage regulators, 16 MHz quartz crystal clock, status LEDs, and convenient pin header sockets so you can easily connect wires without soldering.\n\nLet's break down that big word:\n- **Micro** means super small!\n- **Controller** means it is in charge!\n\nA microcontroller is a complete computer shrunk down onto a single chip. Unlike a desktop computer or tablet with a giant screen, a microcontroller is built to live inside physical devices:\n- **Microwave ovens**: Counts seconds and beeps when your popcorn is hot.\n- **Washing machines**: Controls water valves and spins the drum.\n- **Robot arms**: Reads joint angles and moves motors.\n\nInside this tiny chip lives a **processor** (the thinker) and **memory** (a notebook that stores your code even when you unplug power).",
+      "markdownContent": "The black chip is the microcontroller. It runs your code. The blue board holds the chip and makes it easier to connect to a computer and other parts.",
       "quickCheck": [
         {
           "questionId": "l01_s03_q1",
@@ -50,14 +50,14 @@
       "stepId": "l01_03_s02",
       "title": "Inside the Chip: CPU, Flash, and RAM",
       "type": "visualExplanation",
-      "markdownContent": "### Inside the ATmega328P Silicon Chip 🔬\n\nInside that black plastic casing is a microscopic silicon city! Let's peek under the hood:\n\n```\n┌─────────────────────────────────────────────────────────┐\n│               ATmega328P MICROCONTROLLER                │\n│                                                         │\n│  ┌───────────────────┐        ┌──────────────────────┐  │\n│  │   CPU (The Chef)  │ <----> │ Flash Memory (32 KB) │  │\n│  │   Executes Code   │        │ Permanent Recipe Book│  │\n│  │   Does the Math   │        │ Saves sketch offline │  │\n│  └───────────────────┘        └──────────────────────┘  │\n│           ▲                               ▲             │\n│           │                               │             │\n│  ┌───────────────────┐        ┌──────────────────────┐  │\n│  │   SRAM (2 KB)     │        │ I/O Peripherals      │  │\n│  │   Active Counter  │ <----> │ Controls Pins 0-13,  │  │\n│  │   Temp Variables  │        │ Analog ADC A0-A5     │  │\n│  └───────────────────┘        └──────────────────────┘  │\n└─────────────────────────────────────────────────────────┘\n```\n\n#### How the Parts Work Together:\n1. **CPU (Processor)**: The brain's engine. It fetches instructions and does math at 16 MHz (16 million steps every second!).\n2. **Flash Memory (32 KB)**: Stores your uploaded Arduino sketch safely, even when you unplug all power.\n3. **SRAM (2 KB)**: The fast scratchpad for keeping track of sensor numbers while your robot runs.\n4. **I/O Registers**: Switches that connect the CPU directly to the physical pin headers on the board edges."
+      "markdownContent": "Think of Flash as a recipe book for saved code and RAM as a tiny scratchpad for information used while the program runs. The Uno also has memory for saved settings."
     },
     {
       "stepId": "l01_03_s03",
       "title": "CPU vs Memory Signal Flow",
       "type": "codeExperiment",
       "interactiveWidgetType": "visualFlowDiagram",
-      "markdownContent": "### Watch Code Flow from Memory to Action! ⚡\n\nExplore how instructions live in memory and travel into the physical pins of your robot:\n- **Flash Memory**: Holds your recipe of instructions.\n- **CPU Engine**: Reads each instruction and calculates what to do next.\n- **I/O Pins**: Turns physical voltage on or off to move motors and light LEDs!\n\nTap through each stage and test the signal pulse below!",
+      "markdownContent": "Follow the path: saved code → processor → pin. Tap each part to see how the program reaches an LED.",
       "interactiveConfig": {
         "nodes": [
           {
@@ -118,30 +118,23 @@
             ],
             "correctIndex": 0,
             "explanation": "Microcontrollers are self-contained computer chips specialized for interacting with physical sensors and circuits."
-          },
-          {
-            "question": "Where does the Arduino store your code so it doesn't vanish when power is disconnected?",
-            "options": [
-              "Non-volatile Flash Memory",
-              "In the USB cable",
-              "In the cardboard packaging box"
-            ],
-            "correctIndex": 0,
-            "explanation": "Flash Memory stores your sketch permanently until you overwrite it with a new program."
-          },
-          {
-            "question": "What is the role of the CPU inside the chip?",
-            "options": [
-              "It executes code instructions and performs logical decisions",
-              "It cools down the board with a miniature fan",
-              "It changes the color of the green circuit board"
-            ],
-            "correctIndex": 0,
-            "explanation": "The CPU (Central Processing Unit) is the engine that executes your program commands step-by-step."
           }
         ]
       }
     }
   ],
-  "xpReward": 10
+  "xpReward": 10,
+  "learningGoal": "Explain what the microcontroller chip does on the Uno.",
+  "vocabulary": [
+    {
+      "term": "Processor",
+      "pronunciation": "PRAH-ses-er",
+      "meaning": "The part of the chip that follows instructions."
+    },
+    {
+      "term": "Memory",
+      "pronunciation": "MEM-uh-ree",
+      "meaning": "A place where a computer keeps code or information."
+    }
+  ]
 }
