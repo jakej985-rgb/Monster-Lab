@@ -244,6 +244,22 @@ def prepend_to_changelog(new_entry):
     return True
 
 
+def release_entry_exists(content, semver):
+    """Return whether CHANGELOG already contains a section for this semver."""
+    pattern = rf"^## \[(?:v)?{re.escape(semver)}(?:\+\d+)?\]"
+    return re.search(pattern, content, re.MULTILINE) is not None
+
+
+def parse_requested_version(value, current_build):
+    """Parse strict X.Y.Z[+BUILD] versions, incrementing build when omitted."""
+    match = re.fullmatch(r"(\d+)\.(\d+)\.(\d+)(?:\+(\d+))?", value)
+    if not match:
+        raise ValueError("Version must use X.Y.Z or X.Y.Z+BUILD format")
+    semver = ".".join(match.group(i) for i in (1, 2, 3))
+    build = int(match.group(4)) if match.group(4) else current_build + 1
+    return semver, build
+
+
 def main():
     parser = argparse.ArgumentParser(description="Generate release changelog and automate semantic version bumping")
     parser.add_argument("--version", default=None, help="Target version string (e.g. 0.2.0 or 0.2.0+25)")
@@ -254,6 +270,10 @@ def main():
     parser.add_argument("--bump", choices=["auto", "major", "minor", "patch"], help="Compute semantic version bump")
     parser.add_argument("--apply", action="store_true", help="Apply version bump to pubspec.yaml and CHANGELOG.md")
     args = parser.parse_args()
+
+    if args.apply:
+        if bool(args.bump) == bool(args.version):
+            parser.error("--apply requires exactly one of --bump or --version")
 
     current_semver, current_build = get_current_pubspec_version()
     if not current_semver:
@@ -278,12 +298,12 @@ def main():
         print(f"Calculated bump : {bump_reason.upper()} -> {target_semver}+{target_build}")
 
     if args.version:
-        if "+" in args.version:
-            target_semver, b_str = args.version.split("+", 1)
-            target_build = int(b_str) if b_str.isdigit() else current_build + 1
-        else:
-            target_semver = args.version
-            target_build = current_build + 1
+        try:
+            target_semver, target_build = parse_requested_version(
+                args.version, current_build
+            )
+        except ValueError as error:
+            parser.error(str(error))
 
     full_version_tag = f"{target_semver}+{target_build}"
 
@@ -295,6 +315,13 @@ def main():
         content = generate_draft(full_version_tag, start_tag, args.until)
 
     if args.apply:
+        with open(CHANGELOG_PATH, "r", encoding="utf-8") as changelog_file:
+            existing_changelog = changelog_file.read()
+        if release_entry_exists(existing_changelog, target_semver):
+            parser.error(
+                f"CHANGELOG.md already contains a release entry for {target_semver}"
+            )
+
         print(f"Applying version update to pubspec.yaml: {full_version_tag}")
         update_pubspec_version(target_semver, target_build)
         print("Prepending release section to CHANGELOG.md...")

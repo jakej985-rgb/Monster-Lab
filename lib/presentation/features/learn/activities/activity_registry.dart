@@ -49,6 +49,7 @@ import '../widgets/i2c_daisy_chain_simulator_widget.dart';
 import '../widgets/i2c_address_scanner_widget.dart';
 import '../widgets/i2c_pullup_checker_widget.dart';
 import '../widgets/spi_full_duplex_visualizer_widget.dart';
+import '../widgets/rfid_coupling_simulator_widget.dart';
 import '../widgets/chip_select_arbitrator_widget.dart';
 import '../widgets/spi_vs_i2c_comparison_widget.dart';
 import '../widgets/spi_clock_polarity_phase_lab_widget.dart';
@@ -187,6 +188,8 @@ class ActivityRegistry {
         I2cPullupCheckerWidget(config: config, onComplete: onComplete),
     'spiFullDuplexVisualizer': (context, config, onComplete) =>
         SpiFullDuplexVisualizerWidget(config: config, onComplete: onComplete),
+    'rfidCouplingSimulator': (context, config, onComplete) =>
+        RfidCouplingSimulatorWidget(config: config, onComplete: onComplete),
     'chipSelectArbitrator': (context, config, onComplete) =>
         ChipSelectArbitratorWidget(config: config, onComplete: onComplete),
     'spiVsI2cComparison': (context, config, onComplete) =>

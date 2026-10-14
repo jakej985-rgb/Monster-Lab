@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+
 import '../../../../core/theme/app_colors.dart';
 import '../../../shared/widgets/monster_card.dart';
 
 /// Virtual inductive coil simulator demonstrating Lenz's Law (V = -L * di/dt),
-/// high-voltage inductive kickback spikes destroying driver transistors,
-/// and safe suppression via an antiparallel 1N4007 flyback diode.
+/// illustrative inductive kickback spikes and suppression with an
+/// antiparallel 1N4007 flyback diode.
 class InductiveKickbackSimulatorWidget extends StatefulWidget {
   final Map<String, dynamic>? config;
   final VoidCallback? onComplete;
@@ -60,21 +61,31 @@ class _InductiveKickbackSimulatorWidgetState
     }
   }
 
+  double _configVoltage(String key, double fallback) {
+    final value = widget.config?[key];
+    if (value is num && value.isFinite && value > 0) return value.toDouble();
+    return fallback;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final title = widget.config?['title'] as String? ??
+    final title =
+        widget.config?['title'] as String? ??
         'Inductive Kickback & Flyback Diode Simulator';
+    final supplyVoltageV = _configVoltage('supplyVoltageV', 5.0);
+    final diodeForwardVoltageV = _configVoltage('diodeForwardVoltageV', 0.7);
+    final clampedVoltageV = supplyVoltageV + diodeForwardVoltageV;
 
     // Voltage spike values:
     // When ON: Collector is ~0.2V (saturated)
-    // When OFF & Unprotected: Spikes to 85V! (Destroying 40V transistor)
-    // When OFF & Protected: Clamped to 12.7V (12V rail + 0.7V diode forward drop)
+    // The 85V unprotected spike is an illustrative fixed model value.
+    // The protected clamp follows the configured supply and diode drop.
     final double collectorVoltage;
     if (_isSwitchClosed) {
       collectorVoltage = 0.2;
     } else {
-      collectorVoltage = _hasFlybackDiode ? 12.7 : 85.0;
+      collectorVoltage = _hasFlybackDiode ? clampedVoltageV : 85.0;
     }
 
     final isTransistorFried = !_isSwitchClosed && !_hasFlybackDiode;
@@ -99,8 +110,10 @@ class _InductiveKickbackSimulatorWidgetState
               ),
               if (_hasCompleted)
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.success.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
@@ -109,8 +122,11 @@ class _InductiveKickbackSimulatorWidgetState
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.check_circle,
-                          color: AppColors.success, size: 14),
+                      Icon(
+                        Icons.check_circle,
+                        color: AppColors.success,
+                        size: 14,
+                      ),
                       SizedBox(width: 4),
                       Text(
                         'DIODE CLAMP VERIFIED',
@@ -128,8 +144,9 @@ class _InductiveKickbackSimulatorWidgetState
           const SizedBox(height: 6),
           Text(
             'When a motor switch opens, the magnetic field in its copper coils abruptly collapses. '
-            'According to Lenz\'s Law (V = -L · di/dt), this generates an 80V+ reverse kickback spike '
-            'that destroys driver transistors unless clamped by a 1N4007 flyback diode!',
+            'According to Lenz\'s Law (V = -L · di/dt), opening the switch can create a high-voltage transient. '
+            'This simplified simulation uses an illustrative 85V unprotected spike; real values depend on the motor, '
+            'driver, and circuit. A flyback diode limits the transient.',
             style: theme.textTheme.bodySmall?.copyWith(
               color: AppColors.textSecondaryDark,
             ),
@@ -142,8 +159,10 @@ class _InductiveKickbackSimulatorWidgetState
             decoration: BoxDecoration(
               color: AppColors.backgroundDark,
               borderRadius: BorderRadius.circular(8),
-              border:
-                  Border.all(color: AppColors.surfaceContainerDark, width: 1.5),
+              border: Border.all(
+                color: AppColors.surfaceContainerDark,
+                width: 1.5,
+              ),
             ),
             child: Wrap(
               spacing: 10,
@@ -158,16 +177,20 @@ class _InductiveKickbackSimulatorWidgetState
                     _isSwitchClosed ? Icons.power_settings_new : Icons.flash_on,
                     size: 18,
                   ),
-                  label: Text(_isSwitchClosed
-                      ? 'OPEN SWITCH (Turn OFF)'
-                      : 'CLOSE SWITCH (Turn ON)'),
+                  label: Text(
+                    _isSwitchClosed
+                        ? 'OPEN SWITCH (Turn OFF)'
+                        : 'CLOSE SWITCH (Turn ON)',
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _isSwitchClosed
                         ? AppColors.energyAmber
                         : AppColors.accentCyanDark,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                   ),
                 ),
 
@@ -210,17 +233,19 @@ class _InductiveKickbackSimulatorWidgetState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // +12V Rail
+                    // Configured motor supply rail
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 2),
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.danger.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(3),
                       ),
-                      child: const Text(
-                        '+12V Motor Rail',
-                        style: TextStyle(
+                      child: Text(
+                        '+${supplyVoltageV.toStringAsFixed(1)}V Motor Rail',
+                        style: const TextStyle(
                           color: AppColors.danger,
                           fontSize: 9,
                           fontWeight: FontWeight.bold,
@@ -337,23 +362,23 @@ class _InductiveKickbackSimulatorWidgetState
                             isTransistorFried
                                 ? Icons.warning
                                 : (_isSwitchClosed
-                                    ? Icons.link
-                                    : Icons.link_off),
+                                      ? Icons.link
+                                      : Icons.link_off),
                             size: 16,
                             color: isTransistorFried
                                 ? AppColors.danger
                                 : (_isSwitchClosed
-                                    ? AppColors.syntaxFunction
-                                    : Colors.white60),
+                                      ? AppColors.syntaxFunction
+                                      : Colors.white60),
                           ),
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(
                               isTransistorFried
-                                  ? 'NPN DESTROYED (85V Arc)'
+                                  ? 'MODEL SPIKE: 85V (Illustrative)'
                                   : (_isSwitchClosed
-                                      ? 'NPN Switch: CLOSED (ON)'
-                                      : 'NPN Switch: OPEN (OFF)'),
+                                        ? 'NPN Switch: CLOSED (ON)'
+                                        : 'NPN Switch: OPEN (OFF)'),
                               style: TextStyle(
                                 color: isTransistorFried
                                     ? AppColors.danger
@@ -383,8 +408,11 @@ class _InductiveKickbackSimulatorWidgetState
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.show_chart,
-                            size: 14, color: AppColors.accentCyan),
+                        const Icon(
+                          Icons.show_chart,
+                          size: 14,
+                          color: AppColors.accentCyan,
+                        ),
                         const SizedBox(width: 4),
                         const Expanded(
                           child: Text(
@@ -404,8 +432,8 @@ class _InductiveKickbackSimulatorWidgetState
                             color: isTransistorFried
                                 ? AppColors.danger
                                 : (isProtected
-                                    ? AppColors.success
-                                    : AppColors.syntaxFunction),
+                                      ? AppColors.success
+                                      : AppColors.syntaxFunction),
                             fontWeight: FontWeight.bold,
                             fontSize: 13,
                             fontFamily: 'monospace',
@@ -443,7 +471,7 @@ class _InductiveKickbackSimulatorWidgetState
                             ),
                           ),
 
-                          // Clamped +12.7V line
+                          // Illustrative diode clamp line
                           Positioned(
                             top: 75,
                             left: 0,
@@ -453,12 +481,12 @@ class _InductiveKickbackSimulatorWidgetState
                               color: AppColors.success.withValues(alpha: 0.5),
                             ),
                           ),
-                          const Positioned(
+                          Positioned(
                             top: 62,
                             right: 2,
                             child: Text(
-                              'Diode Clamped (+12.7V)',
-                              style: TextStyle(
+                              'Diode Clamped (${clampedVoltageV.toStringAsFixed(1)}V)',
+                              style: const TextStyle(
                                 color: AppColors.success,
                                 fontSize: 8,
                                 fontFamily: 'monospace',
@@ -472,10 +500,13 @@ class _InductiveKickbackSimulatorWidgetState
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(Icons.bolt,
-                                      color: AppColors.energyAmber, size: 36),
+                                  Icon(
+                                    Icons.bolt,
+                                    color: AppColors.energyAmber,
+                                    size: 36,
+                                  ),
                                   Text(
-                                    '+85V SPIKE! ARC BREAKDOWN',
+                                    '+85V MODEL SPIKE (Illustrative)',
                                     style: TextStyle(
                                       color: AppColors.danger,
                                       fontWeight: FontWeight.bold,
@@ -490,8 +521,11 @@ class _InductiveKickbackSimulatorWidgetState
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(Icons.verified_user,
-                                      color: AppColors.success, size: 30),
+                                  Icon(
+                                    Icons.verified_user,
+                                    color: AppColors.success,
+                                    size: 30,
+                                  ),
                                   Text(
                                     'CLAMPED: Current Recirculating',
                                     style: TextStyle(
@@ -560,8 +594,8 @@ class _InductiveKickbackSimulatorWidgetState
               color: isTransistorFried
                   ? AppColors.danger.withValues(alpha: 0.15)
                   : (isProtected
-                      ? AppColors.success.withValues(alpha: 0.15)
-                      : AppColors.energyAmber.withValues(alpha: 0.15)),
+                        ? AppColors.success.withValues(alpha: 0.15)
+                        : AppColors.energyAmber.withValues(alpha: 0.15)),
               borderRadius: BorderRadius.circular(6),
               border: Border.all(
                 color: isTransistorFried
@@ -578,24 +612,24 @@ class _InductiveKickbackSimulatorWidgetState
                   color: isTransistorFried
                       ? AppColors.danger
                       : (isProtected
-                          ? AppColors.success
-                          : AppColors.energyAmber),
+                            ? AppColors.success
+                            : AppColors.energyAmber),
                   size: 22,
                 ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     isTransistorFried
-                        ? 'CATASTROPHIC BACK-EMF: Abrupt switch shutoff induced an 85V spike. The NPN transistor collector-emitter rating is only 40V, destroying the chip!'
+                        ? 'UNPROTECTED MODEL: The simulator uses an illustrative fixed 85V spike, above the displayed 40V transistor limit. Actual transient voltage depends on the motor, driver, and circuit.'
                         : (isProtected
-                            ? 'PROTECTION ACTIVE: The 1N4007 flyback diode conducts when the collector rises above +12V, safely dissipating stored magnetic energy as gentle heat.'
-                            : 'STEADY STATE: Switch is ON, current flows through the motor coil. Open the switch to observe the collapsing magnetic field!'),
+                              ? 'PROTECTION ACTIVE: The 1N4007 flyback diode clamps the collector near ${clampedVoltageV.toStringAsFixed(1)}V (${supplyVoltageV.toStringAsFixed(1)}V supply + ${diodeForwardVoltageV.toStringAsFixed(1)}V diode drop), providing a path for stored magnetic energy to dissipate.'
+                              : 'STEADY STATE: Switch is ON, current flows through the motor coil. Open the switch to observe the collapsing magnetic field!'),
                     style: TextStyle(
                       color: isTransistorFried
                           ? AppColors.danger
                           : (isProtected
-                              ? AppColors.success
-                              : AppColors.textPrimaryDark),
+                                ? AppColors.success
+                                : AppColors.textPrimaryDark),
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
                     ),

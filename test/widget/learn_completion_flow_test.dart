@@ -294,9 +294,10 @@ void main() {
       await profileRepo.saveProfile(testProfile);
       await profileRepo.setActiveProfile(testProfile.id);
 
-      // Pre-complete 15 out of 16 sub-lessons of Lesson 1
+      // Pre-complete 17 out of 18 sub-lessons of Lesson 1 (excluding l01_16)
       final preCompleted = {
-        for (int i = 1; i <= 15; i++) 'l01_${i.toString().padLeft(2, '0')}'
+        for (int i = 1; i <= 18; i++)
+          if (i != 16) 'l01_${i.toString().padLeft(2, '0')}'
       };
 
       var progress = localDataSource.getProgress('learner_course_completion');

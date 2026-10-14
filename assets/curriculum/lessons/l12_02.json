@@ -71,7 +71,39 @@
               "Observed Measurement / State",
               "Circuit Mechanism & Meaning"
             ],
-            "rows": [
+            "learnerRows": [
+              [
+                "Step 1: Baseline Power ON",
+                "&nbsp;",
+                "&nbsp;",
+                "&nbsp;"
+              ],
+              [
+                "Step 2: Unprotected Turn-Off Prediction",
+                "&nbsp;",
+                "&nbsp;",
+                "&nbsp;"
+              ],
+              [
+                "Step 3: Unprotected Switch Open Test",
+                "&nbsp;",
+                "&nbsp;",
+                "&nbsp;"
+              ],
+              [
+                "Step 4: Diode Clamped Comparison",
+                "&nbsp;",
+                "&nbsp;",
+                "&nbsp;"
+              ],
+              [
+                "Step 5: Current Recirculation Loop",
+                "&nbsp;",
+                "&nbsp;",
+                "&nbsp;"
+              ]
+            ],
+            "educatorRows": [
               [
                 "Step 1: Baseline Power ON",
                 "Steady current through coil",
@@ -88,7 +120,7 @@
                 "Step 3: Unprotected Switch Open Test",
                 "Massive positive voltage surge",
                 "&nbsp;",
-                "Peak voltage exceeds switch rating; risks transistor breakdown"
+                "Monster Lab displays a fixed 85 V illustrative model spike; real transient voltage depends on motor, driver, and circuit. Peak voltage exceeds switch rating; risks transistor breakdown."
               ],
               [
                 "Step 4: Diode Clamped Comparison",
@@ -104,7 +136,9 @@
               ]
             ]
           }
-        }
+        },
+        "supplyVoltageV": 5.0,
+        "diodeForwardVoltageV": 0.7
       },
       "markdownContent": "### Inductive Switching Demonstration Sketch [SIMULATION ONLY]\n> [!NOTE]\n> **Simulation & Logic Demonstration Only:** This Arduino sketch illustrates software control timing (toggling a digital output pin HIGH and LOW). In physical hardware, Pin 9 controls the gate/base of an external switching transistor—never a direct motor coil! The software code alone does NOT absorb back-EMF or measure voltage spikes; electrical protection relies entirely on the physical flyback diode wired across the motor terminals.\n\n```cpp\n// [SIMULATION ONLY — LOGIC CONTROL DEMONSTRATION]\n// In physical hardware, Pin 9 drives an external transistor switch,\n// never a motor directly! Hardware protection requires a physical flyback diode.\nconst int motorControlPin = 9;\n\nvoid setup() {\n  pinMode(motorControlPin, OUTPUT);\n  digitalWrite(motorControlPin, LOW);\n  Serial.begin(9600);\n  Serial.println(F(\"--- Transistor Motor Switching Logic Demo ---\"));\n}\n\nvoid loop() {\n  Serial.println(F(\"Logic HIGH: Transistor ON, motor spinning...\"));\n  digitalWrite(motorControlPin, HIGH);\n  delay(1000);\n\n  Serial.println(F(\"Logic LOW: Transistor OFF, flyback diode recirculates current\"));\n  digitalWrite(motorControlPin, LOW);\n  delay(2000);\n}\n```\n\n### Hands-On Simulation Task: Inspect the Clamping Action 🔬\n\nFollow this structured investigation using the interactive simulator below:\n\n1. **Step 1 — Initial Setup:**\n   - Ensure the motor switch is **CLOSED / ON** and the flyback diode is toggled **OFF** (unprotected baseline).\n2. **Step 2 — Predict the Unprotected Spike:**\n   - **Predict:** What will happen to the voltage at the switch terminal when the circuit opens abruptly without a bypass path?\n3. **Step 3 — Observe & Record Unprotected Turn-Off:**\n   - Click **Open Switch** and observe: without a recirculation loop, the collapsing magnetic field creates an uncontrolled high-voltage transient that exceeds safe transistor ratings.\n4. **Step 4 — Enable Diode & Compare Clamped Voltage:**\n   - Toggle the flyback diode **ON** (connected antiparallel across the motor).\n   - Click **Open Switch** again and record the result: the terminal voltage is clamped safely to approximately $V_{supply} + V_F$ ($\\approx 5.7\\text{V}$ under our 5.0V supply example).\n5. **Step 5 — Trace the Recirculation Loop:**\n   - Watch the animated current loop: verify that after turn-off, current continues flowing through the motor windings and loops back through the forward-biased diode, decaying to zero without crossing the open switch."
     },

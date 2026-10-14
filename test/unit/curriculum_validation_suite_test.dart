@@ -40,10 +40,10 @@ void main() {
 
   group('Curriculum Automated Validation Suite', () {
     test(
-        'All 139 lessons pass CurriculumValidator schema and pedagogical rules',
+        'All 141 lessons pass CurriculumValidator schema and pedagogical rules',
         () async {
       final lessons = await engine.getLessons();
-      expect(lessons.length, equals(139));
+      expect(lessons.length, equals(141));
 
       for (final lesson in lessons) {
         expect(

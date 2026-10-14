@@ -73,7 +73,39 @@
               "Observed Current & Circuit State",
               "Physical Rationale / Meaning"
             ],
-            "rows": [
+            "learnerRows": [
+              [
+                "Step 1: Starting Baseline (Power OFF)",
+                "&nbsp;",
+                "&nbsp;",
+                "&nbsp;"
+              ],
+              [
+                "Step 2: 220 Ω Preset ($V_R = 3.0\\text{V}$)",
+                "&nbsp;",
+                "&nbsp;",
+                "&nbsp;"
+              ],
+              [
+                "Step 3: 10k Ω Preset ($10{,}000\\,\\Omega$)",
+                "&nbsp;",
+                "&nbsp;",
+                "&nbsp;"
+              ],
+              [
+                "Step 4: 0 Ω Boundary Condition",
+                "&nbsp;",
+                "&nbsp;",
+                "&nbsp;"
+              ],
+              [
+                "Step 5: Physical Hardware ID",
+                "&nbsp;",
+                "&nbsp;",
+                "&nbsp;"
+              ]
+            ],
+            "educatorRows": [
               [
                 "Step 1: Starting Baseline (Power OFF)",
                 "0 mA (De-energized circuit)",

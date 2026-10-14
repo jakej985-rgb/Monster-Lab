@@ -61,7 +61,7 @@ void main() {
     test('getCourseById returns specific course', () async {
       final l01 = await engine.getCourseById('lesson_01');
       expect(l01.id, equals('lesson_01'));
-      expect(l01.lessonIds.length, equals(16));
+      expect(l01.lessonIds.length, equals(18));
 
       final cf = await engine.getCourseById('coding_foundations');
       expect(cf.id, equals('coding_foundations'));

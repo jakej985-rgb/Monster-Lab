@@ -20,7 +20,7 @@
       "stepId": "l10_06_s01",
       "title": "Wireless Magic: The 13.56 MHz RFID Transceiver",
       "type": "story",
-      "markdownContent": "### Contactless Identification for Secret Agent Monsters\nHave you ever tapped a plastic keycard against a hotel room door, scanned an automated subway pass, or used contactless tap-to-pay with a phone? These systems use **RFID (Radio-Frequency Identification)**!\n\nIn our monster robotics lab, we want our monster access gate to identify authorized monster operators instantly by reading secret digital tokens. To do this, we use the **RC522 RFID Module** (`comp_23`).\n\n```\nRC522 Reader (Active Transmitter)                 Smart Card / Key Fob (Passive Tag)\n┌────────────────────────────────┐                 ┌────────────────────────────────┐\n│ [MFRC522 IC]                   │                 │ Microscopic Silicon Chip       │\n│       │                        │  13.56 MHz RF   │       ▲                        │\n│ [Copper PCB Loop Antenna]      │════ Magnetic ═══►│ [Internal Wire Coil Antenna]   │\n│ Transmits 13.56 MHz EM Field   │     Field       │ Powered by Inductive Coupling! │\n└────────────────────────────────┘                 └────────────────────────────────┘\n```\n\n### The Mystery of the Batteryless Card\nLook closely at your blue RFID keychain fob and white plastic access card. They have **no batteries**, no charging ports, and no solar panels! How can a dead piece of plastic compute numbers and transmit radio waves?\n\n1. **Electromagnetic Inductive Coupling:** The RC522 reader pumps high-frequency alternating current through the wide copper trace spiraling around its circuit board, creating a localized 13.56 MHz magnetic field.\n2. **Wireless Harvesting:** When you bring a card within 3 centimeters of the reader, the magnetic field cuts across a tiny coiled antenna embedded inside the plastic card.\n3. **Faraday's Law of Induction:** The fluctuating magnetic field induces an electrical current in the tag's coil! A tiny internal capacitor rectifies this electricity, powering up the tag's microchip.\n4. **Load Modulation:** The tag wakes up, reads its burned-in **Unique Identifier (UID)**, and alters the electrical load on its coil to transmit its secret serial number back to the RC522!",
+      "markdownContent": "### Contactless Identification for Secret Agent Monsters\nHave you ever tapped a plastic keycard against a hotel room door, scanned an automated subway pass, or used contactless tap-to-pay with a phone? These systems use **RFID (Radio-Frequency Identification)**!\n\nIn our monster robotics lab, we want our monster access gate to identify authorized monster operators instantly by reading secret digital tokens. To do this, we use the **RC522 RFID Module** (`comp_23`).\n\n```\nRC522 Reader (Active Transmitter)                 Smart Card / Key Fob (Passive Tag)\n┌────────────────────────────────┐                 ┌────────────────────────────────┐\n│ [MFRC522 IC]                   │                 │ Microscopic Silicon Chip       │\n│       │                        │  13.56 MHz RF   │       ▲                        │\n│ [Copper PCB Loop Antenna]      │════ Magnetic ═══►│ [Internal Wire Coil Antenna]   │\n│ Transmits 13.56 MHz EM Field   │     Field       │ Powered by Inductive Coupling! │\n└────────────────────────────────┘                 └────────────────────────────────┘\n```\n\n### The Mystery of the Batteryless Card\nLook closely at your blue RFID keychain fob and white plastic access card. They have **no batteries**, no charging ports, and no solar panels! How can a dead piece of plastic compute numbers and transmit radio waves?\n\n1. **Electromagnetic Inductive Coupling:** The RC522 reader pumps high-frequency alternating current through the wide copper trace spiraling around its circuit board, creating a localized 13.56 MHz magnetic field.\n2. **Wireless Harvesting:** When you bring a card within the reader's near-field range (the simulator models a threshold of 3 cm, though physical range varies with reader/tag antennas, tuning, power, and setup), the magnetic field cuts across a tiny coiled antenna embedded inside the plastic card.\n3. **Faraday's Law of Induction:** The fluctuating magnetic field induces an electrical current in the tag's coil! The tag's internal rectifier converts this induced alternating voltage into direct current (DC) to power the tag's microchip, while capacitors smooth or store energy for the chip.\n4. **Load Modulation:** The tag wakes up, reads its burned-in **Unique Identifier (UID)**, and alters the electrical load on its coil to transmit its secret serial number back to the RC522!",
       "quickCheck": [
         {
           "questionId": "qc_l10_06_s01_q1",
@@ -52,8 +52,8 @@
       "stepId": "l10_06_s02",
       "title": "Inductive Coupling Physics & 3.3V Power Safety",
       "type": "visualExplanation",
-      "interactiveWidgetType": "visualFlowDiagram",
-      "markdownContent": "### CRITICAL HARDWARE SAFETY: The 3.3V Power & Logic Rule\n> [!CAUTION]\n> **THE RC522 MODULE RUNS ON 3.3V POWER AND REQUIRES 3.3V LOGIC SIGNALS!**\n> The MFRC522 silicon chip is rated for a maximum supply voltage of **3.6V** ($V_{DD} \\le 3.6\\text{V}$) and maximum input pin voltage of **$V_{DD} + 0.5\\text{V} \\approx 3.8\\text{V}$**.\n> 1. Connecting the module's `3.3V` power pin to the Arduino's `5V` power rail will **permanently destroy the internal radio receiver circuitry**! Always connect the module's power pin strictly to the Uno's **3.3V** pin.\n> 2. The Arduino Uno's digital output pins emit **5V logic**! Connecting Uno 5V outputs (`MOSI`, `SCK`, `SS/CS`, `RST`) directly to the 3.3V RC522 inputs overstresses its input protection diodes. Unless using a breakout board with built-in level-shifter circuitry, use a **bidirectional logic level shifter** or **voltage divider** (e.g., $1\\,\\text{k}\\Omega$ in series from Uno pin, tapped to RC522 input with $2\\,\\text{k}\\Omega$ to GND) on each 5V output signal line!\n> 3. The `MISO` line (RC522 $\\to$ Uno Pin 12) outputs 3.3V logic, which safely exceeds the ATmega328P minimum digital HIGH input threshold ($V_{IH} \\approx 3.0\\text{V}$), so it can connect directly back to Uno Pin 12.\n\n### In-App Interactive Simulation Activity\nIn Monster Lab's interactive simulator, you can safely explore 13.56 MHz RFID communication without risk of overvolting delicate physical ICs:\n1. **Virtual Antenna Field**: Observe the simulated 13.56 MHz electromagnetic coupling field radiating from the RC522 loop antenna.\n2. **Bring Tag into Range**: Drag the virtual smart card or blue key fob within 3 cm of the reader. Watch the virtual coil harvest energy and load-modulate its burned-in UID.\n3. **Inspect Serial UID**: Verify that the virtual SPI bus interrogates the tag and streams its 4-byte hexadecimal UID (`DE AD BE EF`) into the terminal.\n\n### Optional Physical Hardware Extension\nIf you have the physical kit components and wish to assemble the circuit on a real breadboard, follow this exact level-shifting architecture:\n```\nRC522 MODULE PINOUT (8 PINS):\n  1. 3.3V  ───► Connect to Uno 3.3V ONLY! (Red wire)\n  2. RST   ───► Reset input: 5V Uno Pin 9 via Level Shifter / Divider ──► RC522 RST (White)\n  3. GND   ───► Ground: Connect to Uno GND (Black wire)\n  4. IRQ   ───► Interrupt: Leave UNCONNECTED for basic polling\n  5. MISO  ───► SPI Data In: 3.3V direct to Uno Pin 12 (Yellow wire)\n  6. MOSI  ───► SPI Data Out: 5V Uno Pin 11 via Level Shifter / Divider ──► RC522 MOSI (Blue)\n  7. SCK   ───► SPI Clock: 5V Uno Pin 13 via Level Shifter / Divider ──► RC522 SCK (Green)\n  8. SDA   ───► Chip Select (NSS/CS): 5V Uno Pin 10 via Level Shifter / Divider ──► RC522 SDA (Orange)\n```\n\n*(Note: On the RC522 module silk-screen, the Chip Select pin is labeled `SDA` or `NSS`. In SPI mode, this functions as the standard active-low `CS` line!)*\n\n### Physical Wiring Sequence (Optional):\n1. **Unplug USB:** Disconnect your Arduino Uno from computer power before placing any wires.\n2. **Power & Ground:**\n   - Connect Uno **3.3V pin** (Red wire) directly to RC522 **3.3V pin**. *(CRITICAL: Never connect 5V to the RC522!)*\n   - Connect Uno **GND pin** (Black wire) directly to RC522 **GND pin**.\n3. **MISO Return Line (Direct 3.3V):**\n   - Connect RC522 **MISO** directly to Uno **Pin 12** (Yellow wire). The Uno reads 3.3V logic HIGH reliably without level shifting.\n4. **5V Output Lines via Level Shifting (Uno to RC522):**\n   - Route each 5V Uno signal through a logic level shifter channel or resistor divider ($1\\,\\text{k}\\Omega$ series, $2\\,\\text{k}\\Omega$ to GND):\n     - **RST (Reset):** Uno **Pin 9** ──► Level Shifter / Divider ──► RC522 **RST** (White wire).\n     - **MOSI (Data):** Uno **Pin 11** ──► Level Shifter / Divider ──► RC522 **MOSI** (Blue wire).\n     - **SCK (Clock):** Uno **Pin 13** ──► Level Shifter / Divider ──► RC522 **SCK** (Green wire).\n     - **SDA (CS):** Uno **Pin 10** ──► Level Shifter / Divider ──► RC522 **SDA** (Orange wire).\n5. **IRQ:** Leave unconnected.\n\n### Essential Pre-Power Verification Checklist:\n- [ ] Power disconnected: USB cable unplugged from computer.\n- [ ] RC522 VCC connects to **3.3V pin**, NOT 5V.\n- [ ] Signal lines from Uno (Pins 9, 10, 11, 13) pass through logic level converter / resistor dividers.\n- [ ] Common ground established between Uno GND and RC522 GND.\n- [ ] Only after all wiring is double-checked, reconnect USB power.",
+      "interactiveWidgetType": "rfidCouplingSimulator",
+      "markdownContent": "### CRITICAL HARDWARE SAFETY: The 3.3V Power & Logic Rule\n> [!CAUTION]\n> **THE RC522 MODULE RUNS ON 3.3V POWER AND REQUIRES 3.3V LOGIC SIGNALS!**\n> The MFRC522 silicon chip is rated for a maximum supply voltage of **3.6V** ($V_{DD} \\le 3.6\\text{V}$) and maximum input pin voltage of **$V_{DD} + 0.5\\text{V} \\approx 3.8\\text{V}$**.\n> 1. Connecting the module's `3.3V` power pin to the Arduino's `5V` power rail will **permanently destroy the internal radio receiver circuitry**! Always connect the module's power pin strictly to the Uno's **3.3V** pin.\n> 2. The Arduino Uno's digital output pins emit **5V logic**! Connecting Uno 5V outputs (`MOSI`, `SCK`, `SS/CS`, `RST`) directly to the 3.3V RC522 inputs overstresses its input protection diodes. Unless using a breakout board with built-in level-shifter circuitry, use a **bidirectional logic level shifter** or **voltage divider** (e.g., $1\\,\\text{k}\\Omega$ in series from Uno pin, tapped to RC522 input with $2\\,\\text{k}\\Omega$ to GND) on each 5V output signal line!\n> 3. The `MISO` line (RC522 $\\to$ Uno Pin 12) outputs 3.3V logic, which safely exceeds the ATmega328P minimum digital HIGH input threshold ($V_{IH} \\approx 3.0\\text{V}$), so it can connect directly back to Uno Pin 12.\n\n### In-App Interactive Simulation Activity\nIn Monster Lab's RFID simulation, you can safely explore 13.56 MHz communication without connecting or overvolting physical ICs:\n1. **Virtual Antenna Field**: Observe the simulated 13.56 MHz electromagnetic coupling field radiating from the RC522 loop antenna.\n2. **Bring Tag into Range**: Drag the virtual smart card or blue key fob within the simulated 3 cm read threshold (chosen for our simulator; physical read range varies with reader/tag antennas, tuning, and power). Watch the virtual coil harvest energy and load-modulate its burned-in UID.\n3. **Inspect Serial UID**: Verify that the virtual SPI bus interrogates the tag and streams its 4-byte hexadecimal UID (`DE AD BE EF`) into the terminal.\n\n### Optional Physical Hardware Extension\nIf you have the physical kit components and wish to assemble the circuit on a real breadboard, follow this exact level-shifting architecture:\n```\nRC522 MODULE PINOUT (8 PINS):\n  1. 3.3V  ───► Connect to Uno 3.3V ONLY! (Red wire)\n  2. RST   ───► Reset input: 5V Uno Pin 9 via Level Shifter / Divider ──► RC522 RST (White)\n  3. GND   ───► Ground: Connect to Uno GND (Black wire)\n  4. IRQ   ───► Interrupt: Leave UNCONNECTED for basic polling\n  5. MISO  ───► SPI Data In: 3.3V direct to Uno Pin 12 (Yellow wire)\n  6. MOSI  ───► SPI Data Out: 5V Uno Pin 11 via Level Shifter / Divider ──► RC522 MOSI (Blue)\n  7. SCK   ───► SPI Clock: 5V Uno Pin 13 via Level Shifter / Divider ──► RC522 SCK (Green)\n  8. SDA   ───► Chip Select (NSS/CS): 5V Uno Pin 10 via Level Shifter / Divider ──► RC522 SDA (Orange)\n```\n\n*(Note: On the RC522 module silk-screen, the Chip Select pin is labeled `SDA` or `NSS`. In SPI mode, this functions as the standard active-low `CS` line!)*\n\n### Physical Wiring Sequence (Optional):\n1. **Unplug USB:** Disconnect your Arduino Uno from computer power before placing any wires.\n2. **Power & Ground:**\n   - Connect Uno **3.3V pin** (Red wire) directly to RC522 **3.3V pin**. *(CRITICAL: Never connect 5V to the RC522!)*\n   - Connect Uno **GND pin** (Black wire) directly to RC522 **GND pin**.\n3. **MISO Return Line (Direct 3.3V):**\n   - Connect RC522 **MISO** directly to Uno **Pin 12** (Yellow wire). The Uno reads 3.3V logic HIGH reliably without level shifting.\n4. **5V Output Lines via Level Shifting (Uno to RC522):**\n   - Route each 5V Uno signal through a logic level shifter channel or resistor divider ($1\\,\\text{k}\\Omega$ series, $2\\,\\text{k}\\Omega$ to GND):\n     - **RST (Reset):** Uno **Pin 9** ──► Level Shifter / Divider ──► RC522 **RST** (White wire).\n     - **MOSI (Data):** Uno **Pin 11** ──► Level Shifter / Divider ──► RC522 **MOSI** (Blue wire).\n     - **SCK (Clock):** Uno **Pin 13** ──► Level Shifter / Divider ──► RC522 **SCK** (Green wire).\n     - **SDA (CS):** Uno **Pin 10** ──► Level Shifter / Divider ──► RC522 **SDA** (Orange wire).\n5. **IRQ:** Leave unconnected.\n\n### Essential Pre-Power Verification Checklist:\n- [ ] Power disconnected: USB cable unplugged from computer.\n- [ ] RC522 VCC connects to **3.3V pin**, NOT 5V.\n- [ ] Signal lines from Uno (Pins 9, 10, 11, 13) pass through logic level converter / resistor dividers.\n- [ ] Common ground established between Uno GND and RC522 GND.\n- [ ] Only after all wiring is double-checked, reconnect USB power.",
       "interactiveConfig": {
         "nodes": [
           {
@@ -61,7 +61,7 @@
             "label": "1. EMIT FIELD\n(13.56 MHz Reader Coil)",
             "icon": "sensors",
             "role": "RC522 antenna coil oscillates at 13.56 MHz, emitting an alternating magnetic field into the air gap.",
-            "example": "MFRC522 PCB trace antenna energizes within ~3 cm range",
+            "example": "MFRC522 PCB trace antenna energizes within simulated 3 cm threshold (physical range varies)",
             "color": "#00F5FF"
           },
           {
@@ -89,36 +89,61 @@
             "color": "#00E676"
           }
         ],
+        "demoUid": "DE AD BE EF",
+        "frequencyMHz": 13.56,
+        "readRangeCm": 3.0,
         "printableActivity": {
-          "title": "Laboratory Investigation Sheet: 13.56 MHz RFID Data Exchange",
-          "simulationName": "visualFlowDiagram (RFID Coupling & SPI Pipeline)",
-          "instructions": "Step through each stage in the Monster Lab RFID simulator. Trace magnetic field induction, tag energy harvesting, subcarrier load modulation, and SPI byte transfer:",
+          "title": "RFID Field, Tag, and SPI Investigation",
+          "simulationName": "rfidCouplingSimulator",
+          "instructions": "Move the example tag through the 0–6 cm range, then read it at the simulated 3 cm threshold or closer. Record the stage changes and the example UID shown in the Serial Monitor.",
           "table": {
             "headers": [
-              "Stage",
-              "What I Observed",
-              "What it Means"
+              "Investigation stage",
+              "What I observed",
+              "What the stage means"
             ],
-            "rows": [
+            "learnerRows": [
               [
-                "Stage 1: 13.56 MHz RF Field Emission",
+                "Tag out of range (>3 cm)",
                 "&nbsp;",
-                "Reader coil oscillates continuously to form near-field magnetic coupling"
+                "&nbsp;"
               ],
               [
-                "Stage 2: Tag Energy Harvesting",
+                "Tag in range (≤3 cm)",
                 "&nbsp;",
-                "Faraday induction generates power in the passive card with zero batteries required"
+                "&nbsp;"
               ],
               [
-                "Stage 3: Load Modulation (Tag to Reader)",
+                "Read UID: load modulation",
                 "&nbsp;",
-                "Tag modulates antenna impedance to reflect data back through tiny reader current shifts"
+                "&nbsp;"
               ],
               [
-                "Stage 4: SPI Transfer (RC522 to Uno)",
+                "SPI transfer and Serial Monitor",
                 "&nbsp;",
-                "MFRC522 demodulates subcarrier; transfers 4-byte UID (DE AD BE EF) at 3.3V logic"
+                "&nbsp;"
+              ]
+            ],
+            "educatorRows": [
+              [
+                "Tag out of range (>3 cm)",
+                "Tag is not powered; read action unavailable",
+                "The tag is outside the simulated near-field read range."
+              ],
+              [
+                "Tag in range (≤3 cm)",
+                "Field indicator activates and tag is powered",
+                "The reader field supplies energy to the passive tag."
+              ],
+              [
+                "Read UID: load modulation",
+                "Tag response appears at the reader",
+                "The tag changes its antenna load to return data."
+              ],
+              [
+                "SPI transfer and Serial Monitor",
+                "Uno receives MISO data; example UID DE AD BE EF appears",
+                "Uno clocks the response over SCK; MOSI carries commands to the reader, MISO returns data, and CS selects the RC522."
               ]
             ]
           }
@@ -129,7 +154,7 @@
       "stepId": "l10_06_s03",
       "title": "Reading Smart Card UIDs via SPI",
       "type": "codeExperiment",
-      "markdownContent": "### The Smart Badge Reader Sketch\nLet's test the complete Arduino sketch in the simulator (or upload to physical hardware) to initialize the RC522 reader module over SPI and print the hexadecimal Unique Identifier (UID) of any tapped card or keychain tag to the Serial Monitor!\n\n```cpp\n#include <SPI.h>\n#include <MFRC522.h>\n\n// Pin definitions for RC522\nconst int SS_PIN  = 10; // Chip Select (labeled SDA on module)\nconst int RST_PIN = 9;  // Hardware Reset pin\n\nMFRC522 rfid(SS_PIN, RST_PIN); // Create MFRC522 instance\n\nvoid setup() {\n  Serial.begin(9600);\n  while (!Serial);\n\n  SPI.begin();       // 1. Initialize SPI bus (Pins 11, 12, 13)\n  rfid.PCD_Init();   // 2. Initialize MFRC522 silicon over SPI\n\n  Serial.println(\"====================================\");\n  Serial.println(\"MONSTER ACCESS CONTROL TERMINAL READY\");\n  Serial.println(\"Tap your RFID card or key fob...\");\n  Serial.println(\"====================================\");\n}\n\nvoid loop() {\n  // 1. Look for new cards in the 13.56 MHz field\n  if (!rfid.PICC_IsNewCardPresent()) {\n    return;\n  }\n\n  // 2. Interrogate the card and read its serial number\n  if (!rfid.PICC_ReadCardSerial()) {\n    return;\n  }\n\n  // 3. Print the Unique Identifier (UID)\n  Serial.print(\"SUCCESS: Card Detected! UID (HEX): \");\n  for (byte i = 0; i < rfid.uid.size; i++) {\n    if (rfid.uid.uidByte[i] < 0x10) {\n      Serial.print(\" 0\");\n    } else {\n      Serial.print(\" \");\n    }\n    Serial.print(rfid.uid.uidByte[i], HEX);\n  }\n  Serial.println();\n\n  // 4. Halt the card so it doesn't continuously trigger\n  rfid.PICC_HaltA();\n  rfid.PCD_StopCrypto1();\n  delay(500);\n}\n```\n\n### Code Breakdown:\n- `rfid.PCD_Init()`: Sends commands over hardware SPI to configure the RC522's internal antenna gain, timer registers, and modulation depth.\n- `rfid.PICC_IsNewCardPresent()`: Queries whether a resonant 13.56 MHz tag is currently drawing energy from the antenna field.\n- `rfid.uid.uidByte[i]`: Accesses each byte of the card's burned-in hardware serial number (typically a 4-byte string such as `DE AD BE EF`).",
+      "markdownContent": "### The Smart Badge Reader Sketch\nUse this Arduino sketch as a reference for how an RC522 reader is initialized over SPI and how a tag's Unique Identifier (UID) is printed to the Serial Monitor. The Monster Lab simulation in the previous step demonstrates the interaction with a deterministic example UID without compiling this hardware-specific library. Physical wiring and upload are optional extensions.\n\n```cpp\n#include <SPI.h>\n#include <MFRC522.h>\n\n// Pin definitions for RC522\nconst int SS_PIN  = 10; // Chip Select (labeled SDA on module)\nconst int RST_PIN = 9;  // Hardware Reset pin\n\nMFRC522 rfid(SS_PIN, RST_PIN); // Create MFRC522 instance\n\nvoid setup() {\n  Serial.begin(9600);\n  while (!Serial);\n\n  SPI.begin();       // 1. Initialize SPI bus (Pins 11, 12, 13)\n  rfid.PCD_Init();   // 2. Initialize MFRC522 silicon over SPI\n\n  Serial.println(\"====================================\");\n  Serial.println(\"MONSTER ACCESS CONTROL TERMINAL READY\");\n  Serial.println(\"Tap your RFID card or key fob...\");\n  Serial.println(\"====================================\");\n}\n\nvoid loop() {\n  // 1. Look for new cards in the 13.56 MHz field\n  if (!rfid.PICC_IsNewCardPresent()) {\n    return;\n  }\n\n  // 2. Interrogate the card and read its serial number\n  if (!rfid.PICC_ReadCardSerial()) {\n    return;\n  }\n\n  // 3. Print the Unique Identifier (UID)\n  Serial.print(\"SUCCESS: Card Detected! UID (HEX): \");\n  for (byte i = 0; i < rfid.uid.size; i++) {\n    if (rfid.uid.uidByte[i] < 0x10) {\n      Serial.print(\" 0\");\n    } else {\n      Serial.print(\" \");\n    }\n    Serial.print(rfid.uid.uidByte[i], HEX);\n  }\n  Serial.println();\n\n  // 4. Halt the card so it doesn't continuously trigger\n  rfid.PICC_HaltA();\n  rfid.PCD_StopCrypto1();\n  delay(500);\n}\n```\n\n### Code Breakdown:\n- `rfid.PCD_Init()`: Sends commands over hardware SPI to configure the RC522's internal antenna gain, timer registers, and modulation depth.\n- `rfid.PICC_IsNewCardPresent()`: Queries whether a resonant 13.56 MHz tag is currently drawing energy from the antenna field.\n- `rfid.uid.uidByte[i]`: Accesses each byte of the card's burned-in hardware serial number (typically a 4-byte string such as `DE AD BE EF`).",
       "interactiveConfig": {}
     },
     {

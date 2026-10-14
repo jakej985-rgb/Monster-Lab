@@ -49,7 +49,7 @@ void main() {
       const learnerId = 'learner_skip_cf';
 
       // 1. Complete Lesson 1 course and sub-lessons
-      for (int i = 1; i <= 16; i++) {
+      for (int i = 1; i <= 18; i++) {
         await progressRepo.completeLesson(
             learnerId, 'l01_${i.toString().padLeft(2, '0')}', 10);
       }

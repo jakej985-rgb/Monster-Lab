@@ -57,7 +57,6 @@ def render_lesson_to_html(lesson_data, output_html_path, mode="learner"):
     brand_title = "Monster Lab • Educator Key & Lesson Review" if mode == "educator" else "Monster Lab • Student Lab Handout"
 
     step_html = ""
-    rendered_widgets = set()
     for idx, step in enumerate(steps, 1):
         step_id = step.get("stepId", f"s{idx}")
         step_title = step.get("title", f"Step {idx}")
@@ -155,19 +154,29 @@ def render_lesson_to_html(lesson_data, output_html_path, mode="learner"):
         # Check for explicitly structured printableActivity
         printable_act = interactive_config.get("printableActivity") or step.get("printableActivity")
 
-        sim_key = widget_type or (printable_act.get("simulationName") if printable_act else None)
-        if printable_act and (sim_key not in rendered_widgets or not sim_key):
-            if sim_key:
-                rendered_widgets.add(sim_key)
+        if printable_act:
             p_title = printable_act.get("title", "Laboratory Investigation Sheet")
             p_sim_name = printable_act.get("simulationName", widget_type or "Interactive Simulation")
             p_instructions = printable_act.get("instructions", "")
             p_table = printable_act.get("table", {})
             p_headers = p_table.get("headers", [])
-            p_rows = p_table.get("rows", [])
+            row_key = "educatorRows" if mode == "educator" else "learnerRows"
+            p_rows = p_table.get(row_key, [])
+
+            if p_headers and not p_rows:
+                raise ValueError(
+                    f"Lesson {lesson_id}, step {step_id}: printableActivity.table.{row_key} is required"
+                )
+            for row_index, row in enumerate(p_rows, 1):
+                if not isinstance(row, list) or len(row) != len(p_headers):
+                    raise ValueError(
+                        f"Lesson {lesson_id}, step {step_id}: printableActivity.table.{row_key} "
+                        f"row {row_index} has {len(row) if isinstance(row, list) else 'invalid'} cells; "
+                        f"expected {len(p_headers)}"
+                    )
 
             table_html = ""
-            if p_headers and p_rows:
+            if p_headers:
                 header_cols = "".join([f"<th style='padding: 6px; border: 1px solid #cbd5e1;'>{render_latex_to_html(h)}</th>" for h in p_headers])
                 body_rows = ""
                 for row in p_rows:

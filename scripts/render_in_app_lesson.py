@@ -152,6 +152,114 @@ def render_step_card(step, step_idx, total_steps, lesson_id, lesson_data):
             </div>
         </div>
         """
+    elif widget_type == "rfidCouplingSimulator":
+        widget_html = """
+        <div class="app-widget-card rfid-simulator-card">
+            <div class="widget-header-bar">
+                <div class="widget-icon-title">
+                    <span class="widget-icon">📡</span>
+                    <div>
+                        <div class="widget-title">RFID Coupling &amp; UID Read Simulator</div>
+                        <div class="widget-subtitle">Teaching model: 13.56 MHz Near-Field Coupling • 3.0 cm Simulated Threshold</div>
+                    </div>
+                </div>
+                <div class="chip-badge">STATIC REVIEW MOCKUP</div>
+            </div>
+
+            <div class="rfid-mockup-body">
+                <div class="rfid-device-row">
+                    <div class="rfid-device-col">
+                        <div class="device-icon">📡</div>
+                        <div class="device-label">RC522 reader</div>
+                        <div class="device-sub">13.56 MHz EM Field</div>
+                    </div>
+                    <div class="rfid-wave-indicator">
+                        <div class="wave-icon">〰️</div>
+                        <div class="wave-text">Near-Field Magnetic Wave</div>
+                    </div>
+                    <div class="rfid-device-col">
+                        <div class="device-icon">💳</div>
+                        <div class="device-label">Passive tag</div>
+                        <div class="device-sub unpowered">Unpowered (&gt;3.0 cm)</div>
+                    </div>
+                </div>
+
+                <div class="rfid-scale-box">
+                    <div class="scale-info-row">
+                        <span class="scale-title">Distance Scale (0 to 6 cm)</span>
+                        <span class="threshold-pill">Simulated Read Threshold: 3.0 cm</span>
+                    </div>
+                    <div class="scale-track-wrap">
+                        <div class="scale-track-bar"></div>
+                        <div class="scale-threshold-line" style="left: 50%;">
+                            <span class="threshold-text">3.0 cm threshold</span>
+                        </div>
+                        <div class="scale-tag-pin" style="left: 83.3%;">
+                            <span class="tag-pin-label">💳 Tag at 5.0 cm (Default)</span>
+                        </div>
+                    </div>
+                    <div class="scale-tick-labels">
+                        <span>0 cm</span>
+                        <span>1 cm</span>
+                        <span>2 cm</span>
+                        <span class="threshold-tick">3 cm (Threshold)</span>
+                        <span>4 cm</span>
+                        <span class="default-tick">5 cm (Default)</span>
+                        <span>6 cm</span>
+                    </div>
+                </div>
+
+                <div class="rfid-action-box">
+                    <div class="power-status-pill out-of-range">
+                        <span class="pill-dot">⚠️</span>
+                        <span>TAG NOT POWERED — OUT OF RANGE (5.0 cm &gt; 3.0 cm threshold)</span>
+                    </div>
+                    <div class="action-btn-row">
+                        <button class="mockup-btn btn-disabled" disabled>🔒 Read UID (Unavailable out of range)</button>
+                        <button class="mockup-btn btn-reset">↺ Reset (5.0 cm)</button>
+                    </div>
+                </div>
+
+                <div class="rfid-sequence-box">
+                    <div class="sequence-title">IN-RANGE READ SEQUENCE (when distance &le; 3.0 cm):</div>
+                    <div class="sequence-stages-grid">
+                        <div class="stage-cell">
+                            <div class="stage-step">Stage 1</div>
+                            <div class="stage-name">Tag load modulation</div>
+                            <div class="stage-desc">Tag shifts coil load to modulate 13.56 MHz subcarrier</div>
+                        </div>
+                        <div class="stage-arrow">➔</div>
+                        <div class="stage-cell">
+                            <div class="stage-step">Stage 2</div>
+                            <div class="stage-name">RC522 receives</div>
+                            <div class="stage-desc">MFRC522 detects RF amplitude changes from tag coil</div>
+                        </div>
+                        <div class="stage-arrow">➔</div>
+                        <div class="stage-cell">
+                            <div class="stage-step">Stage 3</div>
+                            <div class="stage-name">SPI transfer</div>
+                            <div class="stage-desc">RC522 → Uno MISO at safe 3.3V logic level</div>
+                        </div>
+                    </div>
+                    <div class="serial-output-mockup">
+                        <div class="serial-title">Serial Monitor Output:</div>
+                        <code class="serial-text">UID (example): DE AD BE EF</code>
+                    </div>
+                </div>
+
+                <div class="spi-roles-box">
+                    <div class="spi-row"><span class="spi-pin">MOSI</span><span class="spi-desc">Uno → RC522: command data</span></div>
+                    <div class="spi-row"><span class="spi-pin">SCK</span><span class="spi-desc">Uno → RC522: clock</span></div>
+                    <div class="spi-row"><span class="spi-pin">CS</span><span class="spi-desc">Uno → RC522: select reader</span></div>
+                    <div class="spi-row"><span class="spi-pin">MISO</span><span class="spi-desc">RC522 → Uno: returned UID bytes</span></div>
+                </div>
+
+                <div class="rfid-summary-footer">
+                    <span>💡 <strong>Activity Summary:</strong> Move the tag into range (&le;3 cm simulated threshold) to power the passive tag via inductive coupling, then tap Read UID to inspect the 4-stage transfer and example UID DE AD BE EF in the Serial Monitor.</span>
+                </div>
+            </div>
+        </div>
+        """
     elif widget_type and widget_type != "miniQuiz":
         safe_wtype = html.escape(widget_type)
         if interactive_config:
@@ -927,6 +1035,280 @@ def render_full_app_lesson(lesson_id, output_html_path, output_pdf_path):
     font-size: 10px;
     color: #00b894;
     font-weight: 600;
+  }}
+
+  /* RFID SIMULATOR MOCKUP */
+  .rfid-simulator-card {{
+    border-color: #00cec9;
+  }}
+  .rfid-mockup-body {{
+    padding: 6px 0;
+  }}
+  .rfid-device-row {{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background: #090a10;
+    border: 1px solid #2a2a3c;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 12px;
+  }}
+  .rfid-device-col {{
+    text-align: center;
+  }}
+  .rfid-device-col .device-icon {{
+    font-size: 26px;
+    margin-bottom: 4px;
+  }}
+  .rfid-device-col .device-label {{
+    font-weight: 700;
+    font-size: 11px;
+    color: #ffffff;
+  }}
+  .rfid-device-col .device-sub {{
+    font-size: 9px;
+    color: #a4b0be;
+    margin-top: 2px;
+  }}
+  .rfid-device-col .device-sub.unpowered {{
+    color: #ffa502;
+  }}
+  .rfid-wave-indicator {{
+    text-align: center;
+  }}
+  .rfid-wave-indicator .wave-icon {{
+    font-size: 20px;
+    color: #00cec9;
+  }}
+  .rfid-wave-indicator .wave-text {{
+    font-size: 9px;
+    color: #81ecec;
+    margin-top: 2px;
+  }}
+  .rfid-scale-box {{
+    background: #12121c;
+    border: 1px solid #2a2a3c;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 12px;
+  }}
+  .scale-info-row {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #ffffff;
+  }}
+  .threshold-pill {{
+    background: rgba(255, 214, 0, 0.15);
+    color: #ffd600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+  }}
+  .scale-track-wrap {{
+    position: relative;
+    height: 36px;
+    margin: 6px 0 10px 0;
+  }}
+  .scale-track-bar {{
+    position: absolute;
+    top: 17px;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: #2a2a3c;
+    border-radius: 2px;
+  }}
+  .scale-threshold-line {{
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    width: 2px;
+    background: #ffd600;
+  }}
+  .threshold-text {{
+    position: absolute;
+    top: -16px;
+    left: -35px;
+    font-size: 8px;
+    color: #ffd600;
+    white-space: nowrap;
+    font-weight: 700;
+  }}
+  .scale-tag-pin {{
+    position: absolute;
+    top: 6px;
+    transform: translateX(-50%);
+  }}
+  .tag-pin-label {{
+    background: #6c5ce7;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 3px 6px;
+    border-radius: 6px;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  }}
+  .scale-tick-labels {{
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    color: #a4b0be;
+  }}
+  .scale-tick-labels .threshold-tick {{
+    color: #ffd600;
+    font-weight: 700;
+  }}
+  .scale-tick-labels .default-tick {{
+    color: #6c5ce7;
+    font-weight: 700;
+  }}
+  .rfid-action-box {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #090a10;
+    border: 1px solid #2a2a3c;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }}
+  .power-status-pill {{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10.5px;
+    font-weight: 700;
+  }}
+  .power-status-pill.out-of-range {{
+    color: #ffa502;
+  }}
+  .action-btn-row {{
+    display: flex;
+    gap: 8px;
+  }}
+  .mockup-btn {{
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+  }}
+  .mockup-btn.btn-disabled {{
+    background: #2a2a3c;
+    color: #636e72;
+    cursor: not-allowed;
+  }}
+  .mockup-btn.btn-reset {{
+    background: transparent;
+    border: 1px solid #6c5ce7;
+    color: #a29bfe;
+  }}
+  .rfid-sequence-box {{
+    background: #12121c;
+    border: 1px solid #2a2a3c;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 12px;
+  }}
+  .sequence-title {{
+    font-size: 10px;
+    font-weight: 800;
+    color: #00cec9;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }}
+  .sequence-stages-grid {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 10px;
+  }}
+  .stage-cell {{
+    background: #181926;
+    border: 1px solid #2a2a3c;
+    border-radius: 8px;
+    padding: 8px;
+    width: 30%;
+    text-align: center;
+  }}
+  .stage-step {{
+    font-size: 8px;
+    font-weight: 800;
+    color: #6c5ce7;
+    text-transform: uppercase;
+  }}
+  .stage-name {{
+    font-size: 10px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 2px 0;
+  }}
+  .stage-desc {{
+    font-size: 8px;
+    color: #a4b0be;
+    line-height: 1.3;
+  }}
+  .stage-arrow {{
+    color: #6c5ce7;
+    font-size: 12px;
+    font-weight: bold;
+  }}
+  .serial-output-mockup {{
+    background: #000000;
+    border: 1px solid #2a2a3c;
+    border-radius: 6px;
+    padding: 8px 10px;
+  }}
+  .serial-title {{
+    font-size: 9px;
+    color: #a4b0be;
+    margin-bottom: 2px;
+  }}
+  .serial-text {{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: #00e676;
+    font-weight: 600;
+  }}
+  .spi-roles-box {{
+    background: #090a10;
+    border: 1px solid #2a2a3c;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+  }}
+  .spi-row {{
+    font-size: 10px;
+    padding: 2px 0;
+    display: flex;
+    gap: 8px;
+  }}
+  .spi-pin {{
+    color: #00cec9;
+    font-weight: 700;
+    width: 44px;
+    font-family: 'JetBrains Mono', monospace;
+  }}
+  .spi-desc {{
+    color: #cbd5e1;
+  }}
+  .rfid-summary-footer {{
+    background: rgba(108, 92, 231, 0.08);
+    border: 1px solid rgba(108, 92, 231, 0.25);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 10px;
+    color: #dcdde1;
+    line-height: 1.4;
   }}
 
   /* QUIZ CONTAINER */

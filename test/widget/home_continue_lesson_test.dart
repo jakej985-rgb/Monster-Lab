@@ -55,7 +55,7 @@ void main() {
         'When Lesson 1 is completed, advances to next lesson as UP NEXT',
         (tester) async {
       final l01SubLessons = [
-        for (int i = 1; i <= 16; i++) '"l01_${i.toString().padLeft(2, '0')}"'
+        for (int i = 1; i <= 18; i++) '"l01_${i.toString().padLeft(2, '0')}"'
       ];
       SharedPreferences.setMockInitialValues({
         'monster_lab_active_profile_id': 'prof_1',
@@ -91,10 +91,10 @@ void main() {
     });
 
     testWidgets(
-        'When all sub-lessons l01_01..l01_16 and course lesson_01 are completed without legacy ID, advances to next lesson',
+        'When all sub-lessons l01_01..l01_18 and course lesson_01 are completed without legacy ID, advances to next lesson',
         (tester) async {
       final l01SubLessons = [
-        for (int i = 1; i <= 16; i++) '"l01_${i.toString().padLeft(2, '0')}"'
+        for (int i = 1; i <= 18; i++) '"l01_${i.toString().padLeft(2, '0')}"'
       ];
       SharedPreferences.setMockInitialValues({
         'monster_lab_active_profile_id': 'prof_1',

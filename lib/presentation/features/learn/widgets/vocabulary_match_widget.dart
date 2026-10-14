@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../domain/models/lesson_model.dart';
 import '../../../shared/widgets/monster_card.dart';
 
 /// A phone-friendly matching activity that only places four pairs on screen.
@@ -43,8 +42,8 @@ class _VocabularyMatchWidgetState extends State<VocabularyMatchWidget> {
   void initState() {
     super.initState();
     final raw = widget.config?['items'];
-    _pairs = (raw is List ? raw : const [])
-        .whereType<Map>()
+    _pairs = (raw is List ? raw : const <dynamic>[])
+        .whereType<Map<dynamic, dynamic>>()
         .map((item) => _VocabularyPair(
               term: '${item['term'] ?? ''}'.trim(),
               meaning: '${item['meaning'] ?? ''}'.trim(),

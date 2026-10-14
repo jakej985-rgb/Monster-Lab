@@ -276,7 +276,7 @@ void main() {
       await tester.tap(find.byKey(const Key('toggle_motor_switch')));
       await tester.pumpAndSettle();
 
-      expect(find.textContaining('ARC BREAKDOWN'), findsOneWidget);
+      expect(find.textContaining('85V MODEL SPIKE'), findsOneWidget);
 
       // Install 1N4007 flyback diode
       await tester.tap(find.byKey(const Key('toggle_flyback_diode')));
