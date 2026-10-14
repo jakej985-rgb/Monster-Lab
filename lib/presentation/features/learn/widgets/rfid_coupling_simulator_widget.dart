@@ -73,17 +73,16 @@ class _RfidCouplingSimulatorWidgetState
   }
 
   String _stageLabel(_RfidReadStage stage) => switch (stage) {
-    _RfidReadStage.loadModulation => 'Tag load modulation: response sent',
-    _RfidReadStage.readerReception => 'RC522 receives the tag response',
-    _RfidReadStage.spiTransfer => 'SPI transfer: RC522 → Uno over MISO',
-    _RfidReadStage.serialOutput => 'Serial Monitor: example UID $_demoUid',
-  };
+        _RfidReadStage.loadModulation => 'Tag load modulation: response sent',
+        _RfidReadStage.readerReception => 'RC522 receives the tag response',
+        _RfidReadStage.spiTransfer => 'SPI transfer: RC522 → Uno over MISO',
+        _RfidReadStage.serialOutput => 'Serial Monitor: example UID $_demoUid',
+      };
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final title =
-        widget.config?['title'] as String? ??
+    final title = widget.config?['title'] as String? ??
         'RFID Coupling & UID Read Simulator';
     final range = _readRangeCm;
     final powered = _tagPowered;
@@ -153,8 +152,7 @@ class _RfidCouplingSimulatorWidgetState
                         0.0,
                         double.infinity,
                       );
-                      final left =
-                          available *
+                      final left = available *
                           (_distanceCm / 6).clamp(0.0, 1.0).toDouble();
                       return Stack(
                         alignment: Alignment.centerLeft,
@@ -165,8 +163,7 @@ class _RfidCouplingSimulatorWidgetState
                             child: Container(height: 3, color: Colors.white24),
                           ),
                           Positioned(
-                            left:
-                                available *
+                            left: available *
                                 (range / 6).clamp(0.0, 1.0).toDouble(),
                             child: Container(
                               width: 2,
@@ -182,15 +179,15 @@ class _RfidCouplingSimulatorWidgetState
                               onHorizontalDragUpdate: _isReading
                                   ? null
                                   : (details) => _setDistance(
-                                      (_distanceCm +
-                                              details.delta.dx /
-                                                  (available <= 0
-                                                      ? 1
-                                                      : available) *
-                                                  6)
-                                          .clamp(0.0, 6.0)
-                                          .toDouble(),
-                                    ),
+                                        (_distanceCm +
+                                                details.delta.dx /
+                                                    (available <= 0
+                                                        ? 1
+                                                        : available) *
+                                                    6)
+                                            .clamp(0.0, 6.0)
+                                            .toDouble(),
+                                      ),
                               child: Container(
                                 width: tagWidth,
                                 height: 44,
@@ -314,34 +311,34 @@ class _RfidCouplingSimulatorWidgetState
   }
 
   Widget _device(String label, IconData icon, Color color) => Column(
-    children: [
-      Icon(icon, color: color, size: 32),
-      const SizedBox(height: 4),
-      Text(label, style: const TextStyle(color: Colors.white)),
-    ],
-  );
+        children: [
+          Icon(icon, color: color, size: 32),
+          const SizedBox(height: 4),
+          Text(label, style: const TextStyle(color: Colors.white)),
+        ],
+      );
 
   Widget _signalRow(String signal, String description) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 2),
-    child: Row(
-      children: [
-        SizedBox(
-          width: 46,
-          child: Text(
-            signal,
-            style: const TextStyle(
-              color: AppColors.accentCyan,
-              fontWeight: FontWeight.bold,
+        padding: const EdgeInsets.symmetric(vertical: 2),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 46,
+              child: Text(
+                signal,
+                style: const TextStyle(
+                  color: AppColors.accentCyan,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
-          ),
+            Expanded(
+              child: Text(
+                description,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ),
+          ],
         ),
-        Expanded(
-          child: Text(
-            description,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-        ),
-      ],
-    ),
-  );
+      );
 }

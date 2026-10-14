@@ -117,7 +117,8 @@ void main() {
   });
 
   testWidgets(
-      'exact 3.0 cm simulated threshold is in range and 3.5 cm is out of range', (
+      'exact 3.0 cm simulated threshold is in range and 3.5 cm is out of range',
+      (
     tester,
   ) async {
     await tester.pumpWidget(wrap(const RfidCouplingSimulatorWidget()));
@@ -151,7 +152,8 @@ void main() {
   });
 
   testWidgets(
-      'displays correct SPI signal roles and qualified simulation threshold note', (
+      'displays correct SPI signal roles and qualified simulation threshold note',
+      (
     tester,
   ) async {
     await tester.pumpWidget(wrap(const RfidCouplingSimulatorWidget()));

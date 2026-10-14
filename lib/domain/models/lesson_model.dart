@@ -166,7 +166,8 @@ class Lesson {
       summary: json['summary'] as String,
       learningGoal: json['learningGoal'] as String?,
       vocabulary: (json['vocabulary'] as List? ?? const [])
-          .map((item) => LessonVocabulary.fromJson(item as Map<String, dynamic>))
+          .map(
+              (item) => LessonVocabulary.fromJson(item as Map<String, dynamic>))
           .toList(),
       tier: DifficultyTier.values.byName(json['tier'] as String),
       estimatedMinutes: json['estimatedMinutes'] as int,

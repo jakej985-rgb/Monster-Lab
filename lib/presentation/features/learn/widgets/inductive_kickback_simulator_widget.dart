@@ -70,8 +70,7 @@ class _InductiveKickbackSimulatorWidgetState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final title =
-        widget.config?['title'] as String? ??
+    final title = widget.config?['title'] as String? ??
         'Inductive Kickback & Flyback Diode Simulator';
     final supplyVoltageV = _configVoltage('supplyVoltageV', 5.0);
     final diodeForwardVoltageV = _configVoltage('diodeForwardVoltageV', 0.7);
@@ -362,14 +361,14 @@ class _InductiveKickbackSimulatorWidgetState
                             isTransistorFried
                                 ? Icons.warning
                                 : (_isSwitchClosed
-                                      ? Icons.link
-                                      : Icons.link_off),
+                                    ? Icons.link
+                                    : Icons.link_off),
                             size: 16,
                             color: isTransistorFried
                                 ? AppColors.danger
                                 : (_isSwitchClosed
-                                      ? AppColors.syntaxFunction
-                                      : Colors.white60),
+                                    ? AppColors.syntaxFunction
+                                    : Colors.white60),
                           ),
                           const SizedBox(width: 6),
                           Expanded(
@@ -377,8 +376,8 @@ class _InductiveKickbackSimulatorWidgetState
                               isTransistorFried
                                   ? 'MODEL SPIKE: 85V (Illustrative)'
                                   : (_isSwitchClosed
-                                        ? 'NPN Switch: CLOSED (ON)'
-                                        : 'NPN Switch: OPEN (OFF)'),
+                                      ? 'NPN Switch: CLOSED (ON)'
+                                      : 'NPN Switch: OPEN (OFF)'),
                               style: TextStyle(
                                 color: isTransistorFried
                                     ? AppColors.danger
@@ -432,8 +431,8 @@ class _InductiveKickbackSimulatorWidgetState
                             color: isTransistorFried
                                 ? AppColors.danger
                                 : (isProtected
-                                      ? AppColors.success
-                                      : AppColors.syntaxFunction),
+                                    ? AppColors.success
+                                    : AppColors.syntaxFunction),
                             fontWeight: FontWeight.bold,
                             fontSize: 13,
                             fontFamily: 'monospace',
@@ -594,8 +593,8 @@ class _InductiveKickbackSimulatorWidgetState
               color: isTransistorFried
                   ? AppColors.danger.withValues(alpha: 0.15)
                   : (isProtected
-                        ? AppColors.success.withValues(alpha: 0.15)
-                        : AppColors.energyAmber.withValues(alpha: 0.15)),
+                      ? AppColors.success.withValues(alpha: 0.15)
+                      : AppColors.energyAmber.withValues(alpha: 0.15)),
               borderRadius: BorderRadius.circular(6),
               border: Border.all(
                 color: isTransistorFried
@@ -612,8 +611,8 @@ class _InductiveKickbackSimulatorWidgetState
                   color: isTransistorFried
                       ? AppColors.danger
                       : (isProtected
-                            ? AppColors.success
-                            : AppColors.energyAmber),
+                          ? AppColors.success
+                          : AppColors.energyAmber),
                   size: 22,
                 ),
                 const SizedBox(width: 8),
@@ -622,14 +621,14 @@ class _InductiveKickbackSimulatorWidgetState
                     isTransistorFried
                         ? 'UNPROTECTED MODEL: The simulator uses an illustrative fixed 85V spike, above the displayed 40V transistor limit. Actual transient voltage depends on the motor, driver, and circuit.'
                         : (isProtected
-                              ? 'PROTECTION ACTIVE: The 1N4007 flyback diode clamps the collector near ${clampedVoltageV.toStringAsFixed(1)}V (${supplyVoltageV.toStringAsFixed(1)}V supply + ${diodeForwardVoltageV.toStringAsFixed(1)}V diode drop), providing a path for stored magnetic energy to dissipate.'
-                              : 'STEADY STATE: Switch is ON, current flows through the motor coil. Open the switch to observe the collapsing magnetic field!'),
+                            ? 'PROTECTION ACTIVE: The 1N4007 flyback diode clamps the collector near ${clampedVoltageV.toStringAsFixed(1)}V (${supplyVoltageV.toStringAsFixed(1)}V supply + ${diodeForwardVoltageV.toStringAsFixed(1)}V diode drop), providing a path for stored magnetic energy to dissipate.'
+                            : 'STEADY STATE: Switch is ON, current flows through the motor coil. Open the switch to observe the collapsing magnetic field!'),
                     style: TextStyle(
                       color: isTransistorFried
                           ? AppColors.danger
                           : (isProtected
-                                ? AppColors.success
-                                : AppColors.textPrimaryDark),
+                              ? AppColors.success
+                              : AppColors.textPrimaryDark),
                       fontSize: 11,
                       fontWeight: FontWeight.bold,
                     ),

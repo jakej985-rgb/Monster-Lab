@@ -3,8 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:monster_lab/presentation/features/learn/widgets/inductive_kickback_simulator_widget.dart';
 
 Widget wrap(Widget child) => MaterialApp(
-  home: Scaffold(body: SingleChildScrollView(child: child)),
-);
+      home: Scaffold(body: SingleChildScrollView(child: child)),
+    );
 
 Future<void> showProtectedState(
   WidgetTester tester,
