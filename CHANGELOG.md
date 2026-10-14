@@ -6,6 +6,33 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.3.0+27] - 2026-10-13
+
+### Overview & Release Highlights
+Release 0.3.0+27 introduces updates across 5 commits.
+
+### 🏗️ Architecture & Data Layer
+- **feat(curriculum): refine RFID rectifier, flyback diode spike model, and in-app simulator preview** (`d9c0d25`):
+  - *What Changed*: - Replace inaccurate capacitor-rectifies statement in l10_06 with RF tag rectifier circuit explanation - Qualify the 3.0 cm RFID detection threshold in l10_06 and simulator widget as a simulation boundary - Document Monster Lab 85V illustrative model spike caveat in l12_02 educator key - Add dedicated RFID coupling simulator static preview mockup in scripts/render_in_app_lesson.py - Add printable activity table validation in scripts/generate_lesson_pdf.py - Add changelog version parsing and validation in scripts/generate_release_changelog.py - Realign tests with Course 1 lesson count and add regression unit/widget test suites
+  - *Why*: Technical necessity and user enhancement.
+- **feat(curriculum): improve course 1 lessons and assessments** (`0606aea`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **Add Phase 28a detailed 16-course hardware curriculum map** (`53fd196`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **Add Phase 28 hardware and computing literacy curriculum plan** (`ff40b1c`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+
+### 🎨 User Experience & Design System
+- **style: apply dart format to lesson model, widgets, and tests** (`693b007`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+
+
+---
+
 ## [0.2.1+26] - 2026-10-11
 
 ### Overview & Release Highlights

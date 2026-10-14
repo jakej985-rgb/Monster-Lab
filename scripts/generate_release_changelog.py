@@ -51,7 +51,13 @@ def get_diff_stat(start_ref, end_ref="HEAD"):
     return run_git(["diff", range_str, "--stat"])
 
 
-CHANGELOG_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "CHANGELOG.md")
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CHANGELOG_PATH = os.path.join(ROOT_DIR, "CHANGELOG.md")
+PUBSPEC_PATH = os.path.join(ROOT_DIR, "pubspec.yaml")
+DART_VERSION_PATH = os.path.join(ROOT_DIR, "lib", "core", "constants", "app_version.dart")
+INNO_SETUP_PATH = os.path.join(ROOT_DIR, "windows", "installer", "monster_lab_setup.iss")
+RUNNER_RC_PATH = os.path.join(ROOT_DIR, "windows", "runner", "Runner.rc")
+DOCKERFILE_PATH = os.path.join(ROOT_DIR, "Dockerfile")
 
 
 def extract_from_changelog(version):
@@ -143,9 +149,6 @@ def generate_draft(version, start_ref, end_ref="HEAD"):
     return "\n".join(lines)
 
 
-PUBSPEC_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "pubspec.yaml")
-
-
 def get_current_pubspec_version():
     if not os.path.exists(PUBSPEC_PATH):
         return None, None
@@ -169,6 +172,67 @@ def update_pubspec_version(new_semver, new_build):
     with open(PUBSPEC_PATH, "w", encoding="utf-8") as f:
         f.write(updated)
     return True
+
+
+def update_dart_version(new_semver, new_build):
+    if not (os.path.exists(DART_VERSION_PATH) or os.path.exists(os.path.dirname(DART_VERSION_PATH))):
+        return False
+    os.makedirs(os.path.dirname(DART_VERSION_PATH), exist_ok=True)
+    dart_content = f"""/// Application version constants for Monster Lab.
+/// Automatically updated by release tooling.
+class AppVersion {{
+  AppVersion._();
+
+  static const String version = '{new_semver}+{new_build}';
+  static const String semver = '{new_semver}';
+  static const int buildNumber = {new_build};
+  static const String displayVersion = 'Version $version • Production Release';
+}}
+"""
+    with open(DART_VERSION_PATH, "w", encoding="utf-8") as f:
+        f.write(dart_content)
+    return True
+
+
+def update_inno_setup(new_semver):
+    if not os.path.exists(INNO_SETUP_PATH):
+        return False
+    with open(INNO_SETUP_PATH, "r", encoding="utf-8") as f:
+        content = f.read()
+    updated = re.sub(r'^#define MyAppVersion\s*".*"', f'#define MyAppVersion "{new_semver}"', content, flags=re.MULTILINE)
+    with open(INNO_SETUP_PATH, "w", encoding="utf-8") as f:
+        f.write(updated)
+    return True
+
+
+def update_runner_rc(new_semver):
+    if not os.path.exists(RUNNER_RC_PATH):
+        return False
+    with open(RUNNER_RC_PATH, "r", encoding="utf-8") as f:
+        content = f.read()
+    updated = re.sub(r'^#define VERSION_AS_STRING\s*".*"', f'#define VERSION_AS_STRING "{new_semver}"', content, flags=re.MULTILINE)
+    with open(RUNNER_RC_PATH, "w", encoding="utf-8") as f:
+        f.write(updated)
+    return True
+
+
+def update_dockerfile(new_semver):
+    if not os.path.exists(DOCKERFILE_PATH):
+        return False
+    with open(DOCKERFILE_PATH, "r", encoding="utf-8") as f:
+        content = f.read()
+    updated = re.sub(r'^LABEL org\.opencontainers\.image\.version=".*"', f'LABEL org.opencontainers.image.version="{new_semver}"', content, flags=re.MULTILINE)
+    with open(DOCKERFILE_PATH, "w", encoding="utf-8") as f:
+        f.write(updated)
+    return True
+
+
+def update_all_version_targets(new_semver, new_build):
+    update_pubspec_version(new_semver, new_build)
+    update_dart_version(new_semver, new_build)
+    update_inno_setup(new_semver)
+    update_runner_rc(new_semver)
+    update_dockerfile(new_semver)
 
 
 def determine_bump_level(commits):
@@ -322,8 +386,8 @@ def main():
                 f"CHANGELOG.md already contains a release entry for {target_semver}"
             )
 
-        print(f"Applying version update to pubspec.yaml: {full_version_tag}")
-        update_pubspec_version(target_semver, target_build)
+        print(f"Applying version update across project files: {full_version_tag}")
+        update_all_version_targets(target_semver, target_build)
         print("Prepending release section to CHANGELOG.md...")
         prepend_to_changelog(content)
         print("Done. Recommended git commands:")
