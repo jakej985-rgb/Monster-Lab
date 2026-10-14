@@ -314,13 +314,19 @@ def release_entry_exists(content, semver):
     return re.search(pattern, content, re.MULTILINE) is not None
 
 
-def parse_requested_version(value, current_build):
-    """Parse strict X.Y.Z[+BUILD] versions, incrementing build when omitted."""
-    match = re.fullmatch(r"(\d+)\.(\d+)\.(\d+)(?:\+(\d+))?", value)
+def parse_requested_version(value, current_build, current_semver=None):
+    """Parse [v]X.Y.Z[+BUILD] versions, preserving current build when semver matches."""
+    clean_value = value.strip().lstrip("v")
+    match = re.fullmatch(r"(\d+)\.(\d+)\.(\d+)(?:\+(\d+))?", clean_value)
     if not match:
-        raise ValueError("Version must use X.Y.Z or X.Y.Z+BUILD format")
+        raise ValueError("Version must use [v]X.Y.Z or [v]X.Y.Z+BUILD format")
     semver = ".".join(match.group(i) for i in (1, 2, 3))
-    build = int(match.group(4)) if match.group(4) else current_build + 1
+    if match.group(4):
+        build = int(match.group(4))
+    elif current_semver is not None and semver == current_semver:
+        build = current_build
+    else:
+        build = current_build + 1
     return semver, build
 
 
@@ -364,7 +370,7 @@ def main():
     if args.version:
         try:
             target_semver, target_build = parse_requested_version(
-                args.version, current_build
+                args.version, current_build, current_semver
             )
         except ValueError as error:
             parser.error(str(error))

@@ -104,6 +104,16 @@ class ReleaseApplyValidationTests(unittest.TestCase):
             ("--apply", "--version", "0.2.1+2"), "release entry"
         )
 
+    def test_parse_requested_version_supports_leading_v_and_preserves_current_build(self):
+        semver, build = release.parse_requested_version("v0.2.0", current_build=25, current_semver="0.2.0")
+        self.assertEqual((semver, build), ("0.2.0", 25))
+
+        semver, build = release.parse_requested_version("v0.3.0", current_build=25, current_semver="0.2.0")
+        self.assertEqual((semver, build), ("0.3.0", 26))
+
+        semver, build = release.parse_requested_version("v0.3.0+99", current_build=25, current_semver="0.2.0")
+        self.assertEqual((semver, build), ("0.3.0", 99))
+
     def test_valid_bump_updates_all_targets_and_prepends_one_release(self):
         self.run_main("--apply", "--bump", "patch")
         self.assertIn("version: 0.2.1+26", self.pubspec.read_text())
@@ -114,6 +124,14 @@ class ReleaseApplyValidationTests(unittest.TestCase):
         changelog = self.changelog.read_text()
         self.assertTrue(changelog.startswith("# Changelog\n\n## [0.2.1+26]"))
         self.assertEqual(changelog.count("## [0.2.1+26]"), 1)
+
+    def test_valid_version_with_leading_v_updates_all_targets(self):
+        self.run_main("--apply", "--version", "v0.3.0+27")
+        self.assertIn("version: 0.3.0+27", self.pubspec.read_text())
+        self.assertIn("version = '0.3.0+27'", self.dart_version.read_text())
+        self.assertIn('#define MyAppVersion "0.3.0"', self.inno_setup.read_text())
+        self.assertIn('#define VERSION_AS_STRING "0.3.0"', self.runner_rc.read_text())
+        self.assertIn('LABEL org.opencontainers.image.version="0.3.0"', self.dockerfile.read_text())
 
 
 if __name__ == "__main__":
