@@ -58,13 +58,12 @@ Never push until every required gate is green.
 6. If anything fails, DO NOT simply halt and say "PUSH BLOCKED". You MUST find the error, diagnose the root cause, and invoke `repair-agent` with the exact failure details to fix it in the working tree.
 7. After every repair, assume ALL previous validation is invalid. Re-run the complete affected validation set, and retry the gate.
 8. Repeat the repair-and-retry cycle up to 3 times. Only if failures remain unresolved after 3 complete repair cycles should you stop, declare PUSH BLOCKED, and report the blocking failures for human review.
-9. Version Bump (starts at v0.0.1 and increments 0.0.1 every push):
-   - Run `python3 scripts/bump_version.py`
-   - Synchronizes `pubspec.yaml`, `lib/core/constants/app_version.dart`, Windows installer, `Runner.rc`, `Dockerfile`, and `CHANGELOG.md`.
-10. Release Changelog & Description Generation:
-   - Invoke `release-changelog` (`.agents/agents/release-changelog/agent.md`) or run `python3 scripts/generate_release_changelog.py --version v[semver]`.
-   - Ensure `CHANGELOG.md` contains the comprehensive "What Changed, Why, and User/Architectural Impact" release notes.
-   - Upon release creation/publication, ensure the GitHub release description contains this full detailed changelog rather than generic GitHub compare URLs or unversioned placeholders.
+9. Automated Version Bump & Multi-Target Synchronization:
+   - Run `python3 scripts/generate_release_changelog.py --bump auto --apply`
+   - Automatically determines semantic level (major, minor, patch) from commit history and synchronizes `pubspec.yaml`, `lib/core/constants/app_version.dart`, Windows installer `monster_lab_setup.iss`, Windows `Runner.rc`, `Dockerfile`, and `CHANGELOG.md`.
+10. Release Notes Verification:
+   - Verify that `CHANGELOG.md` contains the comprehensive release section detailing What Changed, Why, and Architectural/User Impact.
+   - Upon release publication, ensure GitHub release assets and metadata reflect the exact synchronized version.
 11. Before committing or pushing, re-check:
    - `git status --short`
    - `git diff --check`
@@ -76,14 +75,13 @@ Never push until every required gate is green.
    - child-safety & offline invariants intact (COPPA/FERPA compliance, zero telemetry)
 12. If the task requires a commit, create it only after the gate is green.
 13. Immediately before push, capture the exact SHA and working-tree state again. Any change invalidates the gate.
-14. Push only the exact validated commit and push release tag `v[semver]`. Never force-push unless the user explicitly authorizes it.
-15. After pushing, monitor the GitHub Actions runs associated with the pushed SHA/tag until completion without burning API calls or token limits:
-    - GitHub Actions multi-platform workflows (Android Gradle APK, Linux DEB, Windows InnoSetup, and Web Docker) take between 8 to 15 minutes to finish.
-    - NEVER poll in a rapid loop.
-    - When invoking `gh run watch`, ALWAYS specify `--interval 120` or `--interval 180` (e.g. `gh run watch <run-id> --interval 120 --exit-status`).
-    - If tracking asynchronously via background tasks or scripts, delay initial checks by at least 6–8 minutes (e.g., using a timer or sleep) before querying status.
-    - A remote failure is a release failure; do not declare success until remote runs succeed.
-16. If GitHub Actions fails, inspect the failed job/log (`gh run view --log-failed`), repair locally, and restart the complete gate from step 1.
+14. Push validated commit and release tag `v[semver]`:
+   - `git push origin [branch]`
+   - `git push origin v[semver]`
+   - Never force-push unless the user explicitly authorizes it.
+15. Post-Push Monitoring (Zero-Waste Mode):
+   - Do NOT run blocking loops or long-running `gh run watch` commands that consume quota.
+   - Quickly verify workflow kickoff via a non-blocking check (`gh run list -L 3`) and report status.
 
 ## Repository-specific validation baseline
 

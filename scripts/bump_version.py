@@ -9,6 +9,7 @@ import os
 import sys
 import re
 import argparse
+import subprocess
 from datetime import datetime
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -129,11 +130,18 @@ def update_changelog(new_semver: str, new_build: int):
 
 def main():
     parser = argparse.ArgumentParser(description="Bump Monster Lab version.")
+    parser.add_argument("--auto", action="store_true", help="Automatically determine semantic bump level from commits using generate_release_changelog.py")
     parser.add_argument("--minor", action="store_true", help="Bump minor version (e.g. 0.0.9 -> 0.1.0)")
     parser.add_argument("--major", action="store_true", help="Bump major version (e.g. 0.1.0 -> 1.0.0)")
     parser.add_argument("--set-version", help="Explicit version to set (e.g. 0.0.1+1)")
     parser.add_argument("--current", action="store_true", help="Print current version and exit")
     args = parser.parse_args()
+
+    if args.auto:
+        script = os.path.join(ROOT_DIR, "scripts", "generate_release_changelog.py")
+        cmd = [sys.executable, script, "--bump", "auto", "--apply"]
+        res = subprocess.run(cmd)
+        sys.exit(res.returncode)
 
     current_semver, current_build = parse_current_version()
 
