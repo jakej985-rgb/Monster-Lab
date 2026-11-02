@@ -74,6 +74,7 @@ class _ParentGateDialogState extends State<ParentGateDialog> {
         title: const Text('Parental Verification'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          tooltip: 'Back',
           onPressed: () {
             if (Navigator.of(context).canPop()) {
               Navigator.of(context).pop();
