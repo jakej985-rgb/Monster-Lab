@@ -108,6 +108,7 @@ class _TroubleshootingSheetState extends State<TroubleshootingSheet> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.close_rounded),
+                    tooltip: 'Close',
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],

@@ -270,6 +270,7 @@ class _BuildDetailScreenState extends ConsumerState<BuildDetailScreen> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.close_rounded),
+                    tooltip: 'Close',
                     onPressed: () => Navigator.pop(context),
                   ),
                 ],

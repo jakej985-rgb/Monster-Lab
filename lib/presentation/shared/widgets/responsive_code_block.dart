@@ -45,6 +45,7 @@ class ResponsiveCodeBlock extends StatelessWidget {
               right: 4,
               child: IconButton(
                 icon: const Icon(Icons.copy, color: Colors.white54, size: 18),
+                tooltip: 'Copy code',
                 onPressed: () {
                   Clipboard.setData(ClipboardData(text: code));
                   ScaffoldMessenger.of(context).showSnackBar(

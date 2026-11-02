@@ -43,6 +43,7 @@ class FullScreenImageViewer extends StatelessWidget {
                 right: 8,
                 child: IconButton(
                   icon: const Icon(Icons.close, color: Colors.white),
+                  tooltip: 'Close',
                   onPressed: () => Navigator.pop(context),
                 ),
               ),
