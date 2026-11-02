@@ -1,0 +1,4 @@
+## 2026-09-29 - [Missing android:allowBackup in AndroidManifest.xml]
+**Vulnerability:** The Android application is missing the `android:allowBackup="false"` attribute in the `<application>` tag of `android/app/src/main/AndroidManifest.xml`.
+**Learning:** By default, Android applications have `allowBackup` set to true, which means user application data (such as shared preferences storing child profiles and progress) might be backed up to Google Drive and can be extracted via `adb backup` if the device is unlocked. Given this app's strong stance on offline privacy and local-only data in `docs/PRIVACY.md`, backing up to Google Drive could be a privacy concern.
+**Prevention:** Always explicitly define `android:allowBackup="false"` in the AndroidManifest.xml unless cloud backups are explicitly desired and documented.

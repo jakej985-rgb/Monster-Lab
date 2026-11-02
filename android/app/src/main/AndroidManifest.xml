@@ -3,6 +3,7 @@
     <uses-permission android:name="android.permission.USB_PERMISSION" />
 
     <application
+        android:allowBackup="false"
         android:label="Monster Lab"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
