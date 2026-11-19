@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "monster_lab",
+  "version": "0.3.0",
+  "buildNumber": 27,
+  "releaseName": "Monster Lab v0.3.0",
+  "releaseDate": "2026-11-19",
+  "channel": "stable",
+  "supportedPlatforms": [
+    "android",
+    "linux",
+    "windows",
+    "web"
+  ],
+  "dependencies": {
+    "flutter": ">=3.38.0",
+    "dart": ">=3.10.0 <4.0.0"
+  },
+  "packageMetadata": {
+    "android": {
+      "applicationId": "com.monsterlab.app",
+      "versionCode": 27,
+      "versionName": "0.3.0"
+    },
+    "linux": {
+      "packageName": "monster-lab",
+      "architecture": "amd64",
+      "section": "education",
+      "priority": "optional"
+    },
+    "windows": {
+      "appName": "Monster Lab",
+      "executable": "monster_lab.exe",
+      "company": "Monster Lab Robotics Team"
+    },
+    "docker": {
+      "imageName": "monster-lab-web",
+      "tag": "0.3.0"
+    }
+  }
+}

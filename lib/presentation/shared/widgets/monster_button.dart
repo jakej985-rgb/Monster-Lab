@@ -4,6 +4,8 @@ import '../../../core/theme/app_colors.dart';
 enum MonsterButtonVariant { primary, secondary }
 
 class MonsterButton extends StatelessWidget {
+  static const double minTouchTargetSize = 48.0;
+
   final String label;
   final String? semanticLabel;
   final VoidCallback? onPressed;
