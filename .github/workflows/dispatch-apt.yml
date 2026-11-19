@@ -22,9 +22,9 @@ jobs:
       - name: Validate Dispatch Token
         id: check-token
         run: |
-          TOKEN="${{ secrets.M3TAL_APT_DISPATCH_TOKEN || secrets.HUB_DISPATCH_TOKEN || secrets.GH_PAT }}"
+          TOKEN="${{ secrets.M3TAL_APT_DISPATCH_TOKEN || secrets.HUB_DISPATCH_TOKEN || secrets.M3TAL_HUB_TOKEN || secrets.GH_PAT }}"
           if [ -z "$TOKEN" ]; then
-            echo "::error ::Neither M3TAL_APT_DISPATCH_TOKEN nor GH_PAT secret is configured. Refusing to proceed with release dispatch."
+            echo "::error ::No dispatch token configured (M3TAL_APT_DISPATCH_TOKEN, HUB_DISPATCH_TOKEN, M3TAL_HUB_TOKEN, or GH_PAT). Refusing to proceed with release dispatch."
             exit 1
           fi
           echo "configured=true" >> $GITHUB_OUTPUT
@@ -69,7 +69,7 @@ jobs:
       - name: Dispatch Release Event to Central APT Repository
         uses: peter-evans/repository-dispatch@v3
         with:
-          token: ${{ secrets.M3TAL_APT_DISPATCH_TOKEN || secrets.HUB_DISPATCH_TOKEN || secrets.GH_PAT }}
+          token: ${{ secrets.M3TAL_APT_DISPATCH_TOKEN || secrets.HUB_DISPATCH_TOKEN || secrets.M3TAL_HUB_TOKEN || secrets.GH_PAT }}
           repository: jakej985-rgb/m3tal-apt-key
           event-type: publish-deb
           client-payload: >-

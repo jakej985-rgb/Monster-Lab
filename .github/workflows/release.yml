@@ -223,7 +223,6 @@ jobs:
           GPG_KEY_ID: ${{ secrets.APT_GPG_KEY_ID || secrets.GPG_KEY_ID || '5F84FE50A40111C981410E11775AD1473BF25102' }}
         run: |
           DEB_NAME="monster-lab-${PACKAGE_VERSION}-linux.deb"
-          STD_DEB_NAME="monster-lab_${CLEAN_VERSION}_amd64.deb"
           if [ -n "$GPG_PRIVATE_KEY" ]; then
             echo "Importing canonical 50-year GPG key for Debian release signing..."
             echo "$GPG_PRIVATE_KEY" | gpg --batch --import
@@ -231,8 +230,6 @@ jobs:
           else
             python3 scripts/package_linux_deb.py --bundle-dir build/linux/x64/release/bundle --output "$DEB_NAME" --version "$CLEAN_VERSION"
           fi
-          cp "$DEB_NAME" "$STD_DEB_NAME"
-          if [ -f "$DEB_NAME.asc" ]; then cp "$DEB_NAME.asc" "$STD_DEB_NAME.asc"; fi
           SHA256=$(sha256sum "$DEB_NAME" | cut -d ' ' -f1)
           echo "deb_sha256=${SHA256}" >> $GITHUB_ENV
           echo "deb_sha256=${SHA256}" >> $GITHUB_OUTPUT
@@ -250,7 +247,6 @@ jobs:
       - name: Verify Linux release asset naming format
         run: |
           test -f "monster-lab-${PACKAGE_VERSION}-linux.deb"
-          test -f "monster-lab_${CLEAN_VERSION}_amd64.deb"
           test -f "monster-lab-${PACKAGE_VERSION}-linux-portable.tar.gz"
           test -f m3tal-archive-keyring.gpg
           echo "Linux assets verified!"
@@ -262,8 +258,6 @@ jobs:
           files: |
             monster-lab-*-linux.deb
             monster-lab-*-linux.deb.asc
-            monster-lab_*_amd64.deb
-            monster-lab_*_amd64.deb.asc
             monster-lab-*-linux-portable.tar.gz
             m3tal-archive-keyring.gpg
             monster-lab-keyring.gpg
@@ -273,9 +267,9 @@ jobs:
       - name: Validate APT Dispatch Credentials
         if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
         run: |
-          TOKEN="${{ secrets.M3TAL_APT_DISPATCH_TOKEN || secrets.HUB_DISPATCH_TOKEN || secrets.GH_PAT }}"
+          TOKEN="${{ secrets.M3TAL_APT_DISPATCH_TOKEN || secrets.HUB_DISPATCH_TOKEN || secrets.M3TAL_HUB_TOKEN || secrets.GH_PAT }}"
           if [ -z "$TOKEN" ]; then
-            echo "::error ::Missing repository dispatch token! Please configure M3TAL_APT_DISPATCH_TOKEN or GH_PAT in repository settings."
+            echo "::error ::Missing repository dispatch token! Configure M3TAL_APT_DISPATCH_TOKEN, HUB_DISPATCH_TOKEN, M3TAL_HUB_TOKEN, or GH_PAT in repository settings."
             exit 1
           fi
           echo "APT dispatch token is present and verified."
@@ -284,7 +278,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
         uses: peter-evans/repository-dispatch@v3
         with:
-          token: ${{ secrets.M3TAL_APT_DISPATCH_TOKEN || secrets.HUB_DISPATCH_TOKEN || secrets.GH_PAT }}
+          token: ${{ secrets.M3TAL_APT_DISPATCH_TOKEN || secrets.HUB_DISPATCH_TOKEN || secrets.M3TAL_HUB_TOKEN || secrets.GH_PAT }}
           repository: jakej985-rgb/m3tal-apt-key
           event-type: publish-deb
           client-payload: >-
