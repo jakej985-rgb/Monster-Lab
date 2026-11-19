@@ -19,19 +19,34 @@ def verify_android() -> list:
     errors = []
     print("Checking Android release signing configuration...")
 
-    key_props_path = os.path.join(ROOT_DIR, "android", "key.properties")
-    if not os.path.exists(key_props_path):
-        errors.append("android/key.properties missing")
+    example_path = os.path.join(ROOT_DIR, "android", "key.properties.example")
+    if not os.path.exists(example_path):
+        errors.append("android/key.properties.example missing")
     else:
+        with open(example_path, "r") as f:
+            example_content = f.read()
+        for key in ["storePassword", "keyPassword", "keyAlias", "storeFile"]:
+            if key not in example_content:
+                errors.append(f"android/key.properties.example missing required property: {key}")
+
+    key_props_path = os.path.join(ROOT_DIR, "android", "key.properties")
+    require_keystore = os.environ.get("REQUIRE_ANDROID_KEYSTORE", "").lower() in ("true", "1", "yes")
+
+    if os.path.exists(key_props_path):
         with open(key_props_path, "r") as f:
             content = f.read()
         for key in ["storePassword", "keyPassword", "keyAlias", "storeFile"]:
             if key not in content:
                 errors.append(f"android/key.properties missing required property: {key}")
+    elif require_keystore:
+        errors.append("android/key.properties missing (required by REQUIRE_ANDROID_KEYSTORE)")
 
     jks_path = os.path.join(ROOT_DIR, "android", "app", "monster-lab-release.jks")
-    if not os.path.exists(jks_path):
-        errors.append("android/app/monster-lab-release.jks keystore missing")
+    if os.path.exists(jks_path):
+        if os.path.getsize(jks_path) == 0:
+            errors.append("android/app/monster-lab-release.jks keystore is empty")
+    elif require_keystore:
+        errors.append("android/app/monster-lab-release.jks keystore missing (required by REQUIRE_ANDROID_KEYSTORE)")
 
     gradle_path = os.path.join(ROOT_DIR, "android", "app", "build.gradle.kts")
     if not os.path.exists(gradle_path):
