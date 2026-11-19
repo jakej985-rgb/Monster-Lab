@@ -4,6 +4,7 @@ import '../../domain/models/learner_profile_model.dart';
 import '../../domain/models/learner_progress_model.dart';
 import '../../domain/repositories/profile_repository.dart';
 import '../../domain/repositories/progress_repository.dart';
+import 'competency_progression_service.dart';
 
 /// Encapsulates the verified payload extracted from an imported backup.
 class BackupImportResult {
@@ -33,6 +34,35 @@ class ParentDataService {
       'progress': progress.toJson(),
     };
     return const JsonEncoder.withIndent('  ').convert(data);
+  }
+
+  /// Generates a privacy-conscious, offline learning summary report
+  /// excluding any telemetry, IP addresses, or personal identifiers.
+  static Map<String, dynamic> generatePrivacyConsciousReport(
+    LearnerProfileModel profile,
+    LearnerProgressModel progress,
+  ) {
+    final competencies =
+        CompetencyProgressionService.evaluateCompetencies(progress);
+
+    return {
+      'reportType': 'ParentLearningSummary',
+      'generatedAt': DateTime.now().toIso8601String(),
+      'learnerAlias': profile.nickname,
+      'avatarId': profile.avatarId,
+      'ageBracket': profile.ageBracket.name,
+      'overview': {
+        'totalXp': progress.totalXp,
+        'currentLevel': progress.currentLevel,
+        'completedLessonsCount': progress.completedLessonIds.length,
+        'completedProjectsCount': progress.completedProjectIds.length,
+        'earnedBadgesCount': progress.earnedBadgeIds.length,
+        'lastActiveDate': progress.lastSessionDate.toIso8601String(),
+      },
+      'competencies': competencies.map((c) => c.toJson()).toList(),
+      'privacyNotice':
+          'Generated offline on local device. Monster Lab strictly never collects, transmits, or shares personal data or online telemetry.',
+    };
   }
 
   /// Parses and validates a JSON backup string, returning the restored profile and progress.

@@ -207,6 +207,8 @@ class ProjectModel {
   final List<TroubleshootingItem> troubleshooting;
   final List<ProjectVariant> variants;
   final List<EngineeringMission> extensionMissions;
+  final List<String> competencies;
+  final List<String> learningOutcomes;
   final int xpReward;
   final String? badgeRewardId;
 
@@ -223,6 +225,8 @@ class ProjectModel {
     this.troubleshooting = const [],
     this.variants = const [],
     this.extensionMissions = const [],
+    this.competencies = const [],
+    this.learningOutcomes = const [],
     required this.xpReward,
     this.badgeRewardId,
   });
@@ -258,6 +262,12 @@ class ProjectModel {
                   (m) => EngineeringMission.fromJson(m as Map<String, dynamic>))
               .toList()
           : const [],
+      competencies: json['competencies'] != null
+          ? List<String>.from(json['competencies'] as List)
+          : const [],
+      learningOutcomes: json['learningOutcomes'] != null
+          ? List<String>.from(json['learningOutcomes'] as List)
+          : const [],
       xpReward: json['xpReward'] as int,
       badgeRewardId: json['badgeRewardId'] as String?,
     );
@@ -276,6 +286,8 @@ class ProjectModel {
         'troubleshooting': troubleshooting.map((t) => t.toJson()).toList(),
         'variants': variants.map((v) => v.toJson()).toList(),
         'extensionMissions': extensionMissions.map((m) => m.toJson()).toList(),
+        if (competencies.isNotEmpty) 'competencies': competencies,
+        if (learningOutcomes.isNotEmpty) 'learningOutcomes': learningOutcomes,
         'xpReward': xpReward,
         'badgeRewardId': badgeRewardId,
       };

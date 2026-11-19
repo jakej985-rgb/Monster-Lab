@@ -230,6 +230,16 @@ class CurriculumValidator {
         errors.add("Phase ${phase.phaseNumber} is missing instructions");
       }
     }
+    for (final comp in project.competencies) {
+      if (comp.trim().isEmpty) {
+        errors.add("Project competency identifier cannot be empty");
+      }
+    }
+    for (final outcome in project.learningOutcomes) {
+      if (outcome.trim().length < 5) {
+        errors.add("Learning outcome '$outcome' must be at least 5 characters");
+      }
+    }
     if (project.xpReward < 50) {
       errors.add("xpReward must be at least 50 (got ${project.xpReward})");
     }
