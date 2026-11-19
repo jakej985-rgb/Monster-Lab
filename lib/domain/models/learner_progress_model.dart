@@ -92,7 +92,80 @@ class LastActivityInfo {
       };
 }
 
+class UnsupportedSchemaVersionException implements Exception {
+  final int requestedVersion;
+  final int currentVersion;
+
+  const UnsupportedSchemaVersionException(
+    this.requestedVersion,
+    this.currentVersion,
+  );
+
+  @override
+  String toString() =>
+      'UnsupportedSchemaVersionException: Schema version $requestedVersion is higher than supported version $currentVersion';
+}
+
+enum ProgressEventType {
+  courseCompleted,
+  lessonCompleted,
+  placementPassed,
+  componentDiscovered,
+  projectCompleted,
+  projectStepBookmarked,
+  challengeSolved,
+  badgeEarned,
+  quizScoreRecorded,
+  quickCheckRecorded,
+  xpAdded,
+}
+
+class LearnerProgressEvent {
+  final String eventId;
+  final ProgressEventType eventType;
+  final String learnerId;
+  final String activityId;
+  final DateTime timestamp;
+  final int xpAwarded;
+  final Map<String, dynamic> metadata;
+
+  const LearnerProgressEvent({
+    required this.eventId,
+    required this.eventType,
+    required this.learnerId,
+    required this.activityId,
+    required this.timestamp,
+    this.xpAwarded = 0,
+    this.metadata = const {},
+  });
+
+  factory LearnerProgressEvent.fromJson(Map<String, dynamic> json) {
+    return LearnerProgressEvent(
+      eventId: json['eventId'] as String,
+      eventType: ProgressEventType.values.byName(json['eventType'] as String),
+      learnerId: json['learnerId'] as String,
+      activityId: json['activityId'] as String,
+      timestamp: DateTime.parse(json['timestamp'] as String),
+      xpAwarded: json['xpAwarded'] as int? ?? 0,
+      metadata: Map<String, dynamic>.from(json['metadata'] as Map? ?? {}),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'eventId': eventId,
+        'eventType': eventType.name,
+        'learnerId': learnerId,
+        'activityId': activityId,
+        'timestamp': timestamp.toIso8601String(),
+        'xpAwarded': xpAwarded,
+        'metadata': metadata,
+      };
+}
+
 class LearnerProgressModel {
+  static const int currentSchemaVersion = 2;
+
+  final int schemaVersion;
   final String learnerId;
   final int totalXp;
   final Set<String> completedCourseIds;
@@ -107,8 +180,11 @@ class LearnerProgressModel {
   final Map<String, QuickCheckResult> quickCheckResults;
   final LastActivityInfo? lastActivity;
   final DateTime lastSessionDate;
+  final Set<String> processedTransactionIds;
+  final List<LearnerProgressEvent> eventLedger;
 
   const LearnerProgressModel({
+    this.schemaVersion = currentSchemaVersion,
     required this.learnerId,
     this.totalXp = 0,
     this.completedCourseIds = const {},
@@ -123,6 +199,8 @@ class LearnerProgressModel {
     this.quickCheckResults = const {},
     this.lastActivity,
     required this.lastSessionDate,
+    this.processedTransactionIds = const {},
+    this.eventLedger = const [],
   });
 
   /// Computes level based on XP: Level = floor(sqrt(XP / 50)) + 1
@@ -149,13 +227,20 @@ class LearnerProgressModel {
 
   factory LearnerProgressModel.empty(String learnerId) {
     return LearnerProgressModel(
+      schemaVersion: currentSchemaVersion,
       learnerId: learnerId,
       lastSessionDate: DateTime.now(),
     );
   }
 
   factory LearnerProgressModel.fromJson(Map<String, dynamic> json) {
-    return LearnerProgressModel(
+    final version = json['schemaVersion'] as int? ?? 1;
+    if (version > currentSchemaVersion) {
+      throw UnsupportedSchemaVersionException(version, currentSchemaVersion);
+    }
+
+    final rawModel = LearnerProgressModel(
+      schemaVersion: version,
       learnerId: json['learnerId'] as String,
       totalXp: json['totalXp'] as int? ?? 0,
       completedCourseIds:
@@ -192,10 +277,22 @@ class LearnerProgressModel {
       lastSessionDate: json['lastSessionDate'] != null
           ? DateTime.parse(json['lastSessionDate'] as String)
           : DateTime.now(),
+      processedTransactionIds:
+          Set<String>.from(json['processedTransactionIds'] as List? ?? []),
+      eventLedger: (json['eventLedger'] as List? ?? [])
+          .map((e) => LearnerProgressEvent.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
+
+    if (version < currentSchemaVersion) {
+      return migrateSchema(rawModel,
+          fromVersion: version, toVersion: currentSchemaVersion);
+    }
+    return rawModel;
   }
 
   Map<String, dynamic> toJson() => {
+        'schemaVersion': schemaVersion,
         'learnerId': learnerId,
         'totalXp': totalXp,
         'currentLevel': currentLevel,
@@ -212,9 +309,12 @@ class LearnerProgressModel {
             quickCheckResults.map((k, v) => MapEntry(k, v.toJson())),
         if (lastActivity != null) 'lastActivity': lastActivity!.toJson(),
         'lastSessionDate': lastSessionDate.toIso8601String(),
+        'processedTransactionIds': processedTransactionIds.toList(),
+        'eventLedger': eventLedger.map((e) => e.toJson()).toList(),
       };
 
   LearnerProgressModel copyWith({
+    int? schemaVersion,
     int? totalXp,
     Set<String>? completedCourseIds,
     Set<String>? placementPassedCourseIds,
@@ -228,8 +328,11 @@ class LearnerProgressModel {
     Map<String, QuickCheckResult>? quickCheckResults,
     LastActivityInfo? lastActivity,
     DateTime? lastSessionDate,
+    Set<String>? processedTransactionIds,
+    List<LearnerProgressEvent>? eventLedger,
   }) {
     return LearnerProgressModel(
+      schemaVersion: schemaVersion ?? this.schemaVersion,
       learnerId: learnerId,
       totalXp: totalXp ?? this.totalXp,
       completedCourseIds: completedCourseIds ?? this.completedCourseIds,
@@ -246,7 +349,177 @@ class LearnerProgressModel {
       quickCheckResults: quickCheckResults ?? this.quickCheckResults,
       lastActivity: lastActivity ?? this.lastActivity,
       lastSessionDate: lastSessionDate ?? this.lastSessionDate,
+      processedTransactionIds:
+          processedTransactionIds ?? this.processedTransactionIds,
+      eventLedger: eventLedger ?? this.eventLedger,
     );
+  }
+
+  /// Migrates models across schema versions
+  static LearnerProgressModel migrateSchema(
+    LearnerProgressModel model, {
+    required int fromVersion,
+    required int toVersion,
+  }) {
+    var current = model;
+    if (fromVersion == 1) {
+      // 1. Run legacy lesson ID mappings
+      current = migrateFromOldFormat(current);
+
+      // 2. Synthesize transaction keys from completed items if empty
+      final synthesizedTx = Set<String>.from(current.processedTransactionIds);
+      for (final cid in current.completedCourseIds) {
+        synthesizedTx.add('tx_course_$cid');
+      }
+      for (final lid in current.completedLessonIds) {
+        synthesizedTx.add('tx_lesson_$lid');
+      }
+      for (final chid in current.solvedChallengeIds) {
+        synthesizedTx.add('tx_chal_$chid');
+      }
+      for (final pid in current.completedProjectIds) {
+        synthesizedTx.add('tx_proj_$pid');
+      }
+      for (final bid in current.earnedBadgeIds) {
+        synthesizedTx.add('tx_badge_$bid');
+      }
+
+      current = current.copyWith(
+        schemaVersion: 2,
+        processedTransactionIds: synthesizedTx,
+      );
+    }
+    return current;
+  }
+
+  /// Replays an event ledger sequentially to construct a consistent state snapshot
+  static LearnerProgressModel replayFromEvents(
+    String learnerId,
+    List<LearnerProgressEvent> events,
+  ) {
+    var progress = LearnerProgressModel.empty(learnerId);
+    for (final event in events) {
+      progress = progress.applyEvent(event);
+    }
+    return progress;
+  }
+
+  /// Applies a single event deterministically and idempotently
+  LearnerProgressModel applyEvent(LearnerProgressEvent event) {
+    if (processedTransactionIds.contains(event.eventId)) {
+      return this; // Idempotent: already applied
+    }
+
+    final updatedTx = Set<String>.from(processedTransactionIds)
+      ..add(event.eventId);
+    final updatedLedger = List<LearnerProgressEvent>.from(eventLedger)
+      ..add(event);
+
+    switch (event.eventType) {
+      case ProgressEventType.courseCompleted:
+        final updatedCourses = Set<String>.from(completedCourseIds)
+          ..add(event.activityId);
+        return copyWith(
+          totalXp: totalXp + event.xpAwarded,
+          completedCourseIds: updatedCourses,
+          processedTransactionIds: updatedTx,
+          eventLedger: updatedLedger,
+          lastSessionDate: event.timestamp,
+        );
+      case ProgressEventType.lessonCompleted:
+        final updatedLessons = Set<String>.from(completedLessonIds)
+          ..add(event.activityId);
+        return copyWith(
+          totalXp: totalXp + event.xpAwarded,
+          completedLessonIds: updatedLessons,
+          processedTransactionIds: updatedTx,
+          eventLedger: updatedLedger,
+          lastSessionDate: event.timestamp,
+        );
+      case ProgressEventType.placementPassed:
+        final updatedPlacements = Set<String>.from(placementPassedCourseIds)
+          ..add(event.activityId);
+        return copyWith(
+          placementPassedCourseIds: updatedPlacements,
+          processedTransactionIds: updatedTx,
+          eventLedger: updatedLedger,
+          lastSessionDate: event.timestamp,
+        );
+      case ProgressEventType.componentDiscovered:
+        final updatedComponents = Set<String>.from(discoveredComponentIds)
+          ..add(event.activityId);
+        return copyWith(
+          totalXp: totalXp + event.xpAwarded,
+          discoveredComponentIds: updatedComponents,
+          processedTransactionIds: updatedTx,
+          eventLedger: updatedLedger,
+          lastSessionDate: event.timestamp,
+        );
+      case ProgressEventType.projectCompleted:
+        final updatedProjects = Set<String>.from(completedProjectIds)
+          ..add(event.activityId);
+        return copyWith(
+          totalXp: totalXp + event.xpAwarded,
+          completedProjectIds: updatedProjects,
+          processedTransactionIds: updatedTx,
+          eventLedger: updatedLedger,
+          lastSessionDate: event.timestamp,
+        );
+      case ProgressEventType.projectStepBookmarked:
+        final step = event.metadata['stepNumber'] as int? ?? 1;
+        final updatedBookmarks = Map<String, int>.from(projectStepBookmarks)
+          ..[event.activityId] = step;
+        return copyWith(
+          projectStepBookmarks: updatedBookmarks,
+          processedTransactionIds: updatedTx,
+          eventLedger: updatedLedger,
+          lastSessionDate: event.timestamp,
+        );
+      case ProgressEventType.challengeSolved:
+        final updatedChallenges = Set<String>.from(solvedChallengeIds)
+          ..add(event.activityId);
+        return copyWith(
+          totalXp: totalXp + event.xpAwarded,
+          solvedChallengeIds: updatedChallenges,
+          processedTransactionIds: updatedTx,
+          eventLedger: updatedLedger,
+          lastSessionDate: event.timestamp,
+        );
+      case ProgressEventType.badgeEarned:
+        final updatedBadges = Set<String>.from(earnedBadgeIds)
+          ..add(event.activityId);
+        return copyWith(
+          totalXp: totalXp + event.xpAwarded,
+          earnedBadgeIds: updatedBadges,
+          processedTransactionIds: updatedTx,
+          eventLedger: updatedLedger,
+          lastSessionDate: event.timestamp,
+        );
+      case ProgressEventType.quizScoreRecorded:
+        final score = event.metadata['score'] as int? ?? 0;
+        final updatedScores = Map<String, int>.from(quizBestScores)
+          ..[event.activityId] = score;
+        return copyWith(
+          totalXp: totalXp + event.xpAwarded,
+          quizBestScores: updatedScores,
+          processedTransactionIds: updatedTx,
+          eventLedger: updatedLedger,
+          lastSessionDate: event.timestamp,
+        );
+      case ProgressEventType.quickCheckRecorded:
+        return copyWith(
+          processedTransactionIds: updatedTx,
+          eventLedger: updatedLedger,
+          lastSessionDate: event.timestamp,
+        );
+      case ProgressEventType.xpAdded:
+        return copyWith(
+          totalXp: totalXp + event.xpAwarded,
+          processedTransactionIds: updatedTx,
+          eventLedger: updatedLedger,
+          lastSessionDate: event.timestamp,
+        );
+    }
   }
 
   static LearnerProgressModel migrateFromOldFormat(LearnerProgressModel old) {

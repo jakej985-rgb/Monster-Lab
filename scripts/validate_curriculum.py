@@ -268,6 +268,117 @@ def validate_challenge(data, path):
 
 
 
+def validate_manifest_counts(manifest, courses, lessons, components, projects, challenges, badges):
+    counts = manifest.get("counts", {})
+    errors = []
+    expected_mapping = {
+        "courses": len(courses),
+        "lessons": len(lessons),
+        "components": len(components),
+        "projects": len(projects),
+        "challenges": len(challenges),
+        "badges": len(badges),
+    }
+    for key, actual in expected_mapping.items():
+        if key in counts and counts[key] != actual:
+            errors.append(f"Manifest count mismatch for '{key}': expected {counts[key]}, found {actual}")
+    return errors
+
+
+def validate_unique_identifiers(courses, lessons, components, projects, challenges, badges, manifest):
+    errors = []
+    def check_unique(name, items):
+        seen = set()
+        for item in items:
+            iid = item["id"] if isinstance(item, dict) else item
+            if iid in seen:
+                errors.append(f"Duplicate {name} identifier detected: '{iid}'")
+            seen.add(iid)
+
+    check_unique("Course", courses.values())
+    check_unique("Lesson", lessons.values())
+    check_unique("Component", components.values())
+    check_unique("Project", projects.values())
+    check_unique("Challenge", challenges.values())
+    check_unique("Badge", badges.values())
+
+    if manifest:
+        for section in ["courses", "lessons", "components", "projects", "challenges"]:
+            if section in manifest and isinstance(manifest[section], list):
+                check_unique(f"Manifest {section}", manifest[section])
+    return errors
+
+
+def detect_prerequisite_cycles(graph):
+    state = {}  # 0 unvisited, 1 visiting, 2 visited
+    path = []
+    cycles = []
+
+    def dfs(node):
+        state[node] = 1
+        path.append(node)
+        for nxt in graph.get(node, []):
+            if nxt in graph:
+                if state.get(nxt) == 1:
+                    cycle_start = path.index(nxt)
+                    cycles.append(" -> ".join(path[cycle_start:] + [nxt]))
+                    return True
+                elif state.get(nxt, 0) == 0:
+                    if dfs(nxt):
+                        return True
+        path.pop()
+        state[node] = 2
+        return False
+
+    for k in graph:
+        if state.get(k, 0) == 0:
+            dfs(k)
+    return cycles
+
+
+def validate_media_paths(components, badges, lessons, projects):
+    errors = []
+    def check_file(entity_type, entity_id, field_name, path_str):
+        if not path_str or not isinstance(path_str, str):
+            return
+        p = ROOT / path_str if not path_str.startswith("/") else Path(path_str)
+        if not p.exists():
+            errors.append(f"{entity_type} '{entity_id}' {field_name} references non-existent media path: '{path_str}'")
+
+    for c in components.values():
+        if "primaryImage" in c:
+            check_file("Component", c["id"], "primaryImage", c["primaryImage"])
+        for img in c.get("detailImages", []):
+            check_file("Component", c["id"], "detailImages", img)
+
+    for b in badges.values():
+        if "iconAsset" in b:
+            check_file("Badge", b["id"], "iconAsset", b["iconAsset"])
+
+    for l in lessons.values():
+        for s in l.get("steps", []):
+            if "illustrationAsset" in s:
+                check_file("Lesson step", f"{l['id']}:{s.get('stepId')}", "illustrationAsset", s["illustrationAsset"])
+
+    for p in projects.values():
+        for ph in p.get("phases", []):
+            if "diagramAsset" in ph:
+                check_file("Project phase", f"{p['id']}:{ph.get('phaseNumber')}", "diagramAsset", ph["diagramAsset"])
+
+    return errors
+
+
+def validate_interactive_activities(lessons):
+    errors = []
+    for l in lessons.values():
+        for s in l.get("steps", []):
+            w_type = s.get("interactiveWidgetType")
+            if w_type:
+                if not re.match(r"^[a-zA-Z0-9_]+$", w_type):
+                    errors.append(f"Lesson '{l['id']}' step '{s.get('stepId')}' has invalid interactiveWidgetType '{w_type}'")
+    return errors
+
+
 def main():
     print("=" * 60)
     print("Monster Lab - Curriculum Data Validation")
@@ -362,7 +473,32 @@ def main():
         except Exception as e:
             errors.append(f"Challenge error in {chfile.name}: {e}")
 
-    print("\n--- Cross-Referential Integrity Checks ---")
+    print("\n--- Cross-Referential Integrity & Parity Checks ---")
+
+    # 7. Manifest Counts Verification
+    count_errors = validate_manifest_counts(manifest, courses, lessons, components, projects, challenges, badges)
+    errors.extend(count_errors)
+
+    # 8. Unique Identifiers Check
+    unique_errors = validate_unique_identifiers(courses, lessons, components, projects, challenges, badges, manifest)
+    errors.extend(unique_errors)
+
+    # 9. Prerequisite Cycle Detection
+    course_graph = {cid: c.get("prerequisites", []) for cid, c in courses.items()}
+    for cycle in detect_prerequisite_cycles(course_graph):
+        errors.append(f"Prerequisite cycle detected in courses: {cycle}")
+
+    lesson_graph = {lid: l.get("prerequisites", []) for lid, l in lessons.items()}
+    for cycle in detect_prerequisite_cycles(lesson_graph):
+        errors.append(f"Prerequisite cycle detected in lessons: {cycle}")
+
+    # 10. Media Paths Validation
+    media_errors = validate_media_paths(components, badges, lessons, projects)
+    errors.extend(media_errors)
+
+    # 11. Interactive Activities Validation
+    activity_errors = validate_interactive_activities(lessons)
+    errors.extend(activity_errors)
 
     # Course referential checks
     for cid, c in courses.items():
@@ -418,3 +554,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

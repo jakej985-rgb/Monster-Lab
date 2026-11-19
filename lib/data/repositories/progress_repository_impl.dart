@@ -50,13 +50,25 @@ class ProgressRepositoryImpl implements ProgressRepository {
   }
 
   @override
-  Future<void> addXp(String learnerId, int xpAmount) {
+  Future<void> addXp(String learnerId, int xpAmount, [String? transactionId]) {
     return _synchronized(learnerId, () async {
       final current = await _getProgressDirect(learnerId);
-      final updated = current.copyWith(
-        totalXp: current.totalXp + xpAmount,
-        lastSessionDate: DateTime.now(),
+      final txKey =
+          transactionId ?? 'tx_xp_${DateTime.now().microsecondsSinceEpoch}';
+      if (current.processedTransactionIds.contains(txKey)) {
+        return; // Idempotent: already processed
+      }
+
+      final event = LearnerProgressEvent(
+        eventId: txKey,
+        eventType: ProgressEventType.xpAdded,
+        learnerId: learnerId,
+        activityId: 'custom_xp',
+        timestamp: DateTime.now(),
+        xpAwarded: xpAmount,
       );
+
+      final updated = current.applyEvent(event);
       await _dataSource.saveProgress(updated);
     });
   }
@@ -65,20 +77,29 @@ class ProgressRepositoryImpl implements ProgressRepository {
   Future<bool> completeCourse(String learnerId, String courseId, int xpReward) {
     return _synchronized(learnerId, () async {
       final current = await _getProgressDirect(learnerId);
+      final txKey = 'tx_course_$courseId';
+      if (current.processedTransactionIds.contains(txKey)) {
+        return false; // Idempotent: course already completed
+      }
+
       final isNew = !current.completedCourseIds.contains(courseId);
-      final updatedCourses = Set<String>.from(current.completedCourseIds)
-        ..add(courseId);
-      final updated = current.copyWith(
-        totalXp: isNew ? current.totalXp + xpReward : current.totalXp,
-        completedCourseIds: updatedCourses,
-        lastActivity: LastActivityInfo(
-          type: ActivityType.lesson,
-          activityId: courseId,
-          title: 'Completed Course $courseId',
-          timestamp: DateTime.now(),
-        ),
-        lastSessionDate: DateTime.now(),
+      final event = LearnerProgressEvent(
+        eventId: txKey,
+        eventType: ProgressEventType.courseCompleted,
+        learnerId: learnerId,
+        activityId: courseId,
+        timestamp: DateTime.now(),
+        xpAwarded: isNew ? xpReward : 0,
       );
+
+      final updated = current.applyEvent(event).copyWith(
+            lastActivity: LastActivityInfo(
+              type: ActivityType.lesson,
+              activityId: courseId,
+              title: 'Completed Course $courseId',
+              timestamp: DateTime.now(),
+            ),
+          );
       await _dataSource.saveProgress(updated);
       return isNew;
     });
@@ -88,12 +109,20 @@ class ProgressRepositoryImpl implements ProgressRepository {
   Future<void> markPlacementPassed(String learnerId, String courseId) {
     return _synchronized(learnerId, () async {
       final current = await _getProgressDirect(learnerId);
-      final updatedPlacements =
-          Set<String>.from(current.placementPassedCourseIds)..add(courseId);
-      final updated = current.copyWith(
-        placementPassedCourseIds: updatedPlacements,
-        lastSessionDate: DateTime.now(),
+      final txKey = 'tx_placement_$courseId';
+      if (current.processedTransactionIds.contains(txKey)) {
+        return; // Idempotent
+      }
+
+      final event = LearnerProgressEvent(
+        eventId: txKey,
+        eventType: ProgressEventType.placementPassed,
+        learnerId: learnerId,
+        activityId: courseId,
+        timestamp: DateTime.now(),
       );
+
+      final updated = current.applyEvent(event);
       await _dataSource.saveProgress(updated);
     });
   }
@@ -102,20 +131,29 @@ class ProgressRepositoryImpl implements ProgressRepository {
   Future<bool> completeLesson(String learnerId, String lessonId, int xpReward) {
     return _synchronized(learnerId, () async {
       final current = await _getProgressDirect(learnerId);
+      final txKey = 'tx_lesson_$lessonId';
+      if (current.processedTransactionIds.contains(txKey)) {
+        return false; // Idempotent: lesson already completed
+      }
+
       final isNew = !current.completedLessonIds.contains(lessonId);
-      final updatedLessons = Set<String>.from(current.completedLessonIds)
-        ..add(lessonId);
-      final updated = current.copyWith(
-        totalXp: isNew ? current.totalXp + xpReward : current.totalXp,
-        completedLessonIds: updatedLessons,
-        lastActivity: LastActivityInfo(
-          type: ActivityType.lesson,
-          activityId: lessonId,
-          title: 'Completed Lesson $lessonId',
-          timestamp: DateTime.now(),
-        ),
-        lastSessionDate: DateTime.now(),
+      final event = LearnerProgressEvent(
+        eventId: txKey,
+        eventType: ProgressEventType.lessonCompleted,
+        learnerId: learnerId,
+        activityId: lessonId,
+        timestamp: DateTime.now(),
+        xpAwarded: isNew ? xpReward : 0,
       );
+
+      final updated = current.applyEvent(event).copyWith(
+            lastActivity: LastActivityInfo(
+              type: ActivityType.lesson,
+              activityId: lessonId,
+              title: 'Completed Lesson $lessonId',
+              timestamp: DateTime.now(),
+            ),
+          );
       await _dataSource.saveProgress(updated);
       return isNew;
     });
@@ -126,20 +164,29 @@ class ProgressRepositoryImpl implements ProgressRepository {
       [int xpReward = 0]) {
     return _synchronized(learnerId, () async {
       final current = await _getProgressDirect(learnerId);
+      final txKey = 'tx_comp_$componentId';
+      if (current.processedTransactionIds.contains(txKey)) {
+        return; // Idempotent
+      }
+
       final isNew = !current.discoveredComponentIds.contains(componentId);
-      final updatedComponents = Set<String>.from(current.discoveredComponentIds)
-        ..add(componentId);
-      final updated = current.copyWith(
-        totalXp: isNew ? current.totalXp + xpReward : current.totalXp,
-        discoveredComponentIds: updatedComponents,
-        lastActivity: LastActivityInfo(
-          type: ActivityType.component,
-          activityId: componentId,
-          title: 'Discovered Component $componentId',
-          timestamp: DateTime.now(),
-        ),
-        lastSessionDate: DateTime.now(),
+      final event = LearnerProgressEvent(
+        eventId: txKey,
+        eventType: ProgressEventType.componentDiscovered,
+        learnerId: learnerId,
+        activityId: componentId,
+        timestamp: DateTime.now(),
+        xpAwarded: isNew ? xpReward : 0,
       );
+
+      final updated = current.applyEvent(event).copyWith(
+            lastActivity: LastActivityInfo(
+              type: ActivityType.component,
+              activityId: componentId,
+              title: 'Discovered Component $componentId',
+              timestamp: DateTime.now(),
+            ),
+          );
       await _dataSource.saveProgress(updated);
     });
   }
@@ -149,23 +196,29 @@ class ProgressRepositoryImpl implements ProgressRepository {
       String learnerId, String projectId, int phaseNumber) {
     return _synchronized(learnerId, () async {
       final current = await _getProgressDirect(learnerId);
-      final updatedBookmarks =
-          Map<String, int>.from(current.projectStepBookmarks);
-      final existing = updatedBookmarks[projectId] ?? 0;
-      if (phaseNumber > existing) {
-        updatedBookmarks[projectId] = phaseNumber;
+      final txKey = 'tx_proj_${projectId}_phase_$phaseNumber';
+      if (current.processedTransactionIds.contains(txKey)) {
+        return; // Idempotent
       }
-      final updated = current.copyWith(
-        projectStepBookmarks: updatedBookmarks,
-        lastActivity: LastActivityInfo(
-          type: ActivityType.project,
-          activityId: projectId,
-          title: 'Project In Progress: Phase $phaseNumber',
-          timestamp: DateTime.now(),
-          stepNumber: phaseNumber,
-        ),
-        lastSessionDate: DateTime.now(),
+
+      final event = LearnerProgressEvent(
+        eventId: txKey,
+        eventType: ProgressEventType.projectStepBookmarked,
+        learnerId: learnerId,
+        activityId: projectId,
+        timestamp: DateTime.now(),
+        metadata: {'stepNumber': phaseNumber},
       );
+
+      final updated = current.applyEvent(event).copyWith(
+            lastActivity: LastActivityInfo(
+              type: ActivityType.project,
+              activityId: projectId,
+              title: 'Project In Progress: Phase $phaseNumber',
+              timestamp: DateTime.now(),
+              stepNumber: phaseNumber,
+            ),
+          );
       await _dataSource.saveProgress(updated);
     });
   }
@@ -175,24 +228,42 @@ class ProgressRepositoryImpl implements ProgressRepository {
       [String? badgeId]) {
     return _synchronized(learnerId, () async {
       final current = await _getProgressDirect(learnerId);
-      final isNew = !current.completedProjectIds.contains(projectId);
-      final updatedProjects = Set<String>.from(current.completedProjectIds)
-        ..add(projectId);
-      final updatedBadges = Set<String>.from(current.earnedBadgeIds);
-      if (badgeId != null) {
-        updatedBadges.add(badgeId);
+      final txKey = 'tx_proj_$projectId';
+      if (current.processedTransactionIds.contains(txKey)) {
+        return false; // Idempotent
       }
-      final updated = current.copyWith(
-        totalXp: isNew ? current.totalXp + xpReward : current.totalXp,
-        completedProjectIds: updatedProjects,
-        earnedBadgeIds: updatedBadges,
+
+      final isNew = !current.completedProjectIds.contains(projectId);
+      final event = LearnerProgressEvent(
+        eventId: txKey,
+        eventType: ProgressEventType.projectCompleted,
+        learnerId: learnerId,
+        activityId: projectId,
+        timestamp: DateTime.now(),
+        xpAwarded: isNew ? xpReward : 0,
+        metadata: badgeId != null ? {'badgeId': badgeId} : const {},
+      );
+
+      var updated = current.applyEvent(event);
+      if (badgeId != null) {
+        final badgeTx = 'tx_badge_$badgeId';
+        final badgeEvent = LearnerProgressEvent(
+          eventId: badgeTx,
+          eventType: ProgressEventType.badgeEarned,
+          learnerId: learnerId,
+          activityId: badgeId,
+          timestamp: DateTime.now(),
+        );
+        updated = updated.applyEvent(badgeEvent);
+      }
+
+      updated = updated.copyWith(
         lastActivity: LastActivityInfo(
           type: ActivityType.project,
           activityId: projectId,
           title: 'Completed Project $projectId',
           timestamp: DateTime.now(),
         ),
-        lastSessionDate: DateTime.now(),
       );
       await _dataSource.saveProgress(updated);
       return isNew;
@@ -204,20 +275,29 @@ class ProgressRepositoryImpl implements ProgressRepository {
       String learnerId, String challengeId, int xpReward) {
     return _synchronized(learnerId, () async {
       final current = await _getProgressDirect(learnerId);
+      final txKey = 'tx_chal_$challengeId';
+      if (current.processedTransactionIds.contains(txKey)) {
+        return false; // Idempotent
+      }
+
       final isNew = !current.solvedChallengeIds.contains(challengeId);
-      final updatedChallenges = Set<String>.from(current.solvedChallengeIds)
-        ..add(challengeId);
-      final updated = current.copyWith(
-        totalXp: isNew ? current.totalXp + xpReward : current.totalXp,
-        solvedChallengeIds: updatedChallenges,
-        lastActivity: LastActivityInfo(
-          type: ActivityType.challenge,
-          activityId: challengeId,
-          title: 'Solved Challenge $challengeId',
-          timestamp: DateTime.now(),
-        ),
-        lastSessionDate: DateTime.now(),
+      final event = LearnerProgressEvent(
+        eventId: txKey,
+        eventType: ProgressEventType.challengeSolved,
+        learnerId: learnerId,
+        activityId: challengeId,
+        timestamp: DateTime.now(),
+        xpAwarded: isNew ? xpReward : 0,
       );
+
+      final updated = current.applyEvent(event).copyWith(
+            lastActivity: LastActivityInfo(
+              type: ActivityType.challenge,
+              activityId: challengeId,
+              title: 'Solved Challenge $challengeId',
+              timestamp: DateTime.now(),
+            ),
+          );
       await _dataSource.saveProgress(updated);
       return isNew;
     });
@@ -228,26 +308,31 @@ class ProgressRepositoryImpl implements ProgressRepository {
       String learnerId, String quizId, int score, int xpReward) {
     return _synchronized(learnerId, () async {
       final current = await _getProgressDirect(learnerId);
-      final updatedScores = Map<String, int>.from(current.quizBestScores);
-      final previousBest = updatedScores[quizId] ?? 0;
-
-      // Only award XP if it is a new high score
-      final addedXp = score > previousBest ? xpReward : 0;
-      if (score > previousBest) {
-        updatedScores[quizId] = score;
+      final txKey = 'tx_quiz_${quizId}_score_$score';
+      if (current.processedTransactionIds.contains(txKey)) {
+        return; // Idempotent
       }
 
-      final updated = current.copyWith(
-        totalXp: current.totalXp + addedXp,
-        quizBestScores: updatedScores,
-        lastActivity: LastActivityInfo(
-          type: ActivityType.lesson,
-          activityId: quizId,
-          title: 'Quiz Checkpoint ($score%)',
-          timestamp: DateTime.now(),
-        ),
-        lastSessionDate: DateTime.now(),
+      final previousBest = current.quizBestScores[quizId] ?? 0;
+      final addedXp = score > previousBest ? xpReward : 0;
+      final event = LearnerProgressEvent(
+        eventId: txKey,
+        eventType: ProgressEventType.quizScoreRecorded,
+        learnerId: learnerId,
+        activityId: quizId,
+        timestamp: DateTime.now(),
+        xpAwarded: addedXp,
+        metadata: {'score': score, 'previousBest': previousBest},
       );
+
+      final updated = current.applyEvent(event).copyWith(
+            lastActivity: LastActivityInfo(
+              type: ActivityType.lesson,
+              activityId: quizId,
+              title: 'Quiz Checkpoint ($score%)',
+              timestamp: DateTime.now(),
+            ),
+          );
       await _dataSource.saveProgress(updated);
     });
   }

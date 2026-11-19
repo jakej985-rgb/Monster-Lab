@@ -1,6 +1,9 @@
 import 'dart:convert';
+import '../../data/datasources/local_storage_datasource.dart';
 import '../../domain/models/learner_profile_model.dart';
 import '../../domain/models/learner_progress_model.dart';
+import '../../domain/repositories/profile_repository.dart';
+import '../../domain/repositories/progress_repository.dart';
 
 /// Encapsulates the verified payload extracted from an imported backup.
 class BackupImportResult {
@@ -15,7 +18,7 @@ class BackupImportResult {
 
 /// Service handling local JSON backup export, import, schema validation, and consistency checks.
 class ParentDataService {
-  static const int currentSchemaVersion = 1;
+  static const int currentSchemaVersion = 2;
 
   /// Serializes learner profile and progress into a formatted JSON backup string.
   static String exportBackupJson(
@@ -77,5 +80,46 @@ class ParentDataService {
     }
 
     return BackupImportResult(profile: profile, progress: progress);
+  }
+
+  /// Transactionally restores a backup payload:
+  /// 1. Fully validates the backup string.
+  /// 2. Creates a rollback snapshot of existing profile, progress, and backup state.
+  /// 3. Commits the restored profile and progress.
+  /// 4. If any persistence operation fails, rolls back immediately to prior state.
+  static Future<BackupImportResult> restoreBackupTransactional({
+    required String jsonString,
+    required ProfileRepository profileRepo,
+    required ProgressRepository progressRepo,
+    required LocalStorageDataSource storageDataSource,
+  }) async {
+    final result = importBackupJson(jsonString);
+
+    // Snapshot existing state for atomic rollback
+    final existingProfiles = storageDataSource.getProfiles();
+    final priorProgressRaw =
+        storageDataSource.getRawProgressString(result.profile.id);
+    final priorBackupRaw =
+        storageDataSource.getRawBackupString(result.profile.id);
+
+    try {
+      await profileRepo.saveProfile(result.profile);
+      await progressRepo.saveProgress(result.progress);
+      return result;
+    } catch (e) {
+      // Rollback on any failure!
+      await storageDataSource.saveProfiles(existingProfiles);
+      if (priorProgressRaw != null) {
+        await storageDataSource.saveRawProgress(
+            result.profile.id, priorProgressRaw);
+      } else {
+        await storageDataSource.deleteProgress(result.profile.id);
+      }
+      if (priorBackupRaw != null) {
+        await storageDataSource.saveBackupSnapshot(
+            result.profile.id, priorBackupRaw);
+      }
+      rethrow;
+    }
   }
 }

@@ -9,11 +9,32 @@ import '../../domain/models/badge_model.dart';
 import '../../domain/models/course_model.dart';
 import 'asset_curriculum_datasource.dart';
 
+class CurriculumLoadException implements Exception {
+  final String message;
+  final Object? cause;
+
+  const CurriculumLoadException(this.message, {this.cause});
+
+  @override
+  String toString() =>
+      'CurriculumLoadException: $message${cause != null ? ' (Cause: $cause)' : ''}';
+}
+
+enum CurriculumEngineStatus {
+  uninitialized,
+  initialized,
+  fallbackActive,
+  failed,
+}
+
 class CurriculumDataEngine {
   final AssetBundle _assetBundle;
   final AssetCurriculumDataSource _fallbackDataSource;
+  final bool allowFallback;
 
   bool _isInitialized = false;
+  bool _isFallbackActive = false;
+  Object? _initializationError;
   Future<void>? _initFuture;
   final Map<String, CourseModel> _courses = {};
   final Map<String, Lesson> _lessons = {};
@@ -25,14 +46,43 @@ class CurriculumDataEngine {
   CurriculumDataEngine({
     AssetBundle? assetBundle,
     AssetCurriculumDataSource? fallbackDataSource,
+    this.allowFallback = true,
   })  : _assetBundle = assetBundle ?? rootBundle,
         _fallbackDataSource = fallbackDataSource ?? AssetCurriculumDataSource();
 
   bool get isInitialized => _isInitialized;
+  bool get isFallbackActive => _isFallbackActive;
+  Object? get initializationError => _initializationError;
+
+  CurriculumEngineStatus get status {
+    if (_isInitialized) return CurriculumEngineStatus.initialized;
+    if (_isFallbackActive) return CurriculumEngineStatus.fallbackActive;
+    if (_initializationError != null) return CurriculumEngineStatus.failed;
+    return CurriculumEngineStatus.uninitialized;
+  }
+
+  void reset() {
+    _isInitialized = false;
+    _isFallbackActive = false;
+    _initializationError = null;
+    _initFuture = null;
+    _courses.clear();
+    _lessons.clear();
+    _components.clear();
+    _projects.clear();
+    _challenges.clear();
+    _badges.clear();
+  }
+
+  Future<void> _ensureReady() async {
+    if (!_isInitialized && !_isFallbackActive) {
+      await initialize();
+    }
+  }
 
   /// Loads and validates all curriculum JSON files from assets
   Future<void> initialize() {
-    if (_isInitialized) return Future.value();
+    if (_isInitialized || _isFallbackActive) return Future.value();
     return _initFuture ??= _performInitialize();
   }
 
@@ -129,14 +179,25 @@ class CurriculumDataEngine {
         challenges: _challenges.values.toList(),
         badges: _badges.values.toList(),
         courses: _courses.values.toList(),
+        manifest: manifest,
       );
 
       _isInitialized = true;
+      _isFallbackActive = false;
+      _initializationError = null;
     } catch (e) {
-      // If asset loading fails (e.g. during headless unit tests without full asset bundle),
-      // populate with baseline fallback data
-      _populateFromFallback();
-      _isInitialized = true;
+      _initializationError = e;
+      _isInitialized = false;
+      if (allowFallback) {
+        _populateFromFallback();
+        _isFallbackActive = true;
+      } else {
+        _isFallbackActive = false;
+        throw CurriculumLoadException(
+          'Failed to load production curriculum assets: $e',
+          cause: e,
+        );
+      }
     }
   }
 
@@ -181,12 +242,12 @@ class CurriculumDataEngine {
   // --- Query Methods ---
 
   Future<List<CourseModel>> getCourses() async {
-    if (!_isInitialized) await initialize();
+    await _ensureReady();
     return _courses.values.toList();
   }
 
   Future<CourseModel> getCourseById(String id) async {
-    if (!_isInitialized) await initialize();
+    await _ensureReady();
     final course = _courses[id];
     if (course == null) {
       throw Exception('Course $id not found in curriculum engine');
@@ -195,14 +256,14 @@ class CurriculumDataEngine {
   }
 
   Future<List<Lesson>> getCourseLessons(String courseId) async {
-    if (!_isInitialized) await initialize();
+    await _ensureReady();
     final list = _lessons.values.where((l) => l.courseId == courseId).toList();
     list.sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
     return list;
   }
 
   Future<List<Lesson>> getLessonsOrdered() async {
-    if (!_isInitialized) await initialize();
+    await _ensureReady();
 
     final standalone = <Lesson>[];
     final courseLessons = <String, List<Lesson>>{};
@@ -235,14 +296,14 @@ class CurriculumDataEngine {
   }
 
   Future<List<Lesson>> getLessons({DifficultyTier? tier}) async {
-    if (!_isInitialized) await initialize();
+    await _ensureReady();
     final list = _lessons.values.toList();
     if (tier == null) return list;
     return list.where((l) => l.tier == tier).toList();
   }
 
   Future<Lesson> getLessonById(String id) async {
-    if (!_isInitialized) await initialize();
+    await _ensureReady();
     final lesson = _lessons[id];
     if (lesson == null) {
       throw Exception('Lesson $id not found in curriculum engine');
@@ -251,14 +312,14 @@ class CurriculumDataEngine {
   }
 
   Future<List<ComponentModel>> getComponents({String? category}) async {
-    if (!_isInitialized) await initialize();
+    await _ensureReady();
     final list = _components.values.toList();
     if (category == null) return list;
     return list.where((c) => c.category == category).toList();
   }
 
   Future<ComponentModel> getComponentById(String id) async {
-    if (!_isInitialized) await initialize();
+    await _ensureReady();
     final component = _components[id];
     if (component == null) {
       throw Exception('Component $id not found in curriculum engine');
@@ -267,14 +328,14 @@ class CurriculumDataEngine {
   }
 
   Future<List<ProjectModel>> getProjects({DifficultyTier? tier}) async {
-    if (!_isInitialized) await initialize();
+    await _ensureReady();
     final list = _projects.values.toList();
     if (tier == null) return list;
     return list.where((p) => p.tier == tier).toList();
   }
 
   Future<ProjectModel> getProjectById(String id) async {
-    if (!_isInitialized) await initialize();
+    await _ensureReady();
     final project = _projects[id];
     if (project == null) {
       throw Exception('Project $id not found in curriculum engine');
@@ -283,14 +344,14 @@ class CurriculumDataEngine {
   }
 
   Future<List<ChallengeModel>> getChallenges({DifficultyTier? tier}) async {
-    if (!_isInitialized) await initialize();
+    await _ensureReady();
     final list = _challenges.values.toList();
     if (tier == null) return list;
     return list.where((c) => c.difficulty == tier).toList();
   }
 
   Future<ChallengeModel> getChallengeById(String id) async {
-    if (!_isInitialized) await initialize();
+    await _ensureReady();
     final challenge = _challenges[id];
     if (challenge == null) {
       throw Exception('Challenge $id not found in curriculum engine');
@@ -299,14 +360,14 @@ class CurriculumDataEngine {
   }
 
   Future<List<BadgeModel>> getBadges({DifficultyTier? tier}) async {
-    if (!_isInitialized) await initialize();
+    await _ensureReady();
     final list = _badges.values.toList();
     if (tier == null) return list;
     return list.where((b) => b.tier == tier).toList();
   }
 
   Future<BadgeModel> getBadgeById(String id) async {
-    if (!_isInitialized) await initialize();
+    await _ensureReady();
     final badge = _badges[id];
     if (badge == null) {
       throw Exception('Badge $id not found in curriculum engine');

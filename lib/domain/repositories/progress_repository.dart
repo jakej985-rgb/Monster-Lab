@@ -3,7 +3,7 @@ import '../models/learner_progress_model.dart';
 abstract class ProgressRepository {
   Future<LearnerProgressModel> getProgress(String learnerId);
   Future<void> saveProgress(LearnerProgressModel progress);
-  Future<void> addXp(String learnerId, int xpAmount);
+  Future<void> addXp(String learnerId, int xpAmount, [String? transactionId]);
   Future<bool> completeLesson(String learnerId, String lessonId, int xpReward);
   Future<void> discoverComponent(String learnerId, String componentId,
       [int xpReward = 0]);

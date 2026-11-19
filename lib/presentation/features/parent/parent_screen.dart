@@ -676,15 +676,13 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
                 final nav = Navigator.of(ctx);
                 final text = controller.text.trim();
                 try {
-                  final result = ParentDataService.importBackupJson(text);
-
-                  // Persist restored profile and progress
-                  await ref
-                      .read(profileRepositoryProvider)
-                      .saveProfile(result.profile);
-                  await ref
-                      .read(progressRepositoryProvider)
-                      .saveProgress(result.progress);
+                  final result =
+                      await ParentDataService.restoreBackupTransactional(
+                    jsonString: text,
+                    profileRepo: ref.read(profileRepositoryProvider),
+                    progressRepo: ref.read(progressRepositoryProvider),
+                    storageDataSource: ref.read(localStorageDataSourceProvider),
+                  );
 
                   // Switch to this profile if needed and reload
                   ref.invalidate(allProfilesProvider);

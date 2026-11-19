@@ -305,6 +305,238 @@ class CurriculumValidator {
     }
   }
 
+  /// Validates manifest counts against loaded item lists
+  static void validateManifestCounts({
+    required Map<String, dynamic> manifest,
+    required int courseCount,
+    required int lessonCount,
+    required int componentCount,
+    required int projectCount,
+    required int challengeCount,
+    required int badgeCount,
+  }) {
+    final counts = manifest['counts'] as Map<String, dynamic>? ?? {};
+    final errors = <String>[];
+
+    void checkCount(String key, int actual) {
+      if (counts.containsKey(key)) {
+        final expected = counts[key] as int?;
+        if (expected != null && expected != actual) {
+          errors.add(
+            "Manifest count mismatch for '$key': expected $expected, found $actual",
+          );
+        }
+      }
+    }
+
+    checkCount('courses', courseCount);
+    checkCount('lessons', lessonCount);
+    checkCount('components', componentCount);
+    checkCount('projects', projectCount);
+    checkCount('challenges', challengeCount);
+    checkCount('badges', badgeCount);
+
+    if (errors.isNotEmpty) {
+      throw CurriculumValidationException(
+        entityId: 'manifest.json',
+        entityType: 'Manifest',
+        message: 'Manifest count validation failed',
+        details: errors,
+      );
+    }
+  }
+
+  /// Detects duplicate identifiers within entity groups or manifest lists
+  static void validateUniqueIdentifiers({
+    List<CourseModel>? courses,
+    List<Lesson>? lessons,
+    List<ComponentModel>? components,
+    List<ProjectModel>? projects,
+    List<ChallengeModel>? challenges,
+    List<BadgeModel>? badges,
+    Map<String, dynamic>? manifest,
+  }) {
+    final errors = <String>[];
+
+    void checkUnique(String type, Iterable<String> ids) {
+      final seen = <String>{};
+      for (final id in ids) {
+        if (!seen.add(id)) {
+          errors.add("Duplicate $type identifier detected: '$id'");
+        }
+      }
+    }
+
+    if (courses != null) {
+      checkUnique('Course', courses.map((c) => c.id));
+    }
+    if (lessons != null) {
+      checkUnique('Lesson', lessons.map((l) => l.id));
+    }
+    if (components != null) {
+      checkUnique('Component', components.map((c) => c.id));
+    }
+    if (projects != null) {
+      checkUnique('Project', projects.map((p) => p.id));
+    }
+    if (challenges != null) {
+      checkUnique('Challenge', challenges.map((c) => c.id));
+    }
+    if (badges != null) {
+      checkUnique('Badge', badges.map((b) => b.id));
+    }
+
+    if (manifest != null) {
+      for (final section in [
+        'courses',
+        'lessons',
+        'components',
+        'projects',
+        'challenges'
+      ]) {
+        if (manifest[section] is List) {
+          final list = List<String>.from(manifest[section] as List);
+          checkUnique('Manifest $section', list);
+        }
+      }
+    }
+
+    if (errors.isNotEmpty) {
+      throw CurriculumValidationException(
+        entityId: 'ALL',
+        entityType: 'UniqueIdentifiers',
+        message: 'Duplicate identifier check failed',
+        details: errors,
+      );
+    }
+  }
+
+  /// Detects directed prerequisite cycles in a dependency graph
+  static List<String> detectPrerequisiteCycles(
+    Map<String, List<String>> graph,
+  ) {
+    final state = <String, int>{}; // 0 = unvisited, 1 = visiting, 2 = visited
+    final path = <String>[];
+    final cycles = <String>[];
+
+    bool dfs(String node) {
+      state[node] = 1;
+      path.add(node);
+
+      final neighbors = graph[node] ?? const [];
+      for (final neighbor in neighbors) {
+        if (!graph.containsKey(neighbor)) continue;
+        final neighborState = state[neighbor] ?? 0;
+        if (neighborState == 1) {
+          final cycleStart = path.indexOf(neighbor);
+          final cyclePath = [...path.sublist(cycleStart), neighbor];
+          cycles.add(cyclePath.join(' -> '));
+          return true;
+        } else if (neighborState == 0) {
+          if (dfs(neighbor)) return true;
+        }
+      }
+
+      path.removeLast();
+      state[node] = 2;
+      return false;
+    }
+
+    for (final node in graph.keys) {
+      if ((state[node] ?? 0) == 0) {
+        dfs(node);
+      }
+    }
+
+    return cycles;
+  }
+
+  /// Validates media paths and confirms required assets exist
+  static void validateMediaPaths({
+    required List<ComponentModel> components,
+    required List<BadgeModel> badges,
+    List<Lesson>? lessons,
+    List<ProjectModel>? projects,
+    bool Function(String path)? fileExistsChecker,
+  }) {
+    if (fileExistsChecker == null) return;
+    final errors = <String>[];
+
+    void verifyPath(
+        String entityType, String entityId, String fieldName, String? path) {
+      if (path == null || path.trim().isEmpty) return;
+      if (!fileExistsChecker(path)) {
+        errors.add(
+          "$entityType '$entityId' $fieldName references non-existent media path: '$path'",
+        );
+      }
+    }
+
+    for (final c in components) {
+      verifyPath('Component', c.id, 'primaryImage', c.primaryImage);
+      for (final img in c.detailImages) {
+        verifyPath('Component', c.id, 'detailImages', img);
+      }
+    }
+
+    for (final b in badges) {
+      verifyPath('Badge', b.id, 'iconAsset', b.iconAsset);
+    }
+
+    if (lessons != null) {
+      for (final l in lessons) {
+        for (final s in l.steps) {
+          verifyPath('Lesson step', '${l.id}:${s.stepId}', 'illustrationAsset',
+              s.illustrationAsset);
+        }
+      }
+    }
+
+    if (projects != null) {
+      for (final p in projects) {
+        for (final ph in p.phases) {
+          verifyPath('Project phase', '${p.id}:${ph.phaseNumber}',
+              'diagramAsset', ph.diagramAsset);
+        }
+      }
+    }
+
+    if (errors.isNotEmpty) {
+      throw CurriculumValidationException(
+        entityId: 'ALL',
+        entityType: 'MediaPaths',
+        message: 'Media path validation failed',
+        details: errors,
+      );
+    }
+  }
+
+  /// Validates interactive activity configurations across lesson steps
+  static void validateInteractiveActivities(List<Lesson> lessons) {
+    final errors = <String>[];
+    for (final l in lessons) {
+      for (final s in l.steps) {
+        if (s.interactiveWidgetType != null &&
+            s.interactiveWidgetType!.isNotEmpty) {
+          if (!RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(s.interactiveWidgetType!)) {
+            errors.add(
+              "Lesson '${l.id}' step '${s.stepId}' has invalid interactiveWidgetType '${s.interactiveWidgetType}'",
+            );
+          }
+        }
+      }
+    }
+
+    if (errors.isNotEmpty) {
+      throw CurriculumValidationException(
+        entityId: 'ALL',
+        entityType: 'InteractiveActivities',
+        message: 'Interactive activity configuration validation failed',
+        details: errors,
+      );
+    }
+  }
+
   /// Validates entire curriculum collection and cross-referential integrity
   static void validateCurriculumIntegrity({
     required List<Lesson> lessons,
@@ -313,7 +545,35 @@ class CurriculumValidator {
     required List<ChallengeModel> challenges,
     required List<BadgeModel> badges,
     List<CourseModel>? courses,
+    Map<String, dynamic>? manifest,
+    bool checkCycles = true,
+    bool checkOrphans = false,
+    bool Function(String path)? fileExistsChecker,
   }) {
+    // 1. Duplicate identifier checks
+    validateUniqueIdentifiers(
+      courses: courses,
+      lessons: lessons,
+      components: components,
+      projects: projects,
+      challenges: challenges,
+      badges: badges,
+      manifest: manifest,
+    );
+
+    // 2. Manifest counts validation
+    if (manifest != null) {
+      validateManifestCounts(
+        manifest: manifest,
+        courseCount: courses?.length ?? 0,
+        lessonCount: lessons.length,
+        componentCount: components.length,
+        projectCount: projects.length,
+        challengeCount: challenges.length,
+        badgeCount: badges.length,
+      );
+    }
+
     final lessonMap = {for (final l in lessons) l.id: l};
     final componentMap = {for (final c in components) c.id: c};
     final projectMap = {for (final p in projects) p.id: p};
@@ -405,6 +665,56 @@ class CurriculumValidator {
     for (final badge in badges) {
       validateBadge(badge);
     }
+
+    // Orphan detection (if requested)
+    if (checkOrphans && courses != null && courses.isNotEmpty) {
+      final referencedLessons = <String>{};
+      for (final c in courses) {
+        referencedLessons.addAll(c.lessonIds);
+      }
+      for (final l in lessons) {
+        if (!referencedLessons.contains(l.id)) {
+          referentialErrors
+              .add("Lesson '${l.id}' is orphaned (not in any course)");
+        }
+      }
+    }
+
+    // Prerequisite Cycle Detection
+    if (checkCycles) {
+      if (courses != null) {
+        final courseGraph = {
+          for (final c in courses) c.id: c.prerequisites,
+        };
+        final courseCycles = detectPrerequisiteCycles(courseGraph);
+        for (final cycle in courseCycles) {
+          referentialErrors
+              .add("Prerequisite cycle detected in courses: $cycle");
+        }
+      }
+
+      final lessonGraph = {
+        for (final l in lessons) l.id: l.prerequisites,
+      };
+      final lessonCycles = detectPrerequisiteCycles(lessonGraph);
+      for (final cycle in lessonCycles) {
+        referentialErrors.add("Prerequisite cycle detected in lessons: $cycle");
+      }
+    }
+
+    // Media Paths Validation
+    if (fileExistsChecker != null) {
+      validateMediaPaths(
+        components: components,
+        badges: badges,
+        lessons: lessons,
+        projects: projects,
+        fileExistsChecker: fileExistsChecker,
+      );
+    }
+
+    // Interactive Activities Validation
+    validateInteractiveActivities(lessons);
 
     if (referentialErrors.isNotEmpty) {
       throw CurriculumValidationException(
