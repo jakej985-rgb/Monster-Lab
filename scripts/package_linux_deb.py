@@ -49,20 +49,22 @@ def sign_deb_package(output_deb: str, key_id: Optional[str] = None, passphrase: 
         return None
 
 
-def create_deb_package(bundle_dir: str, output_deb: str, push_to_apt_repo: str = None, sign: bool = False, key_id: Optional[str] = None, passphrase: Optional[str] = None):
+def create_deb_package(bundle_dir: str, output_deb: str, push_to_apt_repo: str = None, sign: bool = False, key_id: Optional[str] = None, passphrase: Optional[str] = None, version: Optional[str] = None, arch: str = "amd64"):
     if not os.path.exists(bundle_dir):
         print(f"Error: Bundle directory not found: {bundle_dir}", file=sys.stderr)
         print("Please build the Linux release first: flutter build linux --release", file=sys.stderr)
         sys.exit(1)
 
-    version = parse_pubspec_version()
+    raw_version = version or parse_pubspec_version()
+    clean_version = raw_version.lstrip("v").split("+")[0]
+    target_arch = arch or "amd64"
     package_name = "monster-lab"
 
     staging_dir = os.path.join(ROOT_DIR, "build", "deb_staging")
     if os.path.exists(staging_dir):
         shutil.rmtree(staging_dir)
 
-    print(f"Staging Debian package '{package_name}' v{version}...")
+    print(f"Staging Debian package '{package_name}' v{clean_version} ({target_arch})...")
 
     # 1. Directory Structure
     debian_dir = os.path.join(staging_dir, "DEBIAN")
@@ -164,10 +166,10 @@ def create_deb_package(bundle_dir: str, output_deb: str, push_to_apt_repo: str =
     control_path = os.path.join(debian_dir, "control")
     with open(control_path, "w", encoding="utf-8") as f:
         f.write(f"Package: {package_name}\n")
-        f.write(f"Version: {version}\n")
+        f.write(f"Version: {clean_version}\n")
         f.write("Section: education\n")
         f.write("Priority: optional\n")
-        f.write("Architecture: amd64\n")
+        f.write(f"Architecture: {target_arch}\n")
         f.write(f"Installed-Size: {installed_size_kb}\n")
         f.write("Depends: libc6 (>= 2.31), libgtk-3-0 (>= 3.24), libglib2.0-0, libserialport0\n")
         f.write("Maintainer: Monster Lab Team <support@monsterlab.org>\n")
@@ -219,6 +221,10 @@ if __name__ == "__main__":
                         help="Path to compiled Flutter Linux bundle directory")
     parser.add_argument("--output", default=os.path.join(ROOT_DIR, "monster-lab-linux.deb"),
                         help="Path to output .deb package")
+    parser.add_argument("--version", default=None,
+                        help="Explicit Debian package version (e.g. 0.3.0)")
+    parser.add_argument("--arch", default="amd64",
+                        help="Target architecture (default: amd64)")
     parser.add_argument("--push-to-apt-repo", nargs="?", const=DEFAULT_APT_REPO, default=None,
                         help="Path to central m3tal-apt-key repo to push package to (defaults to ~/apps/m3tal-apt-key if flag passed without value)")
     parser.add_argument("--sign", action="store_true",
@@ -244,4 +250,6 @@ if __name__ == "__main__":
         sign=args.sign,
         key_id=args.key_id,
         passphrase=args.passphrase,
+        version=args.version,
+        arch=args.arch,
     )

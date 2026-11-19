@@ -22,12 +22,12 @@ jobs:
       - name: Validate Dispatch Token
         id: check-token
         run: |
-          if [ -z "${{ secrets.M3TAL_APT_DISPATCH_TOKEN }}" ] && [ -z "${{ secrets.M3TAL_HUB_TOKEN }}" ]; then
-            echo "::warning ::Neither M3TAL_APT_DISPATCH_TOKEN nor M3TAL_HUB_TOKEN secret is configured. Skipping automatic dispatch to central APT repository."
-            echo "configured=false" >> $GITHUB_OUTPUT
-          else
-            echo "configured=true" >> $GITHUB_OUTPUT
+          TOKEN="${{ secrets.M3TAL_APT_DISPATCH_TOKEN || secrets.HUB_DISPATCH_TOKEN || secrets.M3TAL_HUB_TOKEN || secrets.GH_PAT }}"
+          if [ -z "$TOKEN" ]; then
+            echo "::error ::No dispatch token configured (M3TAL_APT_DISPATCH_TOKEN, HUB_DISPATCH_TOKEN, M3TAL_HUB_TOKEN, or GH_PAT). Refusing to proceed with release dispatch."
+            exit 1
           fi
+          echo "configured=true" >> $GITHUB_OUTPUT
 
       - name: Determine Target Release Version
         id: target
@@ -41,9 +41,8 @@ jobs:
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
           echo "clean_version=${CLEAN_VER}" >> $GITHUB_OUTPUT
 
-      - name: Locate Release Deb Asset URL
+      - name: Locate Release Deb Asset URL & Compute SHA256
         id: locate-asset
-        if: steps.check-token.outputs.configured == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -60,11 +59,17 @@ jobs:
           echo "Found deb asset URL: ${DEB_URL}"
           echo "deb_url=${DEB_URL}" >> $GITHUB_OUTPUT
 
+          temp_deb="/tmp/incoming_deb_checksum.deb"
+          curl -sL --fail --retry 3 "$DEB_URL" -o "$temp_deb"
+          SHA256=$(sha256sum "$temp_deb" | cut -d ' ' -f1)
+          rm -f "$temp_deb"
+          echo "Calculated deb asset SHA256: ${SHA256}"
+          echo "sha256=${SHA256}" >> $GITHUB_OUTPUT
+
       - name: Dispatch Release Event to Central APT Repository
-        if: steps.check-token.outputs.configured == 'true'
         uses: peter-evans/repository-dispatch@v3
         with:
-          token: ${{ secrets.M3TAL_APT_DISPATCH_TOKEN || secrets.M3TAL_HUB_TOKEN }}
+          token: ${{ secrets.M3TAL_APT_DISPATCH_TOKEN || secrets.HUB_DISPATCH_TOKEN || secrets.M3TAL_HUB_TOKEN || secrets.GH_PAT }}
           repository: jakej985-rgb/m3tal-apt-key
           event-type: publish-deb
           client-payload: >-
@@ -73,7 +78,9 @@ jobs:
               "repo": "${{ github.repository }}",
               "version": "${{ steps.target.outputs.clean_version }}",
               "tag": "${{ steps.target.outputs.tag }}",
-              "deb_url": "${{ steps.locate-asset.outputs.deb_url }}"
+              "deb_url": "${{ steps.locate-asset.outputs.deb_url }}",
+              "sha256": "${{ steps.locate-asset.outputs.sha256 }}",
+              "allow_replace": false
             }
 
       - name: Confirm Dispatch
