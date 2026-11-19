@@ -20,8 +20,9 @@ import '../../domain/repositories/settings_repository.dart';
 import '../../data/datasources/settings_datasource.dart';
 import '../../data/repositories/settings_repository_impl.dart';
 import '../../domain/models/course_model.dart';
-
 import '../../data/datasources/curriculum_data_engine.dart';
+import '../../core/services/parent_session_service.dart';
+import '../../core/services/component_restriction_service.dart';
 
 final storageServiceProvider = Provider<StorageService>((ref) {
   throw UnimplementedError(
@@ -56,6 +57,22 @@ final progressRepositoryProvider = Provider<ProgressRepository>((ref) {
 final curriculumRepositoryProvider = Provider<CurriculumRepository>((ref) {
   final engine = ref.watch(curriculumDataEngineProvider);
   return CurriculumRepositoryImpl(engine);
+});
+
+final parentSessionServiceProvider = Provider<ParentSessionService>((ref) {
+  final service = ParentSessionService();
+  ref.onDispose(service.dispose);
+  return service;
+});
+
+final parentSessionAuthStateProvider = StreamProvider<bool>((ref) {
+  final service = ref.watch(parentSessionServiceProvider);
+  return service.authStateStream;
+});
+
+final componentRestrictionServiceProvider =
+    Provider<ComponentRestrictionService>((ref) {
+  return ComponentRestrictionService();
 });
 
 final nextLessonProvider = FutureProvider<Lesson?>((ref) async {

@@ -2,12 +2,20 @@ import 'dart:async';
 import 'dart:math' as math;
 import '../../../domain/models/hardware_board_model.dart';
 import '../../../domain/models/hardware_connection_model.dart';
+import '../../../domain/models/hardware_device_capability_registry.dart';
 import 'hardware_bridge.dart';
+import 'hardware_protocol.dart';
+import 'hardware_safety_interlock.dart';
 
 class VirtualSimulationBridge implements IHardwareBridge {
   final bool enableTelemetryTimer;
 
-  VirtualSimulationBridge({this.enableTelemetryTimer = true});
+  VirtualSimulationBridge({this.enableTelemetryTimer = true}) {
+    _stateMachine = HardwareConnectionStateMachine(_state);
+  }
+
+  late final HardwareConnectionStateMachine _stateMachine;
+  HardwareSafetyInterlock? _safetyInterlock;
 
   HardwareConnectionState _state = HardwareConnectionState.disconnected;
   DiscoveredBoard? _currentBoard;
@@ -23,6 +31,9 @@ class VirtualSimulationBridge implements IHardwareBridge {
 
   Timer? _telemetryTimer;
   double _phase = 0.0;
+
+  HardwareConnectionStateMachine get stateMachine => _stateMachine;
+  HardwareSafetyInterlock? get safetyInterlock => _safetyInterlock;
 
   @override
   HardwareConnectionState get currentState => _state;
@@ -47,10 +58,10 @@ class VirtualSimulationBridge implements IHardwareBridge {
 
   @override
   Future<List<DiscoveredBoard>> scanDevices() async {
-    _emitState(HardwareConnectionState.scanning);
+    _transitionTo(HardwareConnectionState.scanning);
     _logSystem('Scanning local USB serial ports and virtual adapters...');
     if (enableTelemetryTimer) {
-      await Future<void>.delayed(const Duration(milliseconds: 300));
+      await Future<void>.delayed(const Duration(milliseconds: 200));
     }
 
     final list = [
@@ -61,15 +72,22 @@ class VirtualSimulationBridge implements IHardwareBridge {
         vendorId: 0x1A86,
         productId: 0x7523,
       ),
+      const DiscoveredBoard(
+        portName: '/dev/ttyUSB1 (Simulated ESP32)',
+        boardModel: SupportedBoards.esp32,
+        vendorId: 0x10C4,
+        productId: 0xEA60,
+      ),
     ];
 
-    _emitState(
-      _currentBoard != null
-          ? (_currentBoard!.isVirtual
-              ? HardwareConnectionState.connectedVirtual
-              : HardwareConnectionState.connectedPhysical)
-          : HardwareConnectionState.disconnected,
-    );
+    if (_currentBoard != null) {
+      final activeState = _currentBoard!.isVirtual
+          ? HardwareConnectionState.connectedVirtual
+          : HardwareConnectionState.connectedPhysical;
+      _transitionTo(activeState);
+    } else {
+      _transitionTo(HardwareConnectionState.disconnected);
+    }
     return list;
   }
 
@@ -79,21 +97,31 @@ class VirtualSimulationBridge implements IHardwareBridge {
     _baudRate = baudRate;
     _currentBoard = target;
 
-    _emitState(HardwareConnectionState.scanning);
-    _logSystem('Connecting to ${target.displayTitle} @ $baudRate baud...');
-    if (enableTelemetryTimer) {
-      await Future<void>.delayed(const Duration(milliseconds: 200));
+    // Check capability registry for baud rate support
+    final capabilities =
+        HardwareDeviceCapabilityRegistry.findForBoard(target.boardModel);
+    if (!capabilities.isBaudRateSupported(baudRate)) {
+      _logSystem(
+          'Warning: Baud rate $baudRate is not standard for ${target.boardModel.name}');
     }
 
-    final newState = target.isVirtual
+    _transitionTo(HardwareConnectionState.connecting);
+    _logSystem('Connecting to ${target.displayTitle} @ $baudRate baud...');
+    if (enableTelemetryTimer) {
+      await Future<void>.delayed(const Duration(milliseconds: 150));
+    }
+
+    final targetState = target.isVirtual
         ? HardwareConnectionState.connectedVirtual
         : HardwareConnectionState.connectedPhysical;
-    _emitState(newState);
+    _transitionTo(targetState);
+
+    _safetyInterlock = HardwareSafetyInterlock(board: target.boardModel);
 
     _logSystem('Link established. Ready for serial transmission.');
     _logRx('[Monster Lab Companion v1.0.0 Ready]');
     _logRx(
-        'Board: ${target.boardModel.name} | Microcontroller: ${target.boardModel.microcontroller}');
+        'Board: ${target.boardModel.name} | Architecture: ${capabilities.architecture}');
     _logRx('Type "HELP" for available test commands.');
 
     _startTelemetryStream();
@@ -107,25 +135,79 @@ class VirtualSimulationBridge implements IHardwareBridge {
 
     _serialController.add(SerialLogEntry.tx(command));
 
-    if (_state != HardwareConnectionState.connectedVirtual &&
-        _state != HardwareConnectionState.connectedPhysical) {
+    if (!_state.isConnected) {
       _logSystem('Error: Command dropped. No active hardware connection.');
       return;
     }
 
-    // Process interactive commands
     final upper = command.toUpperCase();
-    if (upper == 'PING') {
+
+    // 1. Emergency stop and safe state handling
+    if (upper == 'EMERGENCY_STOP') {
+      _safetyInterlock
+          ?.tripSafetyLock('Operator Emergency Stop command received');
+      _transitionTo(HardwareConnectionState.safetyLocked);
+      _telemetry = _telemetry.copyWith(pin13Led: false);
+      _telemetryController.add(_telemetry);
+      _logRx('ACK:EMERGENCY_STOP:SAFE_STATE_ENGAGED');
+      return;
+    }
+
+    if (upper == 'SAFE_STATE') {
+      _safetyInterlock?.enterSafeState();
+      _telemetry = _telemetry.copyWith(pin13Led: false);
+      _telemetryController.add(_telemetry);
+      _logRx('ACK:SAFE_STATE:OK');
+      return;
+    }
+
+    if (upper == 'RESET_SAFETY_LOCK') {
+      _safetyInterlock?.resetLock();
+      if (_state == HardwareConnectionState.safetyLocked &&
+          _currentBoard != null) {
+        final target = _currentBoard!.isVirtual
+            ? HardwareConnectionState.connectedVirtual
+            : HardwareConnectionState.connectedPhysical;
+        _stateMachine.unlock(target);
+        _state = target;
+        _stateController.add(target);
+      }
+      _logRx('ACK:SAFETY_LOCK_RESET');
+      return;
+    }
+
+    // 2. Validate with safety interlock
+    if (_safetyInterlock != null) {
+      try {
+        _safetyInterlock!.validateCommand(command);
+      } on SafetyViolationException catch (e) {
+        _logRx('ERR:SAFETY_VIOLATION: ${e.reason}');
+        if (_safetyInterlock!.isLocked) {
+          _transitionTo(HardwareConnectionState.safetyLocked);
+        }
+        return;
+      }
+    }
+
+    // 3. Process commands
+    if (upper.startsWith('HELLO:MONSTER_LAB:')) {
+      final boardId = _currentBoard?.boardModel.id ?? 'virtual_uno';
+      _logRx('ACK:HANDSHAKE:${ProtocolVersion.current}:$boardId:VIRTUAL_HASH');
+    } else if (upper == 'PING') {
       _logRx('PONG:MONSTER_UNO_V1');
     } else if (upper == 'STATUS') {
       _logRx(
-        'STATUS:OK | VCC:5.02V | FREE_SRAM:${_telemetry.freeSramBytes}B | P13_LED:${_telemetry.pin13Led ? "HIGH" : "LOW"} | BAUD:$_baudRate',
+        'STATUS:OK | VCC:${_currentBoard?.boardModel.operatingVoltage ?? "5.0V"} | FREE_SRAM:${_telemetry.freeSramBytes}B | P13_LED:${_telemetry.pin13Led ? "HIGH" : "LOW"} | BAUD:$_baudRate',
       );
-    } else if (upper == 'LED:ON' || upper == 'LED:1') {
+    } else if (upper == 'LED:ON' ||
+        upper == 'LED:1' ||
+        upper == 'PIN:13:HIGH') {
       _telemetry = _telemetry.copyWith(pin13Led: true);
       _telemetryController.add(_telemetry);
       _logRx('ACK:LED:1 (Pin 13 Driven HIGH)');
-    } else if (upper == 'LED:OFF' || upper == 'LED:0') {
+    } else if (upper == 'LED:OFF' ||
+        upper == 'LED:0' ||
+        upper == 'PIN:13:LOW') {
       _telemetry = _telemetry.copyWith(pin13Led: false);
       _telemetryController.add(_telemetry);
       _logRx('ACK:LED:0 (Pin 13 Driven LOW)');
@@ -136,12 +218,17 @@ class VirtualSimulationBridge implements IHardwareBridge {
       _logRx('SONAR:${_telemetry.sonarDistanceCm.toStringAsFixed(1)} cm');
     } else if (upper == 'HELP') {
       _logRx('=== Monster Lab Serial Commands ===');
-      _logRx('PING           - Verify communication link');
-      _logRx('STATUS         - Hardware health check');
-      _logRx('LED:ON / OFF   - Drive Pin 13 test LED');
-      _logRx('ANALOG:READ    - Read A0 analog voltage');
-      _logRx('SONAR:READ     - Read ultrasonic distance');
-      _logRx('HELP           - Show this command reference');
+      _logRx('HELLO:MONSTER_LAB:v1.0 - Protocol Handshake');
+      _logRx('PING                   - Verify communication link');
+      _logRx('STATUS                 - Hardware health check');
+      _logRx('LED:ON / OFF           - Drive Pin 13 test LED');
+      _logRx('ANALOG:READ            - Read A0 analog voltage');
+      _logRx('SONAR:READ             - Read ultrasonic distance');
+      _logRx('SAFE_STATE             - Revert all pins to safe states');
+      _logRx(
+          'EMERGENCY_STOP         - Trip safety lock and shut down actuators');
+      _logRx('RESET_SAFETY_LOCK      - Clear safety lock');
+      _logRx('HELP                   - Show this command reference');
     } else {
       _logRx('ERR: Unknown command "$command". Type HELP for commands.');
     }
@@ -151,19 +238,17 @@ class VirtualSimulationBridge implements IHardwareBridge {
   Future<void> disconnect() async {
     _telemetryTimer?.cancel();
     _telemetryTimer = null;
+    _safetyInterlock?.enterSafeState();
     _currentBoard = null;
     _logSystem('Hardware link closed.');
-    _emitState(HardwareConnectionState.disconnected);
+    _transitionTo(HardwareConnectionState.disconnected);
   }
 
   void _startTelemetryStream() {
     if (!enableTelemetryTimer) return;
     _telemetryTimer?.cancel();
     _telemetryTimer = Timer.periodic(const Duration(milliseconds: 1500), (_) {
-      if (_state != HardwareConnectionState.connectedVirtual &&
-          _state != HardwareConnectionState.connectedPhysical) {
-        return;
-      }
+      if (!_state.isConnected) return;
 
       _phase += 0.2;
       final rawA0 = (512 + (math.sin(_phase) * 300)).toInt().clamp(0, 1023);
@@ -179,7 +264,11 @@ class VirtualSimulationBridge implements IHardwareBridge {
     });
   }
 
-  void _emitState(HardwareConnectionState newState) {
+  void _transitionTo(HardwareConnectionState newState) {
+    if (_state == newState) return;
+    if (_stateMachine.canTransitionTo(newState)) {
+      _stateMachine.transitionTo(newState);
+    }
     _state = newState;
     _stateController.add(newState);
   }

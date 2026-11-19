@@ -23,8 +23,34 @@ import '../../presentation/features/settings/settings_screen.dart';
 import '../../presentation/features/troubleshoot/troubleshooting_screen.dart';
 import '../../presentation/features/hardware/hardware_companion_screen.dart';
 import '../../presentation/features/lab/interactive_lab_screen.dart';
+import '../services/parent_session_service.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
+
+final ParentSessionService defaultParentSessionService = ParentSessionService();
+
+String? routeAuthorizationGuard({
+  required String location,
+  required bool hasActiveProfile,
+  required ParentSessionService sessionService,
+}) {
+  final isOnboarding = location == RoutePaths.onboarding;
+  if (!hasActiveProfile) {
+    return isOnboarding ? null : RoutePaths.onboarding;
+  }
+  if (isOnboarding) {
+    return RoutePaths.home;
+  }
+  if (location == RoutePaths.parent ||
+      (location.startsWith('/parent') &&
+          location != RoutePaths.parentGate &&
+          location != RoutePaths.parentAbout)) {
+    if (!sessionService.isAuthorized) {
+      return RoutePaths.parentGate;
+    }
+  }
+  return null;
+}
 
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
@@ -49,14 +75,11 @@ final GoRouter appRouter = GoRouter(
       }
     }
 
-    final isOnboarding = state.matchedLocation == RoutePaths.onboarding;
-    if (!hasActiveProfile) {
-      return isOnboarding ? null : RoutePaths.onboarding;
-    }
-    if (isOnboarding) {
-      return RoutePaths.home;
-    }
-    return null;
+    return routeAuthorizationGuard(
+      location: state.matchedLocation,
+      hasActiveProfile: hasActiveProfile,
+      sessionService: defaultParentSessionService,
+    );
   },
   routes: [
     StatefulShellRoute.indexedStack(

@@ -26,20 +26,38 @@ class HardwareStatusBadge extends ConsumerWidget {
     String statusText;
 
     switch (state) {
+      case HardwareConnectionState.connected:
       case HardwareConnectionState.connectedPhysical:
         badgeColor = AppColors.success;
         iconData = Icons.usb;
         statusText = board?.boardModel.name ?? 'Arduino USB';
         break;
+      case HardwareConnectionState.simulation:
       case HardwareConnectionState.connectedVirtual:
         badgeColor = AppColors.accentCyan;
         iconData = Icons.developer_board;
         statusText = 'Virtual Simulator';
         break;
+      case HardwareConnectionState.connecting:
       case HardwareConnectionState.scanning:
         badgeColor = AppColors.energyAmber;
         iconData = Icons.sync;
-        statusText = 'Scanning...';
+        statusText = 'Connecting...';
+        break;
+      case HardwareConnectionState.safetyLocked:
+        badgeColor = AppColors.warning;
+        iconData = Icons.lock_outline;
+        statusText = 'Safety Locked';
+        break;
+      case HardwareConnectionState.unavailable:
+        badgeColor = AppColors.textSecondaryLight;
+        iconData = Icons.usb_off;
+        statusText = 'Port Unavailable';
+        break;
+      case HardwareConnectionState.unsupported:
+        badgeColor = AppColors.warning;
+        iconData = Icons.device_unknown;
+        statusText = 'Device Unsupported';
         break;
       case HardwareConnectionState.error:
         badgeColor = AppColors.danger;

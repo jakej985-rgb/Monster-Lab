@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/routing/app_router.dart';
 import '../../../core/routing/route_constants.dart';
 import '../../shared/widgets/monster_button.dart';
 import '../../shared/widgets/monster_card.dart';
@@ -52,6 +53,7 @@ class _ParentGateDialogState extends State<ParentGateDialog> {
     final entered = int.tryParse(_controller.text.trim());
     final expected = _a * _b;
     if (entered == expected) {
+      defaultParentSessionService.authenticate();
       try {
         context.pushReplacement(RoutePaths.parent);
       } catch (_) {

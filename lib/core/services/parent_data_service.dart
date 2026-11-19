@@ -122,4 +122,83 @@ class ParentDataService {
       rethrow;
     }
   }
+
+  /// Takes an in-memory snapshot of all profiles and progress across learners before a destructive action.
+  static PreDestructiveSnapshot createPreDestructiveSnapshot(
+      LocalStorageDataSource storageDataSource) {
+    final profiles = storageDataSource.getProfiles();
+    final progressMap = <String, String?>{};
+    final backupMap = <String, String?>{};
+
+    for (final profile in profiles) {
+      progressMap[profile.id] =
+          storageDataSource.getRawProgressString(profile.id);
+      backupMap[profile.id] = storageDataSource.getRawBackupString(profile.id);
+    }
+
+    return PreDestructiveSnapshot(
+      profiles: profiles,
+      rawProgressByLearner: progressMap,
+      rawBackupByLearner: backupMap,
+      capturedAt: DateTime.now(),
+    );
+  }
+
+  /// Restores a full pre-destructive snapshot, recovering profiles and progress slots.
+  static Future<void> restorePreDestructiveSnapshot(
+    PreDestructiveSnapshot snapshot,
+    LocalStorageDataSource storageDataSource,
+  ) async {
+    await storageDataSource.saveProfiles(snapshot.profiles);
+    for (final entry in snapshot.rawProgressByLearner.entries) {
+      if (entry.value != null) {
+        await storageDataSource.saveRawProgress(entry.key, entry.value!);
+      } else {
+        await storageDataSource.deleteProgress(entry.key);
+      }
+    }
+    for (final entry in snapshot.rawBackupByLearner.entries) {
+      if (entry.value != null) {
+        await storageDataSource.saveBackupSnapshot(entry.key, entry.value!);
+      }
+    }
+  }
+
+  /// Executes a destructive action with mandatory confirmation check and automatic rollback on failure.
+  static Future<T> executeDestructiveAction<T>({
+    required LocalStorageDataSource storageDataSource,
+    required String confirmationInput,
+    String requiredPhrase = 'CONFIRM',
+    required Future<T> Function() action,
+  }) async {
+    if (confirmationInput.trim().toUpperCase() !=
+        requiredPhrase.toUpperCase()) {
+      throw FormatException(
+        'Destructive action cancelled: confirmation phrase "$confirmationInput" did not match "$requiredPhrase".',
+      );
+    }
+
+    final snapshot = createPreDestructiveSnapshot(storageDataSource);
+    try {
+      return await action();
+    } catch (e) {
+      // Automatic recovery on failure!
+      await restorePreDestructiveSnapshot(snapshot, storageDataSource);
+      rethrow;
+    }
+  }
+}
+
+class PreDestructiveSnapshot {
+  final List<LearnerProfileModel> profiles;
+  final Map<String, String?> rawProgressByLearner;
+  final Map<String, String?> rawBackupByLearner;
+  final DateTime capturedAt;
+
+  const PreDestructiveSnapshot({
+    required this.profiles,
+    required this.rawProgressByLearner,
+    required this.rawBackupByLearner,
+    required this.capturedAt,
+  });
 }
