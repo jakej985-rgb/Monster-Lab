@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/routing/route_constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../domain/models/component_model.dart';
 import '../../shared/providers.dart';
@@ -106,34 +108,73 @@ class _PartsScreenState extends ConsumerState<PartsScreen> {
           return Column(
             children: [
               // Search & Filter Header
+              // GtkSearchEntry Styled Input
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                child: TextField(
-                  controller: _searchController,
-                  onChanged: (val) => setState(() => _searchQuery = val),
-                  decoration: InputDecoration(
-                    labelText: 'Search parts',
-                    hintText: 'Search parts by name, number, or chip...',
-                    prefixIcon: const Icon(Icons.search,
-                        color: AppColors.primaryViolet),
-                    suffixIcon: _searchQuery.isNotEmpty
-                        ? IconButton(
-                            tooltip: 'Clear search',
-                            icon: const Icon(Icons.clear, size: 20),
-                            onPressed: () {
-                              _searchController.clear();
-                              setState(() => _searchQuery = '');
-                            },
-                          )
-                        : null,
-                    filled: true,
-                    fillColor: AppColors.surfaceContainerLight,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide.none,
+                child: SizedBox(
+                  height: 38,
+                  child: TextField(
+                    controller: _searchController,
+                    onChanged: (val) => setState(() => _searchQuery = val),
+                    style: const TextStyle(fontSize: 13),
+                    decoration: InputDecoration(
+                      hintText: 'Search parts by name, number, or chip...',
+                      hintStyle: TextStyle(
+                        fontSize: 13,
+                        color: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.color
+                            ?.withValues(alpha: 0.6),
+                      ),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        size: 18,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      suffixIcon: _searchQuery.isNotEmpty
+                          ? IconButton(
+                              tooltip: 'Clear search',
+                              icon: const Icon(Icons.clear, size: 16),
+                              padding: EdgeInsets.zero,
+                              onPressed: () {
+                                _searchController.clear();
+                                setState(() => _searchQuery = '');
+                              },
+                            )
+                          : null,
+                      filled: true,
+                      fillColor: Theme.of(context).brightness == Brightness.dark
+                          ? const Color(0xFF282C34)
+                          : const Color(0xFFF0F2F5),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(6),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? const Color(0xFF444B59)
+                              : const Color(0xFFDCDCDC),
+                          width: 1,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(6),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? const Color(0xFF444B59)
+                              : const Color(0xFFDCDCDC),
+                          width: 1,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(6),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 1.5,
+                        ),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 0),
                     ),
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
                   ),
                 ),
               ),
@@ -298,132 +339,202 @@ class _PartsScreenState extends ConsumerState<PartsScreen> {
                                   discoveredIds.contains(comp.id);
                               final catColor = _getCategoryColor(comp.category);
 
-                              return MonsterCard(
-                                semanticLabel:
-                                    '${comp.name}, peripheral #${comp.peripheralNumber}, category ${comp.category}, ${isDiscovered ? "Found" : "Not yet found"}',
-                                onTap: () => context.push('/parts/${comp.id}'),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 7, vertical: 3),
-                                          decoration: BoxDecoration(
-                                            color: catColor.withValues(
-                                                alpha: 0.15),
-                                            borderRadius:
-                                                BorderRadius.circular(6),
-                                          ),
-                                          child: Text(
-                                            '#${comp.peripheralNumber.toString().padLeft(2, '0')}',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 11,
-                                              color: catColor,
-                                            ),
-                                          ),
+                              return GestureDetector(
+                                onSecondaryTapUp: (details) {
+                                  final overlay = Overlay.of(context)
+                                      .context
+                                      .findRenderObject() as RenderBox?;
+                                  if (overlay == null) return;
+                                  showMenu(
+                                    context: context,
+                                    position: RelativeRect.fromRect(
+                                      details.globalPosition &
+                                          const Size(40, 40),
+                                      Offset.zero & overlay.size,
+                                    ),
+                                    items: [
+                                      PopupMenuItem<void>(
+                                        onTap: () =>
+                                            context.push('/parts/${comp.id}'),
+                                        child: const Row(
+                                          children: [
+                                            Icon(Icons.info_outline, size: 16),
+                                            SizedBox(width: 8),
+                                            Text('Inspect Component'),
+                                          ],
                                         ),
-                                        if (isDiscovered)
+                                      ),
+                                      PopupMenuItem<void>(
+                                        onTap: () {
+                                          Clipboard.setData(ClipboardData(
+                                              text: comp.partNumber));
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                  'Copied ${comp.partNumber} to clipboard'),
+                                              duration:
+                                                  const Duration(seconds: 2),
+                                            ),
+                                          );
+                                        },
+                                        child: const Row(
+                                          children: [
+                                            Icon(Icons.copy, size: 16),
+                                            SizedBox(width: 8),
+                                            Text('Copy Part Number'),
+                                          ],
+                                        ),
+                                      ),
+                                      PopupMenuItem<void>(
+                                        onTap: () =>
+                                            context.push(RoutePaths.build),
+                                        child: const Row(
+                                          children: [
+                                            Icon(Icons.precision_manufacturing,
+                                                size: 16),
+                                            SizedBox(width: 8),
+                                            Text('Open Build Studio'),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                                child: MonsterCard(
+                                  semanticLabel:
+                                      '${comp.name}, peripheral #${comp.peripheralNumber}, category ${comp.category}, ${isDiscovered ? "Found" : "Not yet found"}',
+                                  onTap: () =>
+                                      context.push('/parts/${comp.id}'),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
                                           Container(
                                             padding: const EdgeInsets.symmetric(
-                                                horizontal: 6, vertical: 2),
+                                                horizontal: 7, vertical: 3),
                                             decoration: BoxDecoration(
-                                              color: AppColors.success
-                                                  .withValues(alpha: 0.15),
+                                              color: catColor.withValues(
+                                                  alpha: 0.15),
                                               borderRadius:
                                                   BorderRadius.circular(6),
                                             ),
-                                            child: const Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Icon(Icons.check_circle,
-                                                    size: 12,
-                                                    color: AppColors.success),
-                                                SizedBox(width: 3),
-                                                Text(
-                                                  'FOUND',
-                                                  style: TextStyle(
-                                                    fontSize: 9,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: AppColors.success,
-                                                  ),
-                                                ),
-                                              ],
+                                            child: Text(
+                                              '#${comp.peripheralNumber.toString().padLeft(2, '0')}',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 11,
+                                                color: catColor,
+                                              ),
                                             ),
-                                          )
-                                        else if (comp
-                                            .safety.requiresParentUnlock)
-                                          const Icon(Icons.shield,
-                                              size: 16,
-                                              color: AppColors.warning)
-                                        else
-                                          const SizedBox.shrink(),
-                                      ],
-                                    ),
-                                    const Spacer(),
-                                    Center(
-                                      child: ComponentImageView(
-                                        imagePath: comp.primaryImage,
-                                        width: 64,
-                                        height: 64,
-                                        category: comp.category,
-                                        semanticLabel: comp.imageDescription ??
-                                            '${comp.name} photo',
-                                        borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          if (isDiscovered)
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 6,
+                                                      vertical: 2),
+                                              decoration: BoxDecoration(
+                                                color: AppColors.success
+                                                    .withValues(alpha: 0.15),
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                              ),
+                                              child: const Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Icon(Icons.check_circle,
+                                                      size: 12,
+                                                      color: AppColors.success),
+                                                  SizedBox(width: 3),
+                                                  Text(
+                                                    'FOUND',
+                                                    style: TextStyle(
+                                                      fontSize: 9,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: AppColors.success,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          else if (comp
+                                              .safety.requiresParentUnlock)
+                                            const Icon(Icons.shield,
+                                                size: 16,
+                                                color: AppColors.warning)
+                                          else
+                                            const SizedBox.shrink(),
+                                        ],
                                       ),
-                                    ),
-                                    const Spacer(),
-                                    Text(
-                                      comp.name,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 13,
-                                          height: 1.2),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(
-                                            comp.partNumber,
-                                            style: const TextStyle(
-                                                color: AppColors
-                                                    .textSecondaryLight,
-                                                fontSize: 11),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
+                                      const Spacer(),
+                                      Center(
+                                        child: ComponentImageView(
+                                          imagePath: comp.primaryImage,
+                                          width: 64,
+                                          height: 64,
+                                          category: comp.category,
+                                          semanticLabel:
+                                              comp.imageDescription ??
+                                                  '${comp.name} photo',
+                                          borderRadius:
+                                              BorderRadius.circular(12),
                                         ),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 4, vertical: 1),
-                                          decoration: BoxDecoration(
-                                            color:
-                                                AppColors.surfaceContainerLight,
-                                            borderRadius:
-                                                BorderRadius.circular(4),
+                                      ),
+                                      const Spacer(),
+                                      Text(
+                                        comp.name,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 13,
+                                            height: 1.2),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              comp.partNumber,
+                                              style: const TextStyle(
+                                                  color: AppColors
+                                                      .textSecondaryLight,
+                                                  fontSize: 11),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
                                           ),
-                                          child: Text(
-                                            comp.voltage ==
-                                                    OperatingVoltage.v3_3
-                                                ? '3.3V'
-                                                : comp.voltage ==
-                                                        OperatingVoltage.v5
-                                                    ? '5V'
-                                                    : 'Dual',
-                                            style: const TextStyle(
-                                                fontSize: 9,
-                                                fontWeight: FontWeight.bold),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 4, vertical: 1),
+                                            decoration: BoxDecoration(
+                                              color: AppColors
+                                                  .surfaceContainerLight,
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
+                                            ),
+                                            child: Text(
+                                              comp.voltage ==
+                                                      OperatingVoltage.v3_3
+                                                  ? '3.3V'
+                                                  : comp.voltage ==
+                                                          OperatingVoltage.v5
+                                                      ? '5V'
+                                                      : 'Dual',
+                                              style: const TextStyle(
+                                                  fontSize: 9,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               );
                             },

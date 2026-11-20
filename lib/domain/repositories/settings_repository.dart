@@ -7,4 +7,6 @@ abstract class SettingsRepository {
   Future<void> setSoundEnabled(bool value);
   Future<void> setHighContrast(bool value);
   Future<void> setUiScale(double value);
+  Future<void> setThemeMode(String mode);
+  Future<void> setThemePreset(String preset);
 }

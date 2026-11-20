@@ -1,7 +1,14 @@
+import 'dart:io' show Platform, exit;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/localization/app_strings.dart';
+import '../../../core/routing/route_constants.dart';
 import '../../../core/theme/app_colors.dart';
+import '../widgets/desktop_status_bar.dart';
+import '../widgets/gtk_about_dialog.dart';
+import '../widgets/gtk_sidebar.dart';
 
 class MainScaffold extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -13,72 +20,141 @@ class MainScaffold extends StatelessWidget {
 
   static const double desktopBreakpoint = 720.0;
 
+  void _handleQuit() {
+    if (!kIsWeb &&
+        (Platform.isLinux || Platform.isWindows || Platform.isMacOS)) {
+      exit(0);
+    } else {
+      SystemNavigator.pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isDesktop = screenWidth >= desktopBreakpoint;
 
     if (isDesktop) {
+      final theme = Theme.of(context);
+      final isDark = theme.brightness == Brightness.dark;
+      final borderColor =
+          isDark ? const Color(0xFF3C4049) : const Color(0xFFDCDCDC);
+
       return Scaffold(
-        body: Row(
+        body: Column(
           children: [
-            NavigationRail(
-              selectedIndex: navigationShell.currentIndex,
-              onDestinationSelected: (index) {
-                navigationShell.goBranch(
-                  index,
-                  initialLocation: index == navigationShell.currentIndex,
-                );
-              },
-              labelType: NavigationRailLabelType.all,
-              leading: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
-                child: CircleAvatar(
-                  radius: 20,
-                  backgroundColor:
-                      AppColors.primaryViolet.withValues(alpha: 0.15),
-                  child: const Icon(
-                    Icons.smart_toy_outlined,
-                    color: AppColors.primaryViolet,
-                    size: 22,
-                  ),
+            // Desktop Top MenuBar (File, Navigate, Help)
+            Container(
+              decoration: BoxDecoration(
+                color: theme.scaffoldBackgroundColor,
+                border: Border(
+                  bottom: BorderSide(color: borderColor, width: 1),
                 ),
               ),
-              destinations: const [
-                NavigationRailDestination(
-                  icon: Icon(Icons.home_outlined),
-                  selectedIcon:
-                      Icon(Icons.home, color: AppColors.primaryViolet),
-                  label: Text(AppStrings.tabHome),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.school_outlined),
-                  selectedIcon:
-                      Icon(Icons.school, color: AppColors.primaryViolet),
-                  label: Text(AppStrings.tabLearn),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.extension_outlined),
-                  selectedIcon:
-                      Icon(Icons.extension, color: AppColors.primaryViolet),
-                  label: Text(AppStrings.tabParts),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.precision_manufacturing_outlined),
-                  selectedIcon: Icon(Icons.precision_manufacturing,
-                      color: AppColors.primaryViolet),
-                  label: Text(AppStrings.tabBuild),
-                ),
-                NavigationRailDestination(
-                  icon: Icon(Icons.emoji_events_outlined),
-                  selectedIcon:
-                      Icon(Icons.emoji_events, color: AppColors.primaryViolet),
-                  label: Text(AppStrings.tabProgress),
-                ),
-              ],
+              child: Row(
+                children: [
+                  Expanded(
+                    child: MenuBar(
+                      children: [
+                        SubmenuButton(
+                          menuChildren: [
+                            MenuItemButton(
+                              shortcut: const SingleActivator(
+                                  LogicalKeyboardKey.comma,
+                                  control: true),
+                              onPressed: () =>
+                                  context.push(RoutePaths.settings),
+                              child: const Text('Preferences...'),
+                            ),
+                            const Divider(),
+                            MenuItemButton(
+                              shortcut: const SingleActivator(
+                                  LogicalKeyboardKey.keyQ,
+                                  control: true),
+                              onPressed: _handleQuit,
+                              child: const Text('Quit Monster Lab'),
+                            ),
+                          ],
+                          child: const Text('File'),
+                        ),
+                        SubmenuButton(
+                          menuChildren: [
+                            MenuItemButton(
+                              shortcut: const SingleActivator(
+                                  LogicalKeyboardKey.digit1,
+                                  control: true),
+                              onPressed: () => navigationShell.goBranch(0),
+                              child: const Text('Home'),
+                            ),
+                            MenuItemButton(
+                              shortcut: const SingleActivator(
+                                  LogicalKeyboardKey.digit2,
+                                  control: true),
+                              onPressed: () => navigationShell.goBranch(1),
+                              child: const Text('Learn'),
+                            ),
+                            MenuItemButton(
+                              shortcut: const SingleActivator(
+                                  LogicalKeyboardKey.digit3,
+                                  control: true),
+                              onPressed: () => navigationShell.goBranch(2),
+                              child: const Text('Parts Lab'),
+                            ),
+                            MenuItemButton(
+                              shortcut: const SingleActivator(
+                                  LogicalKeyboardKey.digit4,
+                                  control: true),
+                              onPressed: () => navigationShell.goBranch(3),
+                              child: const Text('Build Studio'),
+                            ),
+                            MenuItemButton(
+                              shortcut: const SingleActivator(
+                                  LogicalKeyboardKey.digit5,
+                                  control: true),
+                              onPressed: () => navigationShell.goBranch(4),
+                              child: const Text('Progress & Badges'),
+                            ),
+                          ],
+                          child: const Text('Navigate'),
+                        ),
+                        SubmenuButton(
+                          menuChildren: [
+                            MenuItemButton(
+                              shortcut:
+                                  const SingleActivator(LogicalKeyboardKey.f1),
+                              onPressed: () => GtkAboutDialog.show(context),
+                              child: const Text('About Monster Lab'),
+                            ),
+                          ],
+                          child: const Text('Help'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const VerticalDivider(thickness: 1, width: 1),
-            Expanded(child: navigationShell),
+
+            // Middle: GTK Sidebar + Active Screen Shell
+            Expanded(
+              child: Row(
+                children: [
+                  GtkSidebar(
+                    selectedIndex: navigationShell.currentIndex,
+                    onDestinationSelected: (index) {
+                      navigationShell.goBranch(
+                        index,
+                        initialLocation: index == navigationShell.currentIndex,
+                      );
+                    },
+                  ),
+                  Expanded(child: navigationShell),
+                ],
+              ),
+            ),
+
+            // Bottom: Desktop Status Bar
+            const DesktopStatusBar(),
           ],
         ),
       );

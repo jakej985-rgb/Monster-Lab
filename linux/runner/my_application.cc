@@ -14,6 +14,65 @@ struct _MyApplication {
 
 G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
 
+static gchar* get_config_file_path() {
+  const gchar* config_dir = g_get_user_config_dir();
+  gchar* app_config_dir = g_build_filename(config_dir, "monster-lab", nullptr);
+  g_mkdir_with_parents(app_config_dir, 0755);
+  gchar* config_path = g_build_filename(app_config_dir, "window.conf", nullptr);
+  g_free(app_config_dir);
+  return config_path;
+}
+
+static void save_window_state(GtkWindow* window) {
+  gchar* config_path = get_config_file_path();
+  g_autoptr(GKeyFile) key_file = g_key_file_new();
+  g_key_file_load_from_file(key_file, config_path, G_KEY_FILE_NONE, nullptr);
+
+  gboolean is_maximized = gtk_window_is_maximized(window);
+  g_key_file_set_boolean(key_file, "Window", "maximized", is_maximized);
+
+  if (!is_maximized) {
+    gint width = 0, height = 0;
+    gtk_window_get_size(window, &width, &height);
+    if (width >= 800 && height >= 500) {
+      g_key_file_set_integer(key_file, "Window", "width", width);
+      g_key_file_set_integer(key_file, "Window", "height", height);
+    }
+  }
+
+  g_autoptr(GError) error = nullptr;
+  g_key_file_save_to_file(key_file, config_path, &error);
+  g_free(config_path);
+}
+
+static void restore_window_state(GtkWindow* window) {
+  gchar* config_path = get_config_file_path();
+  g_autoptr(GKeyFile) key_file = g_key_file_new();
+  if (g_key_file_load_from_file(key_file, config_path, G_KEY_FILE_NONE, nullptr)) {
+    gint width = g_key_file_get_integer(key_file, "Window", "width", nullptr);
+    gint height = g_key_file_get_integer(key_file, "Window", "height", nullptr);
+    gboolean is_maximized = g_key_file_get_boolean(key_file, "Window", "maximized", nullptr);
+
+    if (width >= 800 && height >= 500) {
+      gtk_window_set_default_size(window, width, height);
+    } else {
+      gtk_window_set_default_size(window, 1280, 720);
+    }
+
+    if (is_maximized) {
+      gtk_window_maximize(window);
+    }
+  } else {
+    gtk_window_set_default_size(window, 1280, 720);
+  }
+  g_free(config_path);
+}
+
+static gboolean on_window_delete_event(GtkWidget* widget, GdkEvent* event, gpointer user_data) {
+  save_window_state(GTK_WINDOW(widget));
+  return FALSE;
+}
+
 // Called when first Flutter frame received.
 static void first_frame_cb(MyApplication* self, FlView* view) {
   gtk_widget_show(gtk_widget_get_toplevel(GTK_WIDGET(view)));
@@ -52,7 +111,8 @@ static void my_application_activate(GApplication* application) {
     gtk_window_set_title(window, "Monster Lab");
   }
 
-  gtk_window_set_default_size(window, 1280, 720);
+  restore_window_state(window);
+  g_signal_connect(window, "delete-event", G_CALLBACK(on_window_delete_event), nullptr);
 
   GdkGeometry geometry;
   geometry.min_width = 800;

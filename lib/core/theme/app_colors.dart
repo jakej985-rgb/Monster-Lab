@@ -24,6 +24,17 @@ abstract final class AppColors {
   static const Color textPrimaryDark = Color(0xFFF8F9FD);
   static const Color textSecondaryDark = Color(0xFFA4B0BE);
 
+  // Linux Mint (Mint-Y & Mint-L) Design Tokens
+  static const Color mintGreen = Color(0xFF87CF3E);
+  static const Color mintGreenDark = Color(0xFF6EA84F);
+  static const Color mintGreenLight = Color(0xFF92B874);
+  static const Color mintSurfaceLight = Color(0xFFFFFFFF);
+  static const Color mintBackgroundLight = Color(0xFFF5F6F7);
+  static const Color mintBorderLight = Color(0xFFDCDCDC);
+  static const Color mintSurfaceDark = Color(0xFF383C4A);
+  static const Color mintBackgroundDark = Color(0xFF2F343F);
+  static const Color mintBorderDark = Color(0xFF444B59);
+
   // Semantic Status
   static const Color success = Color(0xFF00B894);
   static const Color warning = Color(0xFFFFA502);

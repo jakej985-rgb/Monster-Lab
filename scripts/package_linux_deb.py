@@ -76,8 +76,10 @@ def create_deb_package(bundle_dir: str, output_deb: str, push_to_apt_repo: str =
     usr_keyrings_dir = os.path.join(staging_dir, "usr", "share", "keyrings")
     etc_keyrings_dir = os.path.join(staging_dir, "etc", "apt", "keyrings")
     apt_sources_dir = os.path.join(staging_dir, "etc", "apt", "sources.list.d")
+    metainfo_dir = os.path.join(staging_dir, "usr", "share", "metainfo")
+    mime_dir = os.path.join(staging_dir, "usr", "share", "mime", "packages")
 
-    for d in [debian_dir, lib_dir, bin_dir, apps_dir, pixmaps_dir, icons_dir, usr_keyrings_dir, etc_keyrings_dir, apt_sources_dir]:
+    for d in [debian_dir, lib_dir, bin_dir, apps_dir, pixmaps_dir, icons_dir, usr_keyrings_dir, etc_keyrings_dir, apt_sources_dir, metainfo_dir, mime_dir]:
         os.makedirs(d, exist_ok=True)
     os.chmod(staging_dir, 0o755)
     os.chmod(debian_dir, 0o755)
@@ -110,14 +112,49 @@ def create_deb_package(bundle_dir: str, output_deb: str, push_to_apt_repo: str =
         f.write("Name=Monster Lab\n")
         f.write("GenericName=Electronics Studio\n")
         f.write("Comment=Hands-on Arduino & Electronics Studio for Kids\n")
-        f.write(f"Exec={package_name}\n")
+        f.write(f"Exec={package_name} %F\n")
         f.write(f"Icon={package_name}\n")
         f.write("Terminal=false\n")
         f.write("Type=Application\n")
-        f.write("Categories=Education;Science;Electronics;Development;\n")
+        f.write("Categories=Education;Science;Electronics;Development;Engineering;\n")
         f.write("Keywords=arduino;electronics;robotics;stem;education;kids;\n")
+        f.write("MimeType=application/x-monsterlab-project;\n")
         f.write("StartupWMClass=monster_lab\n")
     os.chmod(desktop_path, 0o644)
+
+    # 4b. Create AppStream Metadata for Linux Mint Software Manager / GNOME Software
+    appdata_path = os.path.join(metainfo_dir, f"org.monsterlab.MonsterLab.appdata.xml")
+    with open(appdata_path, "w", encoding="utf-8") as f:
+        f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+        f.write('<component type="desktop-application">\n')
+        f.write('  <id>org.monsterlab.MonsterLab</id>\n')
+        f.write('  <metadata_license>CC0-1.0</metadata_license>\n')
+        f.write('  <project_license>MIT</project_license>\n')
+        f.write('  <name>Monster Lab</name>\n')
+        f.write('  <summary>Hands-on Arduino and electronics studio for kids</summary>\n')
+        f.write('  <description>\n')
+        f.write('    <p>Monster Lab is an interactive educational electronics and Arduino studio designed for young makers and students. It features guided breadboard building, simulated circuits, interactive challenges, and hardware companion bridges.</p>\n')
+        f.write('  </description>\n')
+        f.write('  <launchable type="desktop-id">monster-lab.desktop</launchable>\n')
+        f.write('  <url type="homepage">https://jakej985-rgb.github.io/M3tal-Hub/Monster-Lab/</url>\n')
+        f.write('  <provides>\n')
+        f.write('    <mediatype>application/x-monsterlab-project</mediatype>\n')
+        f.write('  </provides>\n')
+        f.write('</component>\n')
+    os.chmod(appdata_path, 0o644)
+
+    # 4c. Create MIME Type Definition for .mlab project files
+    mime_path = os.path.join(mime_dir, f"{package_name}.xml")
+    with open(mime_path, "w", encoding="utf-8") as f:
+        f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+        f.write('<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">\n')
+        f.write('  <mime-type type="application/x-monsterlab-project">\n')
+        f.write('    <comment>Monster Lab Circuit Project</comment>\n')
+        f.write('    <glob pattern="*.mlab"/>\n')
+        f.write('    <glob pattern="*.monsterlab"/>\n')
+        f.write('  </mime-type>\n')
+        f.write('</mime-info>\n')
+    os.chmod(mime_path, 0o644)
 
     # 5. Copy desktop icons
     icon_source = os.path.join(ROOT_DIR, "assets", "icons", "linux", "monster_lab_256x256.png")

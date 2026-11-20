@@ -1,4 +1,7 @@
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../domain/models/hardware_board_model.dart';
@@ -101,6 +104,9 @@ class _HardwareCompanionScreenState
           _buildInfoBanner(),
           const SizedBox(height: 16),
 
+          // Linux Dialout Group Permission Helper
+          _buildLinuxDialoutInfoBar(),
+
           // 2. Hardware Connection Control Card
           _buildConnectionControlCard(bridge, state),
           const SizedBox(height: 20),
@@ -170,6 +176,67 @@ class _HardwareCompanionScreenState
                       fontSize: 13, color: Colors.grey.shade800, height: 1.3),
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLinuxDialoutInfoBar() {
+    if (kIsWeb || !Platform.isLinux) return const SizedBox.shrink();
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE3F2FD),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: const Color(0xFF90CAF9), width: 1),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.info_outline, color: Color(0xFF1976D2), size: 20),
+          const SizedBox(width: 10),
+          const Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Linux Serial USB Permissions',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                    color: Color(0xFF0D47A1),
+                  ),
+                ),
+                SizedBox(height: 2),
+                Text(
+                  'To connect directly to /dev/ttyACM* or /dev/ttyUSB*, your user must belong to the dialout group.',
+                  style: TextStyle(fontSize: 11, color: Color(0xFF1565C0)),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          OutlinedButton.icon(
+            onPressed: () {
+              Clipboard.setData(const ClipboardData(
+                  text: 'sudo usermod -a -G dialout \$USER'));
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                      'Copied "sudo usermod -a -G dialout \$USER" to clipboard. Run it in terminal, then re-login.'),
+                  duration: Duration(seconds: 4),
+                ),
+              );
+            },
+            icon: const Icon(Icons.copy, size: 14),
+            label:
+                const Text('Copy Fix Command', style: TextStyle(fontSize: 11)),
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              minimumSize: const Size(60, 28),
             ),
           ),
         ],

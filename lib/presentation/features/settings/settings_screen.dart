@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/routing/route_constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../shared/providers.dart';
+import '../../shared/widgets/gtk_about_dialog.dart';
 import '../../shared/widgets/monster_card.dart';
 import '../../shared/widgets/responsive_content_container.dart';
 
@@ -160,6 +161,102 @@ class SettingsScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 16),
 
+            // Appearance & Theming
+            MonsterCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+                    child: Row(
+                      children: [
+                        Icon(Icons.palette_outlined,
+                            color: Theme.of(context).colorScheme.primary),
+                        const SizedBox(width: 12),
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Appearance & Desktop Theme',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 16),
+                              ),
+                              SizedBox(height: 2),
+                              Text(
+                                'Configure color scheme and desktop appearance mode.',
+                                style: TextStyle(
+                                    color: AppColors.textSecondaryLight,
+                                    fontSize: 12),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Theme Mode',
+                            style: TextStyle(
+                                fontSize: 13, fontWeight: FontWeight.w600)),
+                        const SizedBox(height: 6),
+                        Wrap(
+                          spacing: 8,
+                          children: [
+                            ChoiceChip(
+                              label: const Text('System (Auto)'),
+                              selected: settings.themeMode == 'system',
+                              onSelected: (_) =>
+                                  notifier.setThemeMode('system'),
+                            ),
+                            ChoiceChip(
+                              label: const Text('Light Lab'),
+                              selected: settings.themeMode == 'light',
+                              onSelected: (_) => notifier.setThemeMode('light'),
+                            ),
+                            ChoiceChip(
+                              label: const Text('Dark Lab'),
+                              selected: settings.themeMode == 'dark',
+                              onSelected: (_) => notifier.setThemeMode('dark'),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        const Text('Color Palette Preset',
+                            style: TextStyle(
+                                fontSize: 13, fontWeight: FontWeight.w600)),
+                        const SizedBox(height: 6),
+                        Wrap(
+                          spacing: 8,
+                          children: [
+                            ChoiceChip(
+                              label: const Text('Default (Violet & Cyan)'),
+                              selected: settings.themePreset == 'default',
+                              onSelected: (_) =>
+                                  notifier.setThemePreset('default'),
+                            ),
+                            ChoiceChip(
+                              label: const Text('Linux Mint (Mint-Y Green)'),
+                              selected: settings.themePreset == 'mint',
+                              onSelected: (_) =>
+                                  notifier.setThemePreset('mint'),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
             MonsterCard(
               onTap: () => context.push(RoutePaths.profileSelect),
               child: const Row(
@@ -169,6 +266,33 @@ class SettingsScreen extends ConsumerWidget {
                   Expanded(
                     child: Text('Switch Learner Profile',
                         style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                  Icon(Icons.arrow_forward_ios, size: 16),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // About Monster Lab
+            MonsterCard(
+              onTap: () => GtkAboutDialog.show(context),
+              child: const Row(
+                children: [
+                  Icon(Icons.info_outline, color: AppColors.success),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('About Monster Lab',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        SizedBox(height: 2),
+                        Text('Version 0.3.0, license, and desktop system info',
+                            style: TextStyle(
+                                fontSize: 12,
+                                color: AppColors.textSecondaryLight)),
+                      ],
+                    ),
                   ),
                   Icon(Icons.arrow_forward_ios, size: 16),
                 ],

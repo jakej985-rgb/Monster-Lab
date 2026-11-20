@@ -17,7 +17,7 @@ class MonsterCard extends StatelessWidget {
     this.onTap,
     this.padding = const EdgeInsets.all(16.0),
     this.color,
-    this.borderRadius = 16.0,
+    this.borderRadius = 8.0,
     this.border,
     this.semanticLabel,
     this.mergeSemantics = false,
@@ -31,16 +31,21 @@ class MonsterCard extends StatelessWidget {
         theme.cardTheme.color ??
         (isDark ? AppColors.surfaceDark : AppColors.surfaceLight);
 
+    final defaultBorderColor =
+        isDark ? const Color(0xFF444B59) : const Color(0xFFDCDCDC);
+    final effectiveBorder =
+        border ?? Border.all(color: defaultBorderColor, width: 1);
+
     Widget card = Container(
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(borderRadius),
-        border: border,
+        border: effectiveBorder,
         boxShadow: const [
           BoxShadow(
-            color: Color(0x146C5CE7),
-            blurRadius: 10,
-            offset: Offset(0, 4),
+            color: Color(0x0D000000),
+            blurRadius: 4,
+            offset: Offset(0, 1),
           ),
         ],
       ),

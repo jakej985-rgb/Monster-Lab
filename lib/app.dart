@@ -13,13 +13,27 @@ class MonsterLabApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsNotifierProvider);
+    final themePreset = settings.themePreset;
+    final ThemeMode themeMode;
+    switch (settings.themeMode) {
+      case 'dark':
+        themeMode = ThemeMode.dark;
+        break;
+      case 'light':
+        themeMode = ThemeMode.light;
+        break;
+      case 'system':
+      default:
+        themeMode = ThemeMode.system;
+        break;
+    }
 
     return MaterialApp.router(
       title: AppStrings.appName,
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.light,
+      theme: AppTheme.buildTheme(isDark: false, preset: themePreset),
+      darkTheme: AppTheme.buildTheme(isDark: true, preset: themePreset),
+      themeMode: themeMode,
       routerConfig: appRouter,
       builder: (context, child) {
         if (child == null) return const SizedBox.shrink();
