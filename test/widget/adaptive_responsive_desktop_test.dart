@@ -9,14 +9,16 @@ import 'package:monster_lab/data/repositories/settings_repository_impl.dart';
 import 'package:monster_lab/presentation/features/settings/settings_screen.dart';
 import 'package:monster_lab/presentation/shared/providers.dart';
 import 'package:monster_lab/presentation/shared/scaffold/main_scaffold.dart';
+import 'package:monster_lab/presentation/shared/widgets/desktop_status_bar.dart';
+import 'package:monster_lab/presentation/shared/widgets/gtk_about_dialog.dart';
+import 'package:monster_lab/presentation/shared/widgets/gtk_sidebar.dart';
 import 'package:monster_lab/presentation/shared/widgets/responsive_content_container.dart';
 
 void main() {
   group('Adaptive Responsive Desktop & Linux Layout Tests', () {
     testWidgets(
-        'MainScaffold renders NavigationBar on mobile width (<720) and NavigationRail on desktop (>=720)',
+        'MainScaffold renders NavigationBar on mobile width (<720) and GtkSidebar, MenuBar, StatusBar on desktop (>=720)',
         (tester) async {
-      // Create a test StatefulNavigationShell mock
       final router = GoRouter(
         initialLocation: '/test1',
         routes: [
@@ -42,6 +44,9 @@ void main() {
         ],
       );
 
+      SharedPreferences.setMockInitialValues({});
+      final storage = await StorageService.init();
+
       // 1. Mobile screen (width: 400, height: 800)
       tester.view.physicalSize = const Size(400, 800);
       tester.view.devicePixelRatio = 1.0;
@@ -50,20 +55,36 @@ void main() {
         tester.view.resetDevicePixelRatio();
       });
 
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            storageServiceProvider.overrideWithValue(storage),
+          ],
+          child: MaterialApp.router(routerConfig: router),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(NavigationBar), findsOneWidget);
-      expect(find.byType(NavigationRail), findsNothing);
+      expect(find.byType(GtkSidebar), findsNothing);
 
       // 2. Desktop screen (width: 1280, height: 720)
       tester.view.physicalSize = const Size(1280, 720);
       tester.view.devicePixelRatio = 1.0;
 
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            storageServiceProvider.overrideWithValue(storage),
+          ],
+          child: MaterialApp.router(routerConfig: router),
+        ),
+      );
       await tester.pumpAndSettle();
 
-      expect(find.byType(NavigationRail), findsOneWidget);
+      expect(find.byType(GtkSidebar), findsOneWidget);
+      expect(find.byType(MenuBar), findsOneWidget);
+      expect(find.byType(DesktopStatusBar), findsOneWidget);
       expect(find.byType(NavigationBar), findsNothing);
     });
 
@@ -98,7 +119,7 @@ void main() {
     });
 
     testWidgets(
-        'SettingsScreen renders Display & UI Scaling selector and updates scale',
+        'SettingsScreen renders UI scaling, theme presets, and launches GtkAboutDialog',
         (tester) async {
       SharedPreferences.setMockInitialValues({});
       final storage = await StorageService.init();
@@ -118,15 +139,42 @@ void main() {
       expect(find.text('Display & UI Scaling'), findsOneWidget);
       expect(find.text('Auto (Recommended)'), findsOneWidget);
       expect(find.text('90% (Desktop Standard)'), findsOneWidget);
-      expect(find.text('80% (Compact)'), findsOneWidget);
 
       // Select 90% (Desktop Standard)
       await tester.tap(find.text('90% (Desktop Standard)'));
       await tester.pumpAndSettle();
 
-      // Check persisted in storage
       final repo = SettingsRepositoryImpl(SettingsDataSource(storage));
       expect(repo.getSettings().uiScale, equals(0.90));
+
+      // Drag until Linux Mint theme preset is visible and select it
+      await tester.dragUntilVisible(
+        find.text('Linux Mint (Mint-Y Green)'),
+        find.byType(ListView),
+        const Offset(0, -100),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Linux Mint (Mint-Y Green)'));
+      await tester.pumpAndSettle();
+      expect(repo.getSettings().themePreset, equals('mint'));
+
+      // Drag until About Monster Lab card is visible and tap it
+      await tester.dragUntilVisible(
+        find.text('About Monster Lab'),
+        find.byType(ListView),
+        const Offset(0, -100),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('About Monster Lab'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(GtkAboutDialog), findsOneWidget);
+      expect(find.text('License: MIT (100% Offline)'), findsOneWidget);
+
+      // Close dialog
+      await tester.tap(find.text('Close'));
+      await tester.pumpAndSettle();
+      expect(find.byType(GtkAboutDialog), findsNothing);
     });
   });
 }

@@ -63,5 +63,27 @@ void main() {
       final repo2 = SettingsRepositoryImpl(ds2);
       expect(repo2.getSettings().uiScale, 0.80);
     });
+
+    test('Updating themeMode and themePreset persists and reloads correctly',
+        () async {
+      SharedPreferences.setMockInitialValues({});
+      final storage = await StorageService.init();
+      final ds = SettingsDataSource(storage);
+      final repo = SettingsRepositoryImpl(ds);
+
+      expect(repo.getSettings().themeMode, 'system');
+      expect(repo.getSettings().themePreset, 'default');
+
+      await repo.setThemeMode('dark');
+      await repo.setThemePreset('mint');
+
+      expect(repo.getSettings().themeMode, 'dark');
+      expect(repo.getSettings().themePreset, 'mint');
+
+      final ds2 = SettingsDataSource(storage);
+      final repo2 = SettingsRepositoryImpl(ds2);
+      expect(repo2.getSettings().themeMode, 'dark');
+      expect(repo2.getSettings().themePreset, 'mint');
+    });
   });
 }

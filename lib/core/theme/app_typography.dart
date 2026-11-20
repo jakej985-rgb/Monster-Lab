@@ -133,8 +133,24 @@ abstract final class AppTypography {
     ),
   );
 
+  static const List<String> desktopFontFallbacks = [
+    'Ubuntu',
+    'Cantarell',
+    'Liberation Sans',
+    'DejaVu Sans',
+    'sans-serif',
+  ];
+
+  static const List<String> desktopCodeFallbacks = [
+    'Ubuntu Mono',
+    'DejaVu Sans Mono',
+    'Liberation Mono',
+    'monospace',
+  ];
+
   static const TextStyle codeLarge = TextStyle(
     fontFamily: 'monospace',
+    fontFamilyFallback: desktopCodeFallbacks,
     fontSize: 15,
     height: 22 / 15,
     fontWeight: FontWeight.w500,
@@ -143,6 +159,7 @@ abstract final class AppTypography {
 
   static const TextStyle codeMedium = TextStyle(
     fontFamily: 'monospace',
+    fontFamilyFallback: desktopCodeFallbacks,
     fontSize: 13,
     height: 18 / 13,
     fontWeight: FontWeight.w400,

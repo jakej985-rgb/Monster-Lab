@@ -265,6 +265,16 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     await _repository.setUiScale(value);
     state = _repository.getSettings();
   }
+
+  Future<void> setThemeMode(String mode) async {
+    await _repository.setThemeMode(mode);
+    state = _repository.getSettings();
+  }
+
+  Future<void> setThemePreset(String preset) async {
+    await _repository.setThemePreset(preset);
+    state = _repository.getSettings();
+  }
 }
 
 final settingsNotifierProvider =

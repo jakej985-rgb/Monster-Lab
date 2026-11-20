@@ -40,4 +40,16 @@ class SettingsRepositoryImpl implements SettingsRepository {
     final settings = getSettings().copyWith(uiScale: value);
     await saveSettings(settings);
   }
+
+  @override
+  Future<void> setThemeMode(String mode) async {
+    final settings = getSettings().copyWith(themeMode: mode);
+    await saveSettings(settings);
+  }
+
+  @override
+  Future<void> setThemePreset(String preset) async {
+    final settings = getSettings().copyWith(themePreset: preset);
+    await saveSettings(settings);
+  }
 }
