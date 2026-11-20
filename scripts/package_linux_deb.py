@@ -14,7 +14,6 @@ from typing import Optional
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_APT_REPO = os.path.expanduser("~/apps/m3tal-apt-key")
-
 def parse_pubspec_version():
     pubspec_path = os.path.join(ROOT_DIR, "pubspec.yaml")
     if os.path.exists(pubspec_path):
@@ -24,6 +23,113 @@ def parse_pubspec_version():
                     raw = line.split(":", 1)[1].strip()
                     return raw.split("+")[0]
     return "0.1.4"
+
+
+def load_pubspec_metadata():
+    """Read declarative package metadata from pubspec.yaml so Debian metadata,
+    dependency constraints, and descriptions stay synchronized with the source
+    of truth instead of being duplicated as text in the DEB builder.
+    """
+    pubspec_path = os.path.join(ROOT_DIR, "pubspec.yaml")
+    metadata = {
+        "name": "monster-lab",
+        "description": "Hands-on offline STEM robotics learning studio for kids.",
+        "long_description": [
+            "Hands-on offline STEM robotics learning studio for kids.",
+            "Features 12 guided lessons, 38 sensor components, 20 build projects,",
+            "24 troubleshooting challenges, and physical serial hardware companion.",
+        ],
+        "maintainer": "Monster Lab Team <support@monsterlab.org>",
+        "homepage": "https://jakej985-rgb.github.io/M3tal-Hub/Monster-Lab/",
+        "depends": [
+            "libc6 (>= 2.31)",
+            "libgtk-3-0 (>= 3.24)",
+            "libglib2.0-0",
+            "libserialport0",
+        ],
+    }
+
+    if not os.path.exists(pubspec_path):
+        return metadata
+
+    try:
+        import yaml
+
+        with open(pubspec_path, "r", encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+
+        if not isinstance(data, dict):
+            return metadata
+
+        name = data.get("name")
+        if name and isinstance(name, str):
+            proposed = name.replace(" ", "-").lower().strip()
+            if proposed and proposed.replace("-", "").replace("+", "").isalnum():
+                metadata["name"] = proposed
+            else:
+                print(
+                    "Note: ignoring non-conformant name in pubspec.yaml "
+                    f"({proposed!r}); using package fallback {metadata['name']!r}",
+                    file=sys.stderr,
+                )
+
+        description = data.get("description")
+        if description and isinstance(description, str):
+            description = description.strip()
+            if description:
+                metadata["description"] = description
+                metadata["long_description"] = [description]
+
+        homepage = None
+        if isinstance(data.get("homepage"), str) and data["homepage"].strip():
+            homepage = data["homepage"].strip()
+        else:
+            repository = data.get("repository") or {}
+            if isinstance(repository, dict):
+                repo_url = repository.get("url")
+                if isinstance(repo_url, str) and repo_url.strip():
+                    homepage = repo_url.strip()
+        if homepage:
+            if homepage.startswith("git@") or homepage.startswith("ssh://"):
+                print(
+                    "Note: ignoring SSH-style repository URL in pubspec.yaml; "
+                    "a public HTTPS homepage is preferred for Debian metadata.",
+                    file=sys.stderr,
+                )
+            else:
+                metadata["homepage"] = homepage
+
+        if isinstance(data.get("author"), dict) and data["author"]:
+            author_name = data["author"].get("name", "")
+            author_email = data["author"].get("email", "")
+            if author_name or author_email:
+                if author_email:
+                    metadata["maintainer"] = f"{author_name} <{author_email}>"
+                else:
+                    metadata["maintainer"] = author_name
+    except Exception as exc:
+        print(f"Note: could not parse pubspec.yaml metadata ({exc})", file=sys.stderr)
+
+    return metadata
+
+
+def deb_control_text(metadata, version, arch, installed_size_kb):
+    depends_line = ", ".join(metadata["depends"])
+    long_desc = "\n ".join(metadata["long_description"])
+    return (
+        f"Package: {metadata['name']}\n"
+        f"Version: {version}\n"
+        f"Section: education\n"
+        f"Priority: optional\n"
+        f"Architecture: {arch}\n"
+        f"Installed-Size: {installed_size_kb}\n"
+        f"Depends: {depends_line}\n"
+        f"Maintainer: {metadata['maintainer']}\n"
+        f"Homepage: {metadata['homepage']}\n"
+        f"Description: {metadata['description']}\n"
+        f" {long_desc}\n"
+    )
+
 
 def sign_deb_package(output_deb: str, key_id: Optional[str] = None, passphrase: Optional[str] = None) -> Optional[str]:
     """Generate detached GPG signature (.deb.asc) using canonical 50-year key."""
@@ -58,7 +164,8 @@ def create_deb_package(bundle_dir: str, output_deb: str, push_to_apt_repo: str =
     raw_version = version or parse_pubspec_version()
     clean_version = raw_version.lstrip("v").split("+")[0]
     target_arch = arch or "amd64"
-    package_name = "monster-lab"
+    metadata = load_pubspec_metadata()
+    package_name = metadata["name"]
 
     staging_dir = os.path.join(ROOT_DIR, "build", "deb_staging")
     if os.path.exists(staging_dir):
@@ -156,8 +263,8 @@ def create_deb_package(bundle_dir: str, output_deb: str, push_to_apt_repo: str =
         f.write('</mime-info>\n')
     os.chmod(mime_path, 0o644)
 
-    # 5. Copy desktop icons
-    icon_source = os.path.join(ROOT_DIR, "assets", "icons", "linux", "monster_lab_256x256.png")
+    # Copy desktop icons
+    icon_source = os.path.join(ROOT_DIR, "assets", "icons", "linux", f"{package_name}_256x256.png")
     if not os.path.exists(icon_source):
         icon_source = os.path.join(ROOT_DIR, "assets", "images", "app_icon.png")
 
@@ -167,8 +274,10 @@ def create_deb_package(bundle_dir: str, output_deb: str, push_to_apt_repo: str =
         os.chmod(os.path.join(pixmaps_dir, f"{package_name}.png"), 0o644)
         os.chmod(os.path.join(icons_dir, f"{package_name}.png"), 0o644)
 
-    # 6. Copy Central M3tal GPG Keyring & APT sources entry
+    # Prepare Linux GPG Keyring Asset
+
     keyring_source = os.path.join(ROOT_DIR, "linux", "keyring", "m3tal-archive-keyring.gpg")
+    keyring_asc = os.path.join(ROOT_DIR, "linux", "keyring", "m3tal-archive-keyring.asc")
     if not os.path.exists(keyring_source):
         # Sync central keyring
         keyring_gen_script = os.path.join(ROOT_DIR, "scripts", "generate_deb_keyring.py")
@@ -188,7 +297,8 @@ def create_deb_package(bundle_dir: str, output_deb: str, push_to_apt_repo: str =
         with open(sources_list_path, "w", encoding="utf-8") as f:
             f.write("# M3tal Official Debian APT Repository\n")
             f.write("# Verification Key: /etc/apt/keyrings/m3tal-archive-keyring.gpg\n")
-            f.write("deb [signed-by=/etc/apt/keyrings/m3tal-archive-keyring.gpg] https://jakej985-rgb.github.io/m3tal-apt-key stable main\n")
+            repo_base = metadata["homepage"].rstrip("/")
+            f.write(f"deb [signed-by=/etc/apt/keyrings/m3tal-archive-keyring.gpg] {repo_base}/m3tal-apt-key stable main\n")
         os.chmod(sources_list_path, 0o644)
 
     # Calculate installed size in KB
@@ -202,19 +312,7 @@ def create_deb_package(bundle_dir: str, output_deb: str, push_to_apt_repo: str =
     # 7. Create DEBIAN/control file
     control_path = os.path.join(debian_dir, "control")
     with open(control_path, "w", encoding="utf-8") as f:
-        f.write(f"Package: {package_name}\n")
-        f.write(f"Version: {clean_version}\n")
-        f.write("Section: education\n")
-        f.write("Priority: optional\n")
-        f.write(f"Architecture: {target_arch}\n")
-        f.write(f"Installed-Size: {installed_size_kb}\n")
-        f.write("Depends: libc6 (>= 2.31), libgtk-3-0 (>= 3.24), libglib2.0-0, libserialport0\n")
-        f.write("Maintainer: Monster Lab Team <support@monsterlab.org>\n")
-        f.write("Homepage: https://jakej985-rgb.github.io/M3tal-Hub/Monster-Lab/\n")
-        f.write("Description: Monster Lab - Educational Arduino & Electronics Studio\n")
-        f.write(" Hands-on offline STEM robotics learning studio for kids.\n")
-        f.write(" Features 12 guided lessons, 38 sensor components, 20 build projects,\n")
-        f.write(" 24 troubleshooting challenges, and physical serial hardware companion.\n")
+        f.write(deb_control_text(metadata, clean_version, target_arch, installed_size_kb))
     os.chmod(control_path, 0o644)
 
     # 8. Build DEB package using dpkg-deb

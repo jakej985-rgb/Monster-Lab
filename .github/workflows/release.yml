@@ -269,10 +269,11 @@ jobs:
         run: |
           TOKEN="${{ secrets.M3TAL_APT_DISPATCH_TOKEN || secrets.HUB_DISPATCH_TOKEN || secrets.M3TAL_HUB_TOKEN || secrets.GH_PAT }}"
           if [ -z "$TOKEN" ]; then
-            echo "::error ::Missing repository dispatch token! Configure M3TAL_APT_DISPATCH_TOKEN, HUB_DISPATCH_TOKEN, M3TAL_HUB_TOKEN, or GH_PAT in repository settings."
-            exit 1
+            echo "::warning::APT repository dispatch skipped. No dispatch token configured (M3TAL_APT_DISPATCH_TOKEN, HUB_DISPATCH_TOKEN, M3TAL_HUB_TOKEN, or GH_PAT)."
+            echo "Signed Debian release was published, but automatic publishing to the central APT repo was not attempted."
+          else
+            echo "APT dispatch token is present and verified."
           fi
-          echo "APT dispatch token is present and verified."
 
       - name: Dispatch Linux Deb to Central APT Repository (m3tal-apt-key)
         if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'

@@ -70,14 +70,24 @@ def verify_linux() -> list:
     else:
         with open(pkg_script, "r") as f:
             script_content = f.read()
-        for expected in ["sign_deb_package", "create_deb_package", "monster-lab"]:
+        for expected in ["sign_deb_package", "create_deb_package", "load_pubspec_metadata", "deb_control_text"]:
             if expected not in script_content:
                 errors.append(f"scripts/package_linux_deb.py missing expected logic: {expected}")
 
-    desktop_path = os.path.join(ROOT_DIR, "linux", "monster-lab.desktop")
-    if not os.path.exists(desktop_path):
-        # Check if desktop entry is created by package script or exists
-        pass
+    # The Debian builder now generates the desktop entry, keyring asset handling,
+    # and APT source entry during packaging, so do not require a standalone
+    # linux/monster-lab.desktop file in the source tree.
+
+    keyring_gpg = os.path.join(ROOT_DIR, "linux", "keyring", "m3tal-archive-keyring.gpg")
+    if not os.path.exists(keyring_gpg):
+        errors.append("linux/keyring/m3tal-archive-keyring.gpg missing")
+    else:
+        if os.path.getsize(keyring_gpg) < 1024:
+            errors.append("linux/keyring/m3tal-archive-keyring.gpg appears too small to be a valid keyring")
+
+    keyring_asc = os.path.join(ROOT_DIR, "linux", "keyring", "m3tal-archive-keyring.asc")
+    if not os.path.exists(keyring_asc):
+        errors.append("linux/keyring/m3tal-archive-keyring.asc missing")
 
     print(f"  Linux verification: {'PASS' if not errors else 'FAIL'}")
     return errors
@@ -97,6 +107,37 @@ def verify_windows() -> list:
                 errors.append(f"windows/installer/monster_lab_setup.iss missing required directive: {item}")
 
     print(f"  Windows verification: {'PASS' if not errors else 'FAIL'}")
+    return errors
+
+
+def verify_release_automation() -> list:
+    """Check release workflow and dispatch configs for common integration pitfalls."""
+    errors = []
+    print("Checking Linux release automation contracts...")
+
+    release_workflow = os.path.join(ROOT_DIR, ".github", "workflows", "release.yml")
+    if not os.path.exists(release_workflow):
+        errors.append(".github/workflows/release.yml missing")
+    else:
+        with open(release_workflow, "r") as f:
+            release_content = f.read()
+
+        dispatch_steps = [
+            line.strip()
+            for line in release_content.splitlines()
+            if "repository-dispatch" in line
+        ]
+        if not dispatch_steps:
+            errors.append("release.yml missing repository-dispatch step for APT/hub integration")
+
+        if "m3tal-archive-keyring.gpg" not in release_content:
+            errors.append("release.yml missing expected keyring asset publication step")
+
+    apt_dispatch = os.path.join(ROOT_DIR, ".github", "workflows", "dispatch-apt.yml")
+    if not os.path.exists(apt_dispatch):
+        errors.append(".github/workflows/dispatch-apt.yml missing")
+
+    print(f"  Release automation verification: {'PASS' if not errors else 'FAIL'}")
     return errors
 
 def verify_docker() -> list:
@@ -140,6 +181,7 @@ def main():
     all_errors.extend(verify_linux())
     all_errors.extend(verify_windows())
     all_errors.extend(verify_docker())
+    all_errors.extend(verify_release_automation())
 
     print("=================================================================")
     if all_errors:
