@@ -34,4 +34,10 @@ class SettingsRepositoryImpl implements SettingsRepository {
     final settings = getSettings().copyWith(highContrast: value);
     await saveSettings(settings);
   }
+
+  @override
+  Future<void> setUiScale(double value) async {
+    final settings = getSettings().copyWith(uiScale: value);
+    await saveSettings(settings);
+  }
 }

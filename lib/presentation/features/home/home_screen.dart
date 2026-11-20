@@ -8,6 +8,7 @@ import '../../../domain/models/learner_progress_model.dart';
 import '../../shared/providers.dart';
 import '../../shared/widgets/monster_button.dart';
 import '../../shared/widgets/monster_card.dart';
+import '../../shared/widgets/responsive_content_container.dart';
 import '../../shared/widgets/xp_progress_bar.dart';
 import '../hardware/widgets/hardware_status_badge.dart';
 
@@ -79,283 +80,290 @@ class HomeScreen extends ConsumerWidget {
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
-        children: [
-          if (activeProgress != null)
-            XPProgressBar(
-              totalXp: activeProgress.totalXp,
-              currentLevel: activeProgress.currentLevel,
-              progressRatio: activeProgress.levelProgressRatio,
-            ),
-          const SizedBox(height: 20),
+      body: ResponsiveContentContainer(
+        maxWidth: 1040,
+        child: ListView(
+          padding: const EdgeInsets.all(16.0),
+          children: [
+            if (activeProgress != null)
+              XPProgressBar(
+                totalXp: activeProgress.totalXp,
+                currentLevel: activeProgress.currentLevel,
+                progressRatio: activeProgress.levelProgressRatio,
+              ),
+            const SizedBox(height: 20),
 
-          // Robot Companion Greeting
-          MonsterCard(
-            color: avatar.backgroundColor.withValues(alpha: 0.7),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 28,
-                  backgroundColor: avatar.accentColor,
-                  child: Icon(avatar.icon, color: Colors.white, size: 30),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${avatar.name} says:',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                          color: avatar.accentColor,
+            // Robot Companion Greeting
+            MonsterCard(
+              color: avatar.backgroundColor.withValues(alpha: 0.7),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 28,
+                    backgroundColor: avatar.accentColor,
+                    child: Icon(avatar.icon, color: Colors.white, size: 30),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${avatar.name} says:',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 13,
+                            color: avatar.accentColor,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        _getCompanionGreeting(
-                            activeProgress?.currentLevel ?? 1),
-                        style: const TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w500),
-                      ),
-                    ],
+                        const SizedBox(height: 4),
+                        Text(
+                          _getCompanionGreeting(
+                              activeProgress?.currentLevel ?? 1),
+                          style: const TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 24),
+            const SizedBox(height: 24),
 
-          // Resume Learning Section
-          const Text(
-            'Continue Learning',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 12),
-          _buildResumeCard(context, ref, activeProgress),
+            // Resume Learning Section
+            const Text(
+              'Continue Learning',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            _buildResumeCard(context, ref, activeProgress),
 
-          const SizedBox(height: 24),
+            const SizedBox(height: 24),
 
-          // Progress Overview Stats Grid
-          const Text(
-            'Your Monster Lab Stats',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatCard(
-                  icon: Icons.menu_book,
-                  color: AppColors.primaryViolet,
-                  label: 'Lessons Done',
-                  value: '${activeProgress?.completedLessonIds.length ?? 0}',
-                  onTap: () => context.go(RoutePaths.learn),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildStatCard(
-                  icon: Icons.extension,
-                  color: AppColors.accentCyan,
-                  label: 'Parts Found',
-                  value:
-                      '${activeProgress?.discoveredComponentIds.length ?? 0}',
-                  onTap: () => context.go(RoutePaths.parts),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatCard(
-                  icon: Icons.precision_manufacturing,
-                  color: AppColors.tierEngineer,
-                  label: 'Projects Built',
-                  value: '${activeProgress?.completedProjectIds.length ?? 0}',
-                  onTap: () => context.go(RoutePaths.build),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildStatCard(
-                  icon: Icons.emoji_events,
-                  color: AppColors.energyAmber,
-                  label: 'Badges Won',
-                  value: '${activeProgress?.earnedBadgeIds.length ?? 0}',
-                  onTap: () => context.go(RoutePaths.progress),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-
-          // Challenge Arena Quick Access
-          MonsterCard(
-            onTap: () => context.push(RoutePaths.challenges),
-            child: Row(
+            // Progress Overview Stats Grid
+            const Text(
+              'Your Monster Lab Stats',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppColors.tierMaster.withValues(alpha: 0.15),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.flash_on,
-                      color: AppColors.tierMaster, size: 28),
-                ),
-                const SizedBox(width: 14),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Challenge Arena',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        '${activeProgress?.solvedChallengeIds.length ?? 0} challenges solved. Test your skills!',
-                        style: const TextStyle(
-                            color: AppColors.textSecondaryLight, fontSize: 13),
-                      ),
-                    ],
+                  child: _buildStatCard(
+                    icon: Icons.menu_book,
+                    color: AppColors.primaryViolet,
+                    label: 'Lessons Done',
+                    value: '${activeProgress?.completedLessonIds.length ?? 0}',
+                    onTap: () => context.go(RoutePaths.learn),
                   ),
                 ),
-                const Icon(Icons.arrow_forward_ios,
-                    size: 16, color: AppColors.primaryViolet),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildStatCard(
+                    icon: Icons.extension,
+                    color: AppColors.accentCyan,
+                    label: 'Parts Found',
+                    value:
+                        '${activeProgress?.discoveredComponentIds.length ?? 0}',
+                    onTap: () => context.go(RoutePaths.parts),
+                  ),
+                ),
               ],
             ),
-          ),
-          const SizedBox(height: 12),
-
-          // Doctor Monster Clinic Quick Access
-          MonsterCard(
-            onTap: () => context.push(RoutePaths.troubleshoot),
-            child: Row(
+            const SizedBox(height: 12),
+            Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppColors.energyAmber.withValues(alpha: 0.15),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.healing,
-                      color: AppColors.energyAmber, size: 28),
-                ),
-                const SizedBox(width: 14),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Doctor Monster Clinic',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 2),
-                      Text(
-                        'Circuit glitching? Debug hardware & code step-by-step!',
-                        style: TextStyle(
-                            color: AppColors.textSecondaryLight, fontSize: 13),
-                      ),
-                    ],
+                Expanded(
+                  child: _buildStatCard(
+                    icon: Icons.precision_manufacturing,
+                    color: AppColors.tierEngineer,
+                    label: 'Projects Built',
+                    value: '${activeProgress?.completedProjectIds.length ?? 0}',
+                    onTap: () => context.go(RoutePaths.build),
                   ),
                 ),
-                const Icon(Icons.arrow_forward_ios,
-                    size: 16, color: AppColors.primaryViolet),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildStatCard(
+                    icon: Icons.emoji_events,
+                    color: AppColors.energyAmber,
+                    label: 'Badges Won',
+                    value: '${activeProgress?.earnedBadgeIds.length ?? 0}',
+                    onTap: () => context.go(RoutePaths.progress),
+                  ),
+                ),
               ],
             ),
-          ),
-          const SizedBox(height: 12),
+            const SizedBox(height: 24),
 
-          // Hardware Companion Quick Access
-          MonsterCard(
-            key: const Key('home_hardware_companion_card'),
-            onTap: () => context.push(RoutePaths.hardware),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppColors.accentCyan.withValues(alpha: 0.15),
-                    shape: BoxShape.circle,
+            // Challenge Arena Quick Access
+            MonsterCard(
+              onTap: () => context.push(RoutePaths.challenges),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColors.tierMaster.withValues(alpha: 0.15),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.flash_on,
+                        color: AppColors.tierMaster, size: 28),
                   ),
-                  child: const Icon(Icons.developer_board,
-                      color: AppColors.accentCyanDark, size: 28),
-                ),
-                const SizedBox(width: 14),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Hardware Companion',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 2),
-                      Text(
-                        'Connect Arduino or Virtual Simulator. Test live serial & pins!',
-                        style: TextStyle(
-                            color: AppColors.textSecondaryLight, fontSize: 13),
-                      ),
-                    ],
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Challenge Arena',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '${activeProgress?.solvedChallengeIds.length ?? 0} challenges solved. Test your skills!',
+                          style: const TextStyle(
+                              color: AppColors.textSecondaryLight,
+                              fontSize: 13),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const Icon(Icons.arrow_forward_ios,
-                    size: 16, color: AppColors.primaryViolet),
-              ],
+                  const Icon(Icons.arrow_forward_ios,
+                      size: 16, color: AppColors.primaryViolet),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          // Interactive Wiring & Code Lab Quick Access
-          MonsterCard(
-            key: const Key('home_interactive_lab_card'),
-            onTap: () => context.push(RoutePaths.interactiveLab),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryViolet.withValues(alpha: 0.15),
-                    shape: BoxShape.circle,
+            // Doctor Monster Clinic Quick Access
+            MonsterCard(
+              onTap: () => context.push(RoutePaths.troubleshoot),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColors.energyAmber.withValues(alpha: 0.15),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.healing,
+                        color: AppColors.energyAmber, size: 28),
                   ),
-                  child: const Icon(Icons.science,
-                      color: AppColors.primaryViolet, size: 28),
-                ),
-                const SizedBox(width: 14),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Interactive Wiring & Code Lab',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 2),
-                      Text(
-                        'Virtual breadboard wiring & live code experiments before physical build!',
-                        style: TextStyle(
-                            color: AppColors.textSecondaryLight, fontSize: 13),
-                      ),
-                    ],
+                  const SizedBox(width: 14),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Doctor Monster Clinic',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 2),
+                        Text(
+                          'Circuit glitching? Debug hardware & code step-by-step!',
+                          style: TextStyle(
+                              color: AppColors.textSecondaryLight,
+                              fontSize: 13),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const Icon(Icons.arrow_forward_ios,
-                    size: 16, color: AppColors.primaryViolet),
-              ],
+                  const Icon(Icons.arrow_forward_ios,
+                      size: 16, color: AppColors.primaryViolet),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 24),
-        ],
+            const SizedBox(height: 12),
+
+            // Hardware Companion Quick Access
+            MonsterCard(
+              key: const Key('home_hardware_companion_card'),
+              onTap: () => context.push(RoutePaths.hardware),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColors.accentCyan.withValues(alpha: 0.15),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.developer_board,
+                        color: AppColors.accentCyanDark, size: 28),
+                  ),
+                  const SizedBox(width: 14),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Hardware Companion',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 2),
+                        Text(
+                          'Connect Arduino or Virtual Simulator. Test live serial & pins!',
+                          style: TextStyle(
+                              color: AppColors.textSecondaryLight,
+                              fontSize: 13),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(Icons.arrow_forward_ios,
+                      size: 16, color: AppColors.primaryViolet),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Interactive Wiring & Code Lab Quick Access
+            MonsterCard(
+              key: const Key('home_interactive_lab_card'),
+              onTap: () => context.push(RoutePaths.interactiveLab),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryViolet.withValues(alpha: 0.15),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.science,
+                        color: AppColors.primaryViolet, size: 28),
+                  ),
+                  const SizedBox(width: 14),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Interactive Wiring & Code Lab',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 2),
+                        Text(
+                          'Virtual breadboard wiring & live code experiments before physical build!',
+                          style: TextStyle(
+                              color: AppColors.textSecondaryLight,
+                              fontSize: 13),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(Icons.arrow_forward_ios,
+                      size: 16, color: AppColors.primaryViolet),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }

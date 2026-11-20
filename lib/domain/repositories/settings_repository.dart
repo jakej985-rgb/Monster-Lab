@@ -6,4 +6,5 @@ abstract class SettingsRepository {
   Future<void> setImmersiveLessonMode(bool value);
   Future<void> setSoundEnabled(bool value);
   Future<void> setHighContrast(bool value);
+  Future<void> setUiScale(double value);
 }

@@ -47,5 +47,21 @@ void main() {
       expect(settings.soundEnabled, isFalse);
       expect(settings.highContrast, isTrue);
     });
+
+    test('Updating uiScale persists and reloads correctly', () async {
+      SharedPreferences.setMockInitialValues({});
+      final storage = await StorageService.init();
+      final ds = SettingsDataSource(storage);
+      final repo = SettingsRepositoryImpl(ds);
+
+      expect(repo.getSettings().uiScale, 0.0);
+
+      await repo.setUiScale(0.80);
+      expect(repo.getSettings().uiScale, 0.80);
+
+      final ds2 = SettingsDataSource(storage);
+      final repo2 = SettingsRepositoryImpl(ds2);
+      expect(repo2.getSettings().uiScale, 0.80);
+    });
   });
 }

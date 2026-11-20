@@ -280,7 +280,13 @@ class _PartsScreenState extends ConsumerState<PartsScreen> {
                             padding: const EdgeInsets.all(16.0),
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: screenWidth > 600 ? 3 : 2,
+                              crossAxisCount: screenWidth >= 1200
+                                  ? 5
+                                  : screenWidth >= 900
+                                      ? 4
+                                      : screenWidth >= 600
+                                          ? 3
+                                          : 2,
                               crossAxisSpacing: 12,
                               mainAxisSpacing: 12,
                               childAspectRatio: responsiveRatio,

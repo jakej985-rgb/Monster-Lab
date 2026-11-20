@@ -260,6 +260,11 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     await _repository.setHighContrast(value);
     state = _repository.getSettings();
   }
+
+  Future<void> setUiScale(double value) async {
+    await _repository.setUiScale(value);
+    state = _repository.getSettings();
+  }
 }
 
 final settingsNotifierProvider =
