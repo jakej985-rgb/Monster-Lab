@@ -266,6 +266,22 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     state = _repository.getSettings();
   }
 
+  Future<void> zoomIn() async {
+    final current = state.uiScale > 0.0 ? state.uiScale : 0.80;
+    final next = (current + 0.05).clamp(0.65, 1.25);
+    await setUiScale(double.parse(next.toStringAsFixed(2)));
+  }
+
+  Future<void> zoomOut() async {
+    final current = state.uiScale > 0.0 ? state.uiScale : 0.80;
+    final next = (current - 0.05).clamp(0.65, 1.25);
+    await setUiScale(double.parse(next.toStringAsFixed(2)));
+  }
+
+  Future<void> resetZoom() async {
+    await setUiScale(0.0);
+  }
+
   Future<void> setThemeMode(String mode) async {
     await _repository.setThemeMode(mode);
     state = _repository.getSettings();

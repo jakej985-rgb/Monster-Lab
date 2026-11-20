@@ -17,7 +17,7 @@ class DesktopStatusBar extends ConsumerWidget {
 
     final zoomText = settings.uiScale > 0.0
         ? '${(settings.uiScale * 100).round()}%'
-        : 'Auto (88%)';
+        : 'Auto (80%)';
 
     final borderColor =
         isDark ? const Color(0xFF3C4049) : const Color(0xFFDCDCDC);

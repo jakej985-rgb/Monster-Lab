@@ -123,13 +123,19 @@ class SettingsScreen extends ConsumerWidget {
                           onSelected: () => notifier.setUiScale(0.0),
                         ),
                         _buildScaleChip(
-                          label: '80% (Compact)',
+                          label: '75% (Ultra Compact)',
+                          value: 0.75,
+                          currentValue: settings.uiScale,
+                          onSelected: () => notifier.setUiScale(0.75),
+                        ),
+                        _buildScaleChip(
+                          label: '80% (Desktop Standard)',
                           value: 0.80,
                           currentValue: settings.uiScale,
                           onSelected: () => notifier.setUiScale(0.80),
                         ),
                         _buildScaleChip(
-                          label: '90% (Desktop Standard)',
+                          label: '90% (Comfortable)',
                           value: 0.90,
                           currentValue: settings.uiScale,
                           onSelected: () => notifier.setUiScale(0.90),

@@ -10,10 +10,12 @@ import sys
 import re
 import argparse
 import subprocess
+import json
 from datetime import datetime
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+VERSION_JSON_PATH = os.path.join(ROOT_DIR, "version.json")
 PUBSPEC_PATH = os.path.join(ROOT_DIR, "pubspec.yaml")
 DART_VERSION_PATH = os.path.join(ROOT_DIR, "lib", "core", "constants", "app_version.dart")
 INNO_SETUP_PATH = os.path.join(ROOT_DIR, "windows", "installer", "monster_lab_setup.iss")
@@ -108,6 +110,19 @@ def update_dockerfile(new_semver: str):
             f.write(updated)
         print(f"  [OK] Dockerfile: {new_semver}")
 
+def update_version_json(new_semver: str, new_build: int):
+    if os.path.exists(VERSION_JSON_PATH):
+        with open(VERSION_JSON_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        data["version"] = new_semver
+        data["buildNumber"] = new_build
+        data["releaseName"] = f"Monster Lab v{new_semver}"
+        data["releaseDate"] = datetime.now().strftime("%Y-%m-%d")
+        with open(VERSION_JSON_PATH, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+            f.write("\n")
+        print(f"  [OK] version.json: {new_semver}+{new_build}")
+
 def update_changelog(new_semver: str, new_build: int):
     if os.path.exists(CHANGELOG_PATH):
         with open(CHANGELOG_PATH, "r", encoding="utf-8") as f:
@@ -165,6 +180,7 @@ def main():
         new_semver, new_build = bump_patch(current_semver, current_build)
 
     print(f"Bumping Monster Lab version: {current_semver}+{current_build} -> {new_semver}+{new_build}")
+    update_version_json(new_semver, new_build)
     update_pubspec(new_semver, new_build)
     update_dart_version(new_semver, new_build)
     update_inno_setup(new_semver)

@@ -138,14 +138,14 @@ void main() {
 
       expect(find.text('Display & UI Scaling'), findsOneWidget);
       expect(find.text('Auto (Recommended)'), findsOneWidget);
-      expect(find.text('90% (Desktop Standard)'), findsOneWidget);
+      expect(find.text('80% (Desktop Standard)'), findsOneWidget);
 
-      // Select 90% (Desktop Standard)
-      await tester.tap(find.text('90% (Desktop Standard)'));
+      // Select 80% (Desktop Standard)
+      await tester.tap(find.text('80% (Desktop Standard)'));
       await tester.pumpAndSettle();
 
       final repo = SettingsRepositoryImpl(SettingsDataSource(storage));
-      expect(repo.getSettings().uiScale, equals(0.90));
+      expect(repo.getSettings().uiScale, equals(0.80));
 
       // Drag until Linux Mint theme preset is visible and select it
       await tester.dragUntilVisible(
@@ -175,6 +175,53 @@ void main() {
       await tester.tap(find.text('Close'));
       await tester.pumpAndSettle();
       expect(find.byType(GtkAboutDialog), findsNothing);
+    });
+
+    testWidgets('MainScaffold MenuBar includes View menu with Zoom controls',
+        (tester) async {
+      final router = GoRouter(
+        initialLocation: '/test',
+        routes: [
+          StatefulShellRoute.indexedStack(
+            builder: (context, state, navigationShell) {
+              return MainScaffold(navigationShell: navigationShell);
+            },
+            branches: [
+              StatefulShellBranch(routes: [
+                GoRoute(
+                  path: '/test',
+                  builder: (_, __) => const Text('Content'),
+                ),
+              ]),
+            ],
+          ),
+        ],
+      );
+
+      SharedPreferences.setMockInitialValues({});
+      final storage = await StorageService.init();
+
+      tester.view.physicalSize = const Size(1280, 720);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            storageServiceProvider.overrideWithValue(storage),
+          ],
+          child: MaterialApp.router(routerConfig: router),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('View'), findsOneWidget);
+      expect(find.text('File'), findsOneWidget);
+      expect(find.text('Navigate'), findsOneWidget);
+      expect(find.text('Help'), findsOneWidget);
     });
   });
 }

@@ -312,9 +312,9 @@ class _PartsScreenState extends ConsumerState<PartsScreen> {
                         builder: (context) {
                           final textScale =
                               MediaQuery.textScalerOf(context).scale(1.0);
-                          final responsiveRatio = (0.85 /
+                          final responsiveRatio = (0.72 /
                                   (textScale > 1.0 ? (textScale * 0.9) : 1.0))
-                              .clamp(0.55, 0.95);
+                              .clamp(0.55, 0.85);
                           final screenWidth = MediaQuery.sizeOf(context).width;
 
                           return GridView.builder(
@@ -472,21 +472,22 @@ class _PartsScreenState extends ConsumerState<PartsScreen> {
                                             const SizedBox.shrink(),
                                         ],
                                       ),
-                                      const Spacer(),
-                                      Center(
-                                        child: ComponentImageView(
-                                          imagePath: comp.primaryImage,
-                                          width: 64,
-                                          height: 64,
-                                          category: comp.category,
-                                          semanticLabel:
-                                              comp.imageDescription ??
-                                                  '${comp.name} photo',
-                                          borderRadius:
-                                              BorderRadius.circular(12),
+                                      Expanded(
+                                        child: Center(
+                                          child: ComponentImageView(
+                                            imagePath: comp.primaryImage,
+                                            width: 56,
+                                            height: 56,
+                                            category: comp.category,
+                                            semanticLabel:
+                                                comp.imageDescription ??
+                                                    '${comp.name} photo',
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                          ),
                                         ),
                                       ),
-                                      const Spacer(),
+                                      const SizedBox(height: 4),
                                       Text(
                                         comp.name,
                                         maxLines: 2,
