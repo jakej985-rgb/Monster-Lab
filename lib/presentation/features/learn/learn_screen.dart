@@ -7,6 +7,7 @@ import '../../../domain/models/course_model.dart';
 import '../../../domain/models/learner_progress_model.dart';
 import '../../shared/providers.dart';
 import '../../shared/widgets/monster_card.dart';
+import '../../shared/widgets/responsive_content_container.dart';
 
 class LearnScreen extends ConsumerStatefulWidget {
   const LearnScreen({super.key});
@@ -32,122 +33,126 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
         title: const Text('Learn Lab',
             style: TextStyle(fontWeight: FontWeight.bold)),
       ),
-      body: Column(
-        children: [
-          // Tier Filter Chips (Responsive Wrap - No side scrolling)
-          Container(
-            width: double.infinity,
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            color: Colors.white,
-            child: Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                _buildTierChip(label: 'All Tiers', tier: null),
-                _buildTierChip(
-                    label: 'Rookie (Beginner)', tier: DifficultyTier.rookie),
-                _buildTierChip(
-                    label: 'Builder (Intermediate)',
-                    tier: DifficultyTier.builder),
-                _buildTierChip(
-                    label: 'Engineer (Advanced)',
-                    tier: DifficultyTier.engineer),
-                _buildTierChip(
-                    label: 'Master', tier: DifficultyTier.monsterMaster),
-              ],
+      body: ResponsiveContentContainer(
+        maxWidth: 1040,
+        child: Column(
+          children: [
+            // Tier Filter Chips (Responsive Wrap - No side scrolling)
+            Container(
+              width: double.infinity,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              color: Colors.white,
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  _buildTierChip(label: 'All Tiers', tier: null),
+                  _buildTierChip(
+                      label: 'Rookie (Beginner)', tier: DifficultyTier.rookie),
+                  _buildTierChip(
+                      label: 'Builder (Intermediate)',
+                      tier: DifficultyTier.builder),
+                  _buildTierChip(
+                      label: 'Engineer (Advanced)',
+                      tier: DifficultyTier.engineer),
+                  _buildTierChip(
+                      label: 'Master', tier: DifficultyTier.monsterMaster),
+                ],
+              ),
             ),
-          ),
-          const Divider(height: 1),
+            const Divider(height: 1),
 
-          // Lesson List with Course Folders
-          Expanded(
-            child: FutureBuilder<List<Lesson>>(
-              future: curriculumRepo.getLessons(tier: _selectedTier),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                }
-                if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                final lessons = snapshot.data!;
-
-                if (lessons.isEmpty) {
-                  return const Center(
-                    child: Text('No lessons found in this tier yet.'),
-                  );
-                }
-
-                // Group lessons into courses and standalone missions
-                final courseLessonsMap = <String, List<Lesson>>{};
-                final standaloneLessons = <Lesson>[];
-
-                for (final lesson in lessons) {
-                  if (lesson.courseId != null) {
-                    courseLessonsMap
-                        .putIfAbsent(lesson.courseId!, () => [])
-                        .add(lesson);
-                  } else {
-                    standaloneLessons.add(lesson);
+            // Lesson List with Course Folders
+            Expanded(
+              child: FutureBuilder<List<Lesson>>(
+                future: curriculumRepo.getLessons(tier: _selectedTier),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
                   }
-                }
+                  if (!snapshot.hasData) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  final lessons = snapshot.data!;
 
-                for (final list in courseLessonsMap.values) {
-                  list.sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
-                }
+                  if (lessons.isEmpty) {
+                    return const Center(
+                      child: Text('No lessons found in this tier yet.'),
+                    );
+                  }
 
-                standaloneLessons.sort((a, b) => a.id.compareTo(b.id));
+                  // Group lessons into courses and standalone missions
+                  final courseLessonsMap = <String, List<Lesson>>{};
+                  final standaloneLessons = <Lesson>[];
 
-                final courses = coursesAsync.value ?? const [];
-
-                // Initialize default expansion: expand active or incomplete courses
-                if (!_initializedExpanded && courses.isNotEmpty) {
-                  for (final course in courses) {
-                    final cLessons = courseLessonsMap[course.id] ?? [];
-                    final isComplete = cLessons.isNotEmpty &&
-                        cLessons.every((l) =>
-                            activeProgress?.completedLessonIds.contains(l.id) ??
-                            false);
-                    if (!isComplete) {
-                      _expandedCourseIds.add(course.id);
-                      break;
+                  for (final lesson in lessons) {
+                    if (lesson.courseId != null) {
+                      courseLessonsMap
+                          .putIfAbsent(lesson.courseId!, () => [])
+                          .add(lesson);
+                    } else {
+                      standaloneLessons.add(lesson);
                     }
                   }
-                  // If all complete or none found, expand first course
-                  if (_expandedCourseIds.isEmpty && courses.isNotEmpty) {
-                    _expandedCourseIds.add(courses.first.id);
-                  }
-                  _initializedExpanded = true;
-                }
 
-                // Build organized items list
-                return ListView(
-                  padding: const EdgeInsets.all(16.0),
-                  children: [
-                    // All 10 Course Folders
-                    for (final course in courses) ...[
-                      if (courseLessonsMap.containsKey(course.id)) ...[
-                        _buildCourseFolderCard(
-                          course: course,
-                          lessons: courseLessonsMap[course.id]!,
-                          activeProgress: activeProgress,
-                        ),
+                  for (final list in courseLessonsMap.values) {
+                    list.sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
+                  }
+
+                  standaloneLessons.sort((a, b) => a.id.compareTo(b.id));
+
+                  final courses = coursesAsync.value ?? const [];
+
+                  // Initialize default expansion: expand active or incomplete courses
+                  if (!_initializedExpanded && courses.isNotEmpty) {
+                    for (final course in courses) {
+                      final cLessons = courseLessonsMap[course.id] ?? [];
+                      final isComplete = cLessons.isNotEmpty &&
+                          cLessons.every((l) =>
+                              activeProgress?.completedLessonIds
+                                  .contains(l.id) ??
+                              false);
+                      if (!isComplete) {
+                        _expandedCourseIds.add(course.id);
+                        break;
+                      }
+                    }
+                    // If all complete or none found, expand first course
+                    if (_expandedCourseIds.isEmpty && courses.isNotEmpty) {
+                      _expandedCourseIds.add(courses.first.id);
+                    }
+                    _initializedExpanded = true;
+                  }
+
+                  // Build organized items list
+                  return ListView(
+                    padding: const EdgeInsets.all(16.0),
+                    children: [
+                      // All 10 Course Folders
+                      for (final course in courses) ...[
+                        if (courseLessonsMap.containsKey(course.id)) ...[
+                          _buildCourseFolderCard(
+                            course: course,
+                            lessons: courseLessonsMap[course.id]!,
+                            activeProgress: activeProgress,
+                          ),
+                          const SizedBox(height: 12),
+                        ],
+                      ],
+
+                      // Standalone Lessons 9 to 12
+                      for (final l in standaloneLessons) ...[
+                        _buildLessonCard(l, activeProgress),
                         const SizedBox(height: 12),
                       ],
                     ],
-
-                    // Standalone Lessons 9 to 12
-                    for (final l in standaloneLessons) ...[
-                      _buildLessonCard(l, activeProgress),
-                      const SizedBox(height: 12),
-                    ],
-                  ],
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

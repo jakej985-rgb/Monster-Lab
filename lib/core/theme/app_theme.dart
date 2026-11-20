@@ -58,6 +58,23 @@ abstract final class AppTheme {
         elevation: 0,
         centerTitle: false,
       ),
+      visualDensity: VisualDensity.adaptivePlatformDensity,
+      navigationRailTheme: const NavigationRailThemeData(
+        backgroundColor: AppColors.surfaceLight,
+        selectedIconTheme: IconThemeData(color: AppColors.primaryViolet),
+        unselectedIconTheme: IconThemeData(color: AppColors.textSecondaryLight),
+        selectedLabelTextStyle: TextStyle(
+          color: AppColors.primaryViolet,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
+        unselectedLabelTextStyle: TextStyle(
+          color: AppColors.textSecondaryLight,
+          fontSize: 12,
+        ),
+        indicatorColor: Color(0x266C5CE7),
+        elevation: 2,
+      ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColors.surfaceLight,
         selectedItemColor: AppColors.primaryViolet,
@@ -72,6 +89,7 @@ abstract final class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
+      visualDensity: VisualDensity.adaptivePlatformDensity,
       primaryColor: AppColors.primaryViolet,
       scaffoldBackgroundColor: AppColors.backgroundDark,
       colorScheme: const ColorScheme.dark(
@@ -119,6 +137,22 @@ abstract final class AppTheme {
         foregroundColor: AppColors.textPrimaryDark,
         elevation: 0,
         centerTitle: false,
+      ),
+      navigationRailTheme: const NavigationRailThemeData(
+        backgroundColor: AppColors.surfaceDark,
+        selectedIconTheme: IconThemeData(color: AppColors.primaryViolet),
+        unselectedIconTheme: IconThemeData(color: AppColors.textSecondaryDark),
+        selectedLabelTextStyle: TextStyle(
+          color: AppColors.primaryViolet,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
+        unselectedLabelTextStyle: TextStyle(
+          color: AppColors.textSecondaryDark,
+          fontSize: 12,
+        ),
+        indicatorColor: Color(0x336C5CE7),
+        elevation: 2,
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColors.surfaceDark,
