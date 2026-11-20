@@ -45,18 +45,46 @@ class MonsterLabApp extends ConsumerWidget {
         } else {
           final isDesktop = !kIsWeb &&
               (Platform.isLinux || Platform.isWindows || Platform.isMacOS);
-          effectiveScale = isDesktop ? 0.88 : 1.0;
+          effectiveScale = isDesktop ? 0.80 : 1.0;
         }
 
-        final baseScale = mediaQuery.textScaler.scale(1.0);
-        final adjustedTextScaler =
-            TextScaler.linear(baseScale * effectiveScale);
+        if (effectiveScale == 1.0) {
+          return child;
+        }
 
-        return MediaQuery(
-          data: mediaQuery.copyWith(
-            textScaler: adjustedTextScaler,
-          ),
-          child: child,
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final double width = constraints.hasBoundedWidth
+                ? constraints.maxWidth
+                : mediaQuery.size.width;
+            final double height = constraints.hasBoundedHeight
+                ? constraints.maxHeight
+                : mediaQuery.size.height;
+
+            final double scaledWidth = width / effectiveScale;
+            final double scaledHeight = height / effectiveScale;
+
+            final scaledMediaQuery = mediaQuery.copyWith(
+              size: Size(scaledWidth, scaledHeight),
+              devicePixelRatio: mediaQuery.devicePixelRatio * effectiveScale,
+              padding: mediaQuery.padding / effectiveScale,
+              viewPadding: mediaQuery.viewPadding / effectiveScale,
+              viewInsets: mediaQuery.viewInsets / effectiveScale,
+            );
+
+            return MediaQuery(
+              data: scaledMediaQuery,
+              child: Transform.scale(
+                scale: effectiveScale,
+                alignment: Alignment.topLeft,
+                child: SizedBox(
+                  width: scaledWidth,
+                  height: scaledHeight,
+                  child: child,
+                ),
+              ),
+            );
+          },
         );
       },
     );

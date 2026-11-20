@@ -2,15 +2,17 @@ import 'dart:io' show Platform, exit;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/routing/route_constants.dart';
 import '../../../core/theme/app_colors.dart';
+import '../providers.dart';
 import '../widgets/desktop_status_bar.dart';
 import '../widgets/gtk_about_dialog.dart';
 import '../widgets/gtk_sidebar.dart';
 
-class MainScaffold extends StatelessWidget {
+class MainScaffold extends ConsumerWidget {
   final StatefulNavigationShell navigationShell;
 
   const MainScaffold({
@@ -30,7 +32,7 @@ class MainScaffold extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isDesktop = screenWidth >= desktopBreakpoint;
 
@@ -116,6 +118,39 @@ class MainScaffold extends StatelessWidget {
                             ),
                           ],
                           child: const Text('Navigate'),
+                        ),
+                        SubmenuButton(
+                          menuChildren: [
+                            MenuItemButton(
+                              shortcut: const SingleActivator(
+                                  LogicalKeyboardKey.equal,
+                                  control: true),
+                              onPressed: () => ref
+                                  .read(settingsNotifierProvider.notifier)
+                                  .zoomIn(),
+                              child: const Text('Zoom In'),
+                            ),
+                            MenuItemButton(
+                              shortcut: const SingleActivator(
+                                  LogicalKeyboardKey.minus,
+                                  control: true),
+                              onPressed: () => ref
+                                  .read(settingsNotifierProvider.notifier)
+                                  .zoomOut(),
+                              child: const Text('Zoom Out'),
+                            ),
+                            const Divider(),
+                            MenuItemButton(
+                              shortcut: const SingleActivator(
+                                  LogicalKeyboardKey.digit0,
+                                  control: true),
+                              onPressed: () => ref
+                                  .read(settingsNotifierProvider.notifier)
+                                  .resetZoom(),
+                              child: const Text('Normal Size (Reset)'),
+                            ),
+                          ],
+                          child: const Text('View'),
                         ),
                         SubmenuButton(
                           menuChildren: [
