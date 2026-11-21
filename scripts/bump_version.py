@@ -2,7 +2,7 @@
 """
 Monster Lab - Automated Version Bump Script
 Increments the patch version by 0.0.1 (e.g. 0.0.1 -> 0.0.2) and increments build number.
-Synchronizes pubspec.yaml, app_version.dart, Windows installer, Runner.rc, and Dockerfile.
+Synchronizes pubspec.yaml, version.json, app_version.dart, Windows installer, Runner.rc, and Dockerfile.
 """
 
 import os
@@ -155,7 +155,7 @@ def main():
     if args.auto:
         script = os.path.join(ROOT_DIR, "scripts", "generate_release_changelog.py")
         cmd = [sys.executable, script, "--bump", "auto", "--apply"]
-        res = subprocess.run(cmd)
+        res = subprocess.run(cmd, check=False)
         sys.exit(res.returncode)
 
     current_semver, current_build = parse_current_version()

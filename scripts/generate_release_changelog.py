@@ -9,6 +9,7 @@ highlighting What Changed, Why, and User/Architectural Impact.
 import sys
 import os
 import re
+import json
 import subprocess
 import argparse
 from datetime import datetime
@@ -58,6 +59,7 @@ DART_VERSION_PATH = os.path.join(ROOT_DIR, "lib", "core", "constants", "app_vers
 INNO_SETUP_PATH = os.path.join(ROOT_DIR, "windows", "installer", "monster_lab_setup.iss")
 RUNNER_RC_PATH = os.path.join(ROOT_DIR, "windows", "runner", "Runner.rc")
 DOCKERFILE_PATH = os.path.join(ROOT_DIR, "Dockerfile")
+VERSION_JSON_PATH = os.path.join(ROOT_DIR, "version.json")
 
 
 def extract_from_changelog(version):
@@ -233,6 +235,22 @@ def update_all_version_targets(new_semver, new_build):
     update_inno_setup(new_semver)
     update_runner_rc(new_semver)
     update_dockerfile(new_semver)
+    update_version_json(new_semver, new_build)
+
+
+def update_version_json(new_semver, new_build):
+    if not os.path.exists(VERSION_JSON_PATH):
+        return False
+    with open(VERSION_JSON_PATH, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    data["version"] = new_semver
+    data["buildNumber"] = new_build
+    data["releaseName"] = f"Monster Lab v{new_semver}"
+    data["releaseDate"] = datetime.now().strftime("%Y-%m-%d")
+    with open(VERSION_JSON_PATH, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+        f.write("\n")
+    return True
 
 
 def determine_bump_level(commits):

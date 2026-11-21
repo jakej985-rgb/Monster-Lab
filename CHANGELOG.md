@@ -6,6 +6,84 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.4.0+29] - 2026-11-20
+
+### Overview & Release Highlights
+Release 0.4.0+29 introduces updates across 20 commits.
+
+### 🚀 New Features & Capabilities
+- **🛡️ Sentinel: [MEDIUM] Add android:allowBackup="false" to AndroidManifest.xml** (`fc6e0e4`):
+  - *What Changed*: Co-authored-by: jakej985-rgb <224218482+jakej985-rgb@users.noreply.github.com>
+  - *Why*: Technical necessity and user enhancement.
+
+### 🏗️ Architecture & Data Layer
+- **chore(release): derive deb metadata from pubspec and restore canonical keyring** (`49e2a1f`):
+  - *What Changed*: - Make scripts/package_linux_deb.py read name, description, maintainer,   homepage, and dependency list from pubspec.yaml instead of duplicating   them as inline text in the DEB builder. - Build DEBIAN/control from that derived metadata so package control fields   stay synchronized with the source of truth. - Generate the APT sources.list entry from metadata[homepage] instead of a   hardcoded URL, with rstrip('/') to avoid a doubled slash. - Treat non-conformant pubspec name and SSH-style repository.url as usable   warnings rather than crashing the packaging script. - Update scripts/verify_release_artifacts.py to validate the new packaging   functions and to require the Linux keyring assets in linux/keyring/. - Add a release-automation contract check so missing repository-dispatch or   keyring asset publication steps show up as verification failures. - Fail the missing-APT-dispatch-token path as a warning, not a hard failure,   since the signed DEB publishing step can still complete independently. - Restore canonical linux/keyring/m3tal-archive-keyring.asc from   jakej985-rgb/m3tal-apt-key so the in-repo keyring surface matches the   authoritative remote keyring.  🤖 Generated with Codebuff Co-Authored-By: Codebuff <noreply@codebuff.com>
+  - *Why*: Technical necessity and user enhancement.
+- **feat: complete Phase D roadmap (Curriculum Expansion #9)** (`2e4e8b7`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **feat: complete Phase C roadmap (Release Engineering #7 and Automated Quality #8)** (`3406472`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **feat: complete Phase B roadmap (Hardware Architecture #5 and Parent Controls & Safety #6)** (`8fe39eb`):
+  - *What Changed*: - Implement physical serial adapter and MockUsbSerialAdapter abstraction (#22) - Add capability-gated WebSerialAdapter with browser fallback (#23) - Create HardwareDeviceCapabilityRegistry indexing board specs and commands (#24) - Implement formal HardwareConnectionStateMachine and all connection states (#25) - Add HardwareProtocolNegotiator for protocol versioning and handshakes (#26) - Implement HardwareSafetyInterlock, pin guards, and Safe State enforcement (#27) - Author comprehensive hardware simulation and integration test suite (#28) - Implement expiring ParentSessionService with renewals and revocations (#30) - Add route authorization guard on /parent routes eliminating deep-link bypass (#31) - Create ComponentRestrictionService securing restricted component unlocks (#32) - Implement DestructiveActionConfirmation and automated snapshot rollback (#33) - Inventory child data collection, sandbox privacy, and permissions (#34) - Author COPPA/FERPA compliance review and regulatory evidence matrix (#35)
+  - *Why*: Technical necessity and user enhancement.
+- **feat: complete Phase A roadmap (Curriculum Integrity #3 and Learner Progress #4)** (`b704e01`):
+  - *What Changed*: - Add strict loader failure boundaries and status tracking in CurriculumDataEngine (#10) - Add manifest count validation against loaded collections (#11) - Enforce unique identifiers across curriculum assets and collections (#12) - Add directed cycle detection for course and lesson prerequisites (#13) - Validate media file existence on disk and interactive activity schemas (#14) - Add comprehensive curriculum integrity regression test suite (#15) - Implement schema versioning v2, migrations, and invariants in LearnerProgressModel (#16) - Create append-only progress event ledger with replay reconstruction (#17) - Enforce idempotent reward transactions preventing duplicate XP (#18) - Add progress corruption detection, dual snapshot backups, and auto-repair (#19) - Implement transactional backup imports with atomic rollback in ParentDataService (#20) - Add multi-profile concurrency synchronization locks in ProgressRepositoryImpl (#21)
+  - *Why*: Technical necessity and user enhancement.
+
+### 🎨 User Experience & Design System
+- **Merge pull request #63 from jakej985-rgb/fix/linux-true-ui-zoom-and-desktop-density** (`9cfac05`):
+  - *What Changed*: fix(ui): true full-UI canvas zoom, MenuBar zoom controls, and 0.80 desktop density (v0.3.1)
+  - *Why*: Technical necessity and user enhancement.
+- **fix(ui): full-UI canvas zoom, MenuBar zoom controls, 0.80 desktop density, and bump to v0.3.1** (`db40db6`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **Merge pull request #62 from jakej985-rgb/feat/linux-mint-desktop-experience** (`ee79653`):
+  - *What Changed*: feat(linux): native Linux Mint desktop UI, GTK sidebar, MenuBar, and Mint-Y theme
+  - *Why*: Technical necessity and user enhancement.
+- **feat(linux): native Linux Mint desktop UI, GTK sidebar, MenuBar, and Mint-Y theme** (`4b26c23`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **Merge pull request #61 from jakej985-rgb/fix/linux-responsive-ui-scale** (`279f052`):
+  - *What Changed*: fix(ui): responsive desktop layout and Linux UI scale calibration
+  - *Why*: Technical necessity and user enhancement.
+- **fix(ui): responsive desktop layout and Linux UI scale calibration** (`3f01857`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **fix(ci): remove cache from setup-python to fix missing requirements.txt error** (`a268e5b`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **fix(release): harden linux deb packaging and central apt publishing dispatch** (`aba2c81`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+
+### 🐛 Bug Fixes & Stability
+- **Merge pull request #60 from jakej985-rgb/fix/apt-publishing-pipeline** (`70afa78`):
+  - *What Changed*: fix(release): harden linux deb packaging and central apt publishing dispatch
+  - *Why*: Technical necessity and user enhancement.
+- **fix(ci): verify android key.properties template while allowing gitignored keystore** (`8b7d2f1`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **fix(release): restore M3TAL_HUB_TOKEN fallback and drop unversioned deb alias** (`113a905`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **Merge pull request #2 from jakej985-rgb/security-fix-allow-backup-7759820879455152755** (`b481af3`):
+  - *What Changed*: 🛡️ Sentinel: [MEDIUM] Fix data backup privacy risk
+  - *Why*: Technical necessity and user enhancement.
+
+### 🛠️ Developer Toolchains & CI/CD
+- **Merge pull request #1 from jakej985-rgb/palette-add-icon-tooltips-5305982885982795190** (`5fc71d7`):
+  - *What Changed*: 🎨 Palette: Add tooltips to icon-only buttons
+  - *Why*: Technical necessity and user enhancement.
+- **🎨 Palette: Add tooltips to icon-only buttons** (`8cc4ee2`):
+  - *What Changed*: 💡 What: Added tooltips to several icon-only buttons across the app. 🎯 Why: To improve accessibility for screen readers and provide context for users hovering over the buttons. ♿ Accessibility: Screen readers will now announce the button's purpose instead of just 'button'.  Co-authored-by: jakej985-rgb <224218482+jakej985-rgb@users.noreply.github.com>
+  - *Why*: Technical necessity and user enhancement.
+
+
+---
+
 ## [0.3.1+28] - 2026-11-20
 - Automated push release build bump to v0.3.1.
 

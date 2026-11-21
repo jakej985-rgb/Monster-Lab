@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "monster_lab",
-  "version": "0.3.1",
-  "buildNumber": 28,
-  "releaseName": "Monster Lab v0.3.1",
+  "version": "0.4.0",
+  "buildNumber": 29,
+  "releaseName": "Monster Lab v0.4.0",
   "releaseDate": "2026-11-20",
   "channel": "stable",
   "supportedPlatforms": [
