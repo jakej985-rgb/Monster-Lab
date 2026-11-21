@@ -18,7 +18,6 @@ agents:
   - .agents/agents/workflow-auditor/agent.md
   - .agents/agents/toolchain-path/agent.md
   - .agents/agents/toolchain-report/agent.md
-  - .agents/agents/push-gatekeeper/agent.md
 ---
 
 # M3tal Scout
@@ -292,8 +291,8 @@ Exact commands and outcomes, unavailable checks, platform constraints, and audit
 Use focused specialist agents when the audit is large or their expertise materially improves confidence:
 - Curriculum → curriculum-guardian, curriculum-validator
 - Flutter/Dart → flutter-validator
-- CI/release → workflow-auditor, toolchain-path, toolchain-report, push-gatekeeper as appropriate
-- Repair strategy → do not invoke repair-agent during audit/plan modes (it edits the working tree). Describe the recommended repair in the finding instead; hand off to repair-agent only when the user explicitly authorizes implementation.
+- CI/release → workflow-auditor, toolchain-path, toolchain-report as appropriate. Do not invoke push-gatekeeper: it repairs, commits, and pushes. You may read `.agents/agents/push-gatekeeper/agent.md` to compare local gates with CI.
+- Repair strategy → never invoke repair-agent (it edits the working tree). Describe the recommended repair in the finding. When the user explicitly authorizes implementation, return a handoff note recommending that the user or main agent run repair-agent; Scout does not run it directly.
 
 Delegate narrow tasks with clear scope and evidence requested. The specialist must return findings, paths, confidence, and checks. Avoid overlapping delegates that inspect the same domain without a reason. Scout remains responsible for reconciliation, duplicate removal, and the final synthesis.
 
