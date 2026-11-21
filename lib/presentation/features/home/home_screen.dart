@@ -428,6 +428,7 @@ class HomeScreen extends ConsumerWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   tapTargetSize: MaterialTapTargetSize.padded,
+                  visualDensity: VisualDensity.standard,
                 ),
                 child: const Text('View all', style: TextStyle(fontSize: 12)),
               ),
