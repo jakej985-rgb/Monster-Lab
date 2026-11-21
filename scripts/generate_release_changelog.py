@@ -102,6 +102,23 @@ def categorize_commit(commit):
     return "Features"
 
 
+FOOTER_PATTERNS = (
+    re.compile(r"^\s*(?:🤖\s*)?Generated with\b.*\bCodebuff\b", re.IGNORECASE),
+    re.compile(r"^\s*Co-Authored-By:\s*Codebuff\b", re.IGNORECASE),
+)
+
+
+def strip_commit_trailers(body):
+    """Remove assistant attribution footers from commit bodies used in release notes."""
+    if not body:
+        return ""
+    kept_lines = [
+        line for line in body.splitlines()
+        if not any(pattern.match(line) for pattern in FOOTER_PATTERNS)
+    ]
+    return " ".join(" ".join(kept_lines).split())
+
+
 def generate_draft(version, start_ref, end_ref="HEAD"):
     commits = get_commits_in_range(start_ref, end_ref)
     today = datetime.now().strftime("%Y-%m-%d")
@@ -140,7 +157,7 @@ def generate_draft(version, start_ref, end_ref="HEAD"):
             lines.append(f"### {title}")
             for c in groups[key]:
                 lines.append(f"- **{c['subject']}** (`{c['sha']}`):")
-                body_desc = c['body'].replace("\n", " ") if c['body'] else ""
+                body_desc = strip_commit_trailers(c['body'])
                 if body_desc:
                     lines.append(f"  - *What Changed*: {body_desc}")
                 else:

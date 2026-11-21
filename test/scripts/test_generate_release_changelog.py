@@ -155,6 +155,32 @@ class ReleaseApplyValidationTests(unittest.TestCase):
         self.assertTrue(changelog.startswith("# Changelog\n\n## [0.2.1+26]"))
         self.assertEqual(changelog.count("## [0.2.1+26]"), 1)
 
+    def test_generated_draft_strips_attribution_footers(self):
+        commits = [
+            {
+                "sha": "abc1234",
+                "subject": "fix(release): keep the manifest in sync",
+                "body": (
+                    "Sync package metadata during every bump.\n\n"
+                    "🤖 Generated with Codebuff\n"
+                    "Co-Authored-By: Codebuff <noreply@codebuff.com>"
+                ),
+            },
+            {
+                "sha": "def5678",
+                "subject": "fix(release): footer only body",
+                "body": "🤖 Generated with Codebuff\nCo-Authored-By: Codebuff <noreply@codebuff.com>",
+            },
+        ]
+        with mock.patch.object(release, "get_commits_in_range", return_value=commits):
+            draft = release.generate_draft("0.2.1+26", "v0.2.0")
+
+        self.assertIn("Sync package metadata during every bump.", draft)
+        self.assertNotIn("Codebuff", draft)
+        self.assertNotIn("Co-Authored-By", draft)
+        self.assertNotIn("🤖", draft)
+        self.assertIn("Implemented changes described in commit.", draft)
+
     def test_valid_version_with_leading_v_updates_all_targets(self):
         self.run_main("--apply", "--version", "v0.3.0+27")
         self.assertIn("version: 0.3.0+27", self.pubspec.read_text())

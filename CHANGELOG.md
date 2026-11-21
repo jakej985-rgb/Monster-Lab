@@ -13,7 +13,7 @@ Release 0.4.2+31 introduces updates across 1 commits.
 
 ### 🐛 Bug Fixes & Stability
 - **fix(release): keep version.json packageMetadata in sync with bumps** (`67eaa6b`):
-  - *What Changed*: android versionCode/versionName and docker.tag were frozen at 0.3.0/27 because both bump entry points only rewrote the top-level version fields. Sync them on every bump and fail CI when the manifest drifts.  🤖 Generated with Codebuff Co-Authored-By: Codebuff <noreply@codebuff.com>
+  - *What Changed*: android versionCode/versionName and docker.tag were frozen at 0.3.0/27 because both bump entry points only rewrote the top-level version fields. Sync them on every bump and fail CI when the manifest drifts.
   - *Why*: Technical necessity and user enhancement.
 
 
@@ -26,10 +26,10 @@ Release 0.4.1+30 introduces updates across 2 commits.
 
 ### 🎨 User Experience & Design System
 - **fix(linux): scope the APT source to amd64 and stop apt warnings** (`b42e4dd`):
-  - *What Changed*: The generated sources.list entry requested every architecture, so apt on multiarch systems (i386 enabled for Steam/Wine) warned that the repo has no i386 index and skipped it on every update. Emit arch=<target_arch> explicitly, matching what the repository actually publishes, and update the documented install command to match.  🤖 Generated with Codebuff Co-Authored-By: Codebuff <noreply@codebuff.com>
+  - *What Changed*: The generated sources.list entry requested every architecture, so apt on multiarch systems (i386 enabled for Steam/Wine) warned that the repo has no i386 index and skipped it on every update. Emit arch=<target_arch> explicitly, matching what the repository actually publishes, and update the documented install command to match.
   - *Why*: Technical necessity and user enhancement.
 - **fix(linux): use canonical APT repository URL in deb sources.list** (`3612c66`):
-  - *What Changed*: The DEB builder derived its sources.list entry from pubspec's homepage, so the installed file pointed at .../M3tal-Hub/Monster-Lab/m3tal-apt-key, which serves no Release file and makes apt-get update fail for everyone who installs the package. Point it at the m3tal-apt-key Pages site directly via a dedicated constant, leaving the app homepage untouched in the control file and AppStream metadata.  🤖 Generated with Codebuff Co-Authored-By: Codebuff <noreply@codebuff.com>
+  - *What Changed*: The DEB builder derived its sources.list entry from pubspec's homepage, so the installed file pointed at .../M3tal-Hub/Monster-Lab/m3tal-apt-key, which serves no Release file and makes apt-get update fail for everyone who installs the package. Point it at the m3tal-apt-key Pages site directly via a dedicated constant, leaving the app homepage untouched in the control file and AppStream metadata.
   - *Why*: Technical necessity and user enhancement.
 
 
@@ -47,7 +47,7 @@ Release 0.4.0+29 introduces updates across 20 commits.
 
 ### 🏗️ Architecture & Data Layer
 - **chore(release): derive deb metadata from pubspec and restore canonical keyring** (`49e2a1f`):
-  - *What Changed*: - Make scripts/package_linux_deb.py read name, description, maintainer,   homepage, and dependency list from pubspec.yaml instead of duplicating   them as inline text in the DEB builder. - Build DEBIAN/control from that derived metadata so package control fields   stay synchronized with the source of truth. - Generate the APT sources.list entry from metadata[homepage] instead of a   hardcoded URL, with rstrip('/') to avoid a doubled slash. - Treat non-conformant pubspec name and SSH-style repository.url as usable   warnings rather than crashing the packaging script. - Update scripts/verify_release_artifacts.py to validate the new packaging   functions and to require the Linux keyring assets in linux/keyring/. - Add a release-automation contract check so missing repository-dispatch or   keyring asset publication steps show up as verification failures. - Fail the missing-APT-dispatch-token path as a warning, not a hard failure,   since the signed DEB publishing step can still complete independently. - Restore canonical linux/keyring/m3tal-archive-keyring.asc from   jakej985-rgb/m3tal-apt-key so the in-repo keyring surface matches the   authoritative remote keyring.  🤖 Generated with Codebuff Co-Authored-By: Codebuff <noreply@codebuff.com>
+  - *What Changed*: - Make scripts/package_linux_deb.py read name, description, maintainer,   homepage, and dependency list from pubspec.yaml instead of duplicating   them as inline text in the DEB builder. - Build DEBIAN/control from that derived metadata so package control fields   stay synchronized with the source of truth. - Generate the APT sources.list entry from metadata[homepage] instead of a   hardcoded URL, with rstrip('/') to avoid a doubled slash. - Treat non-conformant pubspec name and SSH-style repository.url as usable   warnings rather than crashing the packaging script. - Update scripts/verify_release_artifacts.py to validate the new packaging   functions and to require the Linux keyring assets in linux/keyring/. - Add a release-automation contract check so missing repository-dispatch or   keyring asset publication steps show up as verification failures. - Fail the missing-APT-dispatch-token path as a warning, not a hard failure,   since the signed DEB publishing step can still complete independently. - Restore canonical linux/keyring/m3tal-archive-keyring.asc from   jakej985-rgb/m3tal-apt-key so the in-repo keyring surface matches the   authoritative remote keyring.
   - *Why*: Technical necessity and user enhancement.
 - **feat: complete Phase D roadmap (Curriculum Expansion #9)** (`2e4e8b7`):
   - *What Changed*: Implemented changes described in commit.

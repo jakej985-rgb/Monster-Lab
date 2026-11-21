@@ -40,6 +40,7 @@ Whenever invoked to prepare or update a changelog:
   ```bash
   git log <range> --pretty=format:"commit %h%nAuthor: %an%nDate: %ad%nSubject: %s%nBody: %b%n---"
   ```
+- Strip assistant attribution trailers before quoting a commit body: ignore lines such as `🤖 Generated with Codebuff`, `Generated with Codebuff`, and `Co-Authored-By: Codebuff <noreply@codebuff.com>`. They must never be copied into `CHANGELOG.md` or release notes.
 - Inspect file changes and summary stats:
   ```bash
   git diff <range> --stat
@@ -118,3 +119,4 @@ When updating `CHANGELOG.md` directly:
 3. Preserve all historical entries and formatting conventions.
 4. Ensure cross-references to PRs, issues, or commits are clickable and consistent.
 5. If the project uses version metadata in files (`pubspec.yaml`, `package.json`, `app_version.dart`, etc.), verify that the changelog version matches the declared project version.
+6. Never include assistant attribution footers (`Generated with …`, `Co-Authored-By: <assistant>`) in changelog entries; `scripts/verify_changelog_hygiene.py` fails CI if any appear.
