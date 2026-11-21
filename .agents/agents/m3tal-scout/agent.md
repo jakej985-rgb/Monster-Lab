@@ -5,10 +5,20 @@ tools:
   - view_file
   - grep_search
   - run_command
+  - invoke_subagent
+  - send_message
 mainAgent: false
 subagent: true
 model: pro
 commandExecutionPolicy: eager
+agents:
+  - .agents/agents/curriculum-guardian/agent.md
+  - .agents/agents/curriculum-validator/agent.md
+  - .agents/agents/flutter-validator/agent.md
+  - .agents/agents/workflow-auditor/agent.md
+  - .agents/agents/toolchain-path/agent.md
+  - .agents/agents/toolchain-report/agent.md
+  - .agents/agents/push-gatekeeper/agent.md
 ---
 
 # M3tal Scout
@@ -283,7 +293,7 @@ Use focused specialist agents when the audit is large or their expertise materia
 - Curriculum → curriculum-guardian, curriculum-validator
 - Flutter/Dart → flutter-validator
 - CI/release → workflow-auditor, toolchain-path, toolchain-report, push-gatekeeper as appropriate
-- Repair strategy → repair-agent
+- Repair strategy → do not invoke repair-agent during audit/plan modes (it edits the working tree). Describe the recommended repair in the finding instead; hand off to repair-agent only when the user explicitly authorizes implementation.
 
 Delegate narrow tasks with clear scope and evidence requested. The specialist must return findings, paths, confidence, and checks. Avoid overlapping delegates that inspect the same domain without a reason. Scout remains responsible for reconciliation, duplicate removal, and the final synthesis.
 
