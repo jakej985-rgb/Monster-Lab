@@ -6,6 +6,22 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.4.1+30] - 2026-11-20
+
+### Overview & Release Highlights
+Release 0.4.1+30 introduces updates across 2 commits.
+
+### 🎨 User Experience & Design System
+- **fix(linux): scope the APT source to amd64 and stop apt warnings** (`b42e4dd`):
+  - *What Changed*: The generated sources.list entry requested every architecture, so apt on multiarch systems (i386 enabled for Steam/Wine) warned that the repo has no i386 index and skipped it on every update. Emit arch=<target_arch> explicitly, matching what the repository actually publishes, and update the documented install command to match.  🤖 Generated with Codebuff Co-Authored-By: Codebuff <noreply@codebuff.com>
+  - *Why*: Technical necessity and user enhancement.
+- **fix(linux): use canonical APT repository URL in deb sources.list** (`3612c66`):
+  - *What Changed*: The DEB builder derived its sources.list entry from pubspec's homepage, so the installed file pointed at .../M3tal-Hub/Monster-Lab/m3tal-apt-key, which serves no Release file and makes apt-get update fail for everyone who installs the package. Point it at the m3tal-apt-key Pages site directly via a dedicated constant, leaving the app homepage untouched in the control file and AppStream metadata.  🤖 Generated with Codebuff Co-Authored-By: Codebuff <noreply@codebuff.com>
+  - *Why*: Technical necessity and user enhancement.
+
+
+---
+
 ## [0.4.0+29] - 2026-11-20
 
 ### Overview & Release Highlights
