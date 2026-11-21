@@ -263,7 +263,7 @@ class _PartsScreenState extends ConsumerState<PartsScreen> {
                           cat['label']!,
                           style: TextStyle(
                             color: _selectedCategory == cat['id']
-                                ? Colors.white
+                                ? Theme.of(context).colorScheme.onPrimary
                                 : Theme.of(context).colorScheme.onSurface,
                             fontWeight: _selectedCategory == cat['id']
                                 ? FontWeight.bold
@@ -272,7 +272,7 @@ class _PartsScreenState extends ConsumerState<PartsScreen> {
                           ),
                         ),
                         selected: _selectedCategory == cat['id'],
-                        selectedColor: AppColors.primaryViolet,
+                        selectedColor: Theme.of(context).colorScheme.primary,
                         backgroundColor: Theme.of(context)
                             .colorScheme
                             .surfaceContainerHighest,

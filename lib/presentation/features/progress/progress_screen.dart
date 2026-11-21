@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../domain/models/learner_progress_model.dart';
 import '../../shared/providers.dart';
 import '../../shared/widgets/monster_card.dart';
 import '../../shared/widgets/responsive_content_container.dart';
@@ -13,8 +14,9 @@ class ProgressScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final activeProgress = ref.watch(activeProgressProvider);
     final colorScheme = Theme.of(context).colorScheme;
-    final hasFirstBadge =
-        activeProgress?.completedLessonIds.isNotEmpty ?? false;
+    final hasFirstBadge = activeProgress?.earnedBadgeIds
+            .contains(ProgressBadgeIds.firstCircuitScout) ??
+        false;
 
     return Scaffold(
       appBar: AppBar(

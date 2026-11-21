@@ -2,6 +2,10 @@ import 'dart:math' as math;
 
 enum ActivityType { lesson, project, challenge, component }
 
+abstract final class ProgressBadgeIds {
+  static const String firstCircuitScout = 'badge_first_circuit_scout';
+}
+
 enum QuickCheckReadiness {
   ready,
   warmUp,

@@ -25,10 +25,10 @@ class SettingsScreen extends ConsumerWidget {
       label: Text(label),
       selected: isSelected,
       onSelected: (_) => onSelected(),
-      selectedColor: AppColors.primaryViolet.withValues(alpha: 0.2),
-      checkmarkColor: AppColors.primaryViolet,
+      selectedColor: colorScheme.primary,
+      checkmarkColor: colorScheme.onPrimary,
       labelStyle: TextStyle(
-        color: isSelected ? AppColors.primaryViolet : colorScheme.onSurface,
+        color: isSelected ? colorScheme.onPrimary : colorScheme.onSurface,
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         fontSize: 12,
       ),
@@ -88,8 +88,7 @@ class SettingsScreen extends ConsumerWidget {
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
                     child: Row(
                       children: [
-                        const Icon(Icons.zoom_in,
-                            color: AppColors.primaryViolet),
+                        Icon(Icons.zoom_in, color: colorScheme.primary),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Column(

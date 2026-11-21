@@ -6,10 +6,23 @@ import 'package:monster_lab/core/services/storage_service.dart';
 import 'package:monster_lab/data/datasources/asset_curriculum_datasource.dart';
 import 'package:monster_lab/data/datasources/curriculum_data_engine.dart';
 import 'package:monster_lab/data/repositories/curriculum_repository_impl.dart';
+import 'package:monster_lab/core/theme/app_theme.dart';
 import 'package:monster_lab/presentation/features/learn/learn_screen.dart';
 import 'package:monster_lab/presentation/shared/providers.dart';
 
 import 'package:go_router/go_router.dart';
+
+double _contrastRatio(Color foreground, Color background) {
+  final foregroundLuminance = foreground.computeLuminance();
+  final backgroundLuminance = background.computeLuminance();
+  final lighter = foregroundLuminance > backgroundLuminance
+      ? foregroundLuminance
+      : backgroundLuminance;
+  final darker = foregroundLuminance > backgroundLuminance
+      ? backgroundLuminance
+      : foregroundLuminance;
+  return (lighter + 0.05) / (darker + 0.05);
+}
 
 void main() {
   group('LearnScreen Course Folders & Sub-Lesson Prerequisite Tests', () {
@@ -21,7 +34,10 @@ void main() {
       await engine.initialize();
     });
 
-    Widget createTestWidget({required StorageService storageService}) {
+    Widget createTestWidget({
+      required StorageService storageService,
+      ThemeData? theme,
+    }) {
       final router = GoRouter(
         initialLocation: '/learn',
         routes: [
@@ -46,6 +62,7 @@ void main() {
               .overrideWithValue(CurriculumRepositoryImpl(engine)),
         ],
         child: MaterialApp.router(
+          theme: theme,
           routerConfig: router,
         ),
       );
@@ -169,6 +186,42 @@ void main() {
       // Should show prerequisite SnackBar
       expect(find.text('Complete prerequisite (lesson_01) first!'),
           findsOneWidget);
+    });
+
+    testWidgets(
+        'Locked lesson status uses high-contrast surfaces and foreground',
+        (tester) async {
+      tester.view.physicalSize = const Size(1200, 4000);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      SharedPreferences.setMockInitialValues({
+        'monster_lab_active_profile_id': 'prof_1',
+        'monster_lab_profiles':
+            '[{"id":"prof_1","nickname":"Sparky","avatarId":"monster_spark","ageBracket":"ages10_12","createdAt":"2026-01-01T00:00:00.000Z","lastActiveAt":"2026-01-01T00:00:00.000Z","settings":{}}]',
+      });
+      final storageService = await StorageService.init();
+      final theme = AppTheme.buildTheme(isDark: true, highContrast: true);
+
+      await tester.pumpWidget(createTestWidget(
+        storageService: storageService,
+        theme: theme,
+      ));
+      await tester.pumpAndSettle();
+
+      final lockFinder = find.byIcon(Icons.lock).first;
+      final avatarFinder = find
+          .ancestor(of: lockFinder, matching: find.byType(CircleAvatar))
+          .first;
+      final avatar = tester.widget<CircleAvatar>(avatarFinder);
+      final icon = tester.widget<Icon>(lockFinder);
+
+      expect(avatar.backgroundColor, theme.colorScheme.surfaceContainerHighest);
+      expect(icon.color, theme.colorScheme.onSurfaceVariant);
+      expect(
+        _contrastRatio(icon.color!, avatar.backgroundColor!),
+        greaterThanOrEqualTo(4.5),
+      );
     });
   });
 }

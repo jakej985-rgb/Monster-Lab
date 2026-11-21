@@ -63,7 +63,8 @@ void main() {
       expect(aliceProgress.completedLessonIds, contains('lesson_01'));
       expect(aliceProgress.discoveredComponentIds, contains('comp_01'));
       expect(aliceProgress.completedProjectIds, isEmpty);
-      expect(aliceProgress.earnedBadgeIds, isEmpty);
+      expect(aliceProgress.earnedBadgeIds,
+          contains(ProgressBadgeIds.firstCircuitScout));
       expect(aliceProgress.quizBestScores['quiz_l01'], equals(100));
       expect(aliceProgress.lastActivity?.type, equals(ActivityType.lesson));
       expect(aliceProgress.lastActivity?.activityId, equals('quiz_l01'));

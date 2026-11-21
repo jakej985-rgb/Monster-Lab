@@ -22,12 +22,9 @@ abstract final class AppTheme {
     final errorColor = highContrast
         ? (isDark ? const Color(0xFFFF8A80) : const Color(0xFFB00020))
         : AppColors.danger;
-    final onPrimaryColor =
-        primaryColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
-    final onSecondaryColor =
-        secondaryColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
-    final onErrorColor =
-        errorColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+    final onPrimaryColor = _onColor(primaryColor);
+    final onSecondaryColor = _onColor(secondaryColor);
+    final onErrorColor = _onColor(errorColor);
     final backgroundColor = highContrast
         ? (isDark ? Colors.black : Colors.white)
         : (isMint
@@ -209,6 +206,14 @@ abstract final class AppTheme {
         elevation: 8,
       ),
     );
+  }
+
+  /// Picks black or white based on whichever yields the stronger WCAG contrast.
+  static Color _onColor(Color background) {
+    final luminance = background.computeLuminance();
+    final blackContrast = (luminance + 0.05) / 0.05;
+    final whiteContrast = 1.05 / (luminance + 0.05);
+    return blackContrast >= whiteContrast ? Colors.black : Colors.white;
   }
 
   static ThemeData get lightTheme => buildTheme(isDark: false);

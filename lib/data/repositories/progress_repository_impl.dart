@@ -30,11 +30,30 @@ class ProgressRepositoryImpl implements ProgressRepository {
 
   Future<LearnerProgressModel> _getProgressDirect(String learnerId) async {
     final raw = _dataSource.getProgress(learnerId);
-    final migrated = LearnerProgressModel.migrateFromOldFormat(raw);
-    if (raw != migrated) {
+    final migrated = _withFirstLessonBadge(
+      LearnerProgressModel.migrateFromOldFormat(raw),
+    );
+    if (!identical(raw, migrated)) {
       await _dataSource.saveProgress(migrated);
     }
     return migrated;
+  }
+
+  LearnerProgressModel _withFirstLessonBadge(LearnerProgressModel progress) {
+    if (progress.completedLessonIds.isEmpty ||
+        progress.earnedBadgeIds.contains(ProgressBadgeIds.firstCircuitScout)) {
+      return progress;
+    }
+
+    return progress.applyEvent(
+      LearnerProgressEvent(
+        eventId: 'tx_badge_${ProgressBadgeIds.firstCircuitScout}',
+        eventType: ProgressEventType.badgeEarned,
+        learnerId: progress.learnerId,
+        activityId: ProgressBadgeIds.firstCircuitScout,
+        timestamp: progress.lastSessionDate,
+      ),
+    );
   }
 
   @override
@@ -146,14 +165,14 @@ class ProgressRepositoryImpl implements ProgressRepository {
         xpAwarded: isNew ? xpReward : 0,
       );
 
-      final updated = current.applyEvent(event).copyWith(
-            lastActivity: LastActivityInfo(
-              type: ActivityType.lesson,
-              activityId: lessonId,
-              title: 'Completed Lesson $lessonId',
-              timestamp: DateTime.now(),
-            ),
-          );
+      final updated = _withFirstLessonBadge(current.applyEvent(event)).copyWith(
+        lastActivity: LastActivityInfo(
+          type: ActivityType.lesson,
+          activityId: lessonId,
+          title: 'Completed Lesson $lessonId',
+          timestamp: DateTime.now(),
+        ),
+      );
       await _dataSource.saveProgress(updated);
       return isNew;
     });

@@ -180,7 +180,7 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
         border: Border.all(
           color: isAllComplete
               ? AppColors.success.withValues(alpha: 0.5)
-              : AppColors.primaryViolet.withValues(alpha: 0.3),
+              : colorScheme.primary.withValues(alpha: 0.3),
           width: 1.5,
         ),
         boxShadow: [
@@ -214,7 +214,7 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
                 color: isExpanded
-                    ? AppColors.primaryViolet.withValues(alpha: 0.05)
+                    ? colorScheme.primary.withValues(alpha: 0.05)
                     : colorScheme.surface,
                 borderRadius: BorderRadius.vertical(
                   top: const Radius.circular(16),
@@ -225,14 +225,14 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
                 children: [
                   CircleAvatar(
                     radius: 22,
-                    backgroundColor: isAllComplete
-                        ? AppColors.success
-                        : AppColors.primaryViolet,
+                    backgroundColor:
+                        isAllComplete ? AppColors.success : colorScheme.primary,
                     child: Icon(
                       isAllComplete
                           ? Icons.folder_special
                           : (isExpanded ? Icons.folder_open : Icons.folder),
-                      color: Colors.white,
+                      color:
+                          isAllComplete ? Colors.white : colorScheme.onPrimary,
                       size: 24,
                     ),
                   ),
@@ -247,14 +247,14 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
-                                color: AppColors.primaryViolet
-                                    .withValues(alpha: 0.15),
+                                color:
+                                    colorScheme.primary.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(6),
                               ),
-                              child: const Text(
+                              child: Text(
                                 'LESSON FOLDER',
                                 style: TextStyle(
-                                  color: AppColors.primaryViolet,
+                                  color: colorScheme.primary,
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 0.5,
@@ -405,12 +405,18 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
             radius: isNested ? 18 : 22,
             backgroundColor: isCompleted
                 ? AppColors.success
-                : (isLocked ? colorScheme.outline : AppColors.primaryViolet),
+                : (isLocked
+                    ? colorScheme.surfaceContainerHighest
+                    : colorScheme.primary),
             child: Icon(
               isCompleted
                   ? Icons.check
                   : (isLocked ? Icons.lock : Icons.play_arrow),
-              color: Colors.white,
+              color: isCompleted
+                  ? Colors.white
+                  : (isLocked
+                      ? colorScheme.onSurfaceVariant
+                      : colorScheme.onPrimary),
               size: isNested ? 18 : 22,
             ),
           ),

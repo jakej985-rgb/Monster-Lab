@@ -125,21 +125,26 @@ void main() {
         await progressRepo.solveChallenge(learnerId, 'chal_01', 50);
 
         final progress = await progressRepo.getProgress(learnerId);
-        expect(progress.eventLedger.length, equals(3));
+        expect(progress.eventLedger.length, equals(4));
         expect(progress.eventLedger[0].eventType,
             equals(ProgressEventType.lessonCompleted));
         expect(progress.eventLedger[0].activityId, equals('l01_01'));
         expect(progress.eventLedger[0].xpAwarded, equals(25));
 
         expect(progress.eventLedger[1].eventType,
-            equals(ProgressEventType.courseCompleted));
-        expect(progress.eventLedger[1].activityId, equals('lesson_01'));
-        expect(progress.eventLedger[1].xpAwarded, equals(100));
+            equals(ProgressEventType.badgeEarned));
+        expect(progress.eventLedger[1].activityId,
+            equals(ProgressBadgeIds.firstCircuitScout));
 
         expect(progress.eventLedger[2].eventType,
+            equals(ProgressEventType.courseCompleted));
+        expect(progress.eventLedger[2].activityId, equals('lesson_01'));
+        expect(progress.eventLedger[2].xpAwarded, equals(100));
+
+        expect(progress.eventLedger[3].eventType,
             equals(ProgressEventType.challengeSolved));
-        expect(progress.eventLedger[2].activityId, equals('chal_01'));
-        expect(progress.eventLedger[2].xpAwarded, equals(50));
+        expect(progress.eventLedger[3].activityId, equals('chal_01'));
+        expect(progress.eventLedger[3].xpAwarded, equals(50));
       });
 
       test('replays events from ledger to reconstruct identical state snapshot',

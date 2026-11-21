@@ -110,6 +110,7 @@ class _TroubleshootingScreenState extends ConsumerState<TroubleshootingScreen>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: const Row(
@@ -122,9 +123,9 @@ class _TroubleshootingScreenState extends ConsumerState<TroubleshootingScreen>
         ),
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: AppColors.primaryViolet,
-          labelColor: AppColors.primaryViolet,
-          unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
+          indicatorColor: colorScheme.primary,
+          labelColor: colorScheme.primary,
+          unselectedLabelColor: colorScheme.onSurfaceVariant,
           tabs: const [
             Tab(icon: Icon(Icons.psychology), text: 'Diagnostic Wizard'),
             Tab(icon: Icon(Icons.science), text: 'Debugging Method'),

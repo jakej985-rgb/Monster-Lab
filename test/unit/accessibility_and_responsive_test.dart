@@ -5,6 +5,18 @@ import 'package:monster_lab/presentation/shared/widgets/monster_button.dart';
 import 'package:monster_lab/presentation/shared/widgets/monster_card.dart';
 import 'package:monster_lab/presentation/shared/widgets/xp_progress_bar.dart';
 
+double _contrastRatio(Color foreground, Color background) {
+  final foregroundLuminance = foreground.computeLuminance();
+  final backgroundLuminance = background.computeLuminance();
+  final lighter = foregroundLuminance > backgroundLuminance
+      ? foregroundLuminance
+      : backgroundLuminance;
+  final darker = foregroundLuminance > backgroundLuminance
+      ? backgroundLuminance
+      : foregroundLuminance;
+  return (lighter + 0.05) / (darker + 0.05);
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -146,6 +158,31 @@ void main() {
       expect(dark.colorScheme.outline, Colors.white);
       expect(
           dark.colorScheme.outlineVariant.computeLuminance(), greaterThan(0.5));
+    });
+
+    test('All theme on-colors meet WCAG AA contrast across palettes', () {
+      final themes = [
+        AppTheme.lightTheme,
+        AppTheme.darkTheme,
+        AppTheme.buildTheme(isDark: false, preset: 'mint'),
+        AppTheme.buildTheme(isDark: true, preset: 'mint'),
+        AppTheme.buildTheme(isDark: false, highContrast: true),
+        AppTheme.buildTheme(isDark: true, highContrast: true),
+      ];
+
+      for (final theme in themes) {
+        final scheme = theme.colorScheme;
+        final label = '${theme.brightness.name} ${scheme.primary}';
+        expect(_contrastRatio(scheme.onPrimary, scheme.primary),
+            greaterThanOrEqualTo(4.5),
+            reason: 'primary/onPrimary contrast for $label');
+        expect(_contrastRatio(scheme.onSecondary, scheme.secondary),
+            greaterThanOrEqualTo(4.5),
+            reason: 'secondary/onSecondary contrast for $label');
+        expect(_contrastRatio(scheme.onError, scheme.error),
+            greaterThanOrEqualTo(4.5),
+            reason: 'error/onError contrast for $label');
+      }
     });
   });
 }

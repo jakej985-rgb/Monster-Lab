@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:monster_lab/core/services/storage_service.dart';
 import 'package:monster_lab/data/datasources/local_storage_datasource.dart';
 import 'package:monster_lab/data/repositories/progress_repository_impl.dart';
+import 'package:monster_lab/domain/models/learner_progress_model.dart';
 
 void main() {
   group('ProgressRepository Multi-Learner Isolation Tests', () {
@@ -181,6 +182,57 @@ void main() {
       expect(progress.totalXp, equals(110));
       expect(
           progress.completedLessonIds, containsAll(['lesson_01', 'lesson_02']));
+    });
+
+    test('first completed lesson awards First Circuit Scout exactly once',
+        () async {
+      const learnerId = 'learner_first_badge';
+
+      await progressRepo.completeLesson(learnerId, 'lesson_01', 50);
+      var progress = await progressRepo.getProgress(learnerId);
+
+      expect(progress.earnedBadgeIds,
+          contains(ProgressBadgeIds.firstCircuitScout));
+      expect(
+        progress.eventLedger
+            .where((event) => event.eventType == ProgressEventType.badgeEarned)
+            .length,
+        1,
+      );
+
+      await progressRepo.completeLesson(learnerId, 'lesson_01', 50);
+      progress = await progressRepo.getProgress(learnerId);
+
+      expect(progress.totalXp, equals(50));
+      expect(
+        progress.eventLedger
+            .where((event) => event.eventType == ProgressEventType.badgeEarned)
+            .length,
+        1,
+      );
+    });
+
+    test('getProgress backfills First Circuit Scout for legacy progress',
+        () async {
+      const learnerId = 'learner_legacy_badge';
+      await progressRepo.saveProgress(
+        LearnerProgressModel(
+          learnerId: learnerId,
+          completedLessonIds: const {'l01_01'},
+          lastSessionDate: DateTime.utc(2026, 1, 1),
+        ),
+      );
+
+      final progress = await progressRepo.getProgress(learnerId);
+
+      expect(progress.earnedBadgeIds,
+          contains(ProgressBadgeIds.firstCircuitScout));
+      expect(
+        progress.eventLedger
+            .where((event) => event.eventType == ProgressEventType.badgeEarned)
+            .length,
+        1,
+      );
     });
   });
 }
