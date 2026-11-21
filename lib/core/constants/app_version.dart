@@ -3,8 +3,8 @@
 class AppVersion {
   AppVersion._();
 
-  static const String version = '0.4.1+30';
-  static const String semver = '0.4.1';
-  static const int buildNumber = 30;
+  static const String version = '0.4.2+31';
+  static const String semver = '0.4.2';
+  static const int buildNumber = 31;
   static const String displayVersion = 'Version $version • Production Release';
 }

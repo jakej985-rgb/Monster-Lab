@@ -6,6 +6,19 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.4.2+31] - 2026-11-20
+
+### Overview & Release Highlights
+Release 0.4.2+31 introduces updates across 1 commits.
+
+### 🐛 Bug Fixes & Stability
+- **fix(release): keep version.json packageMetadata in sync with bumps** (`67eaa6b`):
+  - *What Changed*: android versionCode/versionName and docker.tag were frozen at 0.3.0/27 because both bump entry points only rewrote the top-level version fields. Sync them on every bump and fail CI when the manifest drifts.  🤖 Generated with Codebuff Co-Authored-By: Codebuff <noreply@codebuff.com>
+  - *Why*: Technical necessity and user enhancement.
+
+
+---
+
 ## [0.4.1+30] - 2026-11-20
 
 ### Overview & Release Highlights

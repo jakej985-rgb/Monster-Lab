@@ -1,9 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "monster_lab",
-  "version": "0.4.1",
-  "buildNumber": 30,
-  "releaseName": "Monster Lab v0.4.1",
+  "version": "0.4.2",
+  "buildNumber": 31,
+  "releaseName": "Monster Lab v0.4.2",
   "releaseDate": "2026-11-20",
   "channel": "stable",
   "supportedPlatforms": [
@@ -19,8 +19,8 @@
   "packageMetadata": {
     "android": {
       "applicationId": "com.monsterlab.app",
-      "versionCode": 30,
-      "versionName": "0.4.1"
+      "versionCode": 31,
+      "versionName": "0.4.2"
     },
     "linux": {
       "packageName": "monster-lab",
@@ -35,7 +35,7 @@
     },
     "docker": {
       "imageName": "monster-lab-web",
-      "tag": "0.4.1"
+      "tag": "0.4.2"
     }
   }
 }
