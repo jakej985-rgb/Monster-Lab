@@ -6,6 +6,27 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.5.0+33] - 2026-11-21
+
+### Overview & Release Highlights
+Release 0.5.0+33 introduces updates across 3 commits.
+
+### 🚀 New Features & Capabilities
+- **feat(release): automate smart bump releases on every push** (`722082b`):
+  - *What Changed*: Run the release pipeline on every main push, smart-bump and verify the version targets, then commit, tag, and atomically push the release before building every platform from that exact SHA. Align the local gate docs with the workflow owning versioning.
+  - *Why*: Technical necessity and user enhancement.
+
+### 🐛 Bug Fixes & Stability
+- **fix(app): resolve badge, contrast, and version review findings** (`114ac37`):
+  - *What Changed*: Award and backfill the First Circuit Scout badge, make progress badge state consistent, use theme-derived on-colors and controls for high contrast, and separate short and full version overrides.
+  - *Why*: Technical necessity and user enhancement.
+- **fix(app): complete accessibility and release audit** (`7551248`):
+  - *What Changed*: Make app surfaces and simulator copy theme-aware, add persisted sound feedback and high-contrast theme support, and source version labels from the generated release metadata. Add regression coverage for settings, sound gating, and light-mode activity contrast.
+  - *Why*: Technical necessity and user enhancement.
+
+
+---
+
 ## [0.4.3+32] - 2026-11-20
 
 ### Overview & Release Highlights
