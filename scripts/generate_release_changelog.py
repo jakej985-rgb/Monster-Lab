@@ -238,6 +238,31 @@ def update_all_version_targets(new_semver, new_build):
     update_version_json(new_semver, new_build)
 
 
+def sync_package_metadata(data, new_semver, new_build):
+    """Align per-ecosystem package metadata with the canonical version pair."""
+    metadata = data.get("packageMetadata")
+    if not isinstance(metadata, dict):
+        return False
+
+    updated = False
+
+    android = metadata.get("android")
+    if isinstance(android, dict):
+        if android.get("versionCode") != new_build:
+            android["versionCode"] = new_build
+            updated = True
+        if android.get("versionName") != new_semver:
+            android["versionName"] = new_semver
+            updated = True
+
+    docker = metadata.get("docker")
+    if isinstance(docker, dict) and docker.get("tag") != new_semver:
+        docker["tag"] = new_semver
+        updated = True
+
+    return updated
+
+
 def update_version_json(new_semver, new_build):
     if not os.path.exists(VERSION_JSON_PATH):
         return False
@@ -247,6 +272,8 @@ def update_version_json(new_semver, new_build):
     data["buildNumber"] = new_build
     data["releaseName"] = f"Monster Lab v{new_semver}"
     data["releaseDate"] = datetime.now().strftime("%Y-%m-%d")
+    if sync_package_metadata(data, new_semver, new_build):
+        print("  [OK] version.json: packageMetadata android/docker synced")
     with open(VERSION_JSON_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
         f.write("\n")

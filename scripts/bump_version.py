@@ -2,7 +2,7 @@
 """
 Monster Lab - Automated Version Bump Script
 Increments the patch version by 0.0.1 (e.g. 0.0.1 -> 0.0.2) and increments build number.
-Synchronizes pubspec.yaml, version.json, app_version.dart, Windows installer, Runner.rc, and Dockerfile.
+Synchronizes pubspec.yaml, version.json (including packageMetadata), app_version.dart, Windows installer, Runner.rc, and Dockerfile.
 """
 
 import os
@@ -110,6 +110,33 @@ def update_dockerfile(new_semver: str):
             f.write(updated)
         print(f"  [OK] Dockerfile: {new_semver}")
 
+def sync_package_metadata(data, new_semver: str, new_build: int) -> bool:
+    """Align per-ecosystem package metadata with the canonical version pair.
+
+    Returns True when at least one field was out of date and has been updated.
+    """
+    metadata = data.get("packageMetadata")
+    if not isinstance(metadata, dict):
+        return False
+
+    updated = False
+
+    android = metadata.get("android")
+    if isinstance(android, dict):
+        if android.get("versionCode") != new_build:
+            android["versionCode"] = new_build
+            updated = True
+        if android.get("versionName") != new_semver:
+            android["versionName"] = new_semver
+            updated = True
+
+    docker = metadata.get("docker")
+    if isinstance(docker, dict) and docker.get("tag") != new_semver:
+        docker["tag"] = new_semver
+        updated = True
+
+    return updated
+
 def update_version_json(new_semver: str, new_build: int):
     if os.path.exists(VERSION_JSON_PATH):
         with open(VERSION_JSON_PATH, "r", encoding="utf-8") as f:
@@ -118,6 +145,8 @@ def update_version_json(new_semver: str, new_build: int):
         data["buildNumber"] = new_build
         data["releaseName"] = f"Monster Lab v{new_semver}"
         data["releaseDate"] = datetime.now().strftime("%Y-%m-%d")
+        if sync_package_metadata(data, new_semver, new_build):
+            print("  [OK] version.json: packageMetadata android/docker synced")
         with open(VERSION_JSON_PATH, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
             f.write("\n")

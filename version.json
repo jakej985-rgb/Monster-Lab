@@ -19,8 +19,8 @@
   "packageMetadata": {
     "android": {
       "applicationId": "com.monsterlab.app",
-      "versionCode": 27,
-      "versionName": "0.3.0"
+      "versionCode": 30,
+      "versionName": "0.4.1"
     },
     "linux": {
       "packageName": "monster-lab",
@@ -35,7 +35,7 @@
     },
     "docker": {
       "imageName": "monster-lab-web",
-      "tag": "0.3.0"
+      "tag": "0.4.1"
     }
   }
 }

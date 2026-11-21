@@ -1,6 +1,7 @@
 import contextlib
 import importlib.util
 import io
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -24,6 +25,7 @@ class ReleaseApplyValidationTests(unittest.TestCase):
         self.inno_setup = root / "windows" / "installer" / "monster_lab_setup.iss"
         self.runner_rc = root / "windows" / "runner" / "Runner.rc"
         self.dockerfile = root / "Dockerfile"
+        self.version_json = root / "version.json"
 
         self.dart_version.parent.mkdir(parents=True, exist_ok=True)
         self.inno_setup.parent.mkdir(parents=True, exist_ok=True)
@@ -38,6 +40,25 @@ class ReleaseApplyValidationTests(unittest.TestCase):
         self.inno_setup.write_text('#define MyAppVersion "0.2.0"\n', encoding="utf-8")
         self.runner_rc.write_text('#define VERSION_AS_STRING "0.2.0"\n', encoding="utf-8")
         self.dockerfile.write_text('LABEL org.opencontainers.image.version="0.2.0"\n', encoding="utf-8")
+        self.version_json.write_text(
+            json.dumps(
+                {
+                    "version": "0.2.0",
+                    "buildNumber": 25,
+                    "packageMetadata": {
+                        "android": {
+                            "applicationId": "com.monsterlab.app",
+                            "versionCode": 24,
+                            "versionName": "0.1.0",
+                        },
+                        "docker": {"imageName": "monster-lab-web", "tag": "0.1.0"},
+                    },
+                },
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
 
         self.path_patches = [
             mock.patch.object(release, "PUBSPEC_PATH", str(self.pubspec)),
@@ -46,6 +67,7 @@ class ReleaseApplyValidationTests(unittest.TestCase):
             mock.patch.object(release, "INNO_SETUP_PATH", str(self.inno_setup)),
             mock.patch.object(release, "RUNNER_RC_PATH", str(self.runner_rc)),
             mock.patch.object(release, "DOCKERFILE_PATH", str(self.dockerfile)),
+            mock.patch.object(release, "VERSION_JSON_PATH", str(self.version_json)),
             mock.patch.object(release, "get_latest_tags", return_value=["v0.2.0"]),
             mock.patch.object(release, "get_commits_in_range", return_value=[]),
         ]
@@ -68,6 +90,7 @@ class ReleaseApplyValidationTests(unittest.TestCase):
             self.inno_setup.read_text(),
             self.runner_rc.read_text(),
             self.dockerfile.read_text(),
+            self.version_json.read_text(),
         )
         with self.assertRaises(SystemExit) as error:
             self.run_main(*args)
@@ -80,6 +103,7 @@ class ReleaseApplyValidationTests(unittest.TestCase):
                 self.inno_setup.read_text(),
                 self.runner_rc.read_text(),
                 self.dockerfile.read_text(),
+                self.version_json.read_text(),
             ),
             before,
         )
@@ -121,6 +145,12 @@ class ReleaseApplyValidationTests(unittest.TestCase):
         self.assertIn('#define MyAppVersion "0.2.1"', self.inno_setup.read_text())
         self.assertIn('#define VERSION_AS_STRING "0.2.1"', self.runner_rc.read_text())
         self.assertIn('LABEL org.opencontainers.image.version="0.2.1"', self.dockerfile.read_text())
+        manifest = json.loads(self.version_json.read_text())
+        self.assertEqual(manifest["version"], "0.2.1")
+        self.assertEqual(manifest["buildNumber"], 26)
+        self.assertEqual(manifest["packageMetadata"]["android"]["versionCode"], 26)
+        self.assertEqual(manifest["packageMetadata"]["android"]["versionName"], "0.2.1")
+        self.assertEqual(manifest["packageMetadata"]["docker"]["tag"], "0.2.1")
         changelog = self.changelog.read_text()
         self.assertTrue(changelog.startswith("# Changelog\n\n## [0.2.1+26]"))
         self.assertEqual(changelog.count("## [0.2.1+26]"), 1)
@@ -132,6 +162,10 @@ class ReleaseApplyValidationTests(unittest.TestCase):
         self.assertIn('#define MyAppVersion "0.3.0"', self.inno_setup.read_text())
         self.assertIn('#define VERSION_AS_STRING "0.3.0"', self.runner_rc.read_text())
         self.assertIn('LABEL org.opencontainers.image.version="0.3.0"', self.dockerfile.read_text())
+        manifest = json.loads(self.version_json.read_text())
+        self.assertEqual(manifest["packageMetadata"]["android"]["versionCode"], 27)
+        self.assertEqual(manifest["packageMetadata"]["android"]["versionName"], "0.3.0")
+        self.assertEqual(manifest["packageMetadata"]["docker"]["tag"], "0.3.0")
 
 
 if __name__ == "__main__":

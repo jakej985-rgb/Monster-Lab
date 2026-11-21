@@ -95,6 +95,20 @@ def check_sync():
         else:
             print("  [OK] Dockerfile matches")
 
+    # 7. Check version.json package metadata mirrors the canonical version
+    metadata = v_data.get("packageMetadata") or {}
+    android_meta = metadata.get("android") or {}
+    if android_meta:
+        if android_meta.get("versionCode") != expected_build:
+            errors.append(f"version.json: packageMetadata.android.versionCode '{android_meta.get('versionCode')}' != '{expected_build}'")
+        if android_meta.get("versionName") != expected_semver:
+            errors.append(f"version.json: packageMetadata.android.versionName '{android_meta.get('versionName')}' != '{expected_semver}'")
+    docker_meta = metadata.get("docker") or {}
+    if docker_meta and docker_meta.get("tag") != expected_semver:
+        errors.append(f"version.json: packageMetadata.docker.tag '{docker_meta.get('tag')}' != '{expected_semver}'")
+    if not any(err.startswith("version.json:") for err in errors):
+        print("  [OK] version.json packageMetadata matches")
+
     if errors:
         print("\n[FAILED] Version synchronization drift detected:")
         for err in errors:
