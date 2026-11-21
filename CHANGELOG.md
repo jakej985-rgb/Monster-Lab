@@ -6,6 +6,24 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.4.3+32] - 2026-11-20
+
+### Overview & Release Highlights
+Release 0.4.3+32 introduces updates across 2 commits.
+
+### 🐛 Bug Fixes & Stability
+- **fix(release): strip assistant attribution footers from generated notes** (`6d5cc94`):
+  - *What Changed*: Generated bullets embedded the assistant trailer from each commit body, so published changelogs and GitHub release bodies carried them too. Drop those trailers during draft generation, clean the existing entries, and tell the release-changelog agent not to copy them.
+  - *Why*: Technical necessity and user enhancement.
+
+### 🛠️ Developer Toolchains & CI/CD
+- **ci: fail when CHANGELOG regains assistant attribution footers** (`dd1434e`):
+  - *What Changed*: Add verify_changelog_hygiene.py and run it from both the CI workflow and the local quality gate so a footer copied by hand cannot ship unnoticed.
+  - *Why*: Technical necessity and user enhancement.
+
+
+---
+
 ## [0.4.2+31] - 2026-11-20
 
 ### Overview & Release Highlights
