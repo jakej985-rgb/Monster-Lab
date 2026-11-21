@@ -6,6 +6,19 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.5.1+34] - 2026-11-21
+
+### Overview & Release Highlights
+Release 0.5.1+34 introduces updates across 1 commits.
+
+### 🛠️ Developer Toolchains & CI/CD
+- **ci(actions): upgrade workflows to Node 24 runtimes** (`f8afbb0`):
+  - *What Changed*: Update checkout, setup-python, setup-java, release publishing, container login, and repository dispatch actions to Node 24 releases so GitHub Actions no longer emits Node.js 20 deprecation warnings.
+  - *Why*: Technical necessity and user enhancement.
+
+
+---
+
 ## [0.5.0+33] - 2026-11-21
 
 ### Overview & Release Highlights
