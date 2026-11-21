@@ -424,10 +424,10 @@ class HomeScreen extends ConsumerWidget {
               TextButton(
                 onPressed: () => context.go(RoutePaths.progress),
                 style: TextButton.styleFrom(
-                  minimumSize: Size.zero,
+                  minimumSize: const Size(48, 48),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  tapTargetSize: MaterialTapTargetSize.padded,
                 ),
                 child: const Text('View all', style: TextStyle(fontSize: 12)),
               ),
@@ -636,7 +636,10 @@ class HomeScreen extends ConsumerWidget {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(6),
-      child: content,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 48),
+        child: content,
+      ),
     );
   }
 
@@ -933,24 +936,27 @@ class _QuickActionTile extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(8),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 7),
-          child: Row(
-            children: [
-              Icon(icon, color: color, size: 18),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  label,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w600,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 48),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 7),
+            child: Row(
+              children: [
+                Icon(icon, color: color, size: 18),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    label,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
