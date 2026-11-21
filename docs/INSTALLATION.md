@@ -123,7 +123,7 @@ To install or receive automatic updates from the central M3tal APT repository:
 
 4. **Configure Repository Source & Install**:
    ```bash
-   echo "deb [signed-by=/etc/apt/keyrings/m3tal-archive-keyring.gpg] https://jakej985-rgb.github.io/m3tal-apt-key stable main" | sudo tee /etc/apt/sources.list.d/m3tal.list > /dev/null
+   echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/m3tal-archive-keyring.gpg] https://jakej985-rgb.github.io/m3tal-apt-key stable main" | sudo tee /etc/apt/sources.list.d/m3tal.list > /dev/null
    sudo apt-get update
    sudo apt-get install -y monster-lab
    ```

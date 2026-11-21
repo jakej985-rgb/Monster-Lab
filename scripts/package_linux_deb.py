@@ -302,7 +302,7 @@ def create_deb_package(bundle_dir: str, output_deb: str, push_to_apt_repo: str =
         with open(sources_list_path, "w", encoding="utf-8") as f:
             f.write("# M3tal Official Debian APT Repository\n")
             f.write("# Verification Key: /etc/apt/keyrings/m3tal-archive-keyring.gpg\n")
-            f.write(f"deb [signed-by=/etc/apt/keyrings/m3tal-archive-keyring.gpg] {APT_REPO_BASE_URL} stable main\n")
+            f.write(f"deb [arch={target_arch} signed-by=/etc/apt/keyrings/m3tal-archive-keyring.gpg] {APT_REPO_BASE_URL} stable main\n")
         os.chmod(sources_list_path, 0o644)
 
     # Calculate installed size in KB
