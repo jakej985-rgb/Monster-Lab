@@ -16,6 +16,7 @@ import 'widgets/board_inspector_widget.dart';
 import 'widgets/quiz_checkpoint_widget.dart';
 import 'widgets/quick_check_modal.dart';
 import '../../../domain/models/learner_progress_model.dart';
+import '../../../domain/repositories/curriculum_repository.dart';
 import '../../shared/widgets/expandable_lesson_image.dart';
 
 class LessonDetailScreen extends ConsumerStatefulWidget {
@@ -36,22 +37,40 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
   final GlobalKey _interactiveKey = GlobalKey();
   bool _isCompleting = false;
   late Future<Lesson> _lessonFuture;
+  late CurriculumRepository _repository;
 
   @override
   void initState() {
     super.initState();
     // Keep the repository future stable across step/quiz rebuilds so they do
     // not trigger a fresh load and a transient loading frame.
-    _lessonFuture =
-        ref.read(curriculumRepositoryProvider).getLessonById(widget.lessonId);
+    _loadLesson(ref.read(curriculumRepositoryProvider));
+  }
+
+  void _loadLesson(CurriculumRepository repository) {
+    _repository = repository;
+    _lessonFuture = repository.getLessonById(widget.lessonId);
+  }
+
+  void _resetLessonState() {
+    _currentStepIndex = 0;
+    _checkedPhysicalTasks.clear();
+    _awardedCheckpointKeys.clear();
+    _completedQuizSteps.clear();
+    _isCompleting = false;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _scrollController.hasClients) {
+        _scrollController.jumpTo(0);
+      }
+    });
   }
 
   @override
   void didUpdateWidget(covariant LessonDetailScreen oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.lessonId != widget.lessonId) {
-      _lessonFuture =
-          ref.read(curriculumRepositoryProvider).getLessonById(widget.lessonId);
+      _resetLessonState();
+      _loadLesson(ref.read(curriculumRepositoryProvider));
     }
   }
 
@@ -177,6 +196,13 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final repository = ref.watch(curriculumRepositoryProvider);
+    if (!identical(repository, _repository)) {
+      // Reload if the provider is replaced or invalidated while this screen is
+      // mounted, without refetching on ordinary step/quiz rebuilds.
+      _resetLessonState();
+      _loadLesson(repository);
+    }
     final activeProfile = ref.watch(activeProfileProvider);
     final activeProgress = ref.watch(activeProgressProvider);
 
