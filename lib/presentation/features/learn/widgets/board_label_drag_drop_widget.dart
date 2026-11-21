@@ -244,7 +244,7 @@ class _BoardLabelDragDropWidgetState extends State<BoardLabelDragDropWidget> {
                 ? 'Mission Complete! You identified all 8 key landmarks on the Arduino Uno.'
                 : 'Tap a label badge below, then tap its matching board target slot (or drag onto target).',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.8),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

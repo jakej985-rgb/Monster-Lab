@@ -138,7 +138,7 @@ class _I2cDaisyChainSimulatorWidgetState
             'In I2C, every sensor shares the exact same two wires (SDA & SCL). '
             'Each peripheral must have a UNIQUE 7-bit hexadecimal address. Attach components below to test the bus!',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

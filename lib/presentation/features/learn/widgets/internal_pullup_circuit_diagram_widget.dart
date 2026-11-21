@@ -121,7 +121,7 @@ class _InternalPullupCircuitDiagramWidgetState
             'The ATmega328P has built-in ~20kΩ to 50kΩ pull-up resistors inside the silicon chip. '
             'Activating pinMode(pin, INPUT_PULLUP) eliminates external breadboard resistors!',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

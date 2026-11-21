@@ -153,7 +153,7 @@ class _SyntaxErrorDebuggerWidgetState extends State<SyntaxErrorDebuggerWidget> {
           Text(
             'The sketch below fails compilation. Tap the bug badges on the code editor lines to diagnose and fix the syntax errors.',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

@@ -160,7 +160,9 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 8, vertical: 3),
                                     decoration: BoxDecoration(
-                                      color: AppColors.surfaceContainerLight,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceContainerHighest,
                                       borderRadius: BorderRadius.circular(6),
                                     ),
                                     child: Text(
@@ -287,6 +289,7 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
                                     await ref
                                         .read(activeProgressProvider.notifier)
                                         .discoverComponent(comp.id, 25);
+                                    ref.read(soundEffectsProvider).success();
                                     if (context.mounted) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
@@ -384,7 +387,7 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
                 const SizedBox(height: 16),
                 MonsterCard(
                   key: const Key('locked_teaser_card'),
-                  color: AppColors.surfaceContainerLight,
+                  color: Theme.of(context).colorScheme.surfaceContainerLow,
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -398,23 +401,25 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
                             color: AppColors.energyAmber, size: 24),
                       ),
                       const SizedBox(width: 14),
-                      const Expanded(
+                      Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            const Text(
                               'Component Locked in Lab Kit',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(height: 4),
+                            const SizedBox(height: 4),
                             Text(
                               'Find this part in your physical kit and tap "Discover Part" above to unlock full pinout schematics, safety ratings, wiring guides, and interactive experiments!',
                               style: TextStyle(
                                 fontSize: 13,
-                                color: AppColors.textSecondaryLight,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
                                 height: 1.4,
                               ),
                             ),
@@ -492,7 +497,9 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 3),
                       decoration: BoxDecoration(
-                        color: AppColors.surfaceContainerLight,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
@@ -539,18 +546,23 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: AppColors.surfaceContainerLight,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .surfaceContainerHighest,
                                   borderRadius: BorderRadius.circular(6),
-                                  border:
-                                      Border.all(color: Colors.grey.shade300),
+                                  border: Border.all(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .outlineVariant),
                                 ),
                                 child: Text(
                                   pin.pinName,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'monospace',
                                     fontSize: 13,
-                                    color: AppColors.textPrimaryLight,
+                                    color:
+                                        Theme.of(context).colorScheme.onSurface,
                                   ),
                                 ),
                               ),
@@ -581,9 +593,11 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
                                         const SizedBox(width: 5),
                                         Text(
                                           wireColorName,
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: 11,
-                                            color: AppColors.textSecondaryLight,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurfaceVariant,
                                             fontWeight: FontWeight.w500,
                                           ),
                                         ),
@@ -698,9 +712,11 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
                         const SizedBox(height: 6),
                         Text(
                           'Circuit: ${miniExp['circuit'] ?? ''}',
-                          style: const TextStyle(
+                          style: TextStyle(
                               fontSize: 13,
-                              color: AppColors.textSecondaryLight),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant),
                         ),
                         const SizedBox(height: 12),
 
@@ -817,7 +833,9 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
                           style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 12),
                         ),
-                        backgroundColor: AppColors.surfaceContainerLight,
+                        backgroundColor: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
                         onPressed: () => context.push('/build/$pId'),
                       );
                     }).toList(),
@@ -916,7 +934,7 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: AppColors.surfaceContainerLight,
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(

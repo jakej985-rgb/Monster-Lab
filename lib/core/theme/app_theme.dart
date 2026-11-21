@@ -5,46 +5,93 @@ import 'app_typography.dart';
 /// Application theme configurations for Light Lab and Dark Lab modes.
 abstract final class AppTheme {
   static ThemeData buildTheme(
-      {required bool isDark, String preset = 'default'}) {
+      {required bool isDark,
+      String preset = 'default',
+      bool highContrast = false}) {
     final isMint = (preset == 'mint');
-    final primaryColor = isMint
-        ? (isDark ? AppColors.mintGreen : AppColors.mintGreenDark)
-        : AppColors.primaryViolet;
-    final backgroundColor = isMint
-        ? (isDark
-            ? AppColors.mintBackgroundDark
-            : AppColors.mintBackgroundLight)
-        : (isDark ? AppColors.backgroundDark : AppColors.backgroundLight);
-    final surfaceColor = isMint
-        ? (isDark ? AppColors.mintSurfaceDark : AppColors.mintSurfaceLight)
-        : (isDark ? AppColors.surfaceDark : AppColors.surfaceLight);
-    final borderColor =
-        isDark ? AppColors.mintBorderDark : AppColors.mintBorderLight;
+    final primaryColor = highContrast
+        ? (isMint
+            ? (isDark ? const Color(0xFF9BE36D) : const Color(0xFF2D5A16))
+            : (isDark ? const Color(0xFFB9B1FF) : AppColors.primaryVioletDark))
+        : (isMint
+            ? (isDark ? AppColors.mintGreen : AppColors.mintGreenDark)
+            : AppColors.primaryViolet);
+    final secondaryColor = highContrast
+        ? (isDark ? const Color(0xFF7FF5F1) : const Color(0xFF00635F))
+        : AppColors.accentCyan;
+    final errorColor = highContrast
+        ? (isDark ? const Color(0xFFFF8A80) : const Color(0xFFB00020))
+        : AppColors.danger;
+    final onPrimaryColor =
+        primaryColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+    final onSecondaryColor =
+        secondaryColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+    final onErrorColor =
+        errorColor.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+    final backgroundColor = highContrast
+        ? (isDark ? Colors.black : Colors.white)
+        : (isMint
+            ? (isDark
+                ? AppColors.mintBackgroundDark
+                : AppColors.mintBackgroundLight)
+            : (isDark ? AppColors.backgroundDark : AppColors.backgroundLight));
+    final surfaceColor = highContrast
+        ? (isDark ? const Color(0xFF0A0A0A) : Colors.white)
+        : (isMint
+            ? (isDark ? AppColors.mintSurfaceDark : AppColors.mintSurfaceLight)
+            : (isDark ? AppColors.surfaceDark : AppColors.surfaceLight));
+    final borderColor = highContrast
+        ? (isDark ? Colors.white : Colors.black)
+        : (isDark ? AppColors.mintBorderDark : AppColors.mintBorderLight);
+    final onSurfaceColor = highContrast
+        ? (isDark ? Colors.white : Colors.black)
+        : (isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight);
 
-    final colorScheme = isDark
+    final baseScheme = isDark
         ? ColorScheme.dark(
             primary: primaryColor,
-            onPrimary: Colors.white,
-            secondary: AppColors.accentCyan,
-            onSecondary: Colors.black,
+            onPrimary: onPrimaryColor,
+            secondary: secondaryColor,
+            onSecondary: onSecondaryColor,
             surface: surfaceColor,
-            onSurface: AppColors.textPrimaryDark,
-            error: AppColors.danger,
-            onError: Colors.white,
+            onSurface: onSurfaceColor,
+            error: errorColor,
+            onError: onErrorColor,
           )
         : ColorScheme.light(
             primary: primaryColor,
-            onPrimary: Colors.white,
-            secondary: AppColors.accentCyan,
-            onSecondary: AppColors.textPrimaryLight,
+            onPrimary: onPrimaryColor,
+            secondary: secondaryColor,
+            onSecondary: onSecondaryColor,
             surface: surfaceColor,
-            onSurface: AppColors.textPrimaryLight,
-            error: AppColors.danger,
-            onError: Colors.white,
+            onSurface: onSurfaceColor,
+            error: errorColor,
+            onError: onErrorColor,
           );
+    final colorScheme = baseScheme.copyWith(
+      onSurfaceVariant: highContrast
+          ? (isDark ? const Color(0xFFE0E0E0) : const Color(0xFF1F1F1F))
+          : null,
+      outline: highContrast ? borderColor : null,
+      outlineVariant: highContrast
+          ? (isDark ? const Color(0xFFC8C8C8) : const Color(0xFF3D3D3D))
+          : null,
+      surfaceContainerLow: highContrast
+          ? (isDark ? const Color(0xFF141414) : const Color(0xFFFAFAFA))
+          : null,
+      surfaceContainerHighest: highContrast
+          ? (isDark ? const Color(0xFF242424) : const Color(0xFFECECEC))
+          : null,
+    );
 
-    final textTheme =
+    final baseTextTheme =
         isDark ? AppTypography.darkTextTheme : AppTypography.lightTextTheme;
+    final textTheme = highContrast
+        ? baseTextTheme.apply(
+            bodyColor: colorScheme.onSurface,
+            displayColor: colorScheme.onSurface,
+          )
+        : baseTextTheme;
 
     return ThemeData(
       useMaterial3: true,
@@ -60,13 +107,21 @@ abstract final class AppTheme {
         shadowColor: const Color(0x0F000000),
         shape: RoundedRectangleBorder(
           borderRadius: const BorderRadius.all(Radius.circular(8)),
-          side: BorderSide(color: borderColor, width: 1),
+          side: BorderSide(
+            color: borderColor,
+            width: highContrast ? 1.5 : 1,
+          ),
         ),
       ),
+      dividerTheme: DividerThemeData(
+        color: highContrast ? colorScheme.outlineVariant : null,
+        thickness: highContrast ? 1.5 : null,
+      ),
+      iconTheme: IconThemeData(color: colorScheme.onSurface),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,
-          foregroundColor: Colors.white,
+          foregroundColor: colorScheme.onPrimary,
           minimumSize: const Size(96, 38),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           shape: const RoundedRectangleBorder(
@@ -126,27 +181,21 @@ abstract final class AppTheme {
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: backgroundColor,
-        foregroundColor:
-            isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+        foregroundColor: colorScheme.onSurface,
         elevation: 0,
         centerTitle: false,
       ),
       navigationRailTheme: NavigationRailThemeData(
         backgroundColor: surfaceColor,
         selectedIconTheme: IconThemeData(color: primaryColor),
-        unselectedIconTheme: IconThemeData(
-            color: isDark
-                ? AppColors.textSecondaryDark
-                : AppColors.textSecondaryLight),
+        unselectedIconTheme: IconThemeData(color: colorScheme.onSurfaceVariant),
         selectedLabelTextStyle: TextStyle(
           color: primaryColor,
           fontWeight: FontWeight.bold,
           fontSize: 12,
         ),
         unselectedLabelTextStyle: TextStyle(
-          color: isDark
-              ? AppColors.textSecondaryDark
-              : AppColors.textSecondaryLight,
+          color: colorScheme.onSurfaceVariant,
           fontSize: 12,
         ),
         indicatorColor: primaryColor.withValues(alpha: 0.15),
@@ -155,8 +204,7 @@ abstract final class AppTheme {
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: surfaceColor,
         selectedItemColor: primaryColor,
-        unselectedItemColor:
-            isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+        unselectedItemColor: colorScheme.onSurfaceVariant,
         type: BottomNavigationBarType.fixed,
         elevation: 8,
       ),

@@ -3,7 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:monster_lab/presentation/features/learn/widgets/blink_simulator_widget.dart';
 import 'package:monster_lab/presentation/features/learn/widgets/potentiometer_simulator_widget.dart';
 import 'package:monster_lab/presentation/features/learn/widgets/rgb_mixer_widget.dart';
+import 'package:monster_lab/core/theme/app_theme.dart';
 import 'package:monster_lab/presentation/features/learn/widgets/board_inspector_widget.dart';
+import 'package:monster_lab/presentation/features/learn/widgets/input_output_classification_widget.dart';
 import 'package:monster_lab/presentation/features/learn/widgets/quiz_checkpoint_widget.dart';
 
 void main() {
@@ -269,6 +271,35 @@ void main() {
 
       expect(find.text('Deck 2 Q1'), findsOneWidget);
       expect(find.text('Submit Answer'), findsOneWidget);
+    });
+
+    testWidgets(
+        'InputOutputClassificationWidget uses theme text colors on light cards',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.lightTheme,
+          home: const Scaffold(
+            body: InputOutputClassificationWidget(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final progressLabel = tester.widget<Text>(
+        find.text('Component 1 of 8'),
+      );
+      expect(progressLabel.style?.color,
+          AppTheme.lightTheme.colorScheme.onSurfaceVariant);
+
+      await tester.tap(find.textContaining('INPUT'));
+      await tester.pumpAndSettle();
+
+      final feedback = tester.widget<Text>(
+        find.text(
+            'Senses your physical touch and sends a signal into the Arduino.'),
+      );
+      expect(feedback.style?.color, AppTheme.lightTheme.colorScheme.onSurface);
     });
   });
 }

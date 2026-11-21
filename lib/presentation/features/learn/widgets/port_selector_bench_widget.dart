@@ -174,7 +174,7 @@ class _PortSelectorBenchWidgetState extends State<PortSelectorBenchWidget> {
           Text(
             'The Arduino IDE needs to know which board model you are programming and which serial communication port connects to it.',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

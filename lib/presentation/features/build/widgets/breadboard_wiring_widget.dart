@@ -38,6 +38,8 @@ class BreadboardWiringWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -69,21 +71,21 @@ class BreadboardWiringWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'WIRE CONNECTION MATRIX',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.1,
-                  color: AppColors.textSecondaryLight,
+                  color: colorScheme.onSurfaceVariant,
                 ),
               ),
               Text(
                 '${phase.wiringConnections.length} Wires',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.textSecondaryLight,
+                  color: colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
@@ -91,11 +93,10 @@ class BreadboardWiringWidget extends StatelessWidget {
           const SizedBox(height: 10),
           Card(
             elevation: 0,
-            color: AppColors.surfaceContainerLight.withValues(alpha: 0.5),
+            color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              side: BorderSide(
-                  color: AppColors.textSecondaryLight.withValues(alpha: 0.15)),
+              side: BorderSide(color: colorScheme.outlineVariant),
             ),
             child: ListView.separated(
               shrinkWrap: true,
@@ -103,7 +104,7 @@ class BreadboardWiringWidget extends StatelessWidget {
               itemCount: phase.wiringConnections.length,
               separatorBuilder: (_, __) => Divider(
                 height: 1,
-                color: AppColors.textSecondaryLight.withValues(alpha: 0.1),
+                color: colorScheme.outlineVariant,
               ),
               itemBuilder: (context, index) {
                 final conn = phase.wiringConnections[index];
@@ -159,11 +160,12 @@ class BreadboardWiringWidget extends StatelessWidget {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 6),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 6),
                                   child: Icon(Icons.arrow_forward_rounded,
                                       size: 14,
-                                      color: AppColors.textSecondaryLight),
+                                      color: colorScheme.onSurfaceVariant),
                                 ),
                                 Flexible(
                                   child: Text(
@@ -180,9 +182,9 @@ class BreadboardWiringWidget extends StatelessWidget {
                             const SizedBox(height: 2),
                             Text(
                               type.toUpperCase(),
-                              style: const TextStyle(
+                              style: TextStyle(
                                   fontSize: 10,
-                                  color: AppColors.textSecondaryLight,
+                                  color: colorScheme.onSurfaceVariant,
                                   letterSpacing: 0.5),
                             ),
                           ],
@@ -197,13 +199,13 @@ class BreadboardWiringWidget extends StatelessWidget {
         ],
         if (phase.verificationCheckpoints.isNotEmpty) ...[
           const SizedBox(height: 24),
-          const Text(
+          Text(
             'CONNECTION VERIFICATIONS',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.1,
-              color: AppColors.textSecondaryLight,
+              color: colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 8),
@@ -219,7 +221,8 @@ class BreadboardWiringWidget extends StatelessWidget {
                 elevation: 0,
                 color: isChecked
                     ? AppColors.success.withValues(alpha: 0.08)
-                    : AppColors.surfaceContainerLight.withValues(alpha: 0.5),
+                    : colorScheme.surfaceContainerHighest
+                        .withValues(alpha: 0.5),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                   side: BorderSide(
@@ -240,7 +243,7 @@ class BreadboardWiringWidget extends StatelessWidget {
                       fontWeight:
                           isChecked ? FontWeight.w600 : FontWeight.normal,
                       decoration: isChecked ? TextDecoration.lineThrough : null,
-                      color: isChecked ? AppColors.textSecondaryLight : null,
+                      color: isChecked ? colorScheme.onSurfaceVariant : null,
                     ),
                   ),
                   controlAffinity: ListTileControlAffinity.leading,

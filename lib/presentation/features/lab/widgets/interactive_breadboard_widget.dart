@@ -102,6 +102,7 @@ class _InteractiveBreadboardWidgetState
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -123,7 +124,9 @@ class _InteractiveBreadboardWidgetState
               Text(
                 widget.preset.description,
                 style: TextStyle(
-                    fontSize: 13, color: Colors.grey.shade800, height: 1.3),
+                    fontSize: 13,
+                    color: colorScheme.onSurfaceVariant,
+                    height: 1.3),
               ),
             ],
           ),
@@ -251,7 +254,7 @@ class _InteractiveBreadboardWidgetState
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: Colors.grey.shade700,
+                color: colorScheme.onSurfaceVariant,
               ),
             );
             final verifyBtn = MonsterButton(
@@ -295,8 +298,13 @@ class _InteractiveBreadboardWidgetState
   }
 
   Widget _buildValidationFeedback(WiringValidationResult result) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
     final isSuccess = result.isValid;
-    final color = isSuccess ? AppColors.textSuccessOnLight : AppColors.danger;
+    final color = isSuccess
+        ? (isDark ? AppColors.success : AppColors.textSuccessOnLight)
+        : AppColors.danger;
     final bgColor = isSuccess ? AppColors.success : AppColors.danger;
     final icon = isSuccess ? Icons.verified : Icons.warning_amber_rounded;
 
@@ -333,7 +341,7 @@ class _InteractiveBreadboardWidgetState
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: colorScheme.surface,
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: color.withValues(alpha: 0.3)),
               ),
@@ -346,8 +354,10 @@ class _InteractiveBreadboardWidgetState
                   Expanded(
                     child: RichText(
                       text: TextSpan(
-                        style: const TextStyle(
-                            color: Colors.black87, fontSize: 13, height: 1.3),
+                        style: TextStyle(
+                            color: colorScheme.onSurface,
+                            fontSize: 13,
+                            height: 1.3),
                         children: [
                           const TextSpan(
                             text: 'The Science: ',

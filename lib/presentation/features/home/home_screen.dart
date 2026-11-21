@@ -17,6 +17,7 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
     final activeProfile = ref.watch(activeProfileProvider);
     final activeProgress = ref.watch(activeProgressProvider);
     final avatar = MonsterAvatar.findById(activeProfile?.avatarId);
@@ -56,8 +57,8 @@ class HomeScreen extends ConsumerWidget {
             if (activeProgress != null)
               Text(
                 'Level ${activeProgress.currentLevel} Explorer • Companion: ${avatar.name}',
-                style: const TextStyle(
-                    fontSize: 11, color: AppColors.textSecondaryLight),
+                style: TextStyle(
+                    fontSize: 11, color: colorScheme.onSurfaceVariant),
               ),
           ],
         ),
@@ -151,6 +152,7 @@ class HomeScreen extends ConsumerWidget {
               children: [
                 Expanded(
                   child: _buildStatCard(
+                    context: context,
                     icon: Icons.menu_book,
                     color: AppColors.primaryViolet,
                     label: 'Lessons Done',
@@ -161,6 +163,7 @@ class HomeScreen extends ConsumerWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildStatCard(
+                    context: context,
                     icon: Icons.extension,
                     color: AppColors.accentCyan,
                     label: 'Parts Found',
@@ -176,6 +179,7 @@ class HomeScreen extends ConsumerWidget {
               children: [
                 Expanded(
                   child: _buildStatCard(
+                    context: context,
                     icon: Icons.precision_manufacturing,
                     color: AppColors.tierEngineer,
                     label: 'Projects Built',
@@ -186,6 +190,7 @@ class HomeScreen extends ConsumerWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _buildStatCard(
+                    context: context,
                     icon: Icons.emoji_events,
                     color: AppColors.energyAmber,
                     label: 'Badges Won',
@@ -224,8 +229,8 @@ class HomeScreen extends ConsumerWidget {
                         const SizedBox(height: 2),
                         Text(
                           '${activeProgress?.solvedChallengeIds.length ?? 0} challenges solved. Test your skills!',
-                          style: const TextStyle(
-                              color: AppColors.textSecondaryLight,
+                          style: TextStyle(
+                              color: colorScheme.onSurfaceVariant,
                               fontSize: 13),
                         ),
                       ],
@@ -253,20 +258,20 @@ class HomeScreen extends ConsumerWidget {
                         color: AppColors.energyAmber, size: 28),
                   ),
                   const SizedBox(width: 14),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           'Doctor Monster Clinic',
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(height: 2),
+                        const SizedBox(height: 2),
                         Text(
                           'Circuit glitching? Debug hardware & code step-by-step!',
                           style: TextStyle(
-                              color: AppColors.textSecondaryLight,
+                              color: colorScheme.onSurfaceVariant,
                               fontSize: 13),
                         ),
                       ],
@@ -295,20 +300,20 @@ class HomeScreen extends ConsumerWidget {
                         color: AppColors.accentCyanDark, size: 28),
                   ),
                   const SizedBox(width: 14),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           'Hardware Companion',
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(height: 2),
+                        const SizedBox(height: 2),
                         Text(
                           'Connect Arduino or Virtual Simulator. Test live serial & pins!',
                           style: TextStyle(
-                              color: AppColors.textSecondaryLight,
+                              color: colorScheme.onSurfaceVariant,
                               fontSize: 13),
                         ),
                       ],
@@ -337,20 +342,20 @@ class HomeScreen extends ConsumerWidget {
                         color: AppColors.primaryViolet, size: 28),
                   ),
                   const SizedBox(width: 14),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           'Interactive Wiring & Code Lab',
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(height: 2),
+                        const SizedBox(height: 2),
                         Text(
                           'Virtual breadboard wiring & live code experiments before physical build!',
                           style: TextStyle(
-                              color: AppColors.textSecondaryLight,
+                              color: colorScheme.onSurfaceVariant,
                               fontSize: 13),
                         ),
                       ],
@@ -380,16 +385,18 @@ class HomeScreen extends ConsumerWidget {
 
   Widget _buildResumeCard(
       BuildContext context, WidgetRef ref, LearnerProgressModel? progress) {
+    final colorScheme = Theme.of(context).colorScheme;
     final nextLessonAsync = ref.watch(nextLessonProvider);
 
     return nextLessonAsync.when(
-      loading: () => const MonsterCard(
+      loading: () => MonsterCard(
         child: SizedBox(
           height: 100,
           child: Center(
             child: Text(
               'Loading your next adventure...',
-              style: TextStyle(color: AppColors.textSecondaryLight),
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
           ),
         ),
@@ -435,10 +442,10 @@ class HomeScreen extends ConsumerWidget {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 6),
-                const Text(
+                Text(
                   'Outstanding work, Monster Master! You have mastered all 12 lessons in the lab curriculum.',
                   style: TextStyle(
-                    color: AppColors.textSecondaryLight,
+                    color: colorScheme.onSurfaceVariant,
                     fontSize: 13,
                   ),
                 ),
@@ -490,8 +497,8 @@ class HomeScreen extends ConsumerWidget {
                   ),
                   Text(
                     '⏱ ${nextLesson.estimatedMinutes} min',
-                    style: const TextStyle(
-                      color: AppColors.textSecondaryLight,
+                    style: TextStyle(
+                      color: colorScheme.onSurfaceVariant,
                       fontSize: 12,
                     ),
                   ),
@@ -508,8 +515,8 @@ class HomeScreen extends ConsumerWidget {
               const SizedBox(height: 6),
               Text(
                 nextLesson.summary,
-                style: const TextStyle(
-                  color: AppColors.textSecondaryLight,
+                style: TextStyle(
+                  color: colorScheme.onSurfaceVariant,
                   fontSize: 13,
                 ),
               ),
@@ -529,6 +536,7 @@ class HomeScreen extends ConsumerWidget {
   }
 
   Widget _buildStatCard({
+    required BuildContext context,
     required IconData icon,
     required Color color,
     required String label,
@@ -555,8 +563,9 @@ class HomeScreen extends ConsumerWidget {
           const SizedBox(height: 2),
           Text(
             label,
-            style: const TextStyle(
-                fontSize: 12, color: AppColors.textSecondaryLight),
+            style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
         ],
       ),

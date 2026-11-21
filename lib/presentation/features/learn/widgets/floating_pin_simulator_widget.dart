@@ -157,7 +157,7 @@ class _FloatingPinSimulatorWidgetState
             'An unconnected digital input has an internal impedance over 100 MΩ. '
             'Without a pull resistor, it acts as an antenna picking up stray electromagnetic radiation!',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

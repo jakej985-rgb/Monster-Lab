@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/app_version.dart';
+import '../../../core/app_metadata.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../shared/widgets/monster_card.dart';
 import '../../shared/widgets/monster_button.dart';
@@ -9,6 +9,11 @@ class AboutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final successColor = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.success
+        : AppColors.textSuccessOnLight;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('About Monster Lab'),
@@ -56,15 +61,15 @@ class AboutScreen extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppColors.surfaceContainerLight,
+                    color: colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Text(
-                    AppVersion.displayVersion,
+                  child: Text(
+                    appVersionDisplay,
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textSecondaryLight,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ),
@@ -74,7 +79,7 @@ class AboutScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey.shade700,
+                    color: colorScheme.onSurfaceVariant,
                     height: 1.4,
                   ),
                 ),
@@ -85,27 +90,27 @@ class AboutScreen extends StatelessWidget {
 
           // Privacy & COPPA Card
           MonsterCard(
-            color: AppColors.textSuccessOnLight.withValues(alpha: 0.08),
-            child: const Column(
+            color: successColor.withValues(alpha: 0.08),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     Icon(Icons.verified_user_rounded,
-                        color: AppColors.textSuccessOnLight, size: 24),
-                    SizedBox(width: 10),
+                        color: successColor, size: 24),
+                    const SizedBox(width: 10),
                     Text(
                       '100% Offline & Child-Safe',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
-                        color: AppColors.textSuccessOnLight,
+                        color: successColor,
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
-                Text(
+                const SizedBox(height: 10),
+                const Text(
                   'Monster Lab operates entirely on-device without an internet connection. '
                   'There are zero third-party ads, zero tracking scripts, zero cloud telemetry, '
                   'and zero personal data collection. Designed to satisfy COPPA and FERPA standards.',
@@ -134,19 +139,19 @@ class AboutScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 14),
-                _buildStatRow(Icons.school, '12 Step-by-Step Lessons',
+                _buildStatRow(context, Icons.school, '12 Step-by-Step Lessons',
                     'Digital buses, I2C, SPI, UART, & motor physics'),
                 const Divider(height: 16),
-                _buildStatRow(Icons.memory, '54 Kit Components',
+                _buildStatRow(context, Icons.memory, '54 Kit Components',
                     'Full pinouts, operating voltage, & sample C++ codes'),
                 const Divider(height: 16),
-                _buildStatRow(Icons.handyman, '20 Guided Projects',
+                _buildStatRow(context, Icons.handyman, '20 Guided Projects',
                     'Interactive wiring, code diffs, & variants'),
                 const Divider(height: 16),
-                _buildStatRow(Icons.quiz, '24 Circuit Challenges',
+                _buildStatRow(context, Icons.quiz, '24 Circuit Challenges',
                     'Progressive tiered hints & interactive quizzes'),
                 const Divider(height: 16),
-                _buildStatRow(Icons.military_tech, '20 Mastery Badges',
+                _buildStatRow(context, Icons.military_tech, '20 Mastery Badges',
                     'XP achievements and milestone progression'),
               ],
             ),
@@ -162,7 +167,7 @@ class AboutScreen extends StatelessWidget {
               showLicensePage(
                 context: context,
                 applicationName: 'Monster Lab',
-                applicationVersion: AppVersion.version,
+                applicationVersion: appVersionFull,
                 applicationLegalese:
                     'Copyright (c) 2026 Monster Lab Contributors. Open-source educational platform.',
               );
@@ -182,7 +187,8 @@ class AboutScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatRow(IconData icon, String title, String subtitle) {
+  Widget _buildStatRow(
+      BuildContext context, IconData icon, String title, String subtitle) {
     return Row(
       children: [
         Icon(icon, size: 20, color: AppColors.primaryViolet),
@@ -195,7 +201,9 @@ class AboutScreen extends StatelessWidget {
                   style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 13)),
               Text(subtitle,
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+                  style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant)),
             ],
           ),
         ),

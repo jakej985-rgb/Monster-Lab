@@ -12,6 +12,9 @@ class ProgressScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final activeProgress = ref.watch(activeProgressProvider);
+    final colorScheme = Theme.of(context).colorScheme;
+    final hasFirstBadge =
+        activeProgress?.completedLessonIds.isNotEmpty ?? false;
 
     return Scaffold(
       appBar: AppBar(
@@ -44,9 +47,9 @@ class ProgressScreen extends ConsumerWidget {
                                 color: AppColors.primaryViolet),
                           ),
                           const SizedBox(height: 4),
-                          const Text('Lessons Done',
+                          Text('Lessons Done',
                               style: TextStyle(
-                                  color: AppColors.textSecondaryLight,
+                                  color: colorScheme.onSurfaceVariant,
                                   fontSize: 12)),
                         ],
                       ),
@@ -65,9 +68,9 @@ class ProgressScreen extends ConsumerWidget {
                                 color: AppColors.energyAmber),
                           ),
                           const SizedBox(height: 4),
-                          const Text('Robots Built',
+                          Text('Robots Built',
                               style: TextStyle(
-                                  color: AppColors.textSecondaryLight,
+                                  color: colorScheme.onSurfaceVariant,
                                   fontSize: 12)),
                         ],
                       ),
@@ -86,9 +89,9 @@ class ProgressScreen extends ConsumerWidget {
                                 color: AppColors.accentCyanDark),
                           ),
                           const SizedBox(height: 4),
-                          const Text('Parts Found',
+                          Text('Parts Found',
                               style: TextStyle(
-                                  color: AppColors.textSecondaryLight,
+                                  color: colorScheme.onSurfaceVariant,
                                   fontSize: 12)),
                         ],
                       ),
@@ -108,26 +111,41 @@ class ProgressScreen extends ConsumerWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(12),
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFFFF3CD),
+                    decoration: BoxDecoration(
+                      color: hasFirstBadge
+                          ? AppColors.energyAmber.withValues(alpha: 0.15)
+                          : colorScheme.surfaceContainerHighest,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.star,
-                        color: AppColors.energyAmber, size: 36),
+                    child: Icon(
+                      hasFirstBadge ? Icons.star : Icons.lock_outline,
+                      color: hasFirstBadge
+                          ? AppColors.energyAmber
+                          : colorScheme.onSurfaceVariant,
+                      size: 36,
+                    ),
                   ),
                   const SizedBox(width: 16),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('First Circuit Scout',
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16)),
-                        SizedBox(height: 4),
-                        Text('Completed your first lesson in Monster Lab!',
-                            style: TextStyle(
-                                color: AppColors.textSecondaryLight,
-                                fontSize: 13)),
+                        Text(
+                          hasFirstBadge
+                              ? 'First Circuit Scout'
+                              : 'Your first badge is waiting',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          hasFirstBadge
+                              ? 'Completed your first lesson in Monster Lab!'
+                              : 'Complete your first lesson to earn the First Circuit Scout badge.',
+                          style: TextStyle(
+                              color: colorScheme.onSurfaceVariant,
+                              fontSize: 13),
+                        ),
                       ],
                     ),
                   ),

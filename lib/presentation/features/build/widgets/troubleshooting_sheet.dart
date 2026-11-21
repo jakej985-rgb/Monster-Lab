@@ -44,6 +44,11 @@ class _TroubleshootingSheetState extends State<TroubleshootingSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final solutionColor = Theme.of(context).brightness == Brightness.dark
+        ? AppColors.success
+        : AppColors.textSuccessOnLight;
+
     return DraggableScrollableSheet(
       initialChildSize: 0.7,
       minChildSize: 0.35,
@@ -70,7 +75,7 @@ class _TroubleshootingSheetState extends State<TroubleshootingSheet> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: AppColors.textSecondaryLight.withValues(alpha: 0.4),
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -88,11 +93,11 @@ class _TroubleshootingSheetState extends State<TroubleshootingSheet> {
                         color: AppColors.energyAmber, size: 24),
                   ),
                   const SizedBox(width: 12),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           'Troubleshooting & Diagnostics',
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
@@ -101,7 +106,7 @@ class _TroubleshootingSheetState extends State<TroubleshootingSheet> {
                           'Physical failure modes & diagnostic steps',
                           style: TextStyle(
                               fontSize: 13,
-                              color: AppColors.textSecondaryLight),
+                              color: colorScheme.onSurfaceVariant),
                         ),
                       ],
                     ),
@@ -156,10 +161,10 @@ class _TroubleshootingSheetState extends State<TroubleshootingSheet> {
 
               Expanded(
                 child: widget.items.isEmpty
-                    ? const Center(
+                    ? Center(
                         child: Text(
                           'No known glitches reported for this project.',
-                          style: TextStyle(color: AppColors.textSecondaryLight),
+                          style: TextStyle(color: colorScheme.onSurfaceVariant),
                         ),
                       )
                     : ListView.separated(
@@ -172,13 +177,12 @@ class _TroubleshootingSheetState extends State<TroubleshootingSheet> {
 
                           return Card(
                             elevation: 0,
-                            color: AppColors.surfaceContainerLight
+                            color: colorScheme.surfaceContainerHighest
                                 .withValues(alpha: 0.6),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                               side: BorderSide(
-                                color: AppColors.textSecondaryLight
-                                    .withValues(alpha: 0.15),
+                                color: colorScheme.outlineVariant,
                               ),
                             ),
                             child: Padding(
@@ -234,17 +238,17 @@ class _TroubleshootingSheetState extends State<TroubleshootingSheet> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const Icon(Icons.help_outline_rounded,
-                                          color: AppColors.textSecondaryLight,
+                                      Icon(Icons.help_outline_rounded,
+                                          color: colorScheme.onSurfaceVariant,
                                           size: 16),
                                       const SizedBox(width: 8),
                                       Expanded(
                                         child: Text(
                                           'Cause: ${item.cause}',
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                               fontSize: 13,
                                               color:
-                                                  AppColors.textSecondaryLight),
+                                                  colorScheme.onSurfaceVariant),
                                         ),
                                       ),
                                     ],
@@ -266,18 +270,16 @@ class _TroubleshootingSheetState extends State<TroubleshootingSheet> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        const Icon(Icons.check_circle_rounded,
-                                            color: AppColors.textSuccessOnLight,
-                                            size: 16),
+                                        Icon(Icons.check_circle_rounded,
+                                            color: solutionColor, size: 16),
                                         const SizedBox(width: 8),
                                         Expanded(
                                           child: Text(
                                             item.solution,
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontSize: 13,
                                               fontWeight: FontWeight.w500,
-                                              color:
-                                                  AppColors.textSuccessOnLight,
+                                              color: solutionColor,
                                             ),
                                           ),
                                         ),
@@ -326,9 +328,9 @@ class _TroubleshootingSheetState extends State<TroubleshootingSheet> {
                                                           .check_box_outline_blank,
                                                   size: 20,
                                                   color: isChecked
-                                                      ? AppColors
-                                                          .textSuccessOnLight
-                                                      : Colors.grey,
+                                                      ? solutionColor
+                                                      : colorScheme
+                                                          .onSurfaceVariant,
                                                 ),
                                                 const SizedBox(width: 8),
                                                 Expanded(

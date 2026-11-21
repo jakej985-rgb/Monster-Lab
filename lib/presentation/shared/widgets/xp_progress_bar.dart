@@ -16,6 +16,8 @@ class XPProgressBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final percent = (progressRatio * 100).toInt().clamp(0, 100);
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Semantics(
       container: true,
       label:
@@ -23,13 +25,13 @@ class XPProgressBar extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colorScheme.surface,
           borderRadius: BorderRadius.circular(999),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
-              color: Color(0x146C5CE7),
+              color: colorScheme.shadow.withValues(alpha: 0.08),
               blurRadius: 8,
-              offset: Offset(0, 2),
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -59,7 +61,7 @@ class XPProgressBar extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: progressRatio,
                     semanticsLabel: 'Level progress',
-                    backgroundColor: AppColors.surfaceContainerLight,
+                    backgroundColor: colorScheme.surfaceContainerHighest,
                     valueColor: const AlwaysStoppedAnimation<Color>(
                         AppColors.energyAmber),
                   ),
@@ -69,10 +71,10 @@ class XPProgressBar extends StatelessWidget {
             const SizedBox(width: 12),
             Text(
               '$totalXp XP',
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 13,
-                color: AppColors.textPrimaryLight,
+                color: colorScheme.onSurface,
               ),
             ),
           ],

@@ -53,6 +53,7 @@ class _ChallengesScreenState extends ConsumerState<ChallengesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final curriculumRepo = ref.watch(curriculumRepositoryProvider);
     final activeProgress = ref.watch(activeProgressProvider);
 
@@ -135,7 +136,7 @@ class _ChallengesScreenState extends ConsumerState<ChallengesScreen> {
                         child: LinearProgressIndicator(
                           value: progressPercent,
                           minHeight: 10,
-                          backgroundColor: Colors.grey.shade300,
+                          backgroundColor: colorScheme.surfaceContainerHighest,
                           valueColor: const AlwaysStoppedAnimation<Color>(
                               AppColors.success),
                         ),
@@ -312,8 +313,8 @@ class _ChallengesScreenState extends ConsumerState<ChallengesScreen> {
                                   challenge.prompt,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      color: AppColors.textSecondaryLight,
+                                  style: TextStyle(
+                                      color: colorScheme.onSurfaceVariant,
                                       fontSize: 14),
                                 ),
                                 const SizedBox(height: 12),
@@ -337,10 +338,11 @@ class _ChallengesScreenState extends ConsumerState<ChallengesScreen> {
                                         ],
                                       )
                                     else
-                                      const Text(
+                                      Text(
                                         'Not attempted yet',
                                         style: TextStyle(
-                                            color: Colors.grey, fontSize: 13),
+                                            color: colorScheme.onSurfaceVariant,
+                                            fontSize: 13),
                                       ),
                                     const Row(
                                       children: [

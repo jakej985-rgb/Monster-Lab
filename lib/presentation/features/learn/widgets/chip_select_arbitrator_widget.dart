@@ -110,7 +110,7 @@ class _ChipSelectArbitratorWidgetState
             'Unlike I2C, SPI uses dedicated Chip Select (CS) pins instead of software addresses. '
             'Pulling a CS line LOW awakens that chip and enables its MISO output. Deselected chips float in High-Impedance (Hi-Z) tri-state.',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

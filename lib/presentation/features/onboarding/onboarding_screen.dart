@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/routing/route_constants.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../domain/models/avatar_model.dart';
 import '../../../domain/models/learner_profile_model.dart';
 import '../../shared/providers.dart';
@@ -74,6 +73,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final selectedAvatar = MonsterAvatar.findById(_selectedAvatarId);
 
     return Scaffold(
@@ -111,11 +111,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
-                    const Text(
+                    Text(
                       'Build interactive robots, master electronic circuits, and bring your Monster Kit to life!',
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppColors.textSecondaryLight,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -173,7 +173,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           decoration: BoxDecoration(
                             color: isSelected
                                 ? avatar.backgroundColor
-                                : Colors.grey.withValues(alpha: 0.08),
+                                : colorScheme.surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: isSelected
@@ -204,7 +204,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                       : FontWeight.normal,
                                   color: isSelected
                                       ? avatar.accentColor
-                                      : AppColors.textSecondaryLight,
+                                      : colorScheme.onSurfaceVariant,
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),

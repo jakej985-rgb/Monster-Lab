@@ -17,6 +17,8 @@ class CodeStudioWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -49,13 +51,13 @@ class CodeStudioWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'ARDUINO SOURCE CODE',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.1,
-                  color: AppColors.textSecondaryLight,
+                  color: colorScheme.onSurfaceVariant,
                 ),
               ),
               TextButton.icon(
@@ -85,8 +87,7 @@ class CodeStudioWidget extends StatelessWidget {
             decoration: BoxDecoration(
               color: AppColors.surfaceDark,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                  color: AppColors.textSecondaryLight.withValues(alpha: 0.2)),
+              border: Border.all(color: colorScheme.outlineVariant),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.15),
@@ -109,23 +110,22 @@ class CodeStudioWidget extends StatelessWidget {
         if (phase.codeExplanation != null &&
             phase.codeExplanation!.isNotEmpty) ...[
           const SizedBox(height: 24),
-          const Text(
+          Text(
             'PEDAGOGICAL LOGIC BREAKDOWN',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.1,
-              color: AppColors.textSecondaryLight,
+              color: colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: AppColors.surfaceContainerLight,
+              color: colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                  color: AppColors.textSecondaryLight.withValues(alpha: 0.15)),
+              border: Border.all(color: colorScheme.outlineVariant),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -158,13 +158,13 @@ class CodeStudioWidget extends StatelessWidget {
         ],
         if (phase.verificationCheckpoints.isNotEmpty) ...[
           const SizedBox(height: 24),
-          const Text(
+          Text(
             'CONCEPT CHECKPOINTS',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.1,
-              color: AppColors.textSecondaryLight,
+              color: colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 8),
@@ -180,7 +180,8 @@ class CodeStudioWidget extends StatelessWidget {
                 elevation: 0,
                 color: isChecked
                     ? AppColors.success.withValues(alpha: 0.08)
-                    : AppColors.surfaceContainerLight.withValues(alpha: 0.5),
+                    : colorScheme.surfaceContainerHighest
+                        .withValues(alpha: 0.5),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                   side: BorderSide(
@@ -201,7 +202,7 @@ class CodeStudioWidget extends StatelessWidget {
                       fontWeight:
                           isChecked ? FontWeight.w600 : FontWeight.normal,
                       decoration: isChecked ? TextDecoration.lineThrough : null,
-                      color: isChecked ? AppColors.textSecondaryLight : null,
+                      color: isChecked ? colorScheme.onSurfaceVariant : null,
                     ),
                   ),
                   controlAffinity: ListTileControlAffinity.leading,

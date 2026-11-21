@@ -108,7 +108,7 @@ class _EngineeringPredictionWidgetState
           Text(
             'Engineers never blindly run code. We form a hypothesis, predict the physical result, and observe the reality.',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.8),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

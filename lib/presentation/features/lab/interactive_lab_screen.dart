@@ -33,6 +33,7 @@ class _InteractiveLabScreenState extends State<InteractiveLabScreen>
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -41,10 +42,10 @@ class _InteractiveLabScreenState extends State<InteractiveLabScreen>
         ),
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: AppColors.primaryViolet,
+          indicatorColor: colorScheme.primary,
           indicatorWeight: 3,
-          labelColor: AppColors.primaryViolet,
-          unselectedLabelColor: Colors.grey,
+          labelColor: colorScheme.primary,
+          unselectedLabelColor: colorScheme.onSurfaceVariant,
           labelStyle: const TextStyle(fontWeight: FontWeight.bold),
           tabs: const [
             Tab(
@@ -78,12 +79,13 @@ class _InteractiveLabScreenState extends State<InteractiveLabScreen>
   }
 
   Widget _buildCircuitPresetSelector() {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: colorScheme.outlineVariant),
       ),
       child: Row(
         children: [
@@ -122,12 +124,13 @@ class _InteractiveLabScreenState extends State<InteractiveLabScreen>
   }
 
   Widget _buildCodePresetSelector() {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: colorScheme.outlineVariant),
       ),
       child: Row(
         children: [

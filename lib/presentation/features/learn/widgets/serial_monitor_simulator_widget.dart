@@ -97,7 +97,7 @@ class _SerialMonitorSimulatorWidgetState
           Text(
             'The sketch specifies Serial.begin(9600);. If the Serial Monitor listens at a mismatched baud rate, characters turn into garbled gibberish!',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

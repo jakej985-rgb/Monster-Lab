@@ -157,7 +157,7 @@ class _I2cAddressScannerWidgetState extends State<I2cAddressScannerWidget> {
             'The standard Arduino I2C Scanner sketch iterates from address 1 to 126. '
             'It sends Wire.endTransmission() and listens for the hardware ACK bit (error code 0).',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

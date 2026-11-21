@@ -71,6 +71,7 @@ class _GuidedCodeLabWidgetState extends State<GuidedCodeLabWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final renderedCode = widget.preset.renderCode(_variableValues);
     final delay = _variableValues['blinkDelay'] ?? 1000;
 
@@ -95,7 +96,9 @@ class _GuidedCodeLabWidgetState extends State<GuidedCodeLabWidget> {
               Text(
                 widget.preset.description,
                 style: TextStyle(
-                    fontSize: 13, color: Colors.grey.shade800, height: 1.3),
+                    fontSize: 13,
+                    color: colorScheme.onSurfaceVariant,
+                    height: 1.3),
               ),
             ],
           ),
@@ -111,7 +114,9 @@ class _GuidedCodeLabWidgetState extends State<GuidedCodeLabWidget> {
                 width: 54,
                 height: 54,
                 decoration: BoxDecoration(
-                  color: _ledLit ? AppColors.energyAmber : Colors.grey.shade300,
+                  color: _ledLit
+                      ? AppColors.energyAmber
+                      : colorScheme.surfaceContainerHighest,
                   shape: BoxShape.circle,
                   boxShadow: _ledLit
                       ? [
@@ -125,7 +130,7 @@ class _GuidedCodeLabWidgetState extends State<GuidedCodeLabWidget> {
                 ),
                 child: Icon(
                   Icons.lightbulb,
-                  color: _ledLit ? Colors.white : Colors.grey.shade600,
+                  color: _ledLit ? Colors.white : colorScheme.onSurfaceVariant,
                   size: 32,
                 ),
               ),
@@ -142,8 +147,8 @@ class _GuidedCodeLabWidgetState extends State<GuidedCodeLabWidget> {
                     const SizedBox(height: 2),
                     Text(
                       'Cycle interval: $delay ms (${(1000.0 / delay).toStringAsFixed(1)} Hz blink frequency)',
-                      style:
-                          TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                      style: TextStyle(
+                          fontSize: 12, color: colorScheme.onSurfaceVariant),
                     ),
                   ],
                 ),
@@ -156,7 +161,7 @@ class _GuidedCodeLabWidgetState extends State<GuidedCodeLabWidget> {
         // Interactive Variable Sliders
         for (final v in widget.preset.variables) ...[
           MonsterCard(
-            color: Colors.grey.shade50,
+            color: colorScheme.surfaceContainerLow,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -198,7 +203,8 @@ class _GuidedCodeLabWidgetState extends State<GuidedCodeLabWidget> {
                 ),
                 Text(
                   v.description,
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  style: TextStyle(
+                      fontSize: 12, color: colorScheme.onSurfaceVariant),
                 ),
               ],
             ),
@@ -274,7 +280,7 @@ class _GuidedCodeLabWidgetState extends State<GuidedCodeLabWidget> {
         const SizedBox(height: 6),
         Text(
           'Understand what cryptic C++ error messages actually mean and how to fix them.',
-          style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
+          style: TextStyle(fontSize: 13, color: colorScheme.onSurfaceVariant),
         ),
         const SizedBox(height: 10),
 
@@ -303,8 +309,9 @@ class _GuidedCodeLabWidgetState extends State<GuidedCodeLabWidget> {
   }
 
   Widget _buildErrorDecoderCard(CompilerErrorSample sample) {
+    final colorScheme = Theme.of(context).colorScheme;
     return MonsterCard(
-      color: Colors.grey.shade50,
+      color: colorScheme.surfaceContainerLow,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -362,8 +369,10 @@ class _GuidedCodeLabWidgetState extends State<GuidedCodeLabWidget> {
                 Expanded(
                   child: Text.rich(
                     TextSpan(
-                      style: const TextStyle(
-                          color: Colors.black87, fontSize: 13, height: 1.3),
+                      style: TextStyle(
+                          color: colorScheme.onSurface,
+                          fontSize: 13,
+                          height: 1.3),
                       children: [
                         const TextSpan(
                           text: 'What this means in plain English: ',
@@ -398,9 +407,10 @@ class _GuidedCodeLabWidgetState extends State<GuidedCodeLabWidget> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.red.shade50,
+                        color: AppColors.danger.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: Colors.red.shade200),
+                        border: Border.all(
+                            color: AppColors.danger.withValues(alpha: 0.3)),
                       ),
                       child: Text(
                         sample.buggyCode,
@@ -425,9 +435,10 @@ class _GuidedCodeLabWidgetState extends State<GuidedCodeLabWidget> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.green.shade50,
+                        color: AppColors.success.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: Colors.green.shade200),
+                        border: Border.all(
+                            color: AppColors.success.withValues(alpha: 0.3)),
                       ),
                       child: Text(
                         sample.fixedCode,
@@ -446,7 +457,7 @@ class _GuidedCodeLabWidgetState extends State<GuidedCodeLabWidget> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.grey.shade100,
+              color: colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(6),
             ),
             child: Row(
@@ -458,8 +469,10 @@ class _GuidedCodeLabWidgetState extends State<GuidedCodeLabWidget> {
                 Expanded(
                   child: Text.rich(
                     TextSpan(
-                      style: const TextStyle(
-                          color: Colors.black87, fontSize: 12, height: 1.3),
+                      style: TextStyle(
+                          color: colorScheme.onSurface,
+                          fontSize: 12,
+                          height: 1.3),
                       children: [
                         const TextSpan(
                           text: 'The Science: ',

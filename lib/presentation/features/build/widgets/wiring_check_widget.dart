@@ -16,6 +16,8 @@ class WiringCheckWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -65,18 +67,18 @@ class WiringCheckWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 24),
-        const Row(
+        Row(
           children: [
             Icon(Icons.checklist_rounded,
-                size: 18, color: AppColors.textSecondaryLight),
-            SizedBox(width: 8),
+                size: 18, color: colorScheme.onSurfaceVariant),
+            const SizedBox(width: 8),
             Text(
               'SAFETY VERIFICATION CHECKPOINTS',
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1.1,
-                color: AppColors.textSecondaryLight,
+                color: colorScheme.onSurfaceVariant,
               ),
             ),
           ],
@@ -94,7 +96,7 @@ class WiringCheckWidget extends StatelessWidget {
               elevation: 0,
               color: isChecked
                   ? AppColors.success.withValues(alpha: 0.08)
-                  : AppColors.surfaceContainerLight.withValues(alpha: 0.5),
+                  : colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
                 side: BorderSide(
@@ -114,7 +116,7 @@ class WiringCheckWidget extends StatelessWidget {
                     fontSize: 14,
                     fontWeight: isChecked ? FontWeight.w600 : FontWeight.normal,
                     decoration: isChecked ? TextDecoration.lineThrough : null,
-                    color: isChecked ? AppColors.textSecondaryLight : null,
+                    color: isChecked ? colorScheme.onSurfaceVariant : null,
                   ),
                 ),
                 controlAffinity: ListTileControlAffinity.leading,

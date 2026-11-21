@@ -131,7 +131,7 @@ class _SerialPrintExperimentWidgetState
           Text(
             'The "ln" in println stands for "line". Toggle between print() and println() to see how newline characters format terminal logs:',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

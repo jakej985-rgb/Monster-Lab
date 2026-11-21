@@ -124,7 +124,7 @@ class _TroubleshootingScreenState extends ConsumerState<TroubleshootingScreen>
           controller: _tabController,
           indicatorColor: AppColors.primaryViolet,
           labelColor: AppColors.primaryViolet,
-          unselectedLabelColor: Colors.grey,
+          unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
           tabs: const [
             Tab(icon: Icon(Icons.psychology), text: 'Diagnostic Wizard'),
             Tab(icon: Icon(Icons.science), text: 'Debugging Method'),
@@ -236,8 +236,10 @@ class _TroubleshootingScreenState extends ConsumerState<TroubleshootingScreen>
                         children: [
                           Text(
                             currentNode.title,
-                            style: const TextStyle(
-                              color: AppColors.textSecondaryLight,
+                            style: TextStyle(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant,
                               fontSize: 13,
                               fontWeight: FontWeight.bold,
                             ),
@@ -264,8 +266,10 @@ class _TroubleshootingScreenState extends ConsumerState<TroubleshootingScreen>
                     ),
                     child: Text(
                       currentNode.promptDetails!,
-                      style: const TextStyle(
-                          fontSize: 14, color: AppColors.textSecondaryLight),
+                      style: TextStyle(
+                          fontSize: 14,
+                          color:
+                              Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                   ),
                 ],
@@ -301,9 +305,11 @@ class _TroubleshootingScreenState extends ConsumerState<TroubleshootingScreen>
                             const SizedBox(height: 4),
                             Text(
                               option.description!,
-                              style: const TextStyle(
+                              style: TextStyle(
                                   fontSize: 13,
-                                  color: AppColors.textSecondaryLight),
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant),
                             ),
                           ],
                         ],
@@ -449,11 +455,12 @@ class _TroubleshootingScreenState extends ConsumerState<TroubleshootingScreen>
                   decoration: BoxDecoration(
                     color: isChecked
                         ? AppColors.success.withValues(alpha: 0.1)
-                        : Colors.grey.shade100,
+                        : Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color:
-                          isChecked ? AppColors.success : Colors.grey.shade300,
+                      color: isChecked
+                          ? AppColors.success
+                          : Theme.of(context).colorScheme.outlineVariant,
                       width: 1.2,
                     ),
                   ),
@@ -464,7 +471,9 @@ class _TroubleshootingScreenState extends ConsumerState<TroubleshootingScreen>
                         isChecked
                             ? Icons.check_box
                             : Icons.check_box_outline_blank,
-                        color: isChecked ? AppColors.success : Colors.grey,
+                        color: isChecked
+                            ? AppColors.success
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
                         size: 20,
                       ),
                       const SizedBox(width: 10),
@@ -737,7 +746,7 @@ class _TroubleshootingScreenState extends ConsumerState<TroubleshootingScreen>
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.grey.shade100,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Column(
@@ -926,10 +935,11 @@ class _TroubleshootingScreenState extends ConsumerState<TroubleshootingScreen>
                     // Science explanation
                     Text(
                       pb.theScience,
-                      style: const TextStyle(
+                      style: TextStyle(
                           fontSize: 13,
                           height: 1.4,
-                          color: AppColors.textSecondaryLight),
+                          color:
+                              Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                     const SizedBox(height: 12),
 

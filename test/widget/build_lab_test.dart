@@ -10,6 +10,8 @@ import 'package:monster_lab/data/repositories/curriculum_repository_impl.dart';
 import 'package:monster_lab/data/repositories/profile_repository_impl.dart';
 import 'package:monster_lab/data/repositories/progress_repository_impl.dart';
 import 'package:monster_lab/domain/models/learner_profile_model.dart';
+import 'package:monster_lab/domain/models/lesson_model.dart';
+import 'package:monster_lab/domain/models/project_model.dart';
 import 'package:monster_lab/presentation/features/build/build_detail_screen.dart';
 import 'package:monster_lab/presentation/features/build/build_screen.dart';
 import 'package:monster_lab/presentation/shared/providers.dart';
@@ -81,6 +83,52 @@ void main() {
       await tester.tap(find.text('All Tiers'));
       await tester.pumpAndSettle();
       expect(find.text('Intruder Alarm MONSTER'), findsOneWidget);
+    });
+
+    testWidgets(
+        'BuildScreen shows an error with retry when projects fail to load',
+        (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            storageServiceProvider.overrideWithValue(storageService),
+            curriculumRepositoryProvider
+                .overrideWithValue(_FailingBuildRepository(engine)),
+          ],
+          child: const MaterialApp(home: BuildScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Could not load Build Lab'), findsOneWidget);
+      expect(find.text('Try Again'), findsOneWidget);
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+
+      await tester.tap(find.text('Try Again'));
+      await tester.pumpAndSettle();
+      expect(find.text('Could not load Build Lab'), findsOneWidget);
+    });
+
+    testWidgets(
+        'BuildDetailScreen shows an error with retry when a project fails to load',
+        (tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            storageServiceProvider.overrideWithValue(storageService),
+            curriculumRepositoryProvider
+                .overrideWithValue(_FailingBuildRepository(engine)),
+          ],
+          child: const MaterialApp(
+            home: BuildDetailScreen(projectId: 'proj_01'),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Could not load project'), findsOneWidget);
+      expect(find.text('Try Again'), findsOneWidget);
+      expect(find.byType(CircularProgressIndicator), findsNothing);
     });
 
     testWidgets('BuildScreen shows locked dialog when tapping locked project',
@@ -244,4 +292,18 @@ void main() {
       expect(progress.earnedBadgeIds.contains('badge_security_rookie'), isTrue);
     });
   });
+}
+
+class _FailingBuildRepository extends CurriculumRepositoryImpl {
+  _FailingBuildRepository(super.engine);
+
+  @override
+  Future<List<ProjectModel>> getProjects({DifficultyTier? tier}) async {
+    throw Exception('simulated project list failure');
+  }
+
+  @override
+  Future<ProjectModel> getProjectById(String id) async {
+    throw Exception('simulated project load failure');
+  }
 }

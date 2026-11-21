@@ -57,10 +57,13 @@ class _ChallengeDetailScreenState extends ConsumerState<ChallengeDetailScreen> {
     });
 
     if (isAnswerCorrect) {
+      ref.read(soundEffectsProvider).success();
       ref.read(activeProgressProvider.notifier).solveChallenge(
             challenge.id,
             challenge.xpAward,
           );
+    } else {
+      ref.read(soundEffectsProvider).error();
     }
   }
 
@@ -148,6 +151,10 @@ class _ChallengeDetailScreenState extends ConsumerState<ChallengeDetailScreen> {
           }
 
           final challenge = snapshot.data!;
+          final colorScheme = Theme.of(context).colorScheme;
+          final successColor = Theme.of(context).brightness == Brightness.dark
+              ? AppColors.success
+              : AppColors.textSuccessOnLight;
           final isAlreadySolved =
               activeProgress?.solvedChallengeIds.contains(challenge.id) ??
                   false;
@@ -410,7 +417,7 @@ class _ChallengeDetailScreenState extends ConsumerState<ChallengeDetailScreen> {
 
                   Color borderColor = isSelected
                       ? AppColors.primaryViolet
-                      : Colors.grey.shade300;
+                      : colorScheme.outlineVariant;
                   Color backgroundColor = isSelected
                       ? AppColors.primaryViolet.withValues(alpha: 0.08)
                       : Colors.transparent;
@@ -459,7 +466,7 @@ class _ChallengeDetailScreenState extends ConsumerState<ChallengeDetailScreen> {
                                 decoration: BoxDecoration(
                                   color: isSelected
                                       ? AppColors.primaryViolet
-                                      : Colors.grey.shade200,
+                                      : colorScheme.surfaceContainerHighest,
                                   shape: BoxShape.circle,
                                 ),
                                 child: Text(
@@ -468,7 +475,7 @@ class _ChallengeDetailScreenState extends ConsumerState<ChallengeDetailScreen> {
                                     fontWeight: FontWeight.bold,
                                     color: isSelected
                                         ? Colors.white
-                                        : Colors.black87,
+                                        : colorScheme.onSurface,
                                   ),
                                 ),
                               ),
@@ -623,15 +630,14 @@ class _ChallengeDetailScreenState extends ConsumerState<ChallengeDetailScreen> {
                           children: [
                             Row(
                               children: [
-                                const Icon(Icons.stars,
-                                    color: AppColors.textSuccessOnLight,
-                                    size: 28),
+                                Icon(Icons.stars,
+                                    color: successColor, size: 28),
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: Text(
                                     'Outstanding! Mastered (+${challenge.xpAward} XP)',
-                                    style: const TextStyle(
-                                      color: AppColors.textSuccessOnLight,
+                                    style: TextStyle(
+                                      color: successColor,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 17,
                                     ),

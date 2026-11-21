@@ -130,7 +130,8 @@ class _VocabularyMatchWidgetState extends State<VocabularyMatchWidget> {
                   ? 1
                   : (_round * _pageSize + _matchedTerms.length) / _pairs.length,
               color: AppColors.energyAmber,
-              backgroundColor: AppColors.surfaceContainerLight,
+              backgroundColor:
+                  Theme.of(context).colorScheme.surfaceContainerHighest,
             ),
             const SizedBox(height: 8),
             const Text(

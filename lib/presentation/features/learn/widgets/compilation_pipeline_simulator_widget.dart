@@ -198,7 +198,7 @@ class _CompilationPipelineSimulatorWidgetState
           Text(
             'The computer does NOT send your English words to the chip. It translates your C++ instructions into binary numbers. Walk through the 5 phases below:',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.8),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

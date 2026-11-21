@@ -185,7 +185,7 @@ class _IdeLifecycleSimulatorWidgetState
           Text(
             'Watch how the microcontroller boots: setup() runs ONCE to initialize hardware, then loop() cycles repeatedly forever.',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

@@ -23,6 +23,7 @@ import '../../domain/models/course_model.dart';
 import '../../data/datasources/curriculum_data_engine.dart';
 import '../../core/services/parent_session_service.dart';
 import '../../core/services/component_restriction_service.dart';
+import '../../core/services/sound_effects_service.dart';
 
 final storageServiceProvider = Provider<StorageService>((ref) {
   throw UnimplementedError(
@@ -299,6 +300,11 @@ final settingsNotifierProvider =
   return SettingsNotifier(repo);
 });
 
+final soundEffectsProvider = Provider<SoundEffectsService>((ref) {
+  final settings = ref.watch(settingsNotifierProvider);
+  return SoundEffectsService(enabled: settings.soundEnabled);
+});
+
 final coursesProvider = FutureProvider<List<CourseModel>>((ref) async {
   final engine = ref.watch(curriculumDataEngineProvider);
   return engine.getCourses();
@@ -307,6 +313,28 @@ final coursesProvider = FutureProvider<List<CourseModel>>((ref) async {
 final orderedLessonsProvider = FutureProvider<List<Lesson>>((ref) async {
   final engine = ref.watch(curriculumDataEngineProvider);
   return engine.getLessonsOrdered();
+});
+
+typedef CurriculumTotals = ({
+  int lessons,
+  int projects,
+  int components,
+  int challenges,
+});
+
+final curriculumTotalsProvider = FutureProvider<CurriculumTotals>((ref) async {
+  final repository = ref.watch(curriculumRepositoryProvider);
+  final lessons = await repository.getLessons();
+  final projects = await repository.getProjects();
+  final components = await repository.getComponents();
+  final challenges = await repository.getChallenges();
+
+  return (
+    lessons: lessons.length,
+    projects: projects.length,
+    components: components.length,
+    challenges: challenges.length,
+  );
 });
 
 final courseProgressProvider =

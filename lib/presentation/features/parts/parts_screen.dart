@@ -44,7 +44,7 @@ class _PartsScreenState extends ConsumerState<PartsScreen> {
     super.dispose();
   }
 
-  Color _getCategoryColor(String category) {
+  Color _getCategoryColor(String category, ColorScheme colorScheme) {
     switch (category) {
       case 'microcontroller':
         return AppColors.primaryViolet;
@@ -59,7 +59,7 @@ class _PartsScreenState extends ConsumerState<PartsScreen> {
       case 'switch':
         return AppColors.warning;
       case 'passive':
-        return AppColors.textSecondaryLight;
+        return colorScheme.onSurfaceVariant;
       default:
         return AppColors.primaryViolet;
     }
@@ -233,8 +233,9 @@ class _PartsScreenState extends ConsumerState<PartsScreen> {
                                     : discoveredIds.length /
                                         allComponents.length,
                                 minHeight: 6,
-                                backgroundColor:
-                                    AppColors.surfaceContainerLight,
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainerHighest,
                                 valueColor: const AlwaysStoppedAnimation<Color>(
                                     AppColors.energyAmber),
                               ),
@@ -263,7 +264,7 @@ class _PartsScreenState extends ConsumerState<PartsScreen> {
                           style: TextStyle(
                             color: _selectedCategory == cat['id']
                                 ? Colors.white
-                                : AppColors.textPrimaryLight,
+                                : Theme.of(context).colorScheme.onSurface,
                             fontWeight: _selectedCategory == cat['id']
                                 ? FontWeight.bold
                                 : FontWeight.normal,
@@ -272,7 +273,9 @@ class _PartsScreenState extends ConsumerState<PartsScreen> {
                         ),
                         selected: _selectedCategory == cat['id'],
                         selectedColor: AppColors.primaryViolet,
-                        backgroundColor: AppColors.surfaceContainerLight,
+                        backgroundColor: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
                         showCheckmark: false,
                         onSelected: (_) {
                           setState(() => _selectedCategory = cat['id']!);
@@ -291,8 +294,11 @@ class _PartsScreenState extends ConsumerState<PartsScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.search_off,
-                                size: 56, color: AppColors.textSecondaryLight),
+                            Icon(Icons.search_off,
+                                size: 56,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant),
                             const SizedBox(height: 12),
                             const Text(
                               'No components found',
@@ -303,7 +309,10 @@ class _PartsScreenState extends ConsumerState<PartsScreen> {
                             Text(
                               'Try searching for a different keyword or category.',
                               style: TextStyle(
-                                  fontSize: 13, color: Colors.grey[600]),
+                                  fontSize: 13,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant),
                             ),
                           ],
                         ),
@@ -337,7 +346,8 @@ class _PartsScreenState extends ConsumerState<PartsScreen> {
                               final comp = filteredComponents[index];
                               final isDiscovered =
                                   discoveredIds.contains(comp.id);
-                              final catColor = _getCategoryColor(comp.category);
+                              final catColor = _getCategoryColor(
+                                  comp.category, Theme.of(context).colorScheme);
 
                               return GestureDetector(
                                 onSecondaryTapUp: (details) {
@@ -503,9 +513,10 @@ class _PartsScreenState extends ConsumerState<PartsScreen> {
                                           Expanded(
                                             child: Text(
                                               comp.partNumber,
-                                              style: const TextStyle(
-                                                  color: AppColors
-                                                      .textSecondaryLight,
+                                              style: TextStyle(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurfaceVariant,
                                                   fontSize: 11),
                                               overflow: TextOverflow.ellipsis,
                                             ),
@@ -514,8 +525,9 @@ class _PartsScreenState extends ConsumerState<PartsScreen> {
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 4, vertical: 1),
                                             decoration: BoxDecoration(
-                                              color: AppColors
-                                                  .surfaceContainerLight,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .surfaceContainerHighest,
                                               borderRadius:
                                                   BorderRadius.circular(4),
                                             ),

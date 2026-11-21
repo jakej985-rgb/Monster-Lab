@@ -31,8 +31,16 @@ class MonsterLabApp extends ConsumerWidget {
     return MaterialApp.router(
       title: AppStrings.appName,
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.buildTheme(isDark: false, preset: themePreset),
-      darkTheme: AppTheme.buildTheme(isDark: true, preset: themePreset),
+      theme: AppTheme.buildTheme(
+        isDark: false,
+        preset: themePreset,
+        highContrast: settings.highContrast,
+      ),
+      darkTheme: AppTheme.buildTheme(
+        isDark: true,
+        preset: themePreset,
+        highContrast: settings.highContrast,
+      ),
       themeMode: themeMode,
       routerConfig: appRouter,
       builder: (context, child) {

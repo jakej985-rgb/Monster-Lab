@@ -20,6 +20,7 @@ class HardwareStatusBadge extends ConsumerWidget {
     final stateAsync = ref.watch(hardwareStateStreamProvider);
     final state = stateAsync.value ?? bridge.currentState;
     final board = bridge.currentBoard;
+    final colorScheme = Theme.of(context).colorScheme;
 
     Color badgeColor;
     IconData iconData;
@@ -50,7 +51,7 @@ class HardwareStatusBadge extends ConsumerWidget {
         statusText = 'Safety Locked';
         break;
       case HardwareConnectionState.unavailable:
-        badgeColor = AppColors.textSecondaryLight;
+        badgeColor = colorScheme.onSurfaceVariant;
         iconData = Icons.usb_off;
         statusText = 'Port Unavailable';
         break;
@@ -65,7 +66,7 @@ class HardwareStatusBadge extends ConsumerWidget {
         statusText = 'Hardware Error';
         break;
       case HardwareConnectionState.disconnected:
-        badgeColor = AppColors.textSecondaryLight;
+        badgeColor = colorScheme.onSurfaceVariant;
         iconData = Icons.usb_off;
         statusText = 'Hardware Offline';
         break;

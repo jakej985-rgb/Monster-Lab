@@ -170,7 +170,7 @@ class _RealWorldSystemDiagramWidgetState
           Text(
             'The same three-part pattern powers real autonomous devices worldwide. Choose a machine below and test its automated response:',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.8),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

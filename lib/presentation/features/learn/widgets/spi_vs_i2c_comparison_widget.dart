@@ -133,7 +133,7 @@ class _SpiVsI2cComparisonWidgetState extends State<SpiVsI2cComparisonWidget> {
             'Both protocols solve pin limitations, but they optimize for different engineering trade-offs: '
             'I2C minimizes wire count; SPI maximizes raw communication bandwidth.',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

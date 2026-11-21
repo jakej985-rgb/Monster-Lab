@@ -56,8 +56,10 @@ class _BlinkSimulatorWidgetState extends State<BlinkSimulatorWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
     return MonsterCard(
-      color: AppColors.backgroundLight,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -97,7 +99,9 @@ class _BlinkSimulatorWidgetState extends State<BlinkSimulatorWidget> {
                   height: 72,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: _isOn ? AppColors.energyAmber : Colors.grey.shade400,
+                    color: _isOn
+                        ? AppColors.energyAmber
+                        : colorScheme.surfaceContainerHighest,
                     boxShadow: _isOn
                         ? [
                             BoxShadow(
@@ -130,7 +134,7 @@ class _BlinkSimulatorWidgetState extends State<BlinkSimulatorWidget> {
                   decoration: BoxDecoration(
                     color: _isOn
                         ? AppColors.energyAmber.withValues(alpha: 0.15)
-                        : Colors.grey.withValues(alpha: 0.15),
+                        : colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -139,8 +143,10 @@ class _BlinkSimulatorWidgetState extends State<BlinkSimulatorWidget> {
                       fontWeight: FontWeight.bold,
                       fontSize: 13,
                       color: _isOn
-                          ? AppColors.textAmberOnLight
-                          : AppColors.textSecondaryLight,
+                          ? (isDark
+                              ? AppColors.energyGold
+                              : AppColors.textAmberOnLight)
+                          : colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ),

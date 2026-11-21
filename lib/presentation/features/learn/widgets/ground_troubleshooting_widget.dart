@@ -154,7 +154,7 @@ class _GroundTroubleshootingWidgetState
           Text(
             'Ground (GND) is NOT an electrical drain where electricity disappears. It is the essential return highway. Test the 4 ground conditions below:',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.8),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

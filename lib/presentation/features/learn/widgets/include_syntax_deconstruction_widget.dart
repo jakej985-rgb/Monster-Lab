@@ -169,7 +169,7 @@ class _IncludeSyntaxDeconstructionWidgetState
           Text(
             'Tap each syntax token below to inspect its role in commanding the C++ compiler:',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

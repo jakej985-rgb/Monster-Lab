@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/app_metadata.dart';
 import '../../../core/routing/route_constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../shared/providers.dart';
@@ -12,12 +13,14 @@ class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   Widget _buildScaleChip({
+    required BuildContext context,
     required String label,
     required double value,
     required double currentValue,
     required VoidCallback onSelected,
   }) {
     final isSelected = (currentValue == value);
+    final colorScheme = Theme.of(context).colorScheme;
     return ChoiceChip(
       label: Text(label),
       selected: isSelected,
@@ -25,8 +28,7 @@ class SettingsScreen extends ConsumerWidget {
       selectedColor: AppColors.primaryViolet.withValues(alpha: 0.2),
       checkmarkColor: AppColors.primaryViolet,
       labelStyle: TextStyle(
-        color:
-            isSelected ? AppColors.primaryViolet : AppColors.textPrimaryLight,
+        color: isSelected ? AppColors.primaryViolet : colorScheme.onSurface,
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         fontSize: 12,
       ),
@@ -35,6 +37,7 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
     final settings = ref.watch(settingsNotifierProvider);
     final notifier = ref.read(settingsNotifierProvider.notifier);
 
@@ -51,17 +54,17 @@ class SettingsScreen extends ConsumerWidget {
                   SwitchListTile(
                     title: const Text('Sound Effects & Audio Chimes'),
                     subtitle: const Text(
-                        'Plays celebratory chimes on milestones and clicks.'),
+                        'Play feedback sounds for lessons, projects, and challenges.'),
                     value: settings.soundEnabled,
-                    onChanged: (val) => notifier.setSoundEnabled(val),
+                    onChanged: (value) => notifier.setSoundEnabled(value),
                   ),
                   const Divider(),
                   SwitchListTile(
                     title: const Text('High Contrast Mode'),
                     subtitle: const Text(
-                        'Increases visual borders and pin label contrast.'),
+                        'Use stronger text, borders, and surface contrast across the app.'),
                     value: settings.highContrast,
-                    onChanged: (val) => notifier.setHighContrast(val),
+                    onChanged: (value) => notifier.setHighContrast(value),
                   ),
                   const Divider(),
                   SwitchListTile(
@@ -81,26 +84,27 @@ class SettingsScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(16, 16, 16, 4),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
                     child: Row(
                       children: [
-                        Icon(Icons.zoom_in, color: AppColors.primaryViolet),
-                        SizedBox(width: 12),
+                        const Icon(Icons.zoom_in,
+                            color: AppColors.primaryViolet),
+                        const SizedBox(width: 12),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              const Text(
                                 'Display & UI Scaling',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 16),
                               ),
-                              SizedBox(height: 2),
+                              const SizedBox(height: 2),
                               Text(
                                 'Calibrate size of text, cards, and buttons for your screen.',
                                 style: TextStyle(
-                                    color: AppColors.textSecondaryLight,
+                                    color: colorScheme.onSurfaceVariant,
                                     fontSize: 12),
                               ),
                             ],
@@ -117,42 +121,49 @@ class SettingsScreen extends ConsumerWidget {
                       runSpacing: 8,
                       children: [
                         _buildScaleChip(
+                          context: context,
                           label: 'Auto (Recommended)',
                           value: 0.0,
                           currentValue: settings.uiScale,
                           onSelected: () => notifier.setUiScale(0.0),
                         ),
                         _buildScaleChip(
+                          context: context,
                           label: '75% (Ultra Compact)',
                           value: 0.75,
                           currentValue: settings.uiScale,
                           onSelected: () => notifier.setUiScale(0.75),
                         ),
                         _buildScaleChip(
+                          context: context,
                           label: '80% (Desktop Standard)',
                           value: 0.80,
                           currentValue: settings.uiScale,
                           onSelected: () => notifier.setUiScale(0.80),
                         ),
                         _buildScaleChip(
+                          context: context,
                           label: '90% (Comfortable)',
                           value: 0.90,
                           currentValue: settings.uiScale,
                           onSelected: () => notifier.setUiScale(0.90),
                         ),
                         _buildScaleChip(
+                          context: context,
                           label: '100% (Default)',
                           value: 1.00,
                           currentValue: settings.uiScale,
                           onSelected: () => notifier.setUiScale(1.00),
                         ),
                         _buildScaleChip(
+                          context: context,
                           label: '110% (Large)',
                           value: 1.10,
                           currentValue: settings.uiScale,
                           onSelected: () => notifier.setUiScale(1.10),
                         ),
                         _buildScaleChip(
+                          context: context,
                           label: '125% (Touch)',
                           value: 1.25,
                           currentValue: settings.uiScale,
@@ -179,20 +190,20 @@ class SettingsScreen extends ConsumerWidget {
                         Icon(Icons.palette_outlined,
                             color: Theme.of(context).colorScheme.primary),
                         const SizedBox(width: 12),
-                        const Expanded(
+                        Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              const Text(
                                 'Appearance & Desktop Theme',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 16),
                               ),
-                              SizedBox(height: 2),
+                              const SizedBox(height: 2),
                               Text(
                                 'Configure color scheme and desktop appearance mode.',
                                 style: TextStyle(
-                                    color: AppColors.textSecondaryLight,
+                                    color: colorScheme.onSurfaceVariant,
                                     fontSize: 12),
                               ),
                             ],
@@ -282,25 +293,28 @@ class SettingsScreen extends ConsumerWidget {
             // About Monster Lab
             MonsterCard(
               onTap: () => GtkAboutDialog.show(context),
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.info_outline, color: AppColors.success),
-                  SizedBox(width: 16),
+                  const Icon(Icons.info_outline, color: AppColors.success),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('About Monster Lab',
+                        const Text('About Monster Lab',
                             style: TextStyle(fontWeight: FontWeight.bold)),
-                        SizedBox(height: 2),
-                        Text('Version 0.3.0, license, and desktop system info',
+                        const SizedBox(height: 2),
+                        Text(
+                            'Version $appVersion, license, and desktop system info',
                             style: TextStyle(
                                 fontSize: 12,
-                                color: AppColors.textSecondaryLight)),
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant)),
                       ],
                     ),
                   ),
-                  Icon(Icons.arrow_forward_ios, size: 16),
+                  const Icon(Icons.arrow_forward_ios, size: 16),
                 ],
               ),
             ),

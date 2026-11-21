@@ -108,7 +108,7 @@ class _SpiClockPolarityPhaseLabWidgetState
             'Different SPI chips require specific clock timing. CPOL sets the SCK idle voltage, '
             'and CPHA defines whether data is sampled on the first (leading) or second (trailing) clock transition.',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

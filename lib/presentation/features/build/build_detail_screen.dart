@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../domain/models/project_model.dart';
 import '../../shared/providers.dart';
+import '../../shared/widgets/load_error_state.dart';
 import '../../shared/widgets/monster_button.dart';
 import '../../shared/widgets/monster_card.dart';
 import 'widgets/breadboard_wiring_widget.dart';
@@ -34,6 +35,17 @@ class _BuildDetailScreenState extends ConsumerState<BuildDetailScreen> {
         ref.read(curriculumRepositoryProvider).getProjectById(widget.projectId);
   }
 
+  void _reloadProject() {
+    final future =
+        ref.read(curriculumRepositoryProvider).getProjectById(widget.projectId);
+    // FutureBuilder subscribes on the next frame; mark the error as observed
+    // until then so an immediate failure is still shown by the builder.
+    future.ignore();
+    setState(() {
+      _projectFuture = future;
+    });
+  }
+
   void _toggleCheckpoint(String checkpoint) {
     setState(() {
       if (_checkedCheckpoints.contains(checkpoint)) {
@@ -45,6 +57,8 @@ class _BuildDetailScreenState extends ConsumerState<BuildDetailScreen> {
   }
 
   Widget _buildPhaseContent(BuildPhase phase, ProjectModel project) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     switch (phase.type) {
       case PhaseType.gatherParts:
         return GatherPartsWidget(
@@ -105,13 +119,13 @@ class _BuildDetailScreenState extends ConsumerState<BuildDetailScreen> {
             ),
             if (phase.verificationCheckpoints.isNotEmpty) ...[
               const SizedBox(height: 24),
-              const Text(
+              Text(
                 'PHYSICAL VERIFICATION CHECKPOINTS',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.1,
-                  color: AppColors.textSecondaryLight,
+                  color: colorScheme.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: 8),
@@ -127,7 +141,7 @@ class _BuildDetailScreenState extends ConsumerState<BuildDetailScreen> {
                     elevation: 0,
                     color: isChecked
                         ? AppColors.success.withValues(alpha: 0.08)
-                        : AppColors.surfaceContainerLight
+                        : colorScheme.surfaceContainerHighest
                             .withValues(alpha: 0.5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -151,7 +165,7 @@ class _BuildDetailScreenState extends ConsumerState<BuildDetailScreen> {
                           decoration:
                               isChecked ? TextDecoration.lineThrough : null,
                           color:
-                              isChecked ? AppColors.textSecondaryLight : null,
+                              isChecked ? colorScheme.onSurfaceVariant : null,
                         ),
                       ),
                       controlAffinity: ListTileControlAffinity.leading,
@@ -230,6 +244,8 @@ class _BuildDetailScreenState extends ConsumerState<BuildDetailScreen> {
 
   void _showVariantsAndMissionsSheet(
       BuildContext context, ProjectModel project) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -252,7 +268,7 @@ class _BuildDetailScreenState extends ConsumerState<BuildDetailScreen> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: AppColors.textSecondaryLight.withValues(alpha: 0.3),
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -278,18 +294,18 @@ class _BuildDetailScreenState extends ConsumerState<BuildDetailScreen> {
               if (project.variants.isNotEmpty)
                 ProjectVariantsSection(variants: project.variants)
               else
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Text('No alternative variants for this build.',
-                      style: TextStyle(color: AppColors.textSecondaryLight)),
+                      style: TextStyle(color: colorScheme.onSurfaceVariant)),
                 ),
               if (project.extensionMissions.isNotEmpty)
                 EngineeringMissionsSection(missions: project.extensionMissions)
               else
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                   child: Text('No extension missions for this build.',
-                      style: TextStyle(color: AppColors.textSecondaryLight)),
+                      style: TextStyle(color: colorScheme.onSurfaceVariant)),
                 ),
             ],
           ),
@@ -300,6 +316,7 @@ class _BuildDetailScreenState extends ConsumerState<BuildDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final activeProfile = ref.watch(activeProfileProvider);
     final activeProgress = ref.watch(activeProgressProvider);
     final progressRepo = ref.watch(progressRepositoryProvider);
@@ -334,6 +351,14 @@ class _BuildDetailScreenState extends ConsumerState<BuildDetailScreen> {
       body: FutureBuilder<ProjectModel?>(
         future: _projectFuture,
         builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return LoadErrorState(
+              title: 'Could not load project',
+              message:
+                  'This project could not be loaded. Check that the curriculum files are available and try again.',
+              onRetry: _reloadProject,
+            );
+          }
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -380,8 +405,8 @@ class _BuildDetailScreenState extends ConsumerState<BuildDetailScreen> {
                     Text(
                       'Complete foundational lessons (${missingPrereqs.join(', ')}) before building this project to ensure safety and mastery.',
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          color: AppColors.textSecondaryLight, fontSize: 14),
+                      style: TextStyle(
+                          color: colorScheme.onSurfaceVariant, fontSize: 14),
                     ),
                     const SizedBox(height: 24),
                     MonsterButton(
@@ -409,7 +434,7 @@ class _BuildDetailScreenState extends ConsumerState<BuildDetailScreen> {
                 // Phase Progress Bar
                 LinearProgressIndicator(
                   value: (_currentPhaseIndex + 1) / phases.length,
-                  backgroundColor: AppColors.surfaceContainerLight,
+                  backgroundColor: colorScheme.surfaceContainerHighest,
                   valueColor:
                       const AlwaysStoppedAnimation(AppColors.primaryViolet),
                 ),
@@ -427,10 +452,10 @@ class _BuildDetailScreenState extends ConsumerState<BuildDetailScreen> {
                     ),
                     Text(
                       project.title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 13,
-                        color: AppColors.textSecondaryLight,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -545,6 +570,7 @@ class _BuildDetailScreenState extends ConsumerState<BuildDetailScreen> {
                                             project.xpReward,
                                             project.badgeRewardId,
                                           );
+                                      ref.read(soundEffectsProvider).success();
                                     }
                                     if (context.mounted) {
                                       showDialog<void>(
@@ -580,8 +606,8 @@ class _BuildDetailScreenState extends ConsumerState<BuildDetailScreen> {
                                                       ? AppColors.success
                                                           .withValues(
                                                               alpha: 0.1)
-                                                      : AppColors
-                                                          .surfaceContainerLight,
+                                                      : colorScheme
+                                                          .surfaceContainerHighest,
                                                   borderRadius:
                                                       BorderRadius.circular(12),
                                                 ),
@@ -597,8 +623,8 @@ class _BuildDetailScreenState extends ConsumerState<BuildDetailScreen> {
                                                       color: isFirst
                                                           ? AppColors
                                                               .energyAmber
-                                                          : AppColors
-                                                              .textSecondaryLight,
+                                                          : colorScheme
+                                                              .onSurfaceVariant,
                                                     ),
                                                     const SizedBox(width: 6),
                                                     Text(
@@ -612,8 +638,8 @@ class _BuildDetailScreenState extends ConsumerState<BuildDetailScreen> {
                                                             isFirst ? 16 : 14,
                                                         color: isFirst
                                                             ? null
-                                                            : AppColors
-                                                                .textSecondaryLight,
+                                                            : colorScheme
+                                                                .onSurfaceVariant,
                                                       ),
                                                     ),
                                                   ],
@@ -663,6 +689,7 @@ class ProjectVariantsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (variants.isEmpty) return const SizedBox.shrink();
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -715,7 +742,7 @@ class ProjectVariantsSection extends StatelessWidget {
                                       label: Text(c,
                                           style: const TextStyle(fontSize: 11)),
                                       backgroundColor:
-                                          AppColors.surfaceContainerLight,
+                                          colorScheme.surfaceContainerHighest,
                                       visualDensity: VisualDensity.compact,
                                       padding: EdgeInsets.zero,
                                     ))
@@ -737,9 +764,9 @@ class ProjectVariantsSection extends StatelessWidget {
                           Expanded(
                             child: Text(
                               'Wiring: ${v.wiringDifferences}',
-                              style: const TextStyle(
+                              style: TextStyle(
                                   fontSize: 13,
-                                  color: AppColors.textSecondaryLight),
+                                  color: colorScheme.onSurfaceVariant),
                             ),
                           ),
                         ],
@@ -756,9 +783,9 @@ class ProjectVariantsSection extends StatelessWidget {
                           Expanded(
                             child: Text(
                               'Code: ${v.codeAdaptation}',
-                              style: const TextStyle(
+                              style: TextStyle(
                                   fontSize: 13,
-                                  color: AppColors.textSecondaryLight),
+                                  color: colorScheme.onSurfaceVariant),
                             ),
                           ),
                         ],

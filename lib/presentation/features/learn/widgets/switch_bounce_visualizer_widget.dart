@@ -144,7 +144,7 @@ class _SwitchBounceVisualizerWidgetState
             'When two metal leaves inside a mechanical switch collide, they vibrate and bounce elastically for 1–15 milliseconds. '
             'Because the 16MHz Arduino executes an instruction every 62.5ns, it counts every single microsecond bounce!',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

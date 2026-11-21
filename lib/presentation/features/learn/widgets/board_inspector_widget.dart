@@ -99,8 +99,10 @@ class _BoardInspectorWidgetState extends State<BoardInspectorWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
     return MonsterCard(
-      color: AppColors.backgroundLight,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -115,9 +117,9 @@ class _BoardInspectorWidgetState extends State<BoardInspectorWidget> {
             ],
           ),
           const SizedBox(height: 6),
-          const Text(
+          Text(
             'Tap any section of the Arduino Uno to discover what it does:',
-            style: TextStyle(color: AppColors.textSecondaryLight, fontSize: 12),
+            style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
           ),
           const SizedBox(height: 14),
 
@@ -139,8 +141,9 @@ class _BoardInspectorWidgetState extends State<BoardInspectorWidget> {
                     color: isSelected ? Colors.white : AppColors.primaryViolet),
                 selectedColor: AppColors.primaryViolet,
                 labelStyle: TextStyle(
-                    color:
-                        isSelected ? Colors.white : AppColors.textPrimaryLight),
+                    color: isSelected
+                        ? Colors.white
+                        : colorScheme.onSurfaceVariant),
                 onSelected: (sel) {
                   if (sel) setState(() => _selected = h);
                 },
@@ -154,7 +157,7 @@ class _BoardInspectorWidgetState extends State<BoardInspectorWidget> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                   color: AppColors.primaryViolet.withValues(alpha: 0.3),
@@ -214,10 +217,12 @@ class _BoardInspectorWidgetState extends State<BoardInspectorWidget> {
                       Expanded(
                         child: Text(
                           _selected.analogy,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
-                            color: Color(0xFF7A4A00),
+                            color: isDark
+                                ? AppColors.energyGold
+                                : const Color(0xFF7A4A00),
                           ),
                         ),
                       ),

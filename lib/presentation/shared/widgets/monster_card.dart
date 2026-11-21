@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart';
 
 class MonsterCard extends StatelessWidget {
   final Widget child;
@@ -26,13 +25,9 @@ class MonsterCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final cardColor = color ??
-        theme.cardTheme.color ??
-        (isDark ? AppColors.surfaceDark : AppColors.surfaceLight);
-
-    final defaultBorderColor =
-        isDark ? const Color(0xFF444B59) : const Color(0xFFDCDCDC);
+    final cardColor =
+        color ?? theme.cardTheme.color ?? theme.colorScheme.surface;
+    final defaultBorderColor = theme.colorScheme.outlineVariant;
     final effectiveBorder =
         border ?? Border.all(color: defaultBorderColor, width: 1);
 

@@ -212,6 +212,8 @@ class _InputOutputClassificationWidgetState
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
     final title = widget.config?['title'] as String? ??
         'Think Like a Robot: Input vs. Output';
 
@@ -240,7 +242,9 @@ class _InputOutputClassificationWidgetState
                   title,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppColors.energyAmber,
+                    color: isDark
+                        ? AppColors.energyAmber
+                        : AppColors.textAmberOnLight,
                   ),
                 ),
               ),
@@ -280,8 +284,8 @@ class _InputOutputClassificationWidgetState
               children: [
                 Text(
                   'Component ${_currentIndex + 1} of ${_items.length}',
-                  style: const TextStyle(
-                    color: Colors.white70,
+                  style: TextStyle(
+                    color: colorScheme.onSurfaceVariant,
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
@@ -289,8 +293,10 @@ class _InputOutputClassificationWidgetState
                 const Spacer(),
                 Text(
                   'Score: $_correctCount/${_items.length}',
-                  style: const TextStyle(
-                    color: AppColors.accentCyan,
+                  style: TextStyle(
+                    color: isDark
+                        ? AppColors.accentCyan
+                        : AppColors.textCyanOnLight,
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
@@ -302,7 +308,7 @@ class _InputOutputClassificationWidgetState
               borderRadius: BorderRadius.circular(4),
               child: LinearProgressIndicator(
                 value: (_currentIndex + 1) / _items.length,
-                backgroundColor: const Color(0xFF1E293B),
+                backgroundColor: theme.colorScheme.surfaceContainerHighest,
                 valueColor:
                     const AlwaysStoppedAnimation<Color>(AppColors.energyAmber),
                 minHeight: 6,
@@ -404,8 +410,8 @@ class _InputOutputClassificationWidgetState
                           const SizedBox(height: 4),
                           Text(
                             _items[_currentIndex].reason,
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurface,
                               fontSize: 12,
                               height: 1.3,
                             ),

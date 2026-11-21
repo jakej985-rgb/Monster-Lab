@@ -121,7 +121,7 @@ class _MissingLibraryTroubleshootingWidgetState
           Text(
             'A fellow robotics student hit a fatal compiler error when verifying their sketch. Read the compiler console, diagnose the root cause, and apply the fix.',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

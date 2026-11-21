@@ -137,7 +137,7 @@ class _ActiveLowLogicCheckerWidgetState
             'With INPUT_PULLUP, unpressed reads HIGH (+5V) and pressed reads LOW (0V). '
             'Always evaluate if (digitalRead(pin) == LOW) to detect physical presses!',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

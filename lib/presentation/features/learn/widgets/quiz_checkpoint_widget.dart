@@ -100,9 +100,9 @@ class _QuizCheckpointWidgetState extends State<QuizCheckpointWidget> {
   }
 
   Widget _buildMultiQuestion() {
+    final colorScheme = Theme.of(context).colorScheme;
     if (_isDeckComplete) {
       return MonsterCard(
-        color: AppColors.backgroundLight,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -125,8 +125,8 @@ class _QuizCheckpointWidgetState extends State<QuizCheckpointWidget> {
             const SizedBox(height: 8),
             Text(
               'You scored $_correctCount of ${widget.questions!.length} correct! Great job mastering these robotics concepts.',
-              style: const TextStyle(
-                  fontSize: 14, color: AppColors.textSecondaryLight),
+              style:
+                  TextStyle(fontSize: 14, color: colorScheme.onSurfaceVariant),
             ),
           ],
         ),
@@ -141,7 +141,6 @@ class _QuizCheckpointWidgetState extends State<QuizCheckpointWidget> {
     final isCorrect = _selectedIndex == qCorrectIndex;
 
     return MonsterCard(
-      color: AppColors.backgroundLight,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -167,7 +166,7 @@ class _QuizCheckpointWidgetState extends State<QuizCheckpointWidget> {
           const SizedBox(height: 8),
           LinearProgressIndicator(
             value: (_currentQuestionIndex + 1) / widget.questions!.length,
-            backgroundColor: Colors.grey.shade200,
+            backgroundColor: colorScheme.surfaceContainerHighest,
             valueColor: const AlwaysStoppedAnimation(AppColors.primaryViolet),
             minHeight: 6,
             borderRadius: BorderRadius.circular(3),
@@ -219,7 +218,6 @@ class _QuizCheckpointWidgetState extends State<QuizCheckpointWidget> {
     final isCorrect = _selectedIndex == widget.correctIndex;
 
     return MonsterCard(
-      color: AppColors.backgroundLight,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -270,12 +268,13 @@ class _QuizCheckpointWidgetState extends State<QuizCheckpointWidget> {
     required int correctIndex,
     required bool isCorrect,
   }) {
+    final colorScheme = Theme.of(context).colorScheme;
     return List.generate(options.length, (index) {
       final optionText = options[index];
       final isChosen = _selectedIndex == index;
 
-      Color borderColor = Colors.grey.shade300;
-      Color bgColor = Colors.white;
+      Color borderColor = colorScheme.outlineVariant;
+      Color bgColor = colorScheme.surface;
       IconData? trailingIcon;
 
       if (_hasSubmitted) {
@@ -322,7 +321,7 @@ class _QuizCheckpointWidgetState extends State<QuizCheckpointWidget> {
                         ? (_hasSubmitted
                             ? (isCorrect ? AppColors.success : AppColors.danger)
                             : AppColors.primaryViolet)
-                        : Colors.grey.shade200,
+                        : colorScheme.surfaceContainerHighest,
                     child: Text(
                       optionLetter,
                       style: TextStyle(
@@ -330,7 +329,7 @@ class _QuizCheckpointWidgetState extends State<QuizCheckpointWidget> {
                         fontWeight: FontWeight.bold,
                         color: isChosen
                             ? Colors.white
-                            : AppColors.textPrimaryLight,
+                            : colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ),
@@ -363,6 +362,9 @@ class _QuizCheckpointWidgetState extends State<QuizCheckpointWidget> {
     required bool isCorrect,
     String? explanation,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final successColor =
+        isDark ? AppColors.success : AppColors.textSuccessOnLight;
     final prefix = isCorrect ? 'Spot on! ' : 'Not quite! ';
     final feedbackText = explanation != null
         ? '$prefix$explanation'
@@ -385,8 +387,7 @@ class _QuizCheckpointWidgetState extends State<QuizCheckpointWidget> {
           children: [
             Icon(
               isCorrect ? Icons.celebration : Icons.info_outline,
-              color:
-                  isCorrect ? AppColors.textSuccessOnLight : AppColors.danger,
+              color: isCorrect ? successColor : AppColors.danger,
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -394,9 +395,7 @@ class _QuizCheckpointWidgetState extends State<QuizCheckpointWidget> {
                 feedbackText,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: isCorrect
-                      ? AppColors.textSuccessOnLight
-                      : AppColors.danger,
+                  color: isCorrect ? successColor : AppColors.danger,
                   fontSize: 13,
                 ),
               ),

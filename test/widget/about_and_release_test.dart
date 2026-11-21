@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:monster_lab/core/constants/app_version.dart';
+import 'package:monster_lab/core/app_metadata.dart';
 import 'package:monster_lab/presentation/features/parent/about_screen.dart';
 
 void main() {
@@ -17,7 +17,7 @@ void main() {
 
       // App Title and Version
       expect(find.text('Monster Lab'), findsWidgets);
-      expect(find.text(AppVersion.displayVersion), findsOneWidget);
+      expect(find.text(appVersionDisplay), findsOneWidget);
 
       // 100% Offline & Child-Safe notice
       expect(find.text('100% Offline & Child-Safe'), findsOneWidget);

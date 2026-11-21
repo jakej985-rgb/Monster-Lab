@@ -44,7 +44,7 @@ class ComponentImageView extends StatelessWidget {
     }
   }
 
-  static Color getCategoryColor(String category) {
+  static Color getCategoryColor(String category, ColorScheme colorScheme) {
     switch (category) {
       case 'microcontroller':
         return AppColors.primaryViolet;
@@ -59,14 +59,14 @@ class ComponentImageView extends StatelessWidget {
       case 'switch':
         return AppColors.warning;
       case 'passive':
-        return AppColors.textSecondaryLight;
+        return colorScheme.onSurfaceVariant;
       default:
         return AppColors.primaryViolet;
     }
   }
 
-  Widget _buildFallback([double? iconSize]) {
-    final catColor = getCategoryColor(category);
+  Widget _buildFallback(BuildContext context, [double? iconSize]) {
+    final catColor = getCategoryColor(category, Theme.of(context).colorScheme);
     final size = iconSize ??
         ((width != null && height != null)
             ? (width! < height! ? width! * 0.5 : height! * 0.5)
@@ -84,7 +84,8 @@ class ComponentImageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final effectiveRadius = borderRadius ?? BorderRadius.circular(12);
-    final effectiveBg = backgroundColor ?? AppColors.surfaceContainerLight;
+    final effectiveBg = backgroundColor ??
+        Theme.of(context).colorScheme.surfaceContainerHighest;
 
     Widget content;
     final path = imagePath;
@@ -95,10 +96,10 @@ class ComponentImageView extends StatelessWidget {
         height: height,
         fit: fit,
         excludeFromSemantics: true,
-        errorBuilder: (context, error, stackTrace) => _buildFallback(),
+        errorBuilder: (context, error, stackTrace) => _buildFallback(context),
       );
     } else {
-      content = _buildFallback();
+      content = _buildFallback(context);
     }
 
     return Semantics(

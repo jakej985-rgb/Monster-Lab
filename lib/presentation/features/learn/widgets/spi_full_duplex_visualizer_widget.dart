@@ -157,7 +157,7 @@ class _SpiFullDuplexVisualizerWidgetState
             'SPI connects Master and Slave registers into an unbroken 16-bit ring. '
             'On every clock pulse (SCK), one bit leaves MOSI while one bit arrives on MISO simultaneously!',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

@@ -19,6 +19,8 @@ class GatherPartsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -48,13 +50,13 @@ class GatherPartsWidget extends StatelessWidget {
         ),
         if (requiredComponents.isNotEmpty) ...[
           const SizedBox(height: 20),
-          const Text(
+          Text(
             'REQUIRED LAB COMPONENTS',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.1,
-              color: AppColors.textSecondaryLight,
+              color: colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 10),
@@ -66,7 +68,7 @@ class GatherPartsWidget extends StatelessWidget {
                 avatar: const Icon(Icons.memory,
                     size: 16, color: AppColors.primaryViolet),
                 label: Text(compId),
-                backgroundColor: AppColors.surfaceContainerLight,
+                backgroundColor: colorScheme.surfaceContainerHighest,
                 side: BorderSide(
                     color: AppColors.primaryViolet.withValues(alpha: 0.3)),
                 onPressed: () => context.push('/parts/$compId'),
@@ -77,13 +79,13 @@ class GatherPartsWidget extends StatelessWidget {
         ],
         if (phase.verificationCheckpoints.isNotEmpty) ...[
           const SizedBox(height: 24),
-          const Text(
+          Text(
             'TOOL & HARDWARE CHECKPOINTS',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
               letterSpacing: 1.1,
-              color: AppColors.textSecondaryLight,
+              color: colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 8),
@@ -99,7 +101,8 @@ class GatherPartsWidget extends StatelessWidget {
                 elevation: 0,
                 color: isChecked
                     ? AppColors.success.withValues(alpha: 0.08)
-                    : AppColors.surfaceContainerLight.withValues(alpha: 0.5),
+                    : colorScheme.surfaceContainerHighest
+                        .withValues(alpha: 0.5),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                   side: BorderSide(
@@ -120,7 +123,7 @@ class GatherPartsWidget extends StatelessWidget {
                       fontWeight:
                           isChecked ? FontWeight.w600 : FontWeight.normal,
                       decoration: isChecked ? TextDecoration.lineThrough : null,
-                      color: isChecked ? AppColors.textSecondaryLight : null,
+                      color: isChecked ? colorScheme.onSurfaceVariant : null,
                     ),
                   ),
                   controlAffinity: ListTileControlAffinity.leading,

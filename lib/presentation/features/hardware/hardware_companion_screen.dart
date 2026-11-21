@@ -143,6 +143,7 @@ class _HardwareCompanionScreenState
   }
 
   Widget _buildInfoBanner() {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -173,7 +174,9 @@ class _HardwareCompanionScreenState
                 Text(
                   'Monster Lab includes a built-in Virtual Hardware Bridge. You can build projects, verify wiring, and test serial commands with zero physical hardware attached.',
                   style: TextStyle(
-                      fontSize: 13, color: Colors.grey.shade800, height: 1.3),
+                      fontSize: 13,
+                      color: colorScheme.onSurfaceVariant,
+                      height: 1.3),
                 ),
               ],
             ),
@@ -186,19 +189,24 @@ class _HardwareCompanionScreenState
   Widget _buildLinuxDialoutInfoBar() {
     if (kIsWeb || !Platform.isLinux) return const SizedBox.shrink();
 
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFFE3F2FD),
+        color: AppColors.info.withValues(alpha: isDark ? 0.14 : 0.08),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: const Color(0xFF90CAF9), width: 1),
+        border:
+            Border.all(color: AppColors.info.withValues(alpha: 0.3), width: 1),
       ),
       child: Row(
         children: [
-          const Icon(Icons.info_outline, color: Color(0xFF1976D2), size: 20),
+          const Icon(Icons.info_outline, color: AppColors.info, size: 20),
           const SizedBox(width: 10),
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -207,13 +215,14 @@ class _HardwareCompanionScreenState
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 12,
-                    color: Color(0xFF0D47A1),
+                    color: colorScheme.onSurface,
                   ),
                 ),
-                SizedBox(height: 2),
+                const SizedBox(height: 2),
                 Text(
                   'To connect directly to /dev/ttyACM* or /dev/ttyUSB*, your user must belong to the dialout group.',
-                  style: TextStyle(fontSize: 11, color: Color(0xFF1565C0)),
+                  style: TextStyle(
+                      fontSize: 11, color: colorScheme.onSurfaceVariant),
                 ),
               ],
             ),
@@ -249,6 +258,7 @@ class _HardwareCompanionScreenState
     HardwareConnectionState state,
   ) {
     final isConnected = state.isConnected;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return MonsterCard(
       child: Column(
@@ -268,12 +278,13 @@ class _HardwareCompanionScreenState
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: (isConnected ? AppColors.success : Colors.grey)
+                  color: (isConnected ? AppColors.success : colorScheme.outline)
                       .withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: (isConnected ? AppColors.success : Colors.grey)
-                        .withValues(alpha: 0.4),
+                    color:
+                        (isConnected ? AppColors.success : colorScheme.outline)
+                            .withValues(alpha: 0.4),
                   ),
                 ),
                 child: Text(
@@ -281,8 +292,9 @@ class _HardwareCompanionScreenState
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color:
-                        isConnected ? AppColors.success : Colors.grey.shade700,
+                    color: isConnected
+                        ? AppColors.success
+                        : colorScheme.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -297,7 +309,7 @@ class _HardwareCompanionScreenState
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300),
+              border: Border.all(color: colorScheme.outlineVariant),
               borderRadius: BorderRadius.circular(8),
             ),
             child: DropdownButtonHideUnderline(
@@ -405,6 +417,7 @@ class _HardwareCompanionScreenState
     PinTelemetry telemetry,
   ) {
     final isConnected = state.isConnected;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return MonsterCard(
       child: Column(
@@ -416,9 +429,9 @@ class _HardwareCompanionScreenState
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade50,
+                    color: colorScheme.surfaceContainerLow,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey.shade200),
+                    border: Border.all(color: colorScheme.outlineVariant),
                   ),
                   child: Column(
                     children: [
@@ -427,7 +440,7 @@ class _HardwareCompanionScreenState
                         size: 32,
                         color: telemetry.pin13Led
                             ? AppColors.energyAmber
-                            : Colors.grey.shade400,
+                            : colorScheme.onSurfaceVariant,
                       ),
                       const SizedBox(height: 6),
                       Text(
@@ -464,9 +477,9 @@ class _HardwareCompanionScreenState
                 child: Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade50,
+                    color: colorScheme.surfaceContainerLow,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey.shade200),
+                    border: Border.all(color: colorScheme.outlineVariant),
                   ),
                   child: Column(
                     children: [
@@ -482,7 +495,7 @@ class _HardwareCompanionScreenState
                       Text(
                         'Rail: 5.02V • Clock: 16MHz',
                         style: TextStyle(
-                            fontSize: 11, color: Colors.grey.shade600),
+                            fontSize: 11, color: colorScheme.onSurfaceVariant),
                       ),
                     ],
                   ),
@@ -496,9 +509,9 @@ class _HardwareCompanionScreenState
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.grey.shade50,
+              color: colorScheme.surfaceContainerLow,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey.shade200),
+              border: Border.all(color: colorScheme.outlineVariant),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -524,7 +537,7 @@ class _HardwareCompanionScreenState
                   child: LinearProgressIndicator(
                     value: (telemetry.a0Raw / 1023.0).clamp(0.0, 1.0),
                     minHeight: 8,
-                    backgroundColor: Colors.grey.shade200,
+                    backgroundColor: colorScheme.surfaceContainerHighest,
                     valueColor: const AlwaysStoppedAnimation<Color>(
                         AppColors.accentCyanDark),
                   ),
@@ -538,9 +551,9 @@ class _HardwareCompanionScreenState
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.grey.shade50,
+              color: colorScheme.surfaceContainerLow,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey.shade200),
+              border: Border.all(color: colorScheme.outlineVariant),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -574,6 +587,7 @@ class _HardwareCompanionScreenState
     HardwareConnectionState state,
     List<SerialLogEntry> logs,
   ) {
+    final colorScheme = Theme.of(context).colorScheme;
     return MonsterCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -599,7 +613,9 @@ class _HardwareCompanionScreenState
                       ? Icons.vertical_align_bottom
                       : Icons.pause_circle_outline,
                   size: 20,
-                  color: _autoScroll ? AppColors.primaryViolet : Colors.grey,
+                  color: _autoScroll
+                      ? colorScheme.primary
+                      : colorScheme.onSurfaceVariant,
                 ),
                 tooltip: _autoScroll ? 'Autoscroll On' : 'Autoscroll Paused',
                 onPressed: () => setState(() => _autoScroll = !_autoScroll),
@@ -736,6 +752,7 @@ class _HardwareCompanionScreenState
   }
 
   Widget _buildSupportedBoardsGuide() {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       children: SupportedBoards.all.map((board) {
         return Padding(
@@ -747,7 +764,8 @@ class _HardwareCompanionScreenState
             ),
             subtitle: Text(
               '${board.microcontroller} • ${board.operatingVoltage}',
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+              style:
+                  TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
             ),
             leading: Icon(
               board.isVirtual ? Icons.developer_board : Icons.memory,
@@ -777,7 +795,7 @@ class _HardwareCompanionScreenState
                       Text(
                         'Known Hardware USB Identifiers: ${board.supportedVidsPids.join(", ")}',
                         style: TextStyle(
-                            fontSize: 11, color: Colors.grey.shade700),
+                            fontSize: 11, color: colorScheme.onSurfaceVariant),
                       ),
                     ],
                   ],

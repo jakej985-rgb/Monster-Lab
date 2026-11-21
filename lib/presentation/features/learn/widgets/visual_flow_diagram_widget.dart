@@ -237,7 +237,7 @@ class _VisualFlowDiagramWidgetState extends State<VisualFlowDiagramWidget>
           Text(
             'Tap any stage below to inspect how information travels, or press "Test Signal Pulse" to watch the robot think in real time!',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.8),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

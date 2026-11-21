@@ -98,7 +98,7 @@ class _DecisionSimulatorWidgetState extends State<DecisionSimulatorWidget> {
           Text(
             'The brain does not guess; it follows logic. Press the tactile button below to see the three-part pipeline execute live!',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.8),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

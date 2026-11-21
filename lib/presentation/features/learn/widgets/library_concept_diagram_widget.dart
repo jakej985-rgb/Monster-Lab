@@ -78,7 +78,7 @@ class _LibraryConceptDiagramWidgetState
           Text(
             'Why do we use libraries? Toggle between the two approaches below to see what a library does for you behind the scenes.',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

@@ -9,7 +9,7 @@ import '../datasources/curriculum_data_engine.dart';
 class CurriculumRepositoryImpl implements CurriculumRepository {
   final CurriculumDataEngine _engine;
 
-  CurriculumRepositoryImpl(this._engine);
+  CurriculumRepositoryImpl(CurriculumDataEngine engine) : _engine = engine;
 
   @override
   Future<List<CourseModel>> getCourses() {

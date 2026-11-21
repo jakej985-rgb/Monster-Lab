@@ -135,7 +135,7 @@ class _LibraryManagerSimulatorWidgetState
           Text(
             'The Arduino IDE Library Manager lets you search open-source repositories and install community drivers with one click.',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

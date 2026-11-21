@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../core/constants/app_version.dart';
+import '../../../core/app_metadata.dart';
 
 /// Authentic GTK About Dialog styled for Linux Mint / desktop environments.
 class GtkAboutDialog extends StatelessWidget {
@@ -26,14 +26,13 @@ class GtkAboutDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final primaryColor = theme.colorScheme.primary;
 
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
         side: BorderSide(
-          color: isDark ? const Color(0xFF444B59) : const Color(0xFFDCDCDC),
+          color: theme.colorScheme.outlineVariant,
           width: 1,
         ),
       ),
@@ -75,7 +74,7 @@ class GtkAboutDialog extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
-                  'Version ${AppVersion.displayVersion}',
+                  appVersionDisplay,
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -109,8 +108,7 @@ class GtkAboutDialog extends StatelessWidget {
 
               Divider(
                 height: 1,
-                color:
-                    isDark ? const Color(0xFF3C4049) : const Color(0xFFE8E8E8),
+                color: theme.colorScheme.outlineVariant,
               ),
               const SizedBox(height: 10),
 

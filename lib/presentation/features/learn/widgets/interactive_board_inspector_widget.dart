@@ -98,7 +98,7 @@ class _InteractiveBoardInspectorWidgetState
           Text(
             'Test the two different ways electronic signals speak to the Arduino brain: Binary Digital (HIGH / LOW) vs. Continuous Analog (smooth 0–5V).',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.8),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

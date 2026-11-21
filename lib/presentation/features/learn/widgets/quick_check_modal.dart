@@ -105,7 +105,7 @@ class _QuickCheckModalState extends State<QuickCheckModal> {
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      backgroundColor: AppColors.surfaceLight,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 560),
         child: Padding(
@@ -127,6 +127,7 @@ class _QuickCheckModalState extends State<QuickCheckModal> {
   }
 
   Widget _buildIntroView() {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -143,20 +144,20 @@ class _QuickCheckModalState extends State<QuickCheckModal> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Quick Check — About 1 minute',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 18,
-                      color: AppColors.textPrimaryLight,
+                      color: colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     widget.submoduleTitle,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
-                      color: AppColors.textSecondaryLight,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -165,11 +166,11 @@ class _QuickCheckModalState extends State<QuickCheckModal> {
           ],
         ),
         const SizedBox(height: 18),
-        const Text(
+        Text(
           "Let's see what you already know. Your answers help Monster Lab decide what to explain.",
           style: TextStyle(
             fontSize: 15,
-            color: AppColors.textPrimaryLight,
+            color: colorScheme.onSurface,
             height: 1.4,
           ),
         ),
@@ -206,6 +207,7 @@ class _QuickCheckModalState extends State<QuickCheckModal> {
   }
 
   Widget _buildQuestionView() {
+    final colorScheme = Theme.of(context).colorScheme;
     final q = widget.questions[_currentQuestionIndex];
     final selected = _selectedOptions[_currentQuestionIndex];
 
@@ -228,7 +230,7 @@ class _QuickCheckModalState extends State<QuickCheckModal> {
               'Diagnostic',
               style: TextStyle(
                 fontSize: 12,
-                color: AppColors.textSecondaryLight.withValues(alpha: 0.8),
+                color: colorScheme.onSurfaceVariant,
               ),
             ),
           ],
@@ -236,10 +238,10 @@ class _QuickCheckModalState extends State<QuickCheckModal> {
         const SizedBox(height: 12),
         Text(
           q.question,
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,
-            color: AppColors.textPrimaryLight,
+            color: colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 16),
@@ -259,7 +261,7 @@ class _QuickCheckModalState extends State<QuickCheckModal> {
                 decoration: BoxDecoration(
                   color: isSelected
                       ? AppColors.primaryViolet.withValues(alpha: 0.12)
-                      : AppColors.surfaceContainerLight,
+                      : colorScheme.surfaceContainerHighest,
                   border: Border.all(
                     color: isSelected
                         ? AppColors.primaryViolet
@@ -276,7 +278,7 @@ class _QuickCheckModalState extends State<QuickCheckModal> {
                           : Icons.radio_button_off,
                       color: isSelected
                           ? AppColors.primaryViolet
-                          : AppColors.textSecondaryLight,
+                          : colorScheme.onSurfaceVariant,
                       size: 20,
                     ),
                     const SizedBox(width: 10),
@@ -287,7 +289,7 @@ class _QuickCheckModalState extends State<QuickCheckModal> {
                           fontSize: 14,
                           fontWeight:
                               isSelected ? FontWeight.bold : FontWeight.normal,
-                          color: AppColors.textPrimaryLight,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -337,6 +339,7 @@ class _QuickCheckModalState extends State<QuickCheckModal> {
   }
 
   Widget _buildResultView() {
+    final colorScheme = Theme.of(context).colorScheme;
     int correctCount = 0;
     for (int i = 0; i < widget.questions.length; i++) {
       if (_selectedOptions[i] == widget.questions[i].correctIndex) {
@@ -375,9 +378,9 @@ class _QuickCheckModalState extends State<QuickCheckModal> {
                   ),
                   Text(
                     '$correctCount of ${widget.questions.length} questions correct',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
-                      color: AppColors.textSecondaryLight,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -398,7 +401,7 @@ class _QuickCheckModalState extends State<QuickCheckModal> {
           ),
           const SizedBox(height: 8),
           MonsterCard(
-            color: const Color(0xFFFFF8E1),
+            color: AppColors.warning.withValues(alpha: 0.12),
             child: Text(
               widget.questions
                       .firstWhere(
@@ -407,9 +410,9 @@ class _QuickCheckModalState extends State<QuickCheckModal> {
                       )
                       .warmupExplanation ??
                   widget.questions.first.explanation,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
-                color: Color(0xFF424242),
+                color: colorScheme.onSurface,
                 height: 1.4,
               ),
             ),

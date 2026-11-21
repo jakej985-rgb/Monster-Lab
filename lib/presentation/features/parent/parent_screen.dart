@@ -27,6 +27,7 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
     final activeProfile = ref.watch(activeProfileProvider);
     final activeProgress = ref.watch(activeProgressProvider);
     final allProfilesAsync = ref.watch(allProfilesProvider);
+    final totals = ref.watch(curriculumTotalsProvider).valueOrNull;
 
     return Scaffold(
       appBar: AppBar(
@@ -52,7 +53,8 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
                 const SizedBox(height: 16),
 
                 // 2. 60-Second Executive Summary Card
-                _buildExecutiveSummaryCard(activeProfile, activeProgress),
+                _buildExecutiveSummaryCard(
+                    activeProfile, activeProgress, totals),
                 const SizedBox(height: 16),
 
                 // 3. Pedagogical Quick-Take & Growth Focus
@@ -67,7 +69,9 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
                 const SizedBox(height: 8),
                 Text(
                   'Curriculum skills mapped against verified circuit builds, sensor readings, and code debugging.',
-                  style: TextStyle(color: Colors.grey.shade700, fontSize: 14),
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 14),
                 ),
                 const SizedBox(height: 12),
                 ..._buildCompetencyCards(activeProgress),
@@ -116,7 +120,7 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
     final uniqueProfiles = profileMap.values.toList();
 
     return MonsterCard(
-      color: AppColors.surfaceContainerLight,
+      color: Theme.of(context).colorScheme.surfaceContainerLow,
       child: Row(
         children: [
           const Icon(Icons.people_alt, color: AppColors.primaryViolet),
@@ -153,6 +157,7 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
   Widget _buildExecutiveSummaryCard(
     LearnerProfileModel profile,
     LearnerProgressModel progress,
+    CurriculumTotals? totals,
   ) {
     return MonsterCard(
       color: AppColors.primaryViolet.withValues(alpha: 0.08),
@@ -192,7 +197,7 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
                       'Level ${progress.currentLevel} Inventor • ${progress.totalXp} Total XP',
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.grey.shade700,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -207,7 +212,8 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
             child: LinearProgressIndicator(
               value: progress.levelProgressRatio,
               minHeight: 10,
-              backgroundColor: Colors.grey.shade300,
+              backgroundColor:
+                  Theme.of(context).colorScheme.surfaceContainerHighest,
               valueColor:
                   const AlwaysStoppedAnimation<Color>(AppColors.energyAmber),
             ),
@@ -217,28 +223,44 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
             alignment: Alignment.centerRight,
             child: Text(
               '${(progress.levelProgressRatio * 100).toInt()}% towards Level ${progress.currentLevel + 1}',
-              style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+              style: TextStyle(
+                  fontSize: 12,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
           ),
           const Divider(height: 24),
           // 4 Metric Counters Grid
           Row(
             children: [
-              _buildMetricTile('Lessons',
-                  '${progress.completedLessonIds.length}/7', Icons.menu_book),
-              _buildMetricTile('Projects',
-                  '${progress.completedProjectIds.length}/14', Icons.handyman),
-              _buildMetricTile('Parts Found',
-                  '${progress.discoveredComponentIds.length}/54', Icons.memory),
+              _buildMetricTile(
+                  'Lessons',
+                  _countLabel(
+                      progress.completedLessonIds.length, totals?.lessons),
+                  Icons.menu_book),
+              _buildMetricTile(
+                  'Projects',
+                  _countLabel(
+                      progress.completedProjectIds.length, totals?.projects),
+                  Icons.handyman),
+              _buildMetricTile(
+                  'Parts Found',
+                  _countLabel(progress.discoveredComponentIds.length,
+                      totals?.components),
+                  Icons.memory),
               _buildMetricTile(
                   'Challenges',
-                  '${progress.solvedChallengeIds.length}/16',
+                  _countLabel(
+                      progress.solvedChallengeIds.length, totals?.challenges),
                   Icons.military_tech),
             ],
           ),
         ],
       ),
     );
+  }
+
+  String _countLabel(int completed, int? total) {
+    return total == null ? '$completed' : '$completed/$total';
   }
 
   Widget _buildMetricTile(String label, String value, IconData icon) {
@@ -253,7 +275,9 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
           ),
           Text(
             label,
-            style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+            style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.onSurfaceVariant),
             textAlign: TextAlign.center,
           ),
         ],
@@ -345,7 +369,7 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
           statusLabel = 'In Progress';
           break;
         case CompetencyStatus.upcoming:
-          statusColor = Colors.grey;
+          statusColor = Theme.of(context).colorScheme.onSurfaceVariant;
           statusLabel = 'Upcoming';
           break;
       }
@@ -389,7 +413,9 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
               const SizedBox(height: 6),
               Text(
                 comp.description,
-                style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
+                style: TextStyle(
+                    fontSize: 13,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
               const SizedBox(height: 10),
               Row(
@@ -400,7 +426,9 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
                       child: LinearProgressIndicator(
                         value: comp.progressRatio,
                         minHeight: 6,
-                        backgroundColor: Colors.grey.shade200,
+                        backgroundColor: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
                         valueColor: AlwaysStoppedAnimation<Color>(statusColor),
                       ),
                     ),
@@ -425,8 +453,10 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
                     label: Text(skill, style: const TextStyle(fontSize: 11)),
                     padding: EdgeInsets.zero,
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    backgroundColor: Colors.grey.shade100,
-                    side: BorderSide(color: Colors.grey.shade300),
+                    backgroundColor:
+                        Theme.of(context).colorScheme.surfaceContainerHighest,
+                    side: BorderSide(
+                        color: Theme.of(context).colorScheme.outlineVariant),
                   );
                 }).toList(),
               ),
@@ -464,7 +494,9 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
                       Text(
                         '${activity.type.name.toUpperCase()} • ${_formatDate(activity.timestamp)}',
                         style: TextStyle(
-                            fontSize: 12, color: Colors.grey.shade600),
+                            fontSize: 12,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant),
                       ),
                     ],
                   ),
@@ -474,14 +506,17 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
           : Row(
               children: [
                 CircleAvatar(
-                  backgroundColor: Colors.grey.shade200,
-                  child: const Icon(Icons.hourglass_empty, color: Colors.grey),
+                  backgroundColor:
+                      Theme.of(context).colorScheme.surfaceContainerHighest,
+                  child: Icon(Icons.hourglass_empty,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant),
                 ),
                 const SizedBox(width: 12),
-                const Expanded(
+                Expanded(
                   child: Text(
                     'No activities recorded yet for this learner profile.',
-                    style: TextStyle(color: Colors.grey),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
                 ),
               ],
@@ -586,9 +621,10 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
                 height: 180,
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade300),
+                  border: Border.all(
+                      color: Theme.of(context).colorScheme.outlineVariant),
                 ),
                 child: SingleChildScrollView(
                   child: SelectableText(

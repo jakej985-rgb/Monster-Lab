@@ -179,7 +179,7 @@ class _CodeDeconstructionWidgetState extends State<CodeDeconstructionWidget> {
           Text(
             'Never blindly copy code. Tap each token chip below to inspect its job in C++, then test your prediction!',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.8),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

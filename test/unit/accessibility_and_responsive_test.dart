@@ -130,5 +130,22 @@ void main() {
       expect(darkBg.computeLuminance(), lessThan(0.2));
       expect(lightBg.computeLuminance(), greaterThan(0.7));
     });
+
+    test('High contrast themes use pure surfaces and strong outlines', () {
+      final light = AppTheme.buildTheme(isDark: false, highContrast: true);
+      final dark = AppTheme.buildTheme(isDark: true, highContrast: true);
+
+      expect(light.scaffoldBackgroundColor, Colors.white);
+      expect(light.colorScheme.onSurface, Colors.black);
+      expect(light.colorScheme.outline, Colors.black);
+      expect(
+          light.colorScheme.outlineVariant.computeLuminance(), lessThan(0.2));
+
+      expect(dark.scaffoldBackgroundColor, Colors.black);
+      expect(dark.colorScheme.onSurface, Colors.white);
+      expect(dark.colorScheme.outline, Colors.white);
+      expect(
+          dark.colorScheme.outlineVariant.computeLuminance(), greaterThan(0.5));
+    });
   });
 }

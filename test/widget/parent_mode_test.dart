@@ -15,6 +15,7 @@ import 'package:monster_lab/domain/models/learner_progress_model.dart';
 import 'package:monster_lab/domain/models/parent_insights_model.dart';
 import 'package:monster_lab/presentation/features/parent/parent_gate_dialog.dart';
 import 'package:monster_lab/presentation/features/parent/parent_screen.dart';
+import 'package:monster_lab/presentation/features/profile/profile_select_screen.dart';
 import 'package:monster_lab/presentation/shared/providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -190,6 +191,26 @@ void main() {
       // Should attempt navigation without error
     });
 
+    testWidgets('Profile deletion requires parent verification',
+        (tester) async {
+      await tester.pumpWidget(createTestWidget(const ProfileSelectScreen()));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byTooltip('Delete Profile').first);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Grown-Ups Only'), findsOneWidget);
+      expect(find.textContaining('please solve'), findsOneWidget);
+
+      await tester.ensureVisible(find.text('Cancel'));
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Grown-Ups Only'), findsNothing);
+      final profiles = await profileRepo.getAllProfiles();
+      expect(profiles.any((p) => p.id == testProfile1.id), isTrue);
+    });
+
     testWidgets(
         'ParentScreen renders executive summary, quick-take, competencies, and safety switches',
         (tester) async {
@@ -205,12 +226,12 @@ void main() {
       expect(find.text('Sparky'), findsOneWidget);
       expect(find.textContaining('850 Total XP'), findsOneWidget);
 
-      // 4 Metric Counters
-      expect(find.text('72/7'),
+      // 4 Metric Counters, with denominators from the curriculum repository
+      expect(find.text('72/141'),
           findsOneWidget); // Lessons (6 legacy + 66 migrated sub-lessons)
-      expect(find.text('2/14'), findsOneWidget); // Projects
+      expect(find.text('2/20'), findsOneWidget); // Projects
       expect(find.text('4/54'), findsOneWidget); // Parts
-      expect(find.text('3/16'), findsOneWidget); // Challenges
+      expect(find.text('3/24'), findsOneWidget); // Challenges
 
       // Quick-Take & Growth Focus
       expect(

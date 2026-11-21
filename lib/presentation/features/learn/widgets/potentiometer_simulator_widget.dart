@@ -26,8 +26,8 @@ class _PotentiometerSimulatorWidgetState
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return MonsterCard(
-      color: AppColors.backgroundLight,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -56,7 +56,7 @@ class _PotentiometerSimulatorWidgetState
                       child: CircularProgressIndicator(
                         value: _adcValue / 1023.0,
                         strokeWidth: 10,
-                        backgroundColor: Colors.grey.shade300,
+                        backgroundColor: colorScheme.surfaceContainerHighest,
                         valueColor:
                             const AlwaysStoppedAnimation(AppColors.accentCyan),
                       ),
@@ -66,10 +66,10 @@ class _PotentiometerSimulatorWidgetState
                       children: [
                         Text(
                           '$_adcValue',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 26,
                             fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimaryLight,
+                            color: colorScheme.onSurface,
                           ),
                         ),
                         Text(
@@ -87,8 +87,8 @@ class _PotentiometerSimulatorWidgetState
                 const SizedBox(height: 12),
                 Text(
                   'Physical Position: ${((_adcValue / 1023.0) * 100).round()}% Turned',
-                  style: const TextStyle(
-                      color: AppColors.textSecondaryLight, fontSize: 12),
+                  style: TextStyle(
+                      color: colorScheme.onSurfaceVariant, fontSize: 12),
                 ),
               ],
             ),

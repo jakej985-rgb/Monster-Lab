@@ -173,7 +173,7 @@ class _PortTroubleshootingBenchWidgetState
           Text(
             'When the Arduino IDE reports "Port Not Found", do not panic! Systematically test the 4 most common causes below:',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

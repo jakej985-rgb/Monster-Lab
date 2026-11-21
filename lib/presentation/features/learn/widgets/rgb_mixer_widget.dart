@@ -27,7 +27,6 @@ class _RgbMixerWidgetState extends State<RgbMixerWidget> {
   @override
   Widget build(BuildContext context) {
     return MonsterCard(
-      color: AppColors.backgroundLight,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

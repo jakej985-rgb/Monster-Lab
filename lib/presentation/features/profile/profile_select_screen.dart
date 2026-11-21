@@ -6,6 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../domain/models/learner_profile_model.dart';
 import '../../../domain/models/avatar_model.dart';
 import '../../shared/providers.dart';
+import '../parent/parent_gate_dialog.dart';
 import '../../shared/widgets/monster_button.dart';
 import '../../shared/widgets/monster_card.dart';
 
@@ -29,9 +30,24 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
     super.dispose();
   }
 
-  void _showDeleteConfirmation(
-      BuildContext context, LearnerProfileModel profile) {
-    showDialog<void>(
+  Future<void> _showDeleteConfirmation(
+      BuildContext context, LearnerProfileModel profile) async {
+    final verified = await showDialog<bool>(
+      context: context,
+      builder: (dialogCtx) => Dialog(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 480),
+          child: ParentGateDialog(
+            embedded: true,
+            onVerified: () => Navigator.of(dialogCtx).pop(true),
+            onCancel: () => Navigator.of(dialogCtx).pop(false),
+          ),
+        ),
+      ),
+    );
+    if (verified != true || !context.mounted) return;
+
+    await showDialog<void>(
       context: context,
       builder: (dialogCtx) => AlertDialog(
         title: Text('Delete ${profile.nickname}?'),
@@ -53,7 +69,7 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
               await ref
                   .read(activeProfileProvider.notifier)
                   .loadActiveProfile();
-              setState(() {});
+              if (mounted) setState(() {});
             },
             child: const Text('Delete'),
           ),
@@ -64,6 +80,7 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final profileRepo = ref.watch(profileRepositoryProvider);
     final activeProfile = ref.watch(activeProfileProvider);
 
@@ -147,22 +164,22 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                                 const SizedBox(height: 4),
                                 Text(
                                   '${avatar.name} • ${p.ageBracket.name}',
-                                  style: const TextStyle(
-                                      color: AppColors.textSecondaryLight,
+                                  style: TextStyle(
+                                      color: colorScheme.onSurfaceVariant,
                                       fontSize: 12),
                                 ),
                               ],
                             ),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.delete_outline,
-                                color: AppColors.textSecondaryLight, size: 20),
+                            icon: Icon(Icons.delete_outline,
+                                color: colorScheme.onSurfaceVariant, size: 20),
                             tooltip: 'Delete Profile',
                             onPressed: () =>
                                 _showDeleteConfirmation(context, p),
                           ),
-                          const Icon(Icons.arrow_forward_ios,
-                              size: 16, color: AppColors.textSecondaryLight),
+                          Icon(Icons.arrow_forward_ios,
+                              size: 16, color: colorScheme.onSurfaceVariant),
                         ],
                       ),
                     ),
@@ -207,7 +224,7 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                           decoration: BoxDecoration(
                             color: isSelected
                                 ? avatar.backgroundColor
-                                : Colors.grey.withValues(alpha: 0.08),
+                                : colorScheme.surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: isSelected
@@ -235,7 +252,7 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                                       : FontWeight.normal,
                                   color: isSelected
                                       ? avatar.accentColor
-                                      : AppColors.textSecondaryLight,
+                                      : colorScheme.onSurfaceVariant,
                                 ),
                               ),
                             ],

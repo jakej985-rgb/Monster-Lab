@@ -168,7 +168,7 @@ class _I2cBusTimingDiagramWidgetState extends State<I2cBusTimingDiagramWidget> {
             'Golden Rule of I2C: Data (SDA) can only change when Clock (SCL) is LOW. '
             'Changes on SDA while SCL is HIGH are strictly reserved for START and STOP conditions!',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

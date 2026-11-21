@@ -107,7 +107,7 @@ class _InteractiveTroubleshootingWidgetState
           Text(
             'A learner cries: "My code uploaded, but my LED will not turn on!" Practice the 4-step diagnostic triage to find and fix the glitch.',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.8),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

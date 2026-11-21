@@ -136,7 +136,7 @@ class _ExecutionSpeedVisualizerWidgetState
           Text(
             'The ATmega328P processor executes 16 million instructions every single second. Without delay(), physical changes happen too fast for humans to see!',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

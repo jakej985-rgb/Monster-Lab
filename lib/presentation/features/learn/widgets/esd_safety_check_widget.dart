@@ -104,7 +104,7 @@ class _EsdSafetyCheckWidgetState extends State<EsdSafetyCheckWidget> {
           Text(
             'Electrostatic Discharge (ESD) can zap microchips with invisible thousands of volts. Practice the 3 Golden Rules of workshop ESD defense:',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

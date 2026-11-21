@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/app_metadata.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/routing/route_constants.dart';
 
@@ -20,7 +21,6 @@ class GtkSidebar extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final primaryColor = theme.colorScheme.primary;
-    final isDark = theme.brightness == Brightness.dark;
 
     const items = [
       _SidebarItemData(
@@ -56,7 +56,7 @@ class GtkSidebar extends StatelessWidget {
         color: theme.colorScheme.surface,
         border: Border(
           right: BorderSide(
-            color: isDark ? const Color(0xFF444B59) : const Color(0xFFDCDCDC),
+            color: theme.colorScheme.outlineVariant,
             width: 1,
           ),
         ),
@@ -93,7 +93,7 @@ class GtkSidebar extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        'v0.3.0',
+                        appVersionLabel,
                         style: TextStyle(
                           color: theme.textTheme.bodySmall?.color
                               ?.withValues(alpha: 0.7),
@@ -109,7 +109,7 @@ class GtkSidebar extends StatelessWidget {
           Divider(
             height: 1,
             thickness: 1,
-            color: isDark ? const Color(0xFF3C4049) : const Color(0xFFE8E8E8),
+            color: theme.colorScheme.outlineVariant,
           ),
           const SizedBox(height: 8),
 
@@ -137,7 +137,7 @@ class GtkSidebar extends StatelessWidget {
           Divider(
             height: 1,
             thickness: 1,
-            color: isDark ? const Color(0xFF3C4049) : const Color(0xFFE8E8E8),
+            color: theme.colorScheme.outlineVariant,
           ),
           const SizedBox(height: 6),
 
@@ -208,7 +208,7 @@ class _GtkSidebarRowState extends State<_GtkSidebarRow> {
 
     final textColor = widget.isSelected
         ? widget.primaryColor
-        : (isDark ? Colors.white70 : const Color(0xFF2D3436));
+        : theme.colorScheme.onSurfaceVariant;
 
     final iconColor = widget.isSelected ? widget.primaryColor : textColor;
 

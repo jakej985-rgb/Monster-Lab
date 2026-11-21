@@ -5,6 +5,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../domain/models/lesson_model.dart';
 import '../../../domain/models/project_model.dart';
 import '../../shared/providers.dart';
+import '../../shared/widgets/load_error_state.dart';
 import '../../shared/widgets/monster_card.dart';
 import '../../shared/widgets/responsive_content_container.dart';
 
@@ -23,6 +24,16 @@ class _BuildScreenState extends ConsumerState<BuildScreen> {
   void initState() {
     super.initState();
     _projectsFuture = ref.read(curriculumRepositoryProvider).getProjects();
+  }
+
+  void _reloadProjects() {
+    final future = ref.read(curriculumRepositoryProvider).getProjects();
+    // FutureBuilder subscribes on the next frame; mark the error as observed
+    // until then so an immediate failure is still shown by the builder.
+    future.ignore();
+    setState(() {
+      _projectsFuture = future;
+    });
   }
 
   Color _getTierColor(DifficultyTier tier) {
@@ -53,6 +64,7 @@ class _BuildScreenState extends ConsumerState<BuildScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final activeProgress = ref.watch(activeProgressProvider);
     final completedLessonIds =
         activeProgress?.completedLessonIds.toSet() ?? <String>{};
@@ -69,6 +81,14 @@ class _BuildScreenState extends ConsumerState<BuildScreen> {
       body: FutureBuilder<List<ProjectModel>>(
         future: _projectsFuture,
         builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return LoadErrorState(
+              title: 'Could not load Build Lab',
+              message:
+                  'The project library could not be loaded. Check that the curriculum files are available and try again.',
+              onRetry: _reloadProjects,
+            );
+          }
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -303,8 +323,8 @@ class _BuildScreenState extends ConsumerState<BuildScreen> {
                                     const SizedBox(width: 10),
                                     Text(
                                       '⏱ ${project.estimatedMinutes}m',
-                                      style: const TextStyle(
-                                        color: AppColors.textSecondaryLight,
+                                      style: TextStyle(
+                                        color: colorScheme.onSurfaceVariant,
                                         fontSize: 12,
                                         fontWeight: FontWeight.w500,
                                       ),
@@ -320,15 +340,15 @@ class _BuildScreenState extends ConsumerState<BuildScreen> {
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
                                 color: isLocked
-                                    ? AppColors.textSecondaryLight
+                                    ? colorScheme.onSurfaceVariant
                                     : null,
                               ),
                             ),
                             const SizedBox(height: 6),
                             Text(
                               project.tagline,
-                              style: const TextStyle(
-                                  color: AppColors.textSecondaryLight,
+                              style: TextStyle(
+                                  color: colorScheme.onSurfaceVariant,
                                   fontSize: 14),
                             ),
                             const SizedBox(height: 14),
@@ -337,15 +357,15 @@ class _BuildScreenState extends ConsumerState<BuildScreen> {
                                 Icon(Icons.extension_rounded,
                                     size: 15,
                                     color: isLocked
-                                        ? AppColors.textSecondaryLight
+                                        ? colorScheme.onSurfaceVariant
                                         : AppColors.primaryViolet),
                                 const SizedBox(width: 6),
                                 Text(
                                   '${project.requiredComponents.length} Parts',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
-                                      color: AppColors.textSecondaryLight),
+                                      color: colorScheme.onSurfaceVariant),
                                 ),
                                 const SizedBox(width: 16),
                                 const Icon(Icons.bolt_rounded,

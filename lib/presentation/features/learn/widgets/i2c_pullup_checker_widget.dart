@@ -97,7 +97,7 @@ class _I2cPullupCheckerWidgetState extends State<I2cPullupCheckerWidget> {
             'I2C uses "open-drain" pins: chips can ONLY pull the line down to 0V (GND). '
             'External pull-up resistors are required to restore the line back to +5V when released!',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

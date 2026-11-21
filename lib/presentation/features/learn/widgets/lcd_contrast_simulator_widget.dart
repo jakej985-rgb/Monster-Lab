@@ -93,7 +93,7 @@ class _LcdContrastSimulatorWidgetState
           Text(
             'The #1 problem when powering on an LCD is incorrect contrast voltage! Adjust the trimmer potentiometer screw below to find the crisp readability sweet spot.',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withValues(alpha: 0.85),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 16),

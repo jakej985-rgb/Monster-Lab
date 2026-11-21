@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/routing/route_constants.dart';
-import '../../../core/theme/app_colors.dart';
 import '../providers.dart';
 import '../widgets/desktop_status_bar.dart';
 import '../widgets/gtk_about_dialog.dart';
@@ -195,6 +194,7 @@ class MainScaffold extends ConsumerWidget {
       );
     }
 
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: NavigationBar(
@@ -205,35 +205,39 @@ class MainScaffold extends ConsumerWidget {
             initialLocation: index == navigationShell.currentIndex,
           );
         },
-        backgroundColor: AppColors.surfaceLight,
-        indicatorColor: AppColors.primaryViolet.withValues(alpha: 0.15),
+        backgroundColor: colorScheme.surface,
+        indicatorColor: colorScheme.primary.withValues(alpha: 0.15),
         elevation: 8,
-        destinations: const [
+        destinations: [
           NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home, color: AppColors.primaryViolet),
+            icon:
+                Icon(Icons.home_outlined, color: colorScheme.onSurfaceVariant),
+            selectedIcon: Icon(Icons.home, color: colorScheme.primary),
             label: AppStrings.tabHome,
           ),
           NavigationDestination(
-            icon: Icon(Icons.school_outlined),
-            selectedIcon: Icon(Icons.school, color: AppColors.primaryViolet),
+            icon: Icon(Icons.school_outlined,
+                color: colorScheme.onSurfaceVariant),
+            selectedIcon: Icon(Icons.school, color: colorScheme.primary),
             label: AppStrings.tabLearn,
           ),
           NavigationDestination(
-            icon: Icon(Icons.extension_outlined),
-            selectedIcon: Icon(Icons.extension, color: AppColors.primaryViolet),
+            icon: Icon(Icons.extension_outlined,
+                color: colorScheme.onSurfaceVariant),
+            selectedIcon: Icon(Icons.extension, color: colorScheme.primary),
             label: AppStrings.tabParts,
           ),
           NavigationDestination(
-            icon: Icon(Icons.precision_manufacturing_outlined),
-            selectedIcon: Icon(Icons.precision_manufacturing,
-                color: AppColors.primaryViolet),
+            icon: Icon(Icons.precision_manufacturing_outlined,
+                color: colorScheme.onSurfaceVariant),
+            selectedIcon:
+                Icon(Icons.precision_manufacturing, color: colorScheme.primary),
             label: AppStrings.tabBuild,
           ),
           NavigationDestination(
-            icon: Icon(Icons.emoji_events_outlined),
-            selectedIcon:
-                Icon(Icons.emoji_events, color: AppColors.primaryViolet),
+            icon: Icon(Icons.emoji_events_outlined,
+                color: colorScheme.onSurfaceVariant),
+            selectedIcon: Icon(Icons.emoji_events, color: colorScheme.primary),
             label: AppStrings.tabProgress,
           ),
         ],

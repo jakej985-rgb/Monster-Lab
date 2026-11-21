@@ -77,7 +77,7 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
               decoration: BoxDecoration(
                 color: isFirstCompletion
                     ? AppColors.energyAmber.withValues(alpha: 0.15)
-                    : AppColors.surfaceContainerLight,
+                    : Theme.of(dialogCtx).colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
@@ -88,7 +88,7 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                 style: TextStyle(
                   color: isFirstCompletion
                       ? const Color(0xFFD48806)
-                      : AppColors.textSecondaryLight,
+                      : Theme.of(dialogCtx).colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.bold,
                   fontSize: isFirstCompletion ? 16 : 14,
                 ),
@@ -157,6 +157,7 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final curriculumRepo = ref.watch(curriculumRepositoryProvider);
     final activeProfile = ref.watch(activeProfileProvider);
     final activeProgress = ref.watch(activeProgressProvider);
@@ -190,7 +191,7 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                     // Step Progress Bar
                     LinearProgressIndicator(
                       value: (_currentStepIndex + 1) / steps.length,
-                      backgroundColor: AppColors.surfaceContainerLight,
+                      backgroundColor: colorScheme.surfaceContainerHighest,
                       valueColor:
                           const AlwaysStoppedAnimation(AppColors.primaryViolet),
                       minHeight: 8,
@@ -211,8 +212,8 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                         ),
                         Text(
                           '${lesson.estimatedMinutes} min • +${lesson.xpReward} XP',
-                          style: const TextStyle(
-                            color: AppColors.textSecondaryLight,
+                          style: TextStyle(
+                            color: colorScheme.onSurfaceVariant,
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                           ),
@@ -229,6 +230,9 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                         currentStep.quickCheck!.isNotEmpty) ...[
                       const SizedBox(height: 6),
                       Builder(builder: (context) {
+                        final quizScheme = Theme.of(context).colorScheme;
+                        final quizIsDark =
+                            Theme.of(context).brightness == Brightness.dark;
                         final qcKey = '${lesson.id}_${currentStep.stepId}';
                         final qcResult =
                             activeProgress?.quickCheckResults[qcKey];
@@ -246,20 +250,26 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                         } else {
                           switch (qcResult.readiness) {
                             case QuickCheckReadiness.ready:
-                              badgeBg = const Color(0xFFE8F5E9);
-                              badgeFg = const Color(0xFF2E7D32);
+                              badgeBg = AppColors.success
+                                  .withValues(alpha: quizIsDark ? 0.2 : 0.12);
+                              badgeFg = quizIsDark
+                                  ? AppColors.success
+                                  : AppColors.textSuccessOnLight;
                               badgeText = '🟢 Ready';
                               badgeIcon = Icons.check_circle;
                               break;
                             case QuickCheckReadiness.warmUp:
-                              badgeBg = const Color(0xFFFFF8E1);
-                              badgeFg = const Color(0xFFF57F17);
+                              badgeBg = AppColors.warning
+                                  .withValues(alpha: quizIsDark ? 0.2 : 0.12);
+                              badgeFg = quizIsDark
+                                  ? AppColors.energyGold
+                                  : AppColors.textWarningOnLight;
                               badgeText = '🟡 Warm Up Review';
                               badgeIcon = Icons.lightbulb;
                               break;
                             case QuickCheckReadiness.notAssessed:
-                              badgeBg = AppColors.surfaceContainerLight;
-                              badgeFg = AppColors.textSecondaryLight;
+                              badgeBg = quizScheme.surfaceContainerHighest;
+                              badgeFg = quizScheme.onSurfaceVariant;
                               badgeText = '⚪ Quick Check (Not Assessed)';
                               badgeIcon = Icons.info_outline;
                               break;
@@ -593,6 +603,7 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                                       .read(activeProgressProvider.notifier)
                                       .completeLesson(
                                           lesson.id, lesson.xpReward);
+                                  ref.read(soundEffectsProvider).success();
 
                                   if (lesson.courseId != null) {
                                     try {
@@ -658,9 +669,7 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
     final isDone = _checkedPhysicalTasks.contains(taskKey);
 
     return MonsterCard(
-      color: isDone
-          ? AppColors.success.withValues(alpha: 0.1)
-          : AppColors.backgroundLight,
+      color: isDone ? AppColors.success.withValues(alpha: 0.1) : null,
       child: Row(
         children: [
           Checkbox(

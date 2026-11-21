@@ -24,6 +24,7 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final curriculumRepo = ref.watch(curriculumRepositoryProvider);
     final activeProgress = ref.watch(activeProgressProvider);
     final coursesAsync = ref.watch(coursesProvider);
@@ -42,7 +43,7 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
               width: double.infinity,
               padding:
                   const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              color: Colors.white,
+              color: colorScheme.surface,
               child: Wrap(
                 spacing: 8,
                 runSpacing: 8,
@@ -162,6 +163,7 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
     required List<Lesson> lessons,
     required LearnerProgressModel? activeProgress,
   }) {
+    final colorScheme = Theme.of(context).colorScheme;
     final courseId = course.id;
     final isExpanded = _expandedCourseIds.contains(courseId);
     final completedCount = lessons
@@ -173,7 +175,7 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isAllComplete
@@ -213,7 +215,7 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
               decoration: BoxDecoration(
                 color: isExpanded
                     ? AppColors.primaryViolet.withValues(alpha: 0.05)
-                    : Colors.white,
+                    : colorScheme.surface,
                 borderRadius: BorderRadius.vertical(
                   top: const Radius.circular(16),
                   bottom: isExpanded ? Radius.zero : const Radius.circular(16),
@@ -262,8 +264,8 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
                             const SizedBox(width: 8),
                             Text(
                               '$completedCount / $totalCount Completed',
-                              style: const TextStyle(
-                                color: AppColors.textSecondaryLight,
+                              style: TextStyle(
+                                color: colorScheme.onSurfaceVariant,
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -273,10 +275,10 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
                         const SizedBox(height: 6),
                         Text(
                           course.title,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 15,
-                            color: AppColors.textPrimaryLight,
+                            color: colorScheme.onSurface,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -284,8 +286,8 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
                           course.summary,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: AppColors.textSecondaryLight,
+                          style: TextStyle(
+                            color: colorScheme.onSurfaceVariant,
                             fontSize: 12,
                           ),
                         ),
@@ -297,7 +299,8 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
                                 ? completedCount / totalCount
                                 : 0.0,
                             minHeight: 6,
-                            backgroundColor: Colors.grey.shade200,
+                            backgroundColor:
+                                colorScheme.surfaceContainerHighest,
                             valueColor: AlwaysStoppedAnimation<Color>(
                               isAllComplete
                                   ? AppColors.success
@@ -331,7 +334,7 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
                       const SizedBox(height: 8),
                       Icon(
                         isExpanded ? Icons.expand_less : Icons.expand_more,
-                        color: AppColors.textSecondaryLight,
+                        color: colorScheme.onSurfaceVariant,
                         size: 24,
                       ),
                     ],
@@ -345,7 +348,7 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
           if (isExpanded) ...[
             const Divider(height: 1),
             Container(
-              color: Colors.grey.shade50,
+              color: colorScheme.surfaceContainerLow,
               padding: const EdgeInsets.all(12.0),
               child: Column(
                 children: [
@@ -380,9 +383,12 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
         )
         .toList();
     final isLocked = missingPrereqs.isNotEmpty;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return MonsterCard(
-      color: isLocked ? Colors.grey.shade100 : (isNested ? Colors.white : null),
+      color: isLocked
+          ? colorScheme.surfaceContainerHighest
+          : (isNested ? colorScheme.surface : null),
       onTap: isLocked
           ? () {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -399,7 +405,7 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
             radius: isNested ? 18 : 22,
             backgroundColor: isCompleted
                 ? AppColors.success
-                : (isLocked ? Colors.grey.shade400 : AppColors.primaryViolet),
+                : (isLocked ? colorScheme.outline : AppColors.primaryViolet),
             child: Icon(
               isCompleted
                   ? Icons.check
@@ -435,8 +441,8 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
                     const SizedBox(width: 8),
                     Text(
                       '⏱ ${lesson.estimatedMinutes} min',
-                      style: const TextStyle(
-                          color: AppColors.textSecondaryLight, fontSize: 11),
+                      style: TextStyle(
+                          color: colorScheme.onSurfaceVariant, fontSize: 11),
                     ),
                   ],
                 ),
@@ -447,8 +453,8 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
                     fontWeight: FontWeight.bold,
                     fontSize: isNested ? 14 : 15,
                     color: isLocked
-                        ? AppColors.textSecondaryLight
-                        : AppColors.textPrimaryLight,
+                        ? colorScheme.onSurfaceVariant
+                        : colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -456,8 +462,8 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
                   lesson.summary,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                      color: AppColors.textSecondaryLight, fontSize: 12),
+                  style: TextStyle(
+                      color: colorScheme.onSurfaceVariant, fontSize: 12),
                 ),
               ],
             ),
@@ -485,6 +491,7 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
 
   Widget _buildTierChip(
       {required String label, required DifficultyTier? tier}) {
+    final colorScheme = Theme.of(context).colorScheme;
     final isSelected = _selectedTier == tier;
     return ChoiceChip(
       label: Text(label,
@@ -492,9 +499,11 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
               fontSize: 12,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal)),
       selected: isSelected,
-      selectedColor: AppColors.primaryViolet,
+      selectedColor: colorScheme.primary,
       labelStyle: TextStyle(
-          color: isSelected ? Colors.white : AppColors.textPrimaryLight),
+          color: isSelected
+              ? colorScheme.onPrimary
+              : colorScheme.onSurfaceVariant),
       onSelected: (_) => setState(() => _selectedTier = tier),
     );
   }
