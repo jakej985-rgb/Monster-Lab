@@ -3,5 +3,5 @@
 **Action:** Do not parallelize curriculum group loads for startup speed. Reduce the asset count or defer groups that the current screen does not need, and benchmark with a fresh `PlatformAssetBundle` across multiple runs.
 
 ## 2026-11-21 - [Lesson detail future re-created on every rebuild]
-**Learning:** `LessonDetailScreen` created its `FutureBuilder` future inside `build`, so every step/quiz/checkbox rebuild issued another `getLessonById` call (measured 2 fetches for one initial load plus one step transition) and reset through a transient loading state.
+**Learning:** `LessonDetailScreen` created its `FutureBuilder` future inside `build`, so every step/quiz/checkbox rebuild issued another `getLessonById` call (measured 2 fetches for one initial load plus one step transition). `FutureBuilder` keeps the previous data while a replacement future waits, so this cost redundant fetches rather than visible loading frames.
 **Action:** Keep repository futures in `State` and recreate them only when the input ID changes. Verify with a counting repository implementation.
