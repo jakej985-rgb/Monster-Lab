@@ -14,6 +14,11 @@ from typing import Optional
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_APT_REPO = os.path.expanduser("~/apps/m3tal-apt-key")
+# Canonical APT repository root (GitHub Pages site of the m3tal-apt-key repo).
+# This is deliberately independent of the app homepage in pubspec.yaml.
+APT_REPO_BASE_URL = "https://jakej985-rgb.github.io/m3tal-apt-key"
+
+
 def parse_pubspec_version():
     pubspec_path = os.path.join(ROOT_DIR, "pubspec.yaml")
     if os.path.exists(pubspec_path):
@@ -297,8 +302,7 @@ def create_deb_package(bundle_dir: str, output_deb: str, push_to_apt_repo: str =
         with open(sources_list_path, "w", encoding="utf-8") as f:
             f.write("# M3tal Official Debian APT Repository\n")
             f.write("# Verification Key: /etc/apt/keyrings/m3tal-archive-keyring.gpg\n")
-            repo_base = metadata["homepage"].rstrip("/")
-            f.write(f"deb [signed-by=/etc/apt/keyrings/m3tal-archive-keyring.gpg] {repo_base}/m3tal-apt-key stable main\n")
+            f.write(f"deb [signed-by=/etc/apt/keyrings/m3tal-archive-keyring.gpg] {APT_REPO_BASE_URL} stable main\n")
         os.chmod(sources_list_path, 0o644)
 
     # Calculate installed size in KB
