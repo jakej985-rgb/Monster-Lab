@@ -14,6 +14,10 @@ struct _MyApplication {
 
 G_DEFINE_TYPE(MyApplication, my_application, GTK_TYPE_APPLICATION)
 
+// Version 2 opens existing small saved windows maximized once. After that,
+// the normal maximize/unmaximize state is preserved across launches.
+constexpr gint kWindowStateVersion = 2;
+
 static gchar* get_config_file_path() {
   const gchar* config_dir = g_get_user_config_dir();
   gchar* app_config_dir = g_build_filename(config_dir, "monster-lab", nullptr);
@@ -29,6 +33,8 @@ static void save_window_state(GtkWindow* window) {
   g_key_file_load_from_file(key_file, config_path, G_KEY_FILE_NONE, nullptr);
 
   gboolean is_maximized = gtk_window_is_maximized(window);
+  g_key_file_set_integer(key_file, "Window", "state_version",
+                         kWindowStateVersion);
   g_key_file_set_boolean(key_file, "Window", "maximized", is_maximized);
 
   if (!is_maximized) {
@@ -52,6 +58,8 @@ static void restore_window_state(GtkWindow* window) {
     gint width = g_key_file_get_integer(key_file, "Window", "width", nullptr);
     gint height = g_key_file_get_integer(key_file, "Window", "height", nullptr);
     gboolean is_maximized = g_key_file_get_boolean(key_file, "Window", "maximized", nullptr);
+    gint state_version = g_key_file_get_integer(
+        key_file, "Window", "state_version", nullptr);
 
     if (width >= 800 && height >= 500) {
       gtk_window_set_default_size(window, width, height);
@@ -59,11 +67,12 @@ static void restore_window_state(GtkWindow* window) {
       gtk_window_set_default_size(window, 1280, 720);
     }
 
-    if (is_maximized) {
+    if (is_maximized || state_version < kWindowStateVersion) {
       gtk_window_maximize(window);
     }
   } else {
     gtk_window_set_default_size(window, 1280, 720);
+    gtk_window_maximize(window);
   }
   g_free(config_path);
 }

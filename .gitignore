@@ -46,3 +46,6 @@ coverage/
 
 # Generated reports
 reports/
+
+# Local build toolchains
+.toolchain/

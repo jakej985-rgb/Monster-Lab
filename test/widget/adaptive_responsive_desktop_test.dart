@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:monster_lab/app.dart';
 import 'package:monster_lab/core/services/storage_service.dart';
 import 'package:monster_lab/data/datasources/settings_datasource.dart';
 import 'package:monster_lab/data/repositories/settings_repository_impl.dart';
@@ -86,6 +87,42 @@ void main() {
       expect(find.byType(MenuBar), findsOneWidget);
       expect(find.byType(DesktopStatusBar), findsOneWidget);
       expect(find.byType(NavigationBar), findsNothing);
+    });
+
+    testWidgets('UiScaleCanvas fills the viewport at 80% scale',
+        (tester) async {
+      tester.view.physicalSize = const Size(1000, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      var tapped = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: UiScaleCanvas(
+            scale: 0.80,
+            child: Align(
+              alignment: Alignment.bottomRight,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => tapped = true,
+                child: const SizedBox(
+                  width: 80,
+                  height: 80,
+                  child: ColoredBox(color: Colors.red),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // The scaled canvas must reach the physical bottom-right corner.
+      await tester.tapAt(const Offset(990, 790));
+      expect(tapped, isTrue);
     });
 
     testWidgets(

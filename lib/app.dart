@@ -45,7 +45,6 @@ class MonsterLabApp extends ConsumerWidget {
       routerConfig: appRouter,
       builder: (context, child) {
         if (child == null) return const SizedBox.shrink();
-        final mediaQuery = MediaQuery.of(context);
 
         final double effectiveScale;
         if (settings.uiScale > 0.0) {
@@ -60,39 +59,61 @@ class MonsterLabApp extends ConsumerWidget {
           return child;
         }
 
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            final double width = constraints.hasBoundedWidth
-                ? constraints.maxWidth
-                : mediaQuery.size.width;
-            final double height = constraints.hasBoundedHeight
-                ? constraints.maxHeight
-                : mediaQuery.size.height;
+        return UiScaleCanvas(
+          scale: effectiveScale,
+          child: child,
+        );
+      },
+    );
+  }
+}
 
-            final double scaledWidth = width / effectiveScale;
-            final double scaledHeight = height / effectiveScale;
+/// Scales the whole app canvas without leaving unused space around it.
+class UiScaleCanvas extends StatelessWidget {
+  final double scale;
+  final Widget child;
 
-            final scaledMediaQuery = mediaQuery.copyWith(
-              size: Size(scaledWidth, scaledHeight),
-              devicePixelRatio: mediaQuery.devicePixelRatio * effectiveScale,
-              padding: mediaQuery.padding / effectiveScale,
-              viewPadding: mediaQuery.viewPadding / effectiveScale,
-              viewInsets: mediaQuery.viewInsets / effectiveScale,
-            );
+  const UiScaleCanvas({
+    super.key,
+    required this.scale,
+    required this.child,
+  });
 
-            return MediaQuery(
-              data: scaledMediaQuery,
-              child: Transform.scale(
-                scale: effectiveScale,
-                alignment: Alignment.topLeft,
-                child: SizedBox(
-                  width: scaledWidth,
-                  height: scaledHeight,
-                  child: child,
-                ),
-              ),
-            );
-          },
+  @override
+  Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double width = constraints.hasBoundedWidth
+            ? constraints.maxWidth
+            : mediaQuery.size.width;
+        final double height = constraints.hasBoundedHeight
+            ? constraints.maxHeight
+            : mediaQuery.size.height;
+
+        final double scaledWidth = width / scale;
+        final double scaledHeight = height / scale;
+
+        final scaledMediaQuery = mediaQuery.copyWith(
+          size: Size(scaledWidth, scaledHeight),
+          devicePixelRatio: mediaQuery.devicePixelRatio * scale,
+          padding: mediaQuery.padding / scale,
+          viewPadding: mediaQuery.viewPadding / scale,
+          viewInsets: mediaQuery.viewInsets / scale,
+        );
+
+        return MediaQuery(
+          data: scaledMediaQuery,
+          child: FittedBox(
+            fit: BoxFit.fill,
+            alignment: Alignment.topLeft,
+            child: SizedBox(
+              width: scaledWidth,
+              height: scaledHeight,
+              child: child,
+            ),
+          ),
         );
       },
     );
