@@ -69,13 +69,14 @@ class GtkSidebar extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
             child: Row(
               children: [
-                CircleAvatar(
-                  radius: 16,
-                  backgroundColor: primaryColor.withValues(alpha: 0.15),
-                  child: Icon(
-                    Icons.smart_toy_outlined,
-                    color: primaryColor,
-                    size: 18,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.asset(
+                    'assets/images/app_icon.png',
+                    width: 32,
+                    height: 32,
+                    fit: BoxFit.cover,
+                    semanticLabel: 'Monster Lab app icon',
                   ),
                 ),
                 const SizedBox(width: 10),
