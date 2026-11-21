@@ -18,6 +18,7 @@ class HomeScreen extends ConsumerWidget {
 
   static const double _sideRailBreakpoint = 1000.0;
   static const double _sideRailWidth = 300.0;
+  static const double _compactHeightBreakpoint = 700.0;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -41,23 +42,35 @@ class HomeScreen extends ConsumerWidget {
           builder: (context, constraints) {
             final viewportHeight =
                 constraints.hasBoundedHeight ? constraints.maxHeight : 0.0;
-            final minHeight =
-                viewportHeight > 32.0 ? viewportHeight - 32.0 : 0.0;
+            // The desktop shell adds a menu bar and status bar above this body.
+            // Use a denser layout on short viewports so Home does not need a
+            // page scroll at common 720p and 768p window sizes.
+            final isCompact =
+                viewportHeight > 0 && viewportHeight < _compactHeightBreakpoint;
+            final verticalPadding = isCompact ? 8.0 : 16.0;
+            final minHeight = viewportHeight > verticalPadding * 2
+                ? viewportHeight - verticalPadding * 2
+                : 0.0;
             final mainColumn = _buildMainColumn(
               context,
               ref,
               activeProgress: activeProgress,
               avatar: avatar,
+              compact: isCompact,
             );
             final sideRail = _buildSideRail(
               context,
               ref,
               activeProgress: activeProgress,
+              compact: isCompact,
             );
 
             return SingleChildScrollView(
               key: const Key('home_dashboard_scroll'),
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: verticalPadding,
+              ),
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: minHeight),
                 child: constraints.maxWidth >= _sideRailBreakpoint
@@ -73,7 +86,7 @@ class HomeScreen extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           mainColumn,
-                          const SizedBox(height: 16),
+                          SizedBox(height: isCompact ? 12 : 16),
                           sideRail,
                         ],
                       ),
@@ -158,7 +171,9 @@ class HomeScreen extends ConsumerWidget {
     WidgetRef ref, {
     required LearnerProgressModel? activeProgress,
     required MonsterAvatar avatar,
+    required bool compact,
   }) {
+    final sectionGap = compact ? 12.0 : 20.0;
     return Column(
       key: const Key('home_dashboard_main_column'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -169,7 +184,7 @@ class HomeScreen extends ConsumerWidget {
             currentLevel: activeProgress.currentLevel,
             progressRatio: activeProgress.levelProgressRatio,
           ),
-        const SizedBox(height: 16),
+        SizedBox(height: compact ? 10 : 16),
 
         // Robot Companion Greeting
         MonsterCard(
@@ -206,31 +221,34 @@ class HomeScreen extends ConsumerWidget {
             ],
           ),
         ),
-        const SizedBox(height: 20),
+        SizedBox(height: sectionGap),
 
         // Resume Learning Section
         const Text(
           'Continue Learning',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: compact ? 6 : 8),
         _buildResumeCard(context, ref, activeProgress),
 
-        const SizedBox(height: 20),
+        SizedBox(height: sectionGap),
 
         // Progress Overview Stats Grid
         const Text(
           'Your Monster Lab Stats',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 8),
-        _buildStatsGrid(context, activeProgress),
+        SizedBox(height: compact ? 6 : 8),
+        _buildStatsGrid(context, activeProgress, compact: compact),
       ],
     );
   }
 
   Widget _buildStatsGrid(
-      BuildContext context, LearnerProgressModel? activeProgress) {
+    BuildContext context,
+    LearnerProgressModel? activeProgress, {
+    required bool compact,
+  }) {
     final stats = [
       _buildStatCard(
         context: context,
@@ -238,6 +256,7 @@ class HomeScreen extends ConsumerWidget {
         color: AppColors.primaryViolet,
         label: 'Lessons Done',
         value: '${activeProgress?.completedLessonIds.length ?? 0}',
+        compact: compact,
         onTap: () => context.go(RoutePaths.learn),
       ),
       _buildStatCard(
@@ -246,6 +265,7 @@ class HomeScreen extends ConsumerWidget {
         color: AppColors.accentCyan,
         label: 'Parts Found',
         value: '${activeProgress?.discoveredComponentIds.length ?? 0}',
+        compact: compact,
         onTap: () => context.go(RoutePaths.parts),
       ),
       _buildStatCard(
@@ -254,6 +274,7 @@ class HomeScreen extends ConsumerWidget {
         color: AppColors.tierEngineer,
         label: 'Projects Built',
         value: '${activeProgress?.completedProjectIds.length ?? 0}',
+        compact: compact,
         onTap: () => context.go(RoutePaths.build),
       ),
       _buildStatCard(
@@ -262,6 +283,7 @@ class HomeScreen extends ConsumerWidget {
         color: AppColors.energyAmber,
         label: 'Badges Won',
         value: '${activeProgress?.earnedBadgeIds.length ?? 0}',
+        compact: compact,
         onTap: () => context.go(RoutePaths.progress),
       ),
     ];
@@ -306,26 +328,78 @@ class HomeScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref, {
     required LearnerProgressModel? activeProgress,
+    required bool compact,
   }) {
     return Column(
       key: const Key('home_dashboard_side_rail'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _buildAchievementsCard(context, activeProgress),
-        const SizedBox(height: 10),
+        _buildAchievementsCard(context, activeProgress, compact: compact),
+        SizedBox(height: compact ? 8 : 10),
         _buildNotificationsCard(context, ref, activeProgress),
-        const SizedBox(height: 10),
+        SizedBox(height: compact ? 8 : 10),
         _buildQuickActionsCard(context),
       ],
     );
   }
 
   Widget _buildAchievementsCard(
-      BuildContext context, LearnerProgressModel? activeProgress) {
+    BuildContext context,
+    LearnerProgressModel? activeProgress, {
+    required bool compact,
+  }) {
     final colorScheme = Theme.of(context).colorScheme;
     final earned = activeProgress?.earnedBadgeIds.length ?? 0;
     final hasBadges = earned > 0;
     final badgeLabel = earned == 1 ? '1 badge earned' : '$earned badges earned';
+
+    if (compact) {
+      return MonsterCard(
+        key: const Key('home_achievements_card'),
+        padding: const EdgeInsets.fromLTRB(12, 6, 6, 6),
+        child: Row(
+          children: [
+            const Icon(
+              Icons.emoji_events_outlined,
+              color: AppColors.energyAmber,
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Achievements',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 1),
+                  Text(
+                    hasBadges ? badgeLabel : 'First badge waiting',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            IconButton(
+              onPressed: () => context.go(RoutePaths.progress),
+              tooltip: 'View all achievements',
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+              icon: const Icon(Icons.chevron_right, size: 20),
+            ),
+          ],
+        ),
+      );
+    }
 
     return MonsterCard(
       key: const Key('home_achievements_card'),
@@ -801,13 +875,14 @@ class HomeScreen extends ConsumerWidget {
     required Color color,
     required String label,
     required String value,
+    required bool compact,
     required VoidCallback onTap,
   }) {
     return MonsterCard(
       mergeSemantics: true,
       semanticLabel: '$label: $value',
       onTap: onTap,
-      padding: const EdgeInsets.all(12),
+      padding: EdgeInsets.all(compact ? 10 : 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

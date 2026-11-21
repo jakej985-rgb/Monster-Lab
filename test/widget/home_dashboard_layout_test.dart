@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:monster_lab/core/services/storage_service.dart';
 import 'package:monster_lab/data/datasources/asset_curriculum_datasource.dart';
@@ -8,10 +9,11 @@ import 'package:monster_lab/data/datasources/curriculum_data_engine.dart';
 import 'package:monster_lab/data/repositories/curriculum_repository_impl.dart';
 import 'package:monster_lab/presentation/features/home/home_screen.dart';
 import 'package:monster_lab/presentation/shared/providers.dart';
+import 'package:monster_lab/presentation/shared/scaffold/main_scaffold.dart';
 
 void main() {
   testWidgets(
-      'Home dashboard shows its side rail without scrolling at 1280x720',
+      'Home dashboard shows its side rail without page scrolling in the desktop shell',
       (tester) async {
     tester.view.physicalSize = const Size(1280, 720);
     tester.view.devicePixelRatio = 1.0;
@@ -30,6 +32,28 @@ void main() {
     });
     final storageService = await StorageService.init();
 
+    // Use the real desktop shell so the menu bar, sidebar and status bar are
+    // included in the available-height calculation.
+    final router = GoRouter(
+      initialLocation: '/home',
+      routes: [
+        StatefulShellRoute.indexedStack(
+          builder: (context, state, navigationShell) {
+            return MainScaffold(navigationShell: navigationShell);
+          },
+          branches: [
+            StatefulShellBranch(routes: [
+              GoRoute(
+                path: '/home',
+                builder: (_, __) => const HomeScreen(),
+              ),
+            ]),
+          ],
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -37,24 +61,29 @@ void main() {
           curriculumRepositoryProvider
               .overrideWithValue(CurriculumRepositoryImpl(engine)),
         ],
-        child: const MaterialApp(home: HomeScreen()),
+        child: MaterialApp.router(routerConfig: router),
       ),
     );
+    await tester.pumpAndSettle();
 
-    await tester.pump();
     final element = tester.element(find.byType(HomeScreen));
     final container = ProviderScope.containerOf(element);
     await container.read(nextLessonProvider.future);
     await tester.pumpAndSettle();
 
+    expect(find.byType(MainScaffold), findsOneWidget);
     expect(find.byKey(const Key('home_dashboard_side_rail')), findsOneWidget);
     expect(find.text('Achievements'), findsOneWidget);
     expect(find.text('Notifications'), findsOneWidget);
     expect(find.text('Quick Actions'), findsOneWidget);
     expect(tester.takeException(), isNull);
 
-    final scrollable =
-        tester.state<ScrollableState>(find.byType(Scrollable).first);
+    final scrollableFinder = find.descendant(
+      of: find.byKey(const Key('home_dashboard_scroll')),
+      matching: find.byType(Scrollable),
+    );
+    expect(scrollableFinder, findsOneWidget);
+    final scrollable = tester.state<ScrollableState>(scrollableFinder);
     expect(scrollable.position.maxScrollExtent, 0.0);
   });
 }
