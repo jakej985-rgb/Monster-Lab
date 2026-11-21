@@ -6,6 +6,19 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.5.2+35] - 2026-11-21
+
+### Overview & Release Highlights
+Release 0.5.2+35 introduces updates across 1 commits.
+
+### 🎨 User Experience & Design System
+- **fix(ui): use the full desktop window** (`f6b9390`):
+  - *What Changed*: Scale the UI canvas with FittedBox so 80% desktop zoom fills the viewport instead of leaving a black margin. Start Linux and Windows windows maximized, and ignore the local Flutter toolchain.
+  - *Why*: Technical necessity and user enhancement.
+
+
+---
+
 ## [0.5.1+34] - 2026-11-21
 
 ### Overview & Release Highlights
