@@ -43,7 +43,7 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
   void initState() {
     super.initState();
     // Keep the repository future stable across step/quiz rebuilds so they do
-    // not trigger a fresh load and a transient loading frame.
+    // not trigger a redundant lesson fetch.
     _loadLesson(ref.read(curriculumRepositoryProvider));
   }
 
