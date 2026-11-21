@@ -35,6 +35,25 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
   final ScrollController _scrollController = ScrollController();
   final GlobalKey _interactiveKey = GlobalKey();
   bool _isCompleting = false;
+  late Future<Lesson> _lessonFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    // Keep the repository future stable across step/quiz rebuilds so they do
+    // not trigger a fresh load and a transient loading frame.
+    _lessonFuture =
+        ref.read(curriculumRepositoryProvider).getLessonById(widget.lessonId);
+  }
+
+  @override
+  void didUpdateWidget(covariant LessonDetailScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.lessonId != widget.lessonId) {
+      _lessonFuture =
+          ref.read(curriculumRepositoryProvider).getLessonById(widget.lessonId);
+    }
+  }
 
   @override
   void dispose() {
@@ -158,7 +177,6 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final curriculumRepo = ref.watch(curriculumRepositoryProvider);
     final activeProfile = ref.watch(activeProfileProvider);
     final activeProgress = ref.watch(activeProgressProvider);
 
@@ -168,7 +186,7 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
           title: const Text('Learn Lab Session'),
         ),
         body: FutureBuilder<Lesson>(
-          future: curriculumRepo.getLessonById(widget.lessonId),
+          future: _lessonFuture,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return Center(
