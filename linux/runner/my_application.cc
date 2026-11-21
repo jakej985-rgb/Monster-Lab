@@ -82,6 +82,22 @@ static gboolean on_window_delete_event(GtkWidget* widget, GdkEvent* event, gpoin
   return FALSE;
 }
 
+// Finds the bundled app icon next to the release/debug executable.
+static gchar* get_app_icon_path() {
+  gchar* executable_path = g_file_read_link("/proc/self/exe", nullptr);
+  if (executable_path == nullptr) {
+    return nullptr;
+  }
+
+  gchar* executable_dir = g_path_get_dirname(executable_path);
+  gchar* icon_path = g_build_filename(
+      executable_dir, "data", "flutter_assets", "assets", "images",
+      "app_icon.png", nullptr);
+  g_free(executable_dir);
+  g_free(executable_path);
+  return icon_path;
+}
+
 // Called when first Flutter frame received.
 static void first_frame_cb(MyApplication* self, FlView* view) {
   gtk_widget_show(gtk_widget_get_toplevel(GTK_WIDGET(view)));
@@ -118,6 +134,11 @@ static void my_application_activate(GApplication* application) {
     gtk_window_set_titlebar(window, GTK_WIDGET(header_bar));
   } else {
     gtk_window_set_title(window, "Monster Lab");
+  }
+
+  g_autofree gchar* icon_path = get_app_icon_path();
+  if (icon_path != nullptr) {
+    gtk_window_set_icon_from_file(window, icon_path, nullptr);
   }
 
   restore_window_state(window);
