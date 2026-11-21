@@ -17,7 +17,7 @@ Monster Lab officially targets **Android, Linux, and Windows** (along with a str
   7. `flutter build web --release`
   8. `docker build -t monster-lab-web:local .`
   9. Strict platform configuration verification: Android ProGuard rules (`android/app/proguard-rules.pro` including R8 `-dontwarn`), AGP release setup, Linux desktop setup, and Windows Inno Setup wizard.
-- Only the Push Gatekeeper is authorized to execute `git push`.
+- Only the Push Gatekeeper is authorized to execute `git push` from the local workspace. `.github/workflows/release.yml` is the automated exception and may push only its synchronized release commit and tag.
 - Validation results are tied to the exact working-tree/commit state that was tested.
 - Any code, configuration, platform runner (`android/`, `linux/`, `windows/`), dependency, generated-source, curriculum dataset, or workflow change after validation invalidates the previous result.
 - **Active Diagnostics & Auto-Repair**: If any check fails (locally or remotely), do not simply halt and say "PUSH BLOCKED". Actively diagnose the error, repair it (or invoke `repair-agent`), and retry validation up to 3 repair cycles.
@@ -27,20 +27,23 @@ Monster Lab officially targets **Android, Linux, and Windows** (along with a str
 - Never commit secrets, credentials, signing keys, keystores, generated build output (`build/`, `.dart_tool/`, `*.apk`, `*.aab`, `*.deb`, `*.exe`, `*.tar.gz`, `*.zip`), or temporary test artifacts.
 - Enforce strict child-safe and zero-telemetry rules: Monster Lab must remain 100% offline, privacy-compliant (COPPA/FERPA), with no unvetted external HTTP/telemetry endpoints across Android, Linux, Windows, or Web.
 
-## Versioning Protocol (Starts at v0.0.1 & Bumps 0.0.1 Every Push)
+## Versioning Protocol (Smart Bump on Every Push)
 
 - Starting version baseline is **`v0.0.1`** (`0.0.1+1`).
-- **Mandatory Pre-Push Version Bump**:
-  - Immediately before committing and pushing, the Push Gatekeeper must execute `python3 scripts/bump_version.py` to bump the patch version by `0.0.1` (e.g. `0.0.1` -> `0.0.2` -> `0.0.3`) and advance the internal build number.
-  - The script automatically synchronizes:
+- **Every push to `main` is a release**: `.github/workflows/release.yml` runs `python3 scripts/bump_version.py --auto`, which chooses major, minor, or patch from the commits since the previous tag using the smart bump system.
+- **The release workflow owns versioning**: do not run `bump_version.py --auto` with `--apply` or create/push release tags from the local gate. Push the validated source commit; the workflow creates the release commit, tag, and atomic push. Local validation should verify the current sources, not create a second release commit.
+  - To preview the next smart bump without writing files, run `python3 scripts/generate_release_changelog.py --bump auto`.
+  - The smart bump automatically synchronizes:
+    - `version.json` (including package metadata)
     - `pubspec.yaml`
     - `lib/core/constants/app_version.dart`
     - `windows/installer/monster_lab_setup.iss`
     - `windows/runner/Runner.rc`
     - `Dockerfile`
     - `CHANGELOG.md`
-  - **Release Changelog Generation**: Immediately prior to push, invoke `release-changelog` (or `python3 scripts/generate_release_changelog.py --version v[semver]`) to ensure comprehensive release notes are documented in `CHANGELOG.md` and published to the GitHub release description.
-  - Every pushed commit is tagged with `v[semver]` (e.g. `v0.0.1`, `v0.0.2`, `v0.1.1`).
+  - **Release Changelog Generation**: The smart bump delegates to `scripts/generate_release_changelog.py --bump auto --apply`, ensuring release notes are generated and published.
+  - Every release commit is tagged with `v[semver]` (e.g. `v0.0.1`, `v0.0.2`, `v0.1.1`). The workflow commits the synchronized version files, tags the result, and pushes the commit and tag atomically.
+  - The release workflow skips its own `chore(release):` commit and commit messages containing `[skip release]`, preventing a bump loop.
 
 ## Supported Multi-Platform Builds & Release Artifact Matrix
 

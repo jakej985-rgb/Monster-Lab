@@ -227,10 +227,11 @@ Monster Lab officially targets Android, Linux, Windows, and Web (Docker):
 ## Versioning & Release Bumping
 
 Monster Lab follows Semantic Versioning starting at `v0.0.1` (`0.0.1+1`).
-On every push/release gate run, the patch version bumps by `0.0.1` across all components (`pubspec.yaml`, `app_version.dart`, Inno Setup, Windows RC, and Dockerfile) via:
+Every push to `main` runs `.github/workflows/release.yml`, which uses the smart bump to choose a major, minor, or patch release from the commits since the last tag:
 ```bash
-python3 scripts/bump_version.py
+python3 scripts/bump_version.py --auto
 ```
+The workflow synchronizes `version.json`, `pubspec.yaml`, `app_version.dart`, Inno Setup, Windows RC, and Dockerfile; commits and tags `vX.Y.Z`; pushes both atomically; and then builds the full release matrix from that exact commit. Manual release dispatch can supply an explicit `[v]X.Y.Z[+BUILD]` version, or leave it blank to smart-bump.
 
 ## Building and Releasing
 
@@ -263,5 +264,5 @@ Monster Lab enforces automated multi-platform release verification via `.agents/
 - Test Suite (`flutter test` — 102/102 automated tests)
 - Curriculum Engine (`python3 scripts/validate_curriculum.py` — 100% integrity)
 - Multi-Platform Packaging (Android, Linux .deb, Windows .exe, Web Docker)
-- Automated Version Bumping (`python3 scripts/bump_version.py`)
+- Automated Smart Version Bumping (`python3 scripts/bump_version.py --auto`)
 - Offline & Child-Safety Compliance (COPPA / FERPA compliant, zero telemetry)

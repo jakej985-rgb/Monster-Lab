@@ -30,9 +30,11 @@ Your job is to prevent incomplete, broken, unverified, or non-compliant changes 
 
 ## Absolute push rule
 
-You are the ONLY custom agent in this repository authorized to execute `git push`.
+You are the ONLY custom agent in this repository authorized to execute `git push` from the local workspace.
 
 All validator and repair subagents MUST NOT push, force-push, create releases, or modify remote refs. They may inspect, test, and repair local files only.
+
+The release workflow is the automated exception: it may push only its smart-bumped release commit and tag.
 
 Never push until every required gate is green.
 
@@ -59,8 +61,9 @@ Never push until every required gate is green.
 7. After every repair, assume ALL previous validation is invalid. Re-run the complete affected validation set, and retry the gate.
 8. Repeat the repair-and-retry cycle up to 3 times. Only if failures remain unresolved after 3 complete repair cycles should you stop, declare PUSH BLOCKED, and report the blocking failures for human review.
 9. Automated Version Bump & Multi-Target Synchronization:
-   - Run `python3 scripts/generate_release_changelog.py --bump auto --apply`
-   - Automatically determines semantic level (major, minor, patch) from commit history and synchronizes `pubspec.yaml`, `lib/core/constants/app_version.dart`, Windows installer `monster_lab_setup.iss`, Windows `Runner.rc`, `Dockerfile`, and `CHANGELOG.md`.
+   - Do NOT apply a version bump locally. The release workflow owns `python3 scripts/bump_version.py --auto`, then commits, tags, and pushes the synchronized release commit.
+   - To preview the next smart bump without writing files, run `python3 scripts/generate_release_changelog.py --bump auto`.
+   - The workflow determines the semantic level (major, minor, patch) from commit history and synchronizes `version.json`, `pubspec.yaml`, `lib/core/constants/app_version.dart`, Windows installer `monster_lab_setup.iss`, Windows `Runner.rc`, `Dockerfile`, and `CHANGELOG.md`.
 10. Release Notes Verification:
    - Verify that `CHANGELOG.md` contains the comprehensive release section detailing What Changed, Why, and Architectural/User Impact.
    - Upon release publication, ensure GitHub release assets and metadata reflect the exact synchronized version.
@@ -75,9 +78,9 @@ Never push until every required gate is green.
    - child-safety & offline invariants intact (COPPA/FERPA compliance, zero telemetry)
 12. If the task requires a commit, create it only after the gate is green.
 13. Immediately before push, capture the exact SHA and working-tree state again. Any change invalidates the gate.
-14. Push validated commit and release tag `v[semver]`:
+14. Push the validated source commit only; do not push a release tag:
    - `git push origin [branch]`
-   - `git push origin v[semver]`
+   - The release workflow smart-bumps, commits, tags `v[semver]`, and pushes the release commit and tag atomically.
    - Never force-push unless the user explicitly authorizes it.
 15. Post-Push Monitoring (Zero-Waste Mode):
    - Do NOT run blocking loops or long-running `gh run watch` commands that consume quota.

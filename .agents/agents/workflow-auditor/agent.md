@@ -49,7 +49,7 @@ For each relevant workflow, report:
 
 Compare workflow behavior with the custom validators and identify missing local gates.
 
-Pay special attention to `.github/workflows/ci.yml` and `.github/workflows/release.yml`.
+Pay special attention to `.github/workflows/ci.yml` and `.github/workflows/release.yml`. `release.yml` is triggered by every push to `main` (and `workflow_dispatch`): its `prepare-release` job runs the smart bump, commits/tags/pushes the synchronized version state, and the Android, Linux, Windows, and Web build jobs check out that exact bumped SHA and publish under the new tag.
 
 Return:
 - STATUS: PASS if the local gate fully covers the relevant workflows, otherwise FAIL

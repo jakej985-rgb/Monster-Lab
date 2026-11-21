@@ -2,9 +2,17 @@ name: Monster Lab Release Packaging
 
 on:
   push:
-    tags:
-      - 'v*.*.*'
+    branches: [ main ]
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Optional explicit version ([v]X.Y.Z[+BUILD]); blank uses the smart bump'
+        required: false
+        type: string
+
+concurrency:
+  group: monster-lab-release-${{ github.ref }}
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -12,47 +20,127 @@ permissions:
 
 jobs:
   # -------------------------------------------------------------
-  # Job 1: Initialize Release & Generate Changelog
+  # Job 0: Smart version bump, commit, tag, and push
   # -------------------------------------------------------------
-  create-release:
-    name: Initialize Release & Changelog
+  prepare-release:
+    name: Smart Bump & Tag Release
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
+    if: |
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'workflow_dispatch' ||
+       (github.event_name == 'push' &&
+        !startsWith(github.event.head_commit.message, 'chore(release):') &&
+        !contains(github.event.head_commit.message, '[skip release]')))
     outputs:
-      package_version: ${{ steps.pkg_ver.outputs.package_version }}
+      tag: ${{ steps.release.outputs.tag }}
+      version: ${{ steps.release.outputs.version }}
+      build: ${{ steps.release.outputs.build }}
+      sha: ${{ steps.release.outputs.sha }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.RELEASE_TOKEN || secrets.GH_PAT || github.token }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Determine Release Package Version
-        id: pkg_ver
+      - name: Configure Git identity
         run: |
-          if [[ "${{ github.ref_name }}" =~ ^v[0-9] ]]; then
-            VER="${{ github.ref_name }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Smart bump, verify, commit, and tag
+        id: release
+        env:
+          REQUESTED_VERSION: ${{ github.event.inputs.version || '' }}
+        run: |
+          set -euo pipefail
+          git fetch --tags --force
+
+          if [ -n "$REQUESTED_VERSION" ]; then
+            python3 scripts/generate_release_changelog.py --version "$REQUESTED_VERSION" --apply
           else
-            SEMVER=$(python3 -c "import yaml; print(yaml.safe_load(open('pubspec.yaml'))['version'].split('+')[0])")
-            VER="v${SEMVER}"
+            python3 scripts/bump_version.py --auto
           fi
-          echo "PACKAGE_VERSION=${VER}" >> $GITHUB_ENV
-          echo "package_version=${VER}" >> $GITHUB_OUTPUT
-          echo "Using release package version prefix: ${VER}"
+
+          python3 scripts/verify_version_sync.py
+          python3 scripts/verify_changelog_hygiene.py
+
+          FULL=$(python3 scripts/bump_version.py --current)
+          VERSION="${FULL#v}"
+          BUILD="${VERSION##*+}"
+          VERSION="${VERSION%%+*}"
+          TAG="v${VERSION}"
+
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists; refusing to overwrite an existing release." >&2
+            exit 1
+          fi
+
+          git add \
+            CHANGELOG.md \
+            Dockerfile \
+            lib/core/constants/app_version.dart \
+            pubspec.yaml \
+            version.json \
+            windows/installer/monster_lab_setup.iss \
+            windows/runner/Runner.rc
+
+          if git diff --cached --quiet; then
+            echo "Smart bump produced no version changes." >&2
+            exit 1
+          fi
+
+          git commit -m "chore(release): bump version to $TAG"
+          git fetch origin main
+          if ! git merge-base --is-ancestor origin/main HEAD; then
+            git rebase origin/main
+          fi
+          git tag "$TAG"
+          git push --atomic origin HEAD:main "$TAG"
+
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "build=$BUILD" >> "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "Released $TAG at $(git rev-parse HEAD)"
+
+  # -------------------------------------------------------------
+  # Job 1: Initialize Release & Generate Changelog
+  # -------------------------------------------------------------
+  create-release:
+    name: Initialize Release & Changelog
+    needs: prepare-release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ needs.prepare-release.outputs.sha }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
       - name: Generate Detailed Release Notes
+        env:
+          PACKAGE_VERSION: ${{ needs.prepare-release.outputs.tag }}
         run: |
           python3 scripts/generate_release_changelog.py --version "${PACKAGE_VERSION}" --output release_notes.md
           cat release_notes.md
 
       - name: Publish GitHub Release Notes
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
         with:
+          tag_name: ${{ needs.prepare-release.outputs.tag }}
           body_path: release_notes.md
           generate_release_notes: false
           draft: false
@@ -63,11 +151,16 @@ jobs:
   # -------------------------------------------------------------
   build-android:
     name: Build Android Releases
+    needs: [prepare-release, create-release]
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      PACKAGE_VERSION: ${{ needs.prepare-release.outputs.tag }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare-release.outputs.sha }}
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -95,16 +188,6 @@ jobs:
 
       - name: Generate release branding assets
         run: python3 scripts/generate_release_assets.py
-
-      - name: Determine Release Package Version
-        run: |
-          if [[ "${{ github.ref_name }}" =~ ^v[0-9] ]]; then
-            VER="${{ github.ref_name }}"
-          else
-            SEMVER=$(python3 -c "import yaml; print(yaml.safe_load(open('pubspec.yaml'))['version'].split('+')[0])")
-            VER="v${SEMVER}"
-          fi
-          echo "PACKAGE_VERSION=${VER}" >> $GITHUB_ENV
 
       - name: Configure Android Signing Keystore
         env:
@@ -146,8 +229,8 @@ jobs:
 
       - name: Publish Android Assets to GitHub Release
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
         with:
+          tag_name: ${{ needs.prepare-release.outputs.tag }}
           files: |
             monster-lab-*-android.apk
             monster-lab-*-android.aab
@@ -159,11 +242,17 @@ jobs:
   # -------------------------------------------------------------
   build-linux:
     name: Build Linux Releases
+    needs: [prepare-release, create-release]
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      PACKAGE_VERSION: ${{ needs.prepare-release.outputs.tag }}
+      CLEAN_VERSION: ${{ needs.prepare-release.outputs.version }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare-release.outputs.sha }}
 
       - name: Install Linux build dependencies
         timeout-minutes: 5
@@ -199,18 +288,6 @@ jobs:
 
       - name: Generate release branding assets
         run: python3 scripts/generate_release_assets.py
-
-      - name: Determine Release Package Version
-        run: |
-          if [[ "${{ github.ref_name }}" =~ ^v[0-9] ]]; then
-            VER="${{ github.ref_name }}"
-          else
-            SEMVER=$(python3 -c "import yaml; print(yaml.safe_load(open('pubspec.yaml'))['version'].split('+')[0])")
-            VER="v${SEMVER}"
-          fi
-          CLEAN_VER="${VER#v}"
-          echo "PACKAGE_VERSION=${VER}" >> $GITHUB_ENV
-          echo "CLEAN_VERSION=${CLEAN_VER}" >> $GITHUB_ENV
 
       - name: Build Linux Desktop Release
         run: flutter build linux --release
@@ -253,8 +330,8 @@ jobs:
 
       - name: Publish Linux Assets to GitHub Release
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
         with:
+          tag_name: ${{ needs.prepare-release.outputs.tag }}
           files: |
             monster-lab-*-linux.deb
             monster-lab-*-linux.deb.asc
@@ -265,18 +342,20 @@ jobs:
           prerelease: false
 
       - name: Validate APT Dispatch Credentials
-        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+        id: apt_token
         run: |
           TOKEN="${{ secrets.M3TAL_APT_DISPATCH_TOKEN || secrets.HUB_DISPATCH_TOKEN || secrets.M3TAL_HUB_TOKEN || secrets.GH_PAT }}"
           if [ -z "$TOKEN" ]; then
             echo "::warning::APT repository dispatch skipped. No dispatch token configured (M3TAL_APT_DISPATCH_TOKEN, HUB_DISPATCH_TOKEN, M3TAL_HUB_TOKEN, or GH_PAT)."
             echo "Signed Debian release was published, but automatic publishing to the central APT repo was not attempted."
+            echo "configured=false" >> "$GITHUB_OUTPUT"
           else
             echo "APT dispatch token is present and verified."
+            echo "configured=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Dispatch Linux Deb to Central APT Repository (m3tal-apt-key)
-        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+        if: steps.apt_token.outputs.configured == 'true'
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.M3TAL_APT_DISPATCH_TOKEN || secrets.HUB_DISPATCH_TOKEN || secrets.M3TAL_HUB_TOKEN || secrets.GH_PAT }}
@@ -298,11 +377,16 @@ jobs:
   # -------------------------------------------------------------
   build-windows:
     name: Build Windows Desktop Releases
+    needs: [prepare-release, create-release]
     runs-on: windows-latest
     timeout-minutes: 30
+    env:
+      PACKAGE_VERSION: ${{ needs.prepare-release.outputs.tag }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare-release.outputs.sha }}
 
       - name: Install Inno Setup
         run: choco install innosetup -y
@@ -328,21 +412,6 @@ jobs:
       - name: Generate release branding assets
         run: python scripts/generate_release_assets.py
 
-      - name: Determine Release Package Version
-        shell: pwsh
-        run: |
-          if ("${{ github.ref_name }}" -match "^v\d") {
-            $ver = "${{ github.ref_name }}"
-          } else {
-            $pubspec = Get-Content pubspec.yaml -Raw
-            if ($pubspec -match "version:\s*(\d+\.\d+\.\d+)") {
-              $ver = "v" + $Matches[1]
-            } else {
-              $ver = "v1.0.0"
-            }
-          }
-          "PACKAGE_VERSION=$ver" | Out-File -FilePath $env:GITHUB_ENV -Append
-
       - name: Build Windows Release Binary
         run: flutter build windows --release
 
@@ -365,8 +434,8 @@ jobs:
 
       - name: Publish Windows Assets to GitHub Release
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
         with:
+          tag_name: ${{ needs.prepare-release.outputs.tag }}
           files: |
             monster-lab-*-windows.exe
             monster-lab-*-windows-portable.zip
@@ -378,11 +447,16 @@ jobs:
   # -------------------------------------------------------------
   build-web:
     name: Build Web & Container Releases
+    needs: [prepare-release, create-release]
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      PACKAGE_VERSION: ${{ needs.prepare-release.outputs.tag }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare-release.outputs.sha }}
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -410,11 +484,11 @@ jobs:
           GHCR_IMAGE="ghcr.io/${OWNER_LOWER}/monster-lab-web"
 
           docker build \
-            -t "${GHCR_IMAGE}:${{ github.ref_name }}" \
+            -t "${GHCR_IMAGE}:${PACKAGE_VERSION}" \
             -t "${GHCR_IMAGE}:latest" \
             -t monster-lab-web:latest .
 
-          docker push "${GHCR_IMAGE}:${{ github.ref_name }}"
+          docker push "${GHCR_IMAGE}:${PACKAGE_VERSION}"
           docker push "${GHCR_IMAGE}:latest"
 
       - name: Generate Pre-filled Docker Compose Release File
@@ -423,7 +497,7 @@ jobs:
           cat <<EOF > docker-compose.yml
           services:
             monster-lab-web:
-              image: ghcr.io/${OWNER_LOWER}/monster-lab-web:${{ github.ref_name }}
+              image: ghcr.io/${OWNER_LOWER}/monster-lab-web:${PACKAGE_VERSION}
               container_name: monster-lab-web
               restart: unless-stopped
               ports:
@@ -438,8 +512,8 @@ jobs:
 
       - name: Publish Web Assets to GitHub Release
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
         with:
+          tag_name: ${{ needs.prepare-release.outputs.tag }}
           files: docker-compose.yml
           draft: false
           prerelease: false

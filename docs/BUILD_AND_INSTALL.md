@@ -216,23 +216,23 @@ For automated GitHub Releases, the keystore is injected securely via GitHub Repo
 
 ## 4. Automated Version Bumping & Release Quality Gates
 
-Monster Lab follows Semantic Versioning starting at `v0.0.1` (`0.0.1+1`) and increments the patch version by `0.0.1` on each push.
+Monster Lab follows Semantic Versioning starting at `v0.0.1` (`0.0.1+1`). Every push to `main` triggers `.github/workflows/release.yml`, which uses the smart bump to choose major, minor, or patch from the commits since the last tag, then commits, tags, pushes, and builds the release.
 
 ### Version Bumping Script
-Before committing and pushing, bump the version across all components (`pubspec.yaml`, `app_version.dart`, Inno Setup, Windows RC, Dockerfile, CHANGELOG):
+Run the same smart bump locally before a manual release if you need to inspect the result:
 ```bash
 # Check current version
 python3 scripts/bump_version.py --current
 
-# Bump patch version by 0.0.1 (e.g., 0.0.9 -> 0.0.10)
-python3 scripts/bump_version.py
+# Smart bump: derives major/minor/patch from commits since the last tag
+python3 scripts/bump_version.py --auto
 
-# Bump minor version (e.g., 0.0.9 -> 0.1.0)
+# Explicit semantic levels remain available for exceptional releases
 python3 scripts/bump_version.py --minor
-
-# Or set explicit version
+python3 scripts/bump_version.py --major
 python3 scripts/bump_version.py --set-version 0.1.0+10
 ```
+The smart bump synchronizes `version.json`, `pubspec.yaml`, `app_version.dart`, Inno Setup, Windows RC, Dockerfile, and `CHANGELOG.md`.
 
 ### Pre-Push Quality Verification
 Run the standard validation gates enforced by `.agents/rules/push-gatekeeper.md`:

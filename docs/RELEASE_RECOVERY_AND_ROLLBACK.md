@@ -24,7 +24,7 @@ When a production defect, security regression, or platform incompatibility is id
 1. **Halt Rollout:** In Google Play Console -> Production / Open Testing -> Select current track -> Click **Halt Rollout**.
 2. **Revert or Hotfix Build:**
    - In repo: revert offending commit(s) or cherry-pick fix.
-   - Run `python3 scripts/bump_version.py --patch` to produce new build number.
+   - Run `python3 scripts/bump_version.py --auto` to produce a new smart-bumped release and build number.
    - Build verified bundle: `flutter build appbundle --release`.
 3. **Emergency Sideload APK:**
    - Deploy signed APK to GitHub Releases with hotfix tag so sideload users can update directly.
