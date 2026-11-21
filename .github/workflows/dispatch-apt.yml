@@ -67,7 +67,7 @@ jobs:
           echo "sha256=${SHA256}" >> $GITHUB_OUTPUT
 
       - name: Dispatch Release Event to Central APT Repository
-        uses: peter-evans/repository-dispatch@v3
+        uses: peter-evans/repository-dispatch@v4
         with:
           token: ${{ secrets.M3TAL_APT_DISPATCH_TOKEN || secrets.HUB_DISPATCH_TOKEN || secrets.M3TAL_HUB_TOKEN || secrets.GH_PAT }}
           repository: jakej985-rgb/m3tal-apt-key

@@ -29,7 +29,7 @@ For each relevant workflow, report:
   - `build-linux`: Linux Debian installer (`monster-lab-v[version]-linux.deb`), portable bundle (`monster-lab-v[version]-linux-portable.tar.gz`), and GPG keyring (`monster-lab-keyring.gpg`)
   - `build-windows`: Windows setup installer (`monster-lab-v[version]-windows.exe`) & portable zip (`monster-lab-v[version]-windows-portable.zip`)
   - `build-web`: Web PWA release, automated GHCR container push, and pre-filled `docker-compose.yml`
-  - Direct GitHub Release asset publication from each build runner via `softprops/action-gh-release@v2` (bypassing Actions artifact storage quota limits)
+  - Direct GitHub Release asset publication from each build runner via `softprops/action-gh-release@v3` (bypassing Actions artifact storage quota limits)
 - runtime versions (Flutter `3.47.3`, Python `3.11`/`3.12`, Java `17`)
 - validation commands:
   - `flutter pub get`
