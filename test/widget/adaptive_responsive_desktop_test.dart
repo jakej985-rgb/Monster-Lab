@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -259,6 +260,68 @@ void main() {
       expect(find.text('File'), findsOneWidget);
       expect(find.text('Navigate'), findsOneWidget);
       expect(find.text('Help'), findsOneWidget);
+    });
+
+    testWidgets(
+        'GtkSidebar rows are keyboard focusable, show tooltips and semantics, and activate via Enter/Space',
+        (tester) async {
+      int? selectedIndex;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            colorScheme:
+                ColorScheme.fromSeed(seedColor: const Color(0xFF87A556)),
+          ),
+          home: Scaffold(
+            body: GtkSidebar(
+              selectedIndex: 0,
+              onDestinationSelected: (idx) => selectedIndex = idx,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Verify FocusableActionDetector and Tooltip presence for all destinations and footer
+      expect(find.byType(FocusableActionDetector), findsAtLeastNWidgets(6));
+      expect(find.byType(Tooltip), findsAtLeastNWidgets(6));
+
+      FocusManager.instance.highlightStrategy =
+          FocusHighlightStrategy.alwaysTraditional;
+
+      // Tab navigation into the first sidebar item ('Home')
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pumpAndSettle();
+
+      // Tab again to focus the second item ('Learn', index 1)
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pumpAndSettle();
+
+      // Verify that focused item has the theme primary color border outline
+      final primaryColor =
+          Theme.of(tester.element(find.byType(GtkSidebar))).colorScheme.primary;
+      final containers =
+          tester.widgetList<AnimatedContainer>(find.byType(AnimatedContainer));
+      final hasFocusBorder = containers.any((c) {
+        final decoration = c.decoration as BoxDecoration?;
+        final border = decoration?.border as Border?;
+        return border?.top.color == primaryColor && border?.top.width == 1.5;
+      });
+      expect(hasFocusBorder, isTrue);
+
+      // Activate with Enter key
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pumpAndSettle();
+      expect(selectedIndex, equals(1));
+
+      // Tab to the third item ('Parts Lab', index 2)
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pumpAndSettle();
+
+      // Activate with Space key
+      await tester.sendKeyEvent(LogicalKeyboardKey.space);
+      await tester.pumpAndSettle();
+      expect(selectedIndex, equals(2));
     });
   });
 }

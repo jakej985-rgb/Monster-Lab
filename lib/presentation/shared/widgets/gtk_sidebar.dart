@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/app_metadata.dart';
 import '../../../core/localization/app_strings.dart';
@@ -192,6 +193,7 @@ class _GtkSidebarRow extends StatefulWidget {
 
 class _GtkSidebarRowState extends State<_GtkSidebarRow> {
   bool _isHovered = false;
+  bool _isFocused = false;
 
   @override
   Widget build(BuildContext context) {
@@ -201,10 +203,10 @@ class _GtkSidebarRowState extends State<_GtkSidebarRow> {
     Color? backgroundColor;
     if (widget.isSelected) {
       backgroundColor = widget.primaryColor.withValues(alpha: 0.15);
-    } else if (_isHovered) {
+    } else if (_isHovered || _isFocused) {
       backgroundColor = isDark
-          ? Colors.white.withValues(alpha: 0.06)
-          : Colors.black.withValues(alpha: 0.05);
+          ? Colors.white.withValues(alpha: 0.08)
+          : Colors.black.withValues(alpha: 0.06);
     }
 
     final textColor = widget.isSelected
@@ -213,50 +215,81 @@ class _GtkSidebarRowState extends State<_GtkSidebarRow> {
 
     final iconColor = widget.isSelected ? widget.primaryColor : textColor;
 
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 120),
-          height: 36,
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(6),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Row(
-            children: [
-              // Left Accent indicator stripe on selection
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 120),
-                width: 3,
-                height: widget.isSelected ? 20 : 0,
-                decoration: BoxDecoration(
-                  color: widget.isSelected
-                      ? widget.primaryColor
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(2),
+    return Semantics(
+      button: true,
+      selected: widget.isSelected,
+      label: widget.label,
+      child: Tooltip(
+        message: widget.label,
+        waitDuration: const Duration(milliseconds: 600),
+        child: FocusableActionDetector(
+          mouseCursor: SystemMouseCursors.click,
+          onFocusChange: (focused) {
+            if (_isFocused != focused) {
+              setState(() => _isFocused = focused);
+            }
+          },
+          onShowHoverHighlight: (hovered) {
+            if (_isHovered != hovered) {
+              setState(() => _isHovered = hovered);
+            }
+          },
+          actions: <Type, Action<Intent>>{
+            ActivateIntent: CallbackAction<ActivateIntent>(
+              onInvoke: (_) => widget.onTap(),
+            ),
+          },
+          shortcuts: const <ShortcutActivator, Intent>{
+            SingleActivator(LogicalKeyboardKey.enter): ActivateIntent(),
+            SingleActivator(LogicalKeyboardKey.space): ActivateIntent(),
+          },
+          child: GestureDetector(
+            onTap: widget.onTap,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 120),
+              height: 36,
+              decoration: BoxDecoration(
+                color: backgroundColor,
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(
+                  color: _isFocused ? widget.primaryColor : Colors.transparent,
+                  width: 1.5,
                 ),
               ),
-              SizedBox(width: widget.isSelected ? 8 : 4),
-              Icon(widget.icon, size: 18, color: iconColor),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  widget.label,
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight:
-                        widget.isSelected ? FontWeight.w600 : FontWeight.normal,
-                    color: textColor,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                children: [
+                  // Left Accent indicator stripe on selection
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 120),
+                    width: 3,
+                    height: widget.isSelected ? 20 : 0,
+                    decoration: BoxDecoration(
+                      color: widget.isSelected
+                          ? widget.primaryColor
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
-                  overflow: TextOverflow.ellipsis,
-                ),
+                  SizedBox(width: widget.isSelected ? 8 : 4),
+                  Icon(widget.icon, size: 18, color: iconColor),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      widget.label,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: widget.isSelected
+                            ? FontWeight.w600
+                            : FontWeight.normal,
+                        color: textColor,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
