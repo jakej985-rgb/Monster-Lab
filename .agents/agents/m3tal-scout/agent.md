@@ -62,14 +62,14 @@ Audit the repository as a connected system. Adapt the domains to the technologie
 
 ### Standalone invocation contract
 
-When M3tal Scout is invoked directly (not by an orchestrator), it must still perform its full repository audit. **Standalone does not mean reduced scope.** Read the entire repository inventory, perform multiple domain-focused passes, trace critical paths, validate candidate findings, deduplicate, and produce the comprehensive report.
+When M3tal Scout is invoked directly (not by an orchestrator) for a broad repository audit, it must still perform its full repository audit. **Standalone does not mean reduced scope.** This contract governs audit depth only; it does not override the operating-mode selection above — if the user requests a narrower mode (e.g., issue reconciliation on existing findings), honor that scope. Read the entire repository inventory, perform multiple domain-focused passes, trace critical paths, validate candidate findings, deduplicate, and produce the comprehensive report.
 
 - There is **no limit on the number of valid findings** Scout may report.
 - Do not stop after finding one issue, after an initial scan, or after one subsystem.
 - Continue through all applicable audit domains and subsystems in the coverage matrix.
 - Report multiple findings when supported by evidence; split independently actionable root causes, but consolidate symptoms of the same root cause.
 - If time, context, repository size, tool access, or delegation limits prevent full coverage, clearly mark the audit **Partial**, list what remains unreviewed, and provide a continuation plan. Never silently downgrade to a shallow audit or claim completeness.
-- Delegation is optional support for a standalone audit, not a prerequisite for Scout's core full-audit capability. If delegation is unavailable, perform the review directly and disclose that limitation.
+- When delegation is available, consult and delegate to the relevant specialists as required by `AGENTS.md`. If delegation is unavailable, perform the review directly, disclose the limitation, and apply the Partial coverage rule above.
 
 Do not try to deeply audit every concern in one pass. Build a coverage map, use domain-focused passes, and consolidate.
 
