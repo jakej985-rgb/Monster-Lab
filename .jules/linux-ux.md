@@ -1,0 +1,3 @@
+## 2026-11-21 - Linux Desktop Sidebar Keyboard Focus & Accessibility
+**Learning:** In desktop Flutter applications styled after native desktop toolkits (such as GTK/Linux Mint), custom navigation row widgets must not rely solely on `GestureDetector`. They require `FocusableActionDetector` with `onFocusChange` to support keyboard Tab traversal, clear visible focus outlines (`Border.all(color: primaryColor, width: 1.5)`), activation shortcuts (`Enter` / `Space`), and explicit `Semantics(button: true)` with `Tooltip`s for assistive technologies.
+**Action:** Always verify desktop navigation widgets allow keyboard-only focus traversal and provide clear visual focus indicator states without layout jumping.
