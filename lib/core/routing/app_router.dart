@@ -31,6 +31,19 @@ final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 final ParentSessionService defaultParentSessionService =
     appParentSessionService;
 
+/// True when [raw] is a non-empty JSON list whose every entry decodes.
+bool _decodesProfiles(String? raw) {
+  if (raw == null || raw.isEmpty) return false;
+  try {
+    for (final item in jsonDecode(raw) as List) {
+      LearnerProfileModel.fromJson(item as Map<String, dynamic>);
+    }
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
 /// Mirrors `LocalStorageDataSource.getProfiles`: the payload counts only if
 /// every entry decodes, so routing never accepts a profile the repository
 /// would reject.
@@ -81,9 +94,13 @@ final GoRouter appRouter = GoRouter(
     bool hasActiveProfile = false;
     if (activeId != null && activeId.trim().isNotEmpty) {
       if (profilesRaw != '[]') {
-        final backupRaw = prefs.getString('monster_lab_profiles_backup');
-        hasActiveProfile = _containsLoadableProfile(profilesRaw, activeId) ||
-            _containsLoadableProfile(backupRaw, activeId);
+        // Mirror LocalStorageDataSource.getProfiles: a decodable primary list
+        // is authoritative; the backup is consulted only when the primary is
+        // absent, blank, or corrupt.
+        final source = _decodesProfiles(profilesRaw)
+            ? profilesRaw
+            : prefs.getString('monster_lab_profiles_backup');
+        hasActiveProfile = _containsLoadableProfile(source, activeId);
       }
     }
 

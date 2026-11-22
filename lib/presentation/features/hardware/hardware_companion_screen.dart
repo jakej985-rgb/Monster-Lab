@@ -209,7 +209,7 @@ class _HardwareCompanionScreenState
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Use the built-in virtual simulator anywhere, or connect a real Arduino over USB in Chrome or Edge on desktop. Hardware data never leaves this device.',
+                  'Use the built-in virtual simulator to practice wiring, commands, and telemetry. Real USB hardware connections are not enabled in this release.',
                   style: TextStyle(
                       fontSize: 13,
                       color: colorScheme.onSurfaceVariant,

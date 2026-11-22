@@ -68,7 +68,7 @@ Monster Lab is engineered with a **Zero-Network, Local-First, Privacy-by-Design*
 | **Internet / Network** | `android.permission.INTERNET` (Disabled/Not Requested) | N/A — App is completely offline | Zero network traffic permitted; network calls fail fast. |
 | **Camera** | `android.permission.CAMERA` (Not Requested) | N/A — No camera functionality | Not requested or declared in manifests. |
 | **Microphone / Audio** | None declared in app manifest | None — Simulated sound sensor uses mathematical noise model | Zero physical microphone recording or eavesdropping. |
-| **USB / Serial** | Web Serial API (Chromium browsers); native builds use the simulator | Connecting a physical Arduino from the web build | User-initiated browser port picker; local UART only; no automatic device access. |
+| **USB / Serial** | None requested; all builds use the virtual simulator | Not used in this release | Real serial transport is not wired in; no device access occurs. |
 | **Storage / Files** | Scoped app sandbox | Local JSON backup export/import | Confined strictly to application private documents directory. |
 
 ---

@@ -74,7 +74,7 @@ Monster Lab distributes official Android binaries for direct sideloading and Goo
 
 ### Hardware Companion Permissions (USB OTG)
 
-The Android build exposes the Hardware Companion with simulated serial boards only. It does not open a physical USB OTG/serial transport, so Android will not show a USB-device authorization prompt. The simulator is useful for learning commands and telemetry without hardware. For real USB serial, use the web build in Chrome or Edge on a desktop operating system.
+The Android build exposes the Hardware Companion with simulated serial boards only. It does not open a physical USB OTG/serial transport, so Android will not show a USB-device authorization prompt. The simulator is useful for learning commands and telemetry without hardware. Real USB serial is not available on any platform in this release.
 
 ---
 
@@ -137,13 +137,9 @@ To install or receive automatic updates from the central M3tal APT repository:
    ./monster_lab
    ```
 
-### Hardware Serial Access (Linux Dialout Group)
+### Hardware Companion
 
-When using the web build in Chrome or Edge on Linux, your user may need permission to access `/dev/ttyUSB*` or `/dev/ttyACM*` before Web Serial can open the board:
-```bash
-sudo usermod -a -G dialout $USER
-```
-*(Log out and log back in for changes to take effect).* The native Linux desktop build currently uses the virtual simulator.
+The Linux desktop build uses the virtual simulator only; no serial-port permissions (such as the `dialout` group) are required.
 
 ---
 

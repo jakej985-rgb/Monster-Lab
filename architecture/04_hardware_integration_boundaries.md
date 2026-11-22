@@ -83,9 +83,11 @@ abstract class IHardwareBridge {
 
 ---
 
-## 4. Real Web Serial Transport
+## 4. Web Serial Transport (Implemented, Not Wired)
 
-The web build opens real Arduino boards through the browser's `navigator.serial` API behind the `SerialTransport` boundary:
+> **Status:** `HardwareBridgeService.createDefaultBridge` returns only `VirtualSimulationBridge` in this release. The components below exist and are unit-tested with fake transports, but are not reachable from the app until device-confirmed safe-state, stable port identity, and unambiguous board matching land.
+
+When enabled, the web build will open real Arduino boards through the browser's `navigator.serial` API behind the `SerialTransport` boundary:
 
 - `WebSerialTransport` is selected by a conditional import (`dart.library.js_interop`) and implemented with `dart:js_interop`. It lists previously authorized ports, opens the browser port picker, reads raw bytes, and writes newline-terminated commands.
 - `PhysicalSerialBridge` decodes UTF-8 lines, forwards device output to the serial monitor, parses common telemetry (`A0:`, `SONAR:`/`Distance:`, `Pin 13:`, `FREE_SRAM:`), and applies the same safety interlock as the simulator.
