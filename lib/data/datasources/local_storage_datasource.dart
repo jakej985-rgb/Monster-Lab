@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import '../../core/services/storage_service.dart';
 import '../../domain/models/learner_profile_model.dart';
@@ -26,6 +27,23 @@ class LocalStorageDataSource {
 
   LocalStorageDataSource(this._storageService);
 
+  final StreamController<String> _corruptionController =
+      StreamController<String>.broadcast();
+  String? _lastCorruptionMessage;
+
+  String? get lastCorruptionMessage => _lastCorruptionMessage;
+
+  Stream<String> get corruptionStream async* {
+    final initial = _lastCorruptionMessage;
+    if (initial != null) yield initial;
+    yield* _corruptionController.stream;
+  }
+
+  void _reportCorruption(String message) {
+    _lastCorruptionMessage = message;
+    _corruptionController.add(message);
+  }
+
   List<LearnerProfileModel> getProfiles() {
     final raw = _storageService.getString(_profilesKey);
     if (raw == null || raw.isEmpty) return [];
@@ -36,6 +54,9 @@ class LocalStorageDataSource {
               LearnerProfileModel.fromJson(item as Map<String, dynamic>))
           .toList();
     } catch (_) {
+      _reportCorruption(
+        'Learner profiles could not be read. The local profile store may be corrupt; restore a backup or create a new profile.',
+      );
       return [];
     }
   }
@@ -99,10 +120,16 @@ class LocalStorageDataSource {
           final recovered = LearnerProgressModel.fromJson(backupMap);
           // Auto-repair primary slot with recovered backup
           _storageService.setString('$_progressKeyPrefix$learnerId', backupRaw);
+          _reportCorruption(
+            'Progress for learner $learnerId was recovered from a backup snapshot.',
+          );
           return recovered;
         } catch (_) {}
       }
 
+      _reportCorruption(
+        'Progress for learner $learnerId could not be recovered. The corrupt payload was not overwritten; restore a backup if available.',
+      );
       if (throwOnUnrecoverable) {
         throw corruptionException;
       }

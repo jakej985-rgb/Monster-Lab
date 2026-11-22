@@ -108,7 +108,7 @@ void main() {
 
       // Verify title and banner
       expect(find.text('Hardware Companion'), findsOneWidget);
-      expect(find.text('Physical Arduino Optional!'), findsOneWidget);
+      expect(find.text('Hardware Companion (Simulation)'), findsOneWidget);
       expect(find.text('Connection Station'), findsOneWidget);
       expect(find.text('Disconnected'), findsOneWidget);
 

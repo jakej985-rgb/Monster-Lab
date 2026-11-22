@@ -27,7 +27,8 @@ import '../services/parent_session_service.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
-final ParentSessionService defaultParentSessionService = ParentSessionService();
+final ParentSessionService defaultParentSessionService =
+    appParentSessionService;
 
 String? routeAuthorizationGuard({
   required String location,
@@ -68,10 +69,11 @@ final GoRouter appRouter = GoRouter(
           hasActiveProfile = list
               .any((item) => (item as Map<String, dynamic>)['id'] == activeId);
         } catch (_) {
-          hasActiveProfile = true;
+          // A malformed profile store must not be treated as an active learner.
+          hasActiveProfile = false;
         }
       } else {
-        hasActiveProfile = true;
+        hasActiveProfile = false;
       }
     }
 

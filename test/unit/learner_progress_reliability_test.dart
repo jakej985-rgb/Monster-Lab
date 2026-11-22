@@ -256,6 +256,37 @@ void main() {
       });
 
       test(
+          'emits a recovery notice when the backup snapshot repairs the primary slot',
+          () async {
+        const learnerId = 'learner_corrupt_notice';
+        await dataSource.saveRawProgress(
+            learnerId, '{"corrupted_json: [invalid');
+        await dataSource.saveBackupSnapshot(
+          learnerId,
+          jsonEncode(LearnerProgressModel.empty(learnerId).toJson()),
+        );
+
+        final notice = dataSource.corruptionStream.first;
+        final recovered = dataSource.getProgress(learnerId);
+
+        expect(recovered.learnerId, equals(learnerId));
+        expect(await notice, contains('recovered from a backup'));
+      });
+
+      test('replays a corruption notice that occurred before subscription',
+          () async {
+        const learnerId = 'learner_corrupt_replay';
+        await dataSource.saveRawProgress(learnerId, 'not-json');
+
+        expect(dataSource.getProgress(learnerId).learnerId, equals(learnerId));
+        expect(dataSource.lastCorruptionMessage, isNotNull);
+        expect(
+          await dataSource.corruptionStream.first,
+          contains('could not be recovered'),
+        );
+      });
+
+      test(
           'throws ProgressCorruptionException when both primary and backup are missing/unrecoverable',
           () async {
         const learnerId = 'learner_unrecoverable';

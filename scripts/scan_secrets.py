@@ -12,9 +12,9 @@ import sys
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 IGNORED_DIRS = {
-    ".git", ".dart_tool", "build", "ephemeral", "node_modules",
-    "linux/flutter/ephemeral", "windows/flutter/ephemeral", "__pycache__",
-    ".gradle", ".idea", ".widget_preview", "coverage", "audit"
+    ".git", ".dart_tool", ".toolchain", ".fvm", ".venv", "build", "ephemeral",
+    "node_modules", "linux/flutter/ephemeral", "windows/flutter/ephemeral",
+    "__pycache__", ".gradle", ".idea", ".widget_preview", "coverage", "audit"
 }
 
 IGNORED_EXTENSIONS = {

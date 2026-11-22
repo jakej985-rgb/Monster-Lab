@@ -35,6 +35,10 @@ final localStorageDataSourceProvider = Provider<LocalStorageDataSource>((ref) {
   return LocalStorageDataSource(storageService);
 });
 
+final progressCorruptionProvider = StreamProvider<String>((ref) {
+  return ref.watch(localStorageDataSourceProvider).corruptionStream;
+});
+
 final assetCurriculumDataSourceProvider =
     Provider<AssetCurriculumDataSource>((ref) {
   return AssetCurriculumDataSource();
@@ -43,6 +47,13 @@ final assetCurriculumDataSourceProvider =
 final curriculumDataEngineProvider = Provider<CurriculumDataEngine>((ref) {
   final fallback = ref.watch(assetCurriculumDataSourceProvider);
   return CurriculumDataEngine(fallbackDataSource: fallback);
+});
+
+final curriculumHealthProvider =
+    FutureProvider<CurriculumEngineStatus>((ref) async {
+  final engine = ref.watch(curriculumDataEngineProvider);
+  await engine.initialize();
+  return engine.status;
 });
 
 final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
@@ -61,9 +72,7 @@ final curriculumRepositoryProvider = Provider<CurriculumRepository>((ref) {
 });
 
 final parentSessionServiceProvider = Provider<ParentSessionService>((ref) {
-  final service = ParentSessionService();
-  ref.onDispose(service.dispose);
-  return service;
+  return appParentSessionService;
 });
 
 final parentSessionAuthStateProvider = StreamProvider<bool>((ref) {
@@ -73,7 +82,30 @@ final parentSessionAuthStateProvider = StreamProvider<bool>((ref) {
 
 final componentRestrictionServiceProvider =
     Provider<ComponentRestrictionService>((ref) {
-  return ComponentRestrictionService();
+  return ComponentRestrictionService(null, ref.watch(storageServiceProvider));
+});
+
+class SafetyAuthorizationsNotifier extends StateNotifier<Map<String, bool>> {
+  static const List<String> keys = ['laser', 'gas', 'relay'];
+  final ComponentRestrictionService _service;
+
+  SafetyAuthorizationsNotifier(this._service)
+      : super({
+          for (final key in keys) key: _service.isSafetyAuthorized(key),
+        });
+
+  Future<void> setAuthorized(String key, bool value) async {
+    await _service.setSafetyAuthorized(key, value);
+    state = {...state, key: value};
+  }
+}
+
+final safetyAuthorizationsProvider =
+    StateNotifierProvider<SafetyAuthorizationsNotifier, Map<String, bool>>(
+        (ref) {
+  return SafetyAuthorizationsNotifier(
+    ref.watch(componentRestrictionServiceProvider),
+  );
 });
 
 final nextLessonProvider = FutureProvider<Lesson?>((ref) async {

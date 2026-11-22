@@ -163,7 +163,7 @@ class _HardwareCompanionScreenState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Physical Arduino Optional!',
+                  'Hardware Companion (Simulation)',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 15,

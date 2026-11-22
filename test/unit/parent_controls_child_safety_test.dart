@@ -242,6 +242,18 @@ void main() {
         expect(
             restrictionService.isUnlocked('comp_laser', 'learner_1'), isFalse);
       });
+
+      test('persists safety authorizations across service instances', () async {
+        SharedPreferences.setMockInitialValues({});
+        final storage = await StorageService.init();
+        final first = ComponentRestrictionService(null, storage);
+
+        expect(first.isSafetyAuthorized('laser'), isFalse);
+        await first.setSafetyAuthorized('laser', true);
+
+        final reloaded = ComponentRestrictionService(null, storage);
+        expect(reloaded.isSafetyAuthorized('laser'), isTrue);
+      });
     });
 
     // --- Issue #33: Destructive Action Confirmation and Rollback Recovery ---

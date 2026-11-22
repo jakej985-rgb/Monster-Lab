@@ -152,3 +152,7 @@ class ParentSessionService {
     _authChangeController.close();
   }
 }
+
+/// Single production session shared by the router, gate, and providers.
+final ParentSessionService appParentSessionService =
+    ParentSessionService(enableExpiryTimer: true);

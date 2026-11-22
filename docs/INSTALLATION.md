@@ -70,11 +70,7 @@ Monster Lab distributes official Android binaries for direct sideloading and Goo
 
 ### Hardware Companion Permissions (USB OTG)
 
-When connecting an Arduino Uno/Nano via USB OTG cable:
-1. Android will display a system prompt:
-   *"Allow Monster Lab to access this USB device?"*
-2. Tap **OK** (and check *"Always allow"*).
-3. The app will automatically connect and stream live telemetry in the Hardware Companion tab.
+The current build exposes the Hardware Companion with simulated serial boards only. It does not open a physical USB OTG/serial transport, so Android will not yet show a USB-device authorization prompt. The simulator is useful for learning commands and telemetry without hardware; real serial transport remains a future capability.
 
 ---
 

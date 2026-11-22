@@ -119,6 +119,6 @@ To prevent young children from accidentally altering settings, changing system d
    - Enable/disable MQ-9 combustible gas and MQ-3 alcohol experiments.
    - Restrict high-speed motor rotation projects for younger children.
 4. **Data Management & Privacy**:
-   - **Local Backup / Export**: Generates an encrypted local JSON string that can be saved to device storage or shared.
+   - **Local Backup / Export**: Generates a plaintext local JSON string that can be saved to device storage or shared; protect the exported file because it is not encrypted.
    - **Data Import**: Restores progress from a previous device without cloud accounts.
    - **Curriculum Reset**: Reset single learner profile or individual project progress for repeated hands-on practice.

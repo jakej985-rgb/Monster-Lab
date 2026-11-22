@@ -20,10 +20,45 @@ permissions:
 
 jobs:
   # -------------------------------------------------------------
-  # Job 0: Smart version bump, commit, tag, and push
+  # Job 0: Required release preflight
+  # -------------------------------------------------------------
+  quality-gate:
+    name: Release Preflight Quality Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.3'
+          channel: 'stable'
+          cache: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml jsonschema Pillow
+
+      - name: Install Flutter dependencies
+        run: flutter pub get
+
+      - name: Run full repository quality gate
+        run: bash scripts/quality_gate.sh
+
+  # -------------------------------------------------------------
+  # Job 1: Smart version bump, commit, tag, and push
   # -------------------------------------------------------------
   prepare-release:
     name: Smart Bump & Tag Release
+    needs: quality-gate
     runs-on: ubuntu-latest
     timeout-minutes: 15
     if: |
@@ -196,14 +231,21 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
-            echo "Restoring Android release keystore from secrets..."
-            echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/monster-lab-release.jks
-            printf "storePassword=%s\nkeyPassword=%s\nkeyAlias=%s\nstoreFile=monster-lab-release.jks\n" \
-              "$ANDROID_KEYSTORE_PASSWORD" "$ANDROID_KEY_PASSWORD" "$ANDROID_KEY_ALIAS" > android/key.properties
-          else
-            echo "No ANDROID_KEYSTORE_BASE64 secret found; falling back to debug signing."
+          set -euo pipefail
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then
+            echo "::error::ANDROID_KEYSTORE_BASE64 is required for a release build; refusing debug signing."
+            exit 1
           fi
+          if [ -z "$ANDROID_KEYSTORE_PASSWORD" ] || [ -z "$ANDROID_KEY_ALIAS" ] || [ -z "$ANDROID_KEY_PASSWORD" ]; then
+            echo "::error::Android keystore password, alias, and key password are required for a release build."
+            exit 1
+          fi
+          echo "Restoring Android release keystore from secrets..."
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/monster-lab-release.jks
+          printf "storePassword=%s\nkeyPassword=%s\nkeyAlias=%s\nstoreFile=monster-lab-release.jks\n" \
+            "$ANDROID_KEYSTORE_PASSWORD" "$ANDROID_KEY_PASSWORD" "$ANDROID_KEY_ALIAS" > android/key.properties
+          test -s android/app/monster-lab-release.jks
+          test -s android/key.properties
 
       - name: Build Android Release APK
         run: flutter build apk --release
@@ -216,6 +258,20 @@ jobs:
 
       - name: Copy Android AppBundle
         run: cp build/app/outputs/bundle/release/app-release.aab "monster-lab-${PACKAGE_VERSION}-android.aab"
+
+      - name: Verify Android APK is not debug-signed
+        run: |
+          set -euo pipefail
+          APKSIGNER=$(find "${ANDROID_HOME}/build-tools" -type f -name apksigner | sort -V | tail -n 1)
+          if [ -z "$APKSIGNER" ]; then
+            echo "::error::apksigner was not found in the Android SDK."
+            exit 1
+          fi
+          "$APKSIGNER" verify --print-certs "monster-lab-${PACKAGE_VERSION}-android.apk" | tee /tmp/android-certs.txt
+          if grep -qi "Android Debug" /tmp/android-certs.txt; then
+            echo "::error::Release APK is debug-signed."
+            exit 1
+          fi
 
       - name: Clean Up Android Keystore Secrets
         if: always()
@@ -299,14 +355,17 @@ jobs:
           GPG_PASSPHRASE: ${{ secrets.APT_GPG_PASSPHRASE || secrets.GPG_PASSPHRASE }}
           GPG_KEY_ID: ${{ secrets.APT_GPG_KEY_ID || secrets.GPG_KEY_ID || '5F84FE50A40111C981410E11775AD1473BF25102' }}
         run: |
+          set -euo pipefail
           DEB_NAME="monster-lab-${PACKAGE_VERSION}-linux.deb"
-          if [ -n "$GPG_PRIVATE_KEY" ]; then
-            echo "Importing canonical 50-year GPG key for Debian release signing..."
-            echo "$GPG_PRIVATE_KEY" | gpg --batch --import
-            python3 scripts/package_linux_deb.py --bundle-dir build/linux/x64/release/bundle --output "$DEB_NAME" --version "$CLEAN_VERSION" --sign --key-id "$GPG_KEY_ID" --passphrase "$GPG_PASSPHRASE"
-          else
-            python3 scripts/package_linux_deb.py --bundle-dir build/linux/x64/release/bundle --output "$DEB_NAME" --version "$CLEAN_VERSION"
+          if [ -z "$GPG_PRIVATE_KEY" ]; then
+            echo "::error::APT_GPG_PRIVATE_KEY or GPG_PRIVATE_KEY is required; refusing to publish an unsigned .deb."
+            exit 1
           fi
+          echo "Importing canonical 50-year GPG key for Debian release signing..."
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          python3 scripts/package_linux_deb.py --bundle-dir build/linux/x64/release/bundle --output "$DEB_NAME" --version "$CLEAN_VERSION" --sign --key-id "$GPG_KEY_ID" --passphrase "$GPG_PASSPHRASE"
+          test -s "${DEB_NAME}.asc"
+          gpg --batch --verify "${DEB_NAME}.asc" "$DEB_NAME"
           SHA256=$(sha256sum "$DEB_NAME" | cut -d ' ' -f1)
           echo "deb_sha256=${SHA256}" >> $GITHUB_ENV
           echo "deb_sha256=${SHA256}" >> $GITHUB_OUTPUT
@@ -515,5 +574,48 @@ jobs:
         with:
           tag_name: ${{ needs.prepare-release.outputs.tag }}
           files: docker-compose.yml
+          draft: false
+          prerelease: false
+
+  # -------------------------------------------------------------
+  # Job 6: Publish checksums and build provenance
+  # -------------------------------------------------------------
+  publish-integrity:
+    name: Publish Checksums & Provenance
+    needs: [prepare-release, create-release, build-android, build-linux, build-windows, build-web]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.prepare-release.outputs.sha }}
+
+      - name: Download published release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p release-assets
+          gh release download "${{ needs.prepare-release.outputs.tag }}" \
+            --repo "${{ github.repository }}" \
+            --dir release-assets
+          # A rerun may download integrity assets from the previous attempt.
+          # Never checksum the checksum/provenance files themselves.
+          rm -f release-assets/SHA256SUMS.txt release-assets/provenance.json
+
+      - name: Generate and verify checksums/provenance
+        run: |
+          python3 scripts/generate_release_provenance.py \
+            --output-dir release-integrity \
+            --verify-dir release-assets \
+            release-assets/*
+
+      - name: Publish checksums and provenance
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ needs.prepare-release.outputs.tag }}
+          files: |
+            release-integrity/SHA256SUMS.txt
+            release-integrity/provenance.json
           draft: false
           prerelease: false

@@ -67,18 +67,22 @@ class VirtualSimulationBridge implements IHardwareBridge {
     final list = [
       DiscoveredBoard.virtualSimulator(),
       const DiscoveredBoard(
-        portName: '/dev/ttyUSB0 (Simulated Physical)',
+        portName: 'SIMULATED://UNO_R3',
         boardModel: SupportedBoards.unoR3,
         vendorId: 0x1A86,
         productId: 0x7523,
+        isVirtual: true,
       ),
       const DiscoveredBoard(
-        portName: '/dev/ttyUSB1 (Simulated ESP32)',
+        portName: 'SIMULATED://ESP32',
         boardModel: SupportedBoards.esp32,
         vendorId: 0x10C4,
         productId: 0xEA60,
+        isVirtual: true,
       ),
     ];
+    _logSystem(
+        'No physical serial transport is enabled; returning simulated boards only.');
 
     if (_currentBoard != null) {
       final activeState = _currentBoard!.isVirtual

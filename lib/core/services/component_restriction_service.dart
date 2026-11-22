@@ -1,14 +1,18 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/models/component_model.dart';
 import 'parent_session_service.dart';
+import 'storage_service.dart';
 
 class ComponentRestrictionService {
   static const String _storagePrefix = 'monster_lab_restricted_unlocks_';
+  static const String _safetyPrefix = 'monster_lab_safety_authorization_';
   final SharedPreferences? _prefs;
+  final StorageService? _storage;
 
   final Map<String, Set<String>> _inMemoryUnlocks = {};
+  final Map<String, bool> _inMemorySafetyAuthorizations = {};
 
-  ComponentRestrictionService([this._prefs]);
+  ComponentRestrictionService([this._prefs, this._storage]);
 
   static Future<ComponentRestrictionService> create() async {
     final prefs = await SharedPreferences.getInstance();
@@ -18,6 +22,29 @@ class ComponentRestrictionService {
   bool isRestricted(ComponentModel component) {
     return component.safety.requiresParentUnlock ||
         component.safety.level == SafetyLevel.restrictedAdultSupervision;
+  }
+
+  bool isSafetyAuthorized(String safetyKey) {
+    final cached = _inMemorySafetyAuthorizations[safetyKey];
+    if (cached != null) return cached;
+
+    final storageKey = '$_safetyPrefix$safetyKey';
+    final stored = _prefs?.getBool(storageKey) ?? _storage?.getBool(storageKey);
+    if (stored != null) {
+      _inMemorySafetyAuthorizations[safetyKey] = stored;
+      return stored;
+    }
+    return false;
+  }
+
+  Future<void> setSafetyAuthorized(String safetyKey, bool value) async {
+    _inMemorySafetyAuthorizations[safetyKey] = value;
+    final storageKey = '$_safetyPrefix$safetyKey';
+    if (_prefs != null) {
+      await _prefs.setBool(storageKey, value);
+    } else if (_storage != null) {
+      await _storage.setBool(storageKey, value);
+    }
   }
 
   bool isUnlocked(String componentId, String learnerId) {

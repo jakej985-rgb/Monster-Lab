@@ -4,7 +4,7 @@
 #define MyAppName "Monster Lab"
 #define MyAppVersion "0.5.2"
 #define MyAppPublisher "Monster Lab Team"
-#define MyAppURL "https://github.com/monsterlab/monster_lab"
+#define MyAppURL "https://github.com/jakej985-rgb/Monster-Lab"
 #define MyAppExeName "monster_lab.exe"
 
 [Setup]

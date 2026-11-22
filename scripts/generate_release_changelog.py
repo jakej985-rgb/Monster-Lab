@@ -14,6 +14,12 @@ import subprocess
 import argparse
 from datetime import datetime
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+if SCRIPT_DIR not in sys.path:
+    sys.path.insert(0, SCRIPT_DIR)
+
+from release_attribution import strip_commit_trailers  # noqa: E402
+
 
 def run_git(args):
     proc = subprocess.run(["git"] + args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
@@ -101,22 +107,6 @@ def categorize_commit(commit):
         return "Features"
     return "Features"
 
-
-FOOTER_PATTERNS = (
-    re.compile(r"^\s*(?:🤖\s*)?Generated with\b.*\bCodebuff\b", re.IGNORECASE),
-    re.compile(r"^\s*Co-Authored-By:\s*Codebuff\b", re.IGNORECASE),
-)
-
-
-def strip_commit_trailers(body):
-    """Remove assistant attribution footers from commit bodies used in release notes."""
-    if not body:
-        return ""
-    kept_lines = [
-        line for line in body.splitlines()
-        if not any(pattern.match(line) for pattern in FOOTER_PATTERNS)
-    ]
-    return " ".join(" ".join(kept_lines).split())
 
 
 def generate_draft(version, start_ref, end_ref="HEAD"):

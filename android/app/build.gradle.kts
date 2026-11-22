@@ -1,5 +1,6 @@
 import java.util.Properties
 import java.io.FileInputStream
+import org.gradle.api.GradleException
 
 plugins {
     id("com.android.application")
@@ -58,7 +59,15 @@ android {
     buildTypes {
         release {
             val releaseConfig = signingConfigs.getByName("release")
-            signingConfig = if (releaseConfig.storeFile?.exists() == true) {
+            val releaseTaskRequested = gradle.startParameter.taskNames.any {
+                it.contains("Release", ignoreCase = true)
+            }
+            if (releaseTaskRequested && releaseConfig.storeFile?.exists() != true) {
+                throw GradleException(
+                    "Release signing keystore is required. Configure android/key.properties and the keystore; debug signing is not allowed for release builds."
+                )
+            }
+            signingConfig = if (releaseTaskRequested) {
                 releaseConfig
             } else {
                 signingConfigs.getByName("debug")

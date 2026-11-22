@@ -14,8 +14,8 @@ class AssetCurriculumDataSource {
 
   Future<Map<String, dynamic>?> loadManifest() async {
     try {
-      final data = await _assetBundle
-          .loadString('assets/curriculum/curriculum_manifest.json');
+      final data =
+          await _assetBundle.loadString('assets/curriculum/manifest.json');
       return jsonDecode(data) as Map<String, dynamic>;
     } catch (_) {
       return null;

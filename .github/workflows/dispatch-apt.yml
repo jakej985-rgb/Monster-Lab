@@ -1,8 +1,8 @@
 name: Dispatch to Central APT Repository
 
 on:
-  release:
-    types: [published]
+  # Release builds dispatch this event directly after the .deb is uploaded.
+  # Do not trigger on release:published, which fires before assets exist.
   workflow_dispatch:
     inputs:
       version:
@@ -32,11 +32,7 @@ jobs:
       - name: Determine Target Release Version
         id: target
         run: |
-          if [ "${{ github.event_name }}" = "release" ]; then
-            TAG="${{ github.event.release.tag_name }}"
-          else
-            TAG="${{ github.event.inputs.version }}"
-          fi
+          TAG="${{ github.event.inputs.version }}"
           CLEAN_VER="${TAG#v}"
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
           echo "clean_version=${CLEAN_VER}" >> $GITHUB_OUTPUT
@@ -51,7 +47,7 @@ jobs:
           else
             TAG="${{ steps.target.outputs.tag }}"
             REPO="${{ github.repository }}"
-            DEB_URL=$(gh release view "${TAG}" --repo "${REPO}" --json assets --jq '.assets[] | select(.name | endswith(".deb")) | .url' 2>/dev/null | head -n 1 || true)
+            DEB_URL=$(gh release view "${TAG}" --repo "${REPO}" --json assets --jq '.assets[] | select(.name | endswith(".deb")) | .browser_download_url' 2>/dev/null | head -n 1 || true)
             if [ -z "$DEB_URL" ]; then
               DEB_URL="https://github.com/${REPO}/releases/download/${TAG}/monster-lab-${TAG}-linux.deb"
             fi
@@ -60,7 +56,7 @@ jobs:
           echo "deb_url=${DEB_URL}" >> $GITHUB_OUTPUT
 
           temp_deb="/tmp/incoming_deb_checksum.deb"
-          curl -sL --fail --retry 3 "$DEB_URL" -o "$temp_deb"
+          curl -sL --fail --retry 5 --retry-delay 10 "$DEB_URL" -o "$temp_deb"
           SHA256=$(sha256sum "$temp_deb" | cut -d ' ' -f1)
           rm -f "$temp_deb"
           echo "Calculated deb asset SHA256: ${SHA256}"
