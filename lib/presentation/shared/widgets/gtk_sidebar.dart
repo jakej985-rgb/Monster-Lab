@@ -76,6 +76,10 @@ class GtkSidebar extends StatelessWidget {
                     'assets/images/app_icon.png',
                     width: 32,
                     height: 32,
+                    cacheWidth:
+                        (32 * MediaQuery.devicePixelRatioOf(context)).round(),
+                    cacheHeight:
+                        (32 * MediaQuery.devicePixelRatioOf(context)).round(),
                     fit: BoxFit.cover,
                     semanticLabel: 'Monster Lab app icon',
                   ),

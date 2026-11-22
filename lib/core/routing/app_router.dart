@@ -28,37 +28,42 @@ import '../../domain/models/learner_profile_model.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
+/// Redirects run on every navigation, so keep a tiny cache of decoded
+/// profile-id sets instead of parsing the same JSON payload each time.
+final Map<String, Set<String>> _profileIdCache = {};
+const int _maxProfileIdCacheEntries = 4;
+
+Set<String>? _profileIdsFrom(String? raw) {
+  if (raw == null || raw.isEmpty) return null;
+  final cached = _profileIdCache[raw];
+  if (cached != null) return cached;
+
+  try {
+    final ids = <String>{};
+    for (final item in jsonDecode(raw) as List) {
+      ids.add(LearnerProfileModel.fromJson(item as Map<String, dynamic>).id);
+    }
+    if (_profileIdCache.length >= _maxProfileIdCacheEntries) {
+      _profileIdCache.clear();
+    }
+    _profileIdCache[raw] = ids;
+    return ids;
+  } catch (_) {
+    return null;
+  }
+}
+
 final ParentSessionService defaultParentSessionService =
     appParentSessionService;
 
 /// True when [raw] is a non-empty JSON list whose every entry decodes.
-bool _decodesProfiles(String? raw) {
-  if (raw == null || raw.isEmpty) return false;
-  try {
-    for (final item in jsonDecode(raw) as List) {
-      LearnerProfileModel.fromJson(item as Map<String, dynamic>);
-    }
-    return true;
-  } catch (_) {
-    return false;
-  }
-}
+bool _decodesProfiles(String? raw) => _profileIdsFrom(raw) != null;
 
 /// Mirrors `LocalStorageDataSource.getProfiles`: the payload counts only if
 /// every entry decodes, so routing never accepts a profile the repository
 /// would reject.
-bool _containsLoadableProfile(String? raw, String activeId) {
-  if (raw == null || raw.isEmpty) return false;
-  try {
-    final profiles = (jsonDecode(raw) as List)
-        .map((item) =>
-            LearnerProfileModel.fromJson(item as Map<String, dynamic>))
-        .toList();
-    return profiles.any((profile) => profile.id == activeId);
-  } catch (_) {
-    return false;
-  }
-}
+bool _containsLoadableProfile(String? raw, String activeId) =>
+    _profileIdsFrom(raw)?.contains(activeId) ?? false;
 
 String? routeAuthorizationGuard({
   required String location,

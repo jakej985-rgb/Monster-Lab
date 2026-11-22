@@ -19,10 +19,6 @@ class HardwareCompanionScreen extends ConsumerStatefulWidget {
 
 class _HardwareCompanionScreenState
     extends ConsumerState<HardwareCompanionScreen> {
-  final TextEditingController _commandController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
-  bool _autoScroll = true;
-
   List<DiscoveredBoard> _availableBoards = [
     DiscoveredBoard.virtualSimulator(),
   ];
@@ -34,13 +30,6 @@ class _HardwareCompanionScreenState
     super.initState();
     _selectedBoard = _availableBoards.first;
     _refreshDiscoveredBoards();
-  }
-
-  @override
-  void dispose() {
-    _commandController.dispose();
-    _scrollController.dispose();
-    super.dispose();
   }
 
   Future<void> _refreshDiscoveredBoards() async {
@@ -96,20 +85,6 @@ class _HardwareCompanionScreenState
     }
   }
 
-  void _scrollToBottom() {
-    if (_autoScroll && _scrollController.hasClients) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_scrollController.hasClients) {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeOut,
-          );
-        }
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final bridge = ref.watch(hardwareBridgeProvider);
@@ -117,9 +92,6 @@ class _HardwareCompanionScreenState
     final state = stateAsync.value ?? bridge.currentState;
     final telemetryAsync = ref.watch(hardwareTelemetryStreamProvider);
     final telemetry = telemetryAsync.value ?? bridge.currentTelemetry;
-    final logs = ref.watch(hardwareSerialLogsProvider);
-
-    _scrollToBottom();
 
     return Scaffold(
       appBar: AppBar(
@@ -163,7 +135,7 @@ class _HardwareCompanionScreenState
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          _buildSerialMonitorCard(bridge, state, logs),
+          _buildSerialMonitorCard(bridge),
           const SizedBox(height: 20),
 
           // 5. Supported Arduino Boards Guide
@@ -628,173 +600,8 @@ class _HardwareCompanionScreenState
     );
   }
 
-  Widget _buildSerialMonitorCard(
-    IHardwareBridge bridge,
-    HardwareConnectionState state,
-    List<SerialLogEntry> logs,
-  ) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return MonsterCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.terminal, color: AppColors.accentCyanDark),
-              const SizedBox(width: 8),
-              const Text('Serial Terminal',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              const Spacer(),
-              TextButton.icon(
-                key: const Key('serial_clear_button'),
-                icon: const Icon(Icons.clear_all, size: 16),
-                label: const Text('Clear'),
-                onPressed: () {
-                  ref.read(hardwareSerialLogsProvider.notifier).clearLogs();
-                },
-              ),
-              IconButton(
-                icon: Icon(
-                  _autoScroll
-                      ? Icons.vertical_align_bottom
-                      : Icons.pause_circle_outline,
-                  size: 20,
-                  color: _autoScroll
-                      ? colorScheme.primary
-                      : colorScheme.onSurfaceVariant,
-                ),
-                tooltip: _autoScroll ? 'Autoscroll On' : 'Autoscroll Paused',
-                onPressed: () => setState(() => _autoScroll = !_autoScroll),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-
-          // Terminal Output Window
-          Container(
-            height: 220,
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: const Color(0xFF181824),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.black26),
-            ),
-            child: logs.isEmpty
-                ? const Center(
-                    child: Text(
-                      'Terminal ready. Connect hardware or send command to see output.',
-                      style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12,
-                          fontFamily: 'monospace'),
-                    ),
-                  )
-                : ListView.builder(
-                    key: const Key('serial_log_list'),
-                    controller: _scrollController,
-                    itemCount: logs.length,
-                    itemBuilder: (context, index) {
-                      final log = logs[index];
-                      Color textColor;
-                      String prefix;
-
-                      switch (log.direction) {
-                        case SerialLogDirection.rx:
-                          textColor = const Color(0xFF55EFC4); // green
-                          prefix = '← ';
-                          break;
-                        case SerialLogDirection.tx:
-                          textColor = const Color(0xFF00CEC9); // cyan
-                          prefix = '→ ';
-                          break;
-                        case SerialLogDirection.system:
-                          textColor = const Color(0xFFFDCB6E); // amber
-                          prefix = 'ℹ ';
-                          break;
-                      }
-
-                      final timeStr =
-                          '${log.timestamp.hour.toString().padLeft(2, '0')}:${log.timestamp.minute.toString().padLeft(2, '0')}:${log.timestamp.second.toString().padLeft(2, '0')}';
-
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 2.0),
-                        child: Text(
-                          '[$timeStr] $prefix${log.text}',
-                          style: TextStyle(
-                            color: textColor,
-                            fontFamily: 'monospace',
-                            fontSize: 12,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-          ),
-          const SizedBox(height: 10),
-
-          // Quick Command Action Chips
-          Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            children: [
-              _buildCommandChip(bridge, 'PING'),
-              _buildCommandChip(bridge, 'STATUS'),
-              _buildCommandChip(bridge, 'LED:ON'),
-              _buildCommandChip(bridge, 'LED:OFF'),
-              _buildCommandChip(bridge, 'ANALOG:READ'),
-              _buildCommandChip(bridge, 'HELP'),
-            ],
-          ),
-          const SizedBox(height: 10),
-
-          // Interactive Command Input Line
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  key: const Key('serial_command_input'),
-                  controller: _commandController,
-                  style: const TextStyle(fontFamily: 'monospace', fontSize: 13),
-                  decoration: const InputDecoration(
-                    labelText: 'Terminal Command',
-                    hintText: 'Enter command (e.g. PING, STATUS)...',
-                    border: OutlineInputBorder(),
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  ),
-                  onSubmitted: (cmd) => _handleSendCommand(bridge),
-                ),
-              ),
-              const SizedBox(width: 8),
-              ElevatedButton.icon(
-                key: const Key('serial_send_button'),
-                icon: const Icon(Icons.send, size: 16),
-                label: const Text('Send'),
-                onPressed: () => _handleSendCommand(bridge),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCommandChip(IHardwareBridge bridge, String cmd) {
-    return ActionChip(
-      label: Text(cmd,
-          style: const TextStyle(fontFamily: 'monospace', fontSize: 12)),
-      onPressed: () => bridge.sendCommand(cmd),
-      materialTapTargetSize: MaterialTapTargetSize.padded,
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-    );
-  }
-
-  void _handleSendCommand(IHardwareBridge bridge) {
-    final text = _commandController.text.trim();
-    if (text.isNotEmpty) {
-      bridge.sendCommand(text);
-      _commandController.clear();
-    }
+  Widget _buildSerialMonitorCard(IHardwareBridge bridge) {
+    return _SerialTerminal(bridge: bridge);
   }
 
   Widget _buildSupportedBoardsGuide() {
@@ -851,6 +658,208 @@ class _HardwareCompanionScreenState
           ),
         );
       }).toList(),
+    );
+  }
+}
+
+class _SerialTerminal extends ConsumerStatefulWidget {
+  final IHardwareBridge bridge;
+
+  const _SerialTerminal({required this.bridge});
+
+  @override
+  ConsumerState<_SerialTerminal> createState() => _SerialTerminalState();
+}
+
+class _SerialTerminalState extends ConsumerState<_SerialTerminal> {
+  final TextEditingController _commandController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  bool _autoScroll = true;
+
+  @override
+  void dispose() {
+    _commandController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scheduleScrollToBottom() {
+    if (!_autoScroll) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_scrollController.hasClients) return;
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+      );
+    });
+  }
+
+  void _handleSendCommand() {
+    final text = _commandController.text.trim();
+    if (text.isEmpty) return;
+    widget.bridge.sendCommand(text);
+    _commandController.clear();
+  }
+
+  Widget _buildCommandChip(String cmd) {
+    return ActionChip(
+      label: Text(cmd,
+          style: const TextStyle(fontFamily: 'monospace', fontSize: 12)),
+      onPressed: () => widget.bridge.sendCommand(cmd),
+      materialTapTargetSize: MaterialTapTargetSize.padded,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final logs = ref.watch(hardwareSerialLogsProvider);
+
+    ref.listen<List<SerialLogEntry>>(hardwareSerialLogsProvider, (_, __) {
+      _scheduleScrollToBottom();
+    });
+
+    return MonsterCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.terminal, color: AppColors.accentCyanDark),
+              const SizedBox(width: 8),
+              const Text('Serial Terminal',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              const Spacer(),
+              TextButton.icon(
+                key: const Key('serial_clear_button'),
+                icon: const Icon(Icons.clear_all, size: 16),
+                label: const Text('Clear'),
+                onPressed: () {
+                  ref.read(hardwareSerialLogsProvider.notifier).clearLogs();
+                },
+              ),
+              IconButton(
+                icon: Icon(
+                  _autoScroll
+                      ? Icons.vertical_align_bottom
+                      : Icons.pause_circle_outline,
+                  size: 20,
+                  color: _autoScroll
+                      ? colorScheme.primary
+                      : colorScheme.onSurfaceVariant,
+                ),
+                tooltip: _autoScroll ? 'Autoscroll On' : 'Autoscroll Paused',
+                onPressed: () {
+                  setState(() => _autoScroll = !_autoScroll);
+                  if (_autoScroll) _scheduleScrollToBottom();
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Container(
+            height: 220,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: const Color(0xFF181824),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.black26),
+            ),
+            child: logs.isEmpty
+                ? const Center(
+                    child: Text(
+                      'Terminal ready. Connect hardware or send command to see output.',
+                      style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                          fontFamily: 'monospace'),
+                    ),
+                  )
+                : ListView.builder(
+                    key: const Key('serial_log_list'),
+                    controller: _scrollController,
+                    itemCount: logs.length,
+                    itemBuilder: (context, index) {
+                      final log = logs[index];
+                      Color textColor;
+                      String prefix;
+
+                      switch (log.direction) {
+                        case SerialLogDirection.rx:
+                          textColor = const Color(0xFF55EFC4);
+                          prefix = '← ';
+                          break;
+                        case SerialLogDirection.tx:
+                          textColor = const Color(0xFF00CEC9);
+                          prefix = '→ ';
+                          break;
+                        case SerialLogDirection.system:
+                          textColor = const Color(0xFFFDCB6E);
+                          prefix = 'ℹ ';
+                          break;
+                      }
+
+                      final timeStr =
+                          '${log.timestamp.hour.toString().padLeft(2, '0')}:${log.timestamp.minute.toString().padLeft(2, '0')}:${log.timestamp.second.toString().padLeft(2, '0')}';
+
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 2.0),
+                        child: Text(
+                          '[$timeStr] $prefix${log.text}',
+                          style: TextStyle(
+                            color: textColor,
+                            fontFamily: 'monospace',
+                            fontSize: 12,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 6,
+            runSpacing: 6,
+            children: [
+              _buildCommandChip('PING'),
+              _buildCommandChip('STATUS'),
+              _buildCommandChip('LED:ON'),
+              _buildCommandChip('LED:OFF'),
+              _buildCommandChip('ANALOG:READ'),
+              _buildCommandChip('HELP'),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  key: const Key('serial_command_input'),
+                  controller: _commandController,
+                  style: const TextStyle(fontFamily: 'monospace', fontSize: 13),
+                  decoration: const InputDecoration(
+                    labelText: 'Terminal Command',
+                    hintText: 'Enter command (e.g. PING, STATUS)...',
+                    border: OutlineInputBorder(),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  ),
+                  onSubmitted: (_) => _handleSendCommand(),
+                ),
+              ),
+              const SizedBox(width: 8),
+              ElevatedButton.icon(
+                key: const Key('serial_send_button'),
+                icon: const Icon(Icons.send, size: 16),
+                label: const Text('Send'),
+                onPressed: _handleSendCommand,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

@@ -17,8 +17,14 @@ class ExpandableLessonImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
     return LayoutBuilder(
       builder: (context, constraints) {
+        final cacheWidth = constraints.hasBoundedWidth &&
+                constraints.maxWidth.isFinite &&
+                constraints.maxWidth > 0
+            ? (constraints.maxWidth * devicePixelRatio).round()
+            : null;
         Widget content = Stack(
           children: [
             ConstrainedBox(
@@ -27,6 +33,7 @@ class ExpandableLessonImage extends StatelessWidget {
                 assetPath,
                 fit: BoxFit.fitWidth,
                 width: constraints.maxWidth,
+                cacheWidth: cacheWidth,
                 errorBuilder: (context, error, stackTrace) => Container(
                   height: 160,
                   width: constraints.maxWidth,

@@ -80,6 +80,31 @@ class CurriculumDataEngine {
     }
   }
 
+  /// Loads documents in bounded batches and yields between batches so other
+  /// pending async work can progress during curriculum initialization.
+  Future<void> _loadInBatches<T>({
+    required List<String> ids,
+    required String Function(String id) pathFor,
+    required T Function(Map<String, dynamic> json) parse,
+    required void Function(T entity) store,
+  }) async {
+    const batchSize = 8;
+    for (var start = 0; start < ids.length; start += batchSize) {
+      final end =
+          start + batchSize < ids.length ? start + batchSize : ids.length;
+      final raws = await Future.wait(<Future<String>>[
+        for (var index = start; index < end; index++)
+          _assetBundle.loadString(pathFor(ids[index])),
+      ]);
+      for (final raw in raws) {
+        store(parse(jsonDecode(raw) as Map<String, dynamic>));
+      }
+      // A microtask yield keeps widget tests (fake async) progressing without
+      // needing an explicit timer pump.
+      await Future<void>.value();
+    }
+  }
+
   /// Loads and validates all curriculum JSON files from assets
   Future<void> initialize() {
     if (_isInitialized || _isFallbackActive) return Future.value();
@@ -108,68 +133,51 @@ class CurriculumDataEngine {
       // 1.5. Load Courses
       try {
         if (manifest['courses'] != null) {
-          final courseIds = List<String>.from(manifest['courses'] as List);
-          final courseJsons = await Future.wait(
-            courseIds.map((cid) =>
-                _assetBundle.loadString('assets/curriculum/courses/$cid.json')),
+          await _loadInBatches<CourseModel>(
+            ids: List<String>.from(manifest['courses'] as List),
+            pathFor: (cid) => 'assets/curriculum/courses/$cid.json',
+            parse: CourseModel.fromJson,
+            store: (course) => _courses[course.id] = course,
           );
-          for (final cJson in courseJsons) {
-            final course =
-                CourseModel.fromJson(jsonDecode(cJson) as Map<String, dynamic>);
-            _courses[course.id] = course;
-          }
         }
       } catch (_) {
         // Courses optional during tests
       }
 
       // 2. Load Components
-      final compIds = List<String>.from(manifest['components'] as List);
-      final compJsons = await Future.wait(
-        compIds.map((cid) =>
-            _assetBundle.loadString('assets/curriculum/components/$cid.json')),
+      await _loadInBatches<ComponentModel>(
+        ids: List<String>.from(manifest['components'] as List),
+        pathFor: (cid) => 'assets/curriculum/components/$cid.json',
+        parse: ComponentModel.fromJson,
+        store: (comp) => _components[comp.id] = comp,
       );
-      for (final cJson in compJsons) {
-        final comp =
-            ComponentModel.fromJson(jsonDecode(cJson) as Map<String, dynamic>);
-        _components[comp.id] = comp;
-      }
 
       // 3. Load Lessons
-      final lessonIds = List<String>.from(manifest['lessons'] as List);
-      final lessonJsons = await Future.wait(
-        lessonIds.map((lid) =>
-            _assetBundle.loadString('assets/curriculum/lessons/$lid.json')),
+      await _loadInBatches<Lesson>(
+        ids: List<String>.from(manifest['lessons'] as List),
+        pathFor: (lid) => 'assets/curriculum/lessons/$lid.json',
+        parse: Lesson.fromJson,
+        store: (lesson) => _lessons[lesson.id] = lesson,
       );
-      for (final lJson in lessonJsons) {
-        final lesson =
-            Lesson.fromJson(jsonDecode(lJson) as Map<String, dynamic>);
-        _lessons[lesson.id] = lesson;
-      }
 
       // 4. Load Projects
-      final projectIds = List<String>.from(manifest['projects'] as List);
-      final projectJsons = await Future.wait(
-        projectIds.map((pid) =>
-            _assetBundle.loadString('assets/curriculum/projects/$pid.json')),
+      await _loadInBatches<ProjectModel>(
+        ids: List<String>.from(manifest['projects'] as List),
+        pathFor: (pid) => 'assets/curriculum/projects/$pid.json',
+        parse: ProjectModel.fromJson,
+        store: (project) => _projects[project.id] = project,
       );
-      for (final pJson in projectJsons) {
-        final project =
-            ProjectModel.fromJson(jsonDecode(pJson) as Map<String, dynamic>);
-        _projects[project.id] = project;
-      }
 
       // 5. Load Challenges
-      final challengeIds = List<String>.from(manifest['challenges'] as List);
-      final challengeJsons = await Future.wait(
-        challengeIds.map((chid) =>
-            _assetBundle.loadString('assets/curriculum/challenges/$chid.json')),
+      await _loadInBatches<ChallengeModel>(
+        ids: List<String>.from(manifest['challenges'] as List),
+        pathFor: (chid) => 'assets/curriculum/challenges/$chid.json',
+        parse: ChallengeModel.fromJson,
+        store: (challenge) => _challenges[challenge.id] = challenge,
       );
-      for (final chJson in challengeJsons) {
-        final challenge =
-            ChallengeModel.fromJson(jsonDecode(chJson) as Map<String, dynamic>);
-        _challenges[challenge.id] = challenge;
-      }
+
+      // Yield before the full integrity pass.
+      await Future<void>.value();
 
       // 6. Validate Curriculum Integrity
       CurriculumValidator.validateCurriculumIntegrity(

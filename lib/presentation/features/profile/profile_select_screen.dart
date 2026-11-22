@@ -66,6 +66,7 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
               await ref
                   .read(profileRepositoryProvider)
                   .deleteProfile(profile.id);
+              ref.invalidate(allProfilesProvider);
               await ref
                   .read(activeProfileProvider.notifier)
                   .loadActiveProfile();
@@ -81,16 +82,14 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final profileRepo = ref.watch(profileRepositoryProvider);
     final activeProfile = ref.watch(activeProfileProvider);
+    final profilesAsync = ref.watch(allProfilesProvider);
+    final profiles = profilesAsync.value ?? const <LearnerProfileModel>[];
 
     return Scaffold(
       appBar: AppBar(title: const Text('Learner Profiles')),
-      body: FutureBuilder<List<LearnerProfileModel>>(
-        future: profileRepo.getAllProfiles(),
-        builder: (context, snapshot) {
-          final profiles = snapshot.data ?? [];
-
+      body: Builder(
+        builder: (context) {
           return ListView(
             padding: const EdgeInsets.all(20.0),
             children: [
@@ -309,6 +308,7 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                   await ref
                       .read(activeProfileProvider.notifier)
                       .saveProfile(newProfile);
+                  ref.invalidate(allProfilesProvider);
                   if (context.mounted) {
                     context.go(RoutePaths.home);
                   }

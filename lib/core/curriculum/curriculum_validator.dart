@@ -38,6 +38,8 @@ class CurriculumValidator {
   static final RegExp _componentIdPattern = RegExp(r'^comp_[a-z0-9_]+$');
   static final RegExp _projectIdPattern = RegExp(r'^proj_[0-9]{2}$');
   static final RegExp _challengeIdPattern = RegExp(r'^chal_[a-z0-9_]+$');
+  static final RegExp _interactiveWidgetTypePattern =
+      RegExp(r'^[a-zA-Z0-9_]+$');
 
   /// Validates a single course
   static void validateCourse(CourseModel course) {
@@ -528,7 +530,8 @@ class CurriculumValidator {
       for (final s in l.steps) {
         if (s.interactiveWidgetType != null &&
             s.interactiveWidgetType!.isNotEmpty) {
-          if (!RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(s.interactiveWidgetType!)) {
+          if (!_interactiveWidgetTypePattern
+              .hasMatch(s.interactiveWidgetType!)) {
             errors.add(
               "Lesson '${l.id}' step '${s.stepId}' has invalid interactiveWidgetType '${s.interactiveWidgetType}'",
             );
