@@ -35,9 +35,9 @@ Monster Lab provides an official container image on GitHub Container Registry (G
 
 3. Open **`http://localhost:8080`** in any modern web browser.
 
-### Hardware Companion (Web Serial)
+### Hardware Companion (Simulation Only)
 
-Real Arduino support uses the browser's Web Serial API. It is available in Chrome or Edge on desktop when the page is served over HTTPS or from localhost (`http://localhost:8080` qualifies). In the Hardware Companion, click **Add USB Device**, choose the board in the browser picker, then click **Connect to Board**. Permission is remembered per origin and can be revoked from the browser's site settings. Firefox, Safari, mobile browsers, and plain-HTTP LAN addresses fall back to the virtual simulator.
+The Hardware Companion currently runs the built-in virtual simulator on every platform, including the web build. Real USB/Web Serial connections are not enabled in this release.
 
 ### Running Directly via Docker CLI
 

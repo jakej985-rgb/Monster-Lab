@@ -24,11 +24,28 @@ import '../../presentation/features/troubleshoot/troubleshooting_screen.dart';
 import '../../presentation/features/hardware/hardware_companion_screen.dart';
 import '../../presentation/features/lab/interactive_lab_screen.dart';
 import '../services/parent_session_service.dart';
+import '../../domain/models/learner_profile_model.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final ParentSessionService defaultParentSessionService =
     appParentSessionService;
+
+/// Mirrors `LocalStorageDataSource.getProfiles`: the payload counts only if
+/// every entry decodes, so routing never accepts a profile the repository
+/// would reject.
+bool _containsLoadableProfile(String? raw, String activeId) {
+  if (raw == null || raw.isEmpty) return false;
+  try {
+    final profiles = (jsonDecode(raw) as List)
+        .map((item) =>
+            LearnerProfileModel.fromJson(item as Map<String, dynamic>))
+        .toList();
+    return profiles.any((profile) => profile.id == activeId);
+  } catch (_) {
+    return false;
+  }
+}
 
 String? routeAuthorizationGuard({
   required String location,
@@ -63,31 +80,10 @@ final GoRouter appRouter = GoRouter(
 
     bool hasActiveProfile = false;
     if (activeId != null && activeId.trim().isNotEmpty) {
-      String? effectiveRaw = profilesRaw;
-      if (effectiveRaw != '[]') {
-        if (effectiveRaw == null || effectiveRaw.isEmpty) {
-          effectiveRaw = prefs.getString('monster_lab_profiles_backup');
-        }
-        if (effectiveRaw != null && effectiveRaw.isNotEmpty) {
-          try {
-            final list = jsonDecode(effectiveRaw) as List;
-            hasActiveProfile = list.any(
-              (item) => (item as Map<String, dynamic>)['id'] == activeId,
-            );
-          } catch (_) {
-            final backupRaw = prefs.getString('monster_lab_profiles_backup');
-            if (backupRaw != null && backupRaw.isNotEmpty) {
-              try {
-                final backupList = jsonDecode(backupRaw) as List;
-                hasActiveProfile = backupList.any(
-                  (item) => (item as Map<String, dynamic>)['id'] == activeId,
-                );
-              } catch (_) {
-                hasActiveProfile = false;
-              }
-            }
-          }
-        }
+      if (profilesRaw != '[]') {
+        final backupRaw = prefs.getString('monster_lab_profiles_backup');
+        hasActiveProfile = _containsLoadableProfile(profilesRaw, activeId) ||
+            _containsLoadableProfile(backupRaw, activeId);
       }
     }
 
