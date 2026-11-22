@@ -221,6 +221,7 @@ class _GtkSidebarRowState extends State<_GtkSidebarRow> {
       focused: _isFocused,
       label: widget.label,
       excludeSemantics: true,
+      onTap: widget.onTap,
       child: Tooltip(
         message: widget.label,
         waitDuration: const Duration(milliseconds: 600),
