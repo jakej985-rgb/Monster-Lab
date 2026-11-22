@@ -63,29 +63,31 @@ final GoRouter appRouter = GoRouter(
 
     bool hasActiveProfile = false;
     if (activeId != null && activeId.trim().isNotEmpty) {
-      if (profilesRaw != null && profilesRaw.isNotEmpty) {
-        try {
-          final list = jsonDecode(profilesRaw) as List;
-          hasActiveProfile = list
-              .any((item) => (item as Map<String, dynamic>)['id'] == activeId);
-        } catch (_) {
-          // If primary store is corrupt, verify if backup snapshot can restore active profile
-          final backupRaw = prefs.getString('monster_lab_profiles_backup');
-          if (backupRaw != null && backupRaw.isNotEmpty) {
-            try {
-              final backupList = jsonDecode(backupRaw) as List;
-              hasActiveProfile = backupList.any(
-                (item) => (item as Map<String, dynamic>)['id'] == activeId,
-              );
-            } catch (_) {
-              hasActiveProfile = false;
+      String? effectiveRaw = profilesRaw;
+      if (effectiveRaw != '[]') {
+        if (effectiveRaw == null || effectiveRaw.isEmpty) {
+          effectiveRaw = prefs.getString('monster_lab_profiles_backup');
+        }
+        if (effectiveRaw != null && effectiveRaw.isNotEmpty) {
+          try {
+            final list = jsonDecode(effectiveRaw) as List;
+            hasActiveProfile = list.any(
+              (item) => (item as Map<String, dynamic>)['id'] == activeId,
+            );
+          } catch (_) {
+            final backupRaw = prefs.getString('monster_lab_profiles_backup');
+            if (backupRaw != null && backupRaw.isNotEmpty) {
+              try {
+                final backupList = jsonDecode(backupRaw) as List;
+                hasActiveProfile = backupList.any(
+                  (item) => (item as Map<String, dynamic>)['id'] == activeId,
+                );
+              } catch (_) {
+                hasActiveProfile = false;
+              }
             }
-          } else {
-            hasActiveProfile = false;
           }
         }
-      } else {
-        hasActiveProfile = false;
       }
     }
 

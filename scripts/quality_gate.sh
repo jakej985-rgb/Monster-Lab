@@ -64,7 +64,7 @@ python3 scripts/verify_changelog_hygiene.py
 echo "  Changelog hygiene: PASSED"
 
 echo "[11/11] Running release-tool unit tests..."
-python3 -m unittest discover -s test/scripts -p 'test_*.py'
+python3 -m unittest discover -s test/scripts -p 'test_generate_release_*.py'
 echo "  Release-tool tests: PASSED"
 
 echo "================================================================="

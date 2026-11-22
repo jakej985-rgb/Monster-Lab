@@ -23,6 +23,16 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   bool _isSubmitting = false;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ref.read(localStorageDataSourceProvider).getProfiles();
+      }
+    });
+  }
+
+  @override
   void dispose() {
     _nicknameController.dispose();
     super.dispose();
