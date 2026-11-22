@@ -149,25 +149,22 @@ void main() {
     });
 
     test('explicit empty primary list never restores the backup', () {
-      expect(
-        resolveHasActiveProfile(
-          activeId: 'learner_ava',
-          profilesRaw: '[]',
-          backupRaw: ava,
-        ),
-        isFalse,
+      final active = resolveHasActiveProfile(
+        activeId: 'learner_ava',
+        profilesRaw: '[]',
+        backupRaw: ava,
       );
+      expect(active, isFalse,
+          reason: 'explicit empty profiles cannot restore backup');
     });
 
     test('blank active ID is never active', () {
-      expect(
-        resolveHasActiveProfile(
-          activeId: '  ',
-          profilesRaw: ava,
-          backupRaw: ava,
-        ),
-        isFalse,
+      final blankActive = resolveHasActiveProfile(
+        activeId: '  ',
+        profilesRaw: ava,
+        backupRaw: ava,
       );
+      expect(blankActive, isFalse, reason: 'whitespace activeId is ignored');
     });
   });
 }

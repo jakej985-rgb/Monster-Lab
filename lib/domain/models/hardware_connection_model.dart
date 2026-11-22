@@ -255,6 +255,14 @@ class PinTelemetry {
     this.freeSramBytes = 1524,
   });
 
+  factory PinTelemetry.physicalEmpty() => const PinTelemetry(
+        pin13Led: false,
+        a0Voltage: 0.0,
+        a0Raw: 0,
+        sonarDistanceCm: 0.0,
+        freeSramBytes: 0,
+      );
+
   PinTelemetry copyWith({
     bool? pin13Led,
     double? a0Voltage,

@@ -110,7 +110,11 @@ The web version is compiled to WebAssembly / CanvasKit PWA and containerized wit
    ```
    Open `http://localhost:8080`.
 
-The Hardware Companion in the web build uses the virtual simulator only. The Web Serial transport code exists but is not wired into the app in this release.
+Web Serial hardware support requires Chrome or Edge on desktop and a secure
+context (HTTPS or localhost). The Docker Compose default `http://localhost:8080`
+qualifies; serving the PWA from a plain-HTTP LAN address disables real USB
+access and leaves the virtual simulator available.
+
 
 ---
 
@@ -126,7 +130,8 @@ keyPassword=monsterlab2026
 keyAlias=monsterlab
 storeFile=monster-lab-release.jks
 ```
-Release builds fail if `android/key.properties` or the keystore file is absent. Use `flutter build apk --debug` for local development; debug keys must never be published.
+Release builds fail if `android/key.properties` or the keystore file is absent.
+Use `flutter build apk --debug` for local development; debug keys must never be published.
 
 #### 2. GitHub Actions CI/CD Signing Setup
 For automated GitHub Releases, the keystore is injected securely via GitHub Repository Secrets:
@@ -243,4 +248,6 @@ Run the standard validation gates enforced by `.agents/rules/push-gatekeeper.md`
 bash scripts/quality_gate.sh
 ```
 
-The quality gate runs formatting, static analysis, the full test suite with coverage, the secret scan, dependency scan, curriculum validation, version/artifact/changelog contracts, and the Python release-tool tests. All checks must pass before pushing code.
+The quality gate runs formatting, static analysis, the full test suite with coverage,
+the secret scan, dependency scan, curriculum validation, version/artifact/changelog contracts,
+and the Python release-tool tests. All checks must pass before pushing code.

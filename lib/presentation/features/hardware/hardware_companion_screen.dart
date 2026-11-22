@@ -209,7 +209,9 @@ class _HardwareCompanionScreenState
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Use the built-in virtual simulator to practice wiring, commands, and telemetry. Real USB hardware connections are not enabled in this release.',
+                  'Use the built-in virtual simulator anywhere, or connect a '
+                  'real Arduino over USB in Chrome or Edge on desktop. Hardware '
+                  'data never leaves this device.',
                   style: TextStyle(
                       fontSize: 13,
                       color: colorScheme.onSurfaceVariant,
@@ -261,7 +263,8 @@ class _HardwareCompanionScreenState
                 const SizedBox(height: 2),
                 Text(
                   supported
-                      ? 'Click Add USB Device to choose an Arduino. The browser asks permission before sharing a port, and data stays on this device.'
+                      ? 'Click Add USB Device to choose an Arduino. The browser asks permission '
+                          'before sharing a port, and data stays on this device.'
                       : (bridge.transportNotice ??
                           'Real USB serial is unavailable here. The virtual simulator remains fully usable.'),
                   style: TextStyle(

@@ -32,25 +32,24 @@ jobs:
        !startsWith(github.event.head_commit.message, 'chore(release):') &&
        !contains(github.event.head_commit.message, '[skip release]'))
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v5
+      - name: Check out repository for release preflight
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+      - name: Set up Flutter preflight environment
+        uses: subosito/flutter-action@f2c4f66bb070824145240dfbf837072da6485b3e # v2.18.0
         with:
           flutter-version: '3.47.3'
-          channel: 'stable'
           cache: true
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
         with:
           python-version: '3.11'
 
-      - name: Install Python dependencies
+      - name: Install Python quality-gate dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install pyyaml jsonschema Pillow markdown
+          python -m pip install --upgrade pip --quiet
+          pip install --quiet pyyaml jsonschema Pillow markdown
 
       - name: Install Flutter dependencies
         run: flutter pub get
@@ -369,7 +368,13 @@ jobs:
           fi
           echo "Importing canonical 50-year GPG key for Debian release signing..."
           echo "$GPG_PRIVATE_KEY" | gpg --batch --import
-          python3 scripts/package_linux_deb.py --bundle-dir build/linux/x64/release/bundle --output "$DEB_NAME" --version "$CLEAN_VERSION" --sign --key-id "$GPG_KEY_ID" --passphrase "$GPG_PASSPHRASE"
+          python3 scripts/package_linux_deb.py \
+            --bundle-dir build/linux/x64/release/bundle \
+            --output "$DEB_NAME" \
+            --version "$CLEAN_VERSION" \
+            --sign \
+            --key-id "$GPG_KEY_ID" \
+            --passphrase "$GPG_PASSPHRASE"
           test -s "${DEB_NAME}.asc"
           gpg --batch --verify "${DEB_NAME}.asc" "$DEB_NAME"
           SHA256=$(sha256sum "$DEB_NAME" | cut -d ' ' -f1)
@@ -593,7 +598,7 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           ref: ${{ needs.prepare-release.outputs.sha }}
 
@@ -617,7 +622,7 @@ jobs:
             release-assets/*
 
       - name: Publish checksums and provenance
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@c062e08bd532815e2082a85e87e3ef29c3e6d191 # v2.0.8
         with:
           tag_name: ${{ needs.prepare-release.outputs.tag }}
           files: |

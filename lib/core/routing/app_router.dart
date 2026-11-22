@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'route_constants.dart';
@@ -32,32 +31,15 @@ final ParentSessionService defaultParentSessionService =
     appParentSessionService;
 
 /// True when [raw] is a non-empty JSON list whose every entry decodes.
-bool _decodesProfiles(String? raw) {
-  if (raw == null || raw.isEmpty) return false;
-  try {
-    for (final item in jsonDecode(raw) as List) {
-      LearnerProfileModel.fromJson(item as Map<String, dynamic>);
-    }
-    return true;
-  } catch (_) {
-    return false;
-  }
-}
+bool _decodesProfiles(String? raw) =>
+    LearnerProfileModel.tryDecodeList(raw) != null;
 
 /// Mirrors `LocalStorageDataSource.getProfiles`: the payload counts only if
 /// every entry decodes, so routing never accepts a profile the repository
 /// would reject.
 bool _containsLoadableProfile(String? raw, String activeId) {
-  if (raw == null || raw.isEmpty) return false;
-  try {
-    final profiles = (jsonDecode(raw) as List)
-        .map((item) =>
-            LearnerProfileModel.fromJson(item as Map<String, dynamic>))
-        .toList();
-    return profiles.any((profile) => profile.id == activeId);
-  } catch (_) {
-    return false;
-  }
+  final loaded = LearnerProfileModel.tryDecodeList(raw);
+  return loaded != null && loaded.any((profile) => profile.id == activeId);
 }
 
 String? routeAuthorizationGuard({

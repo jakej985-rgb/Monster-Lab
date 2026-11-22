@@ -39,10 +39,10 @@ class FakeSerialTransport implements SerialTransport {
 
   @override
   Future<SerialPortConnection> open(
-    SerialPortInfo port, {
+    SerialPortInfo targetPort, {
     required int baudRate,
   }) async {
-    final connection = FakeSerialConnection(port, baudRate);
+    final connection = FakeSerialConnection(targetPort, baudRate);
     lastConnection = connection;
     return connection;
   }
@@ -86,18 +86,36 @@ class FakeSerialConnection implements SerialPortConnection {
 
 const unoPort = SerialPortInfo(
   id: 'uno',
-  label: 'USB Serial #1 (VID 0x1A86 / PID 0x7523)',
+  label: 'Arduino Uno R3 (VID 0x2341 / PID 0x0043)',
+  vendorId: 0x2341,
+  productId: 0x0043,
+);
+
+const ch340Port = SerialPortInfo(
+  id: 'ch340',
+  label: 'Generic CH340 Bridge (VID 0x1A86 / PID 0x7523)',
   vendorId: 0x1A86,
   productId: 0x7523,
 );
 
 void main() {
   group('PhysicalSerialBridge', () {
+    (FakeSerialTransport, PhysicalSerialBridge) createBridge({
+      SerialPortInfo? initialPort,
+    }) {
+      final transport = FakeSerialTransport();
+      if (initialPort != null) transport.ports.add(initialPort);
+      final bridge = PhysicalSerialBridge(transport: transport);
+      addTearDown(bridge.dispose);
+      return (transport, bridge);
+    }
+
     test('maps known USB identifiers and falls back to a safe profile',
         () async {
       final transport = FakeSerialTransport()
         ..ports.addAll(const [
           unoPort,
+          ch340Port,
           SerialPortInfo(
             id: 'unknown',
             label: 'USB Serial #2 (VID 0xFFFF / PID 0xFFFF)',
@@ -110,9 +128,10 @@ void main() {
 
       final boards = await bridge.scanDevices();
 
-      expect(boards, hasLength(2));
+      expect(boards, hasLength(3));
       expect(boards[0].boardModel.id, 'uno_r3');
       expect(boards[1].boardModel.id, 'usb_serial');
+      expect(boards[2].boardModel.id, 'usb_serial');
       expect(boards[1].boardModel.operatingVoltage, contains('3.3V'));
       expect(boards.every((board) => !board.isVirtual), isTrue);
     });
@@ -128,22 +147,18 @@ void main() {
       expect(bridge.transportNotice, isNotNull);
       expect(await bridge.scanDevices(), isEmpty);
       expect(await bridge.requestPhysicalPort(), isNull);
-      expect(
-        await bridge.connect(
-          board: const DiscoveredBoard(
-            portName: 'USB Serial #1',
-            boardModel: SupportedBoards.unoR3,
-          ),
+      final unsupportedConnect = await bridge.connect(
+        board: const DiscoveredBoard(
+          portName: 'USB Serial #1',
+          boardModel: SupportedBoards.unoR3,
         ),
-        isFalse,
       );
+      expect(unsupportedConnect, isFalse);
     });
 
     test('opens the port, sends the optional handshake, and parses output',
         () async {
-      final transport = FakeSerialTransport()..ports.add(unoPort);
-      final bridge = PhysicalSerialBridge(transport: transport);
-      addTearDown(bridge.dispose);
+      final (transport, bridge) = createBridge(initialPort: unoPort);
 
       final logs = <SerialLogEntry>[];
       final telemetry = <PinTelemetry>[];
@@ -196,14 +211,13 @@ void main() {
       );
 
       await bridge.disconnect();
+      expect(connection.written, contains('SAFE_STATE'));
       expect(connection.closed, isTrue);
       expect(bridge.currentState, HardwareConnectionState.disconnected);
     });
 
     test('surfaces a device removal as an error state', () async {
-      final transport = FakeSerialTransport()..ports.add(unoPort);
-      final bridge = PhysicalSerialBridge(transport: transport);
-      addTearDown(bridge.dispose);
+      final (transport, bridge) = createBridge(initialPort: unoPort);
 
       final logs = <SerialLogEntry>[];
       final logSub = bridge.serialStream.listen(logs.add);
@@ -216,10 +230,9 @@ void main() {
 
       expect(bridge.currentState, HardwareConnectionState.error);
       expect(bridge.currentBoard, isNull);
-      expect(
-        logs.any((entry) => entry.text.contains('device disconnected')),
-        isTrue,
-      );
+      final hasDisconnectLog =
+          logs.any((entry) => entry.text.contains('device disconnected'));
+      expect(hasDisconnectLog, isTrue, reason: 'must log device disconnected');
     });
 
     test('requests a port through the transport and builds a board entry',

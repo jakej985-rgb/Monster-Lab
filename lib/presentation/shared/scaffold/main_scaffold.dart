@@ -52,7 +52,7 @@ class MainScaffold extends ConsumerWidget {
     ref.listen<AsyncValue<CurriculumEngineStatus>>(
       curriculumHealthProvider,
       (previous, next) {
-        if (next.hasError && previous?.hasError != true) {
+        if (next.hasError && !(previous?.hasError ?? false)) {
           _showNotice(
             context,
             'Curriculum assets could not be initialized: ${next.error}',

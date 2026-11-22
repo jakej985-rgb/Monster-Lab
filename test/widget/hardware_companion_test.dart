@@ -205,10 +205,10 @@ class _PhysicalCapableBridge extends VirtualSimulationBridge {
   _PhysicalCapableBridge() : super(enableTelemetryTimer: false);
 
   static const _board = DiscoveredBoard(
-    portName: 'USB Serial #1',
-    boardModel: SupportedBoards.unoR3,
-    vendorId: 0x1A86,
-    productId: 0x7523,
+    portName: 'USB Serial Mega #1',
+    boardModel: SupportedBoards.mega2560,
+    vendorId: 0x2341,
+    productId: 0x0010,
   );
 
   int requestCount = 0;
@@ -222,6 +222,7 @@ class _PhysicalCapableBridge extends VirtualSimulationBridge {
     return [...boards, _board];
   }
 
+  // Overridden to simulate interactive user permission grant in tests.
   @override
   Future<DiscoveredBoard?> requestPhysicalPort() async {
     requestCount++;

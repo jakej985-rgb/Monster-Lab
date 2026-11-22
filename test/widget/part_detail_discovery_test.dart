@@ -54,25 +54,17 @@ void main() {
       await repo.setActiveProfile(profile.id);
     }
 
+    void setDimensions(WidgetTester tester, {double height = 2400}) {
+      tester.view.physicalSize = Size(1200, height);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+    }
+
     testWidgets(
         'Undiscovered part hides pinout and details, shows teaser card and Discover button',
         (tester) async {
-      tester.view.physicalSize = const Size(1200, 2400);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
-
-      final profileRepo =
-          ProfileRepositoryImpl(LocalStorageDataSource(storageService));
-      final testProfile = LearnerProfileModel(
-        id: 'child_undiscovered',
-        nickname: 'Volt',
-        avatarId: 'monster_bolt',
-        ageBracket: AgeBracket.ages10_12,
-        createdAt: DateTime.now(),
-        lastActiveAt: DateTime.now(),
-      );
-      await profileRepo.saveProfile(testProfile);
-      await profileRepo.setActiveProfile(testProfile.id);
+      setDimensions(tester);
+      await seedProfile('child_undiscovered');
 
       await tester.pumpWidget(
         createTestWidget(
@@ -100,78 +92,45 @@ void main() {
       expect(find.text('Featured Projects'), findsNothing);
     });
 
-    testWidgets('Restricted components stay behind the parent safety gate',
-        (tester) async {
-      tester.view.physicalSize = const Size(1200, 2400);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
-
-      final profileRepo =
-          ProfileRepositoryImpl(LocalStorageDataSource(storageService));
-      final testProfile = LearnerProfileModel(
-        id: 'child_restricted',
-        nickname: 'Volt',
-        avatarId: 'monster_bolt',
-        ageBracket: AgeBracket.ages10_12,
-        createdAt: DateTime.now(),
-        lastActiveAt: DateTime.now(),
-      );
-      await profileRepo.saveProfile(testProfile);
-      await profileRepo.setActiveProfile(testProfile.id);
-
-      await tester.pumpWidget(
-        createTestWidget(
-          const PartDetailScreen(componentId: 'comp_16'),
-        ),
-      );
-      await tester.pumpAndSettle();
-
+    void expectSafetyLocked() {
       expect(find.byKey(const Key('parent_safety_lock_card')), findsOneWidget);
       expect(find.text('Parent Authorization Required'), findsOneWidget);
       expect(find.byKey(const Key('discover_button')), findsNothing);
       expect(find.text('Pin Connections & Wires'), findsNothing);
+    }
+
+    Future<void> pumpAndExpectLocked(
+      WidgetTester tester,
+      String componentId,
+    ) async {
+      await tester.pumpWidget(
+        createTestWidget(
+          PartDetailScreen(componentId: componentId),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expectSafetyLocked();
+    }
+
+    testWidgets('Restricted components stay behind the parent safety gate',
+        (tester) async {
+      setDimensions(tester);
+      await seedProfile('child_restricted');
+      await pumpAndExpectLocked(tester, 'comp_16');
     });
 
     testWidgets('Laser diode comp_37 stays behind the laser authorization gate',
         (tester) async {
-      tester.view.physicalSize = const Size(1200, 2400);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
-
+      setDimensions(tester);
       await seedProfile('child_laser_gate');
-
-      await tester.pumpWidget(
-        createTestWidget(
-          const PartDetailScreen(componentId: 'comp_37'),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.byKey(const Key('parent_safety_lock_card')), findsOneWidget);
-      expect(find.text('Parent Authorization Required'), findsOneWidget);
-      expect(find.byKey(const Key('discover_button')), findsNothing);
-      expect(find.text('Pin Connections & Wires'), findsNothing);
+      await pumpAndExpectLocked(tester, 'comp_37');
     });
 
     testWidgets(
         'Tapping Discover awards +25 XP, discovers part, and unlocks full pinouts and specs',
         (tester) async {
-      tester.view.physicalSize = const Size(1200, 3000);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
-
-      final profileRepo =
-          ProfileRepositoryImpl(LocalStorageDataSource(storageService));
-      final testProfile = LearnerProfileModel(
-        id: 'child_discoverer',
-        nickname: 'Sparky',
-        avatarId: 'monster_spark',
-        ageBracket: AgeBracket.ages10_12,
-        createdAt: DateTime.now(),
-        lastActiveAt: DateTime.now(),
-      );
-      await profileRepo.saveProfile(testProfile);
-      await profileRepo.setActiveProfile(testProfile.id);
+      setDimensions(tester, height: 3000);
+      await seedProfile('child_discoverer', 'Sparky');
 
       await tester.pumpWidget(
         createTestWidget(

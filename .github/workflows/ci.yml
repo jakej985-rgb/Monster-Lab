@@ -71,6 +71,9 @@ jobs:
       - name: Run release-tool unit tests
         run: python3 -m unittest discover -s test/scripts -p 'test_generate_release_*.py'
 
+      - name: Run lesson-tool unit tests
+        run: python3 -m unittest discover -s test/scripts -p 'test_*lesson*.py'
+
   android-build:
     name: Build Android (debug)
     needs: quality-gate
@@ -78,16 +81,16 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Set up Java
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@8df10395026579edcb59046f6fb247713d29790c # v4.7.0
         with:
           distribution: 'temurin'
           java-version: '17'
 
       - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@f2c4f66bb070824145240dfbf837072da6485b3e # v2.18.0
         with:
           flutter-version: '3.47.3'
           channel: 'stable'

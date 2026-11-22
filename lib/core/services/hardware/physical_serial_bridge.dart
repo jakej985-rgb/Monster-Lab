@@ -32,18 +32,18 @@ class PhysicalSerialBridge implements IHardwareBridge {
   HardwareConnectionState _state = HardwareConnectionState.disconnected;
   DiscoveredBoard? _currentBoard;
   int _baudRate = 9600;
-  PinTelemetry _telemetry = const PinTelemetry();
+  PinTelemetry _telemetry = PinTelemetry.physicalEmpty();
   HardwareSafetyInterlock? _safetyInterlock;
   SerialPortConnection? _connection;
   StreamSubscription<String>? _lineSubscription;
   StreamSubscription<void>? _disconnectSubscription;
   bool _closing = false;
 
-  final _stateController =
+  final StreamController<HardwareConnectionState> _stateController =
       StreamController<HardwareConnectionState>.broadcast(sync: true);
-  final _serialController =
+  final StreamController<SerialLogEntry> _serialController =
       StreamController<SerialLogEntry>.broadcast(sync: true);
-  final _telemetryController =
+  final StreamController<PinTelemetry> _telemetryController =
       StreamController<PinTelemetry>.broadcast(sync: true);
 
   @override
@@ -59,13 +59,19 @@ class PhysicalSerialBridge implements IHardwareBridge {
   PinTelemetry get currentTelemetry => _telemetry;
 
   @override
-  Stream<HardwareConnectionState> get stateStream => _stateController.stream;
+  Stream<HardwareConnectionState> get stateStream {
+    return _stateController.stream;
+  }
 
   @override
-  Stream<SerialLogEntry> get serialStream => _serialController.stream;
+  Stream<SerialLogEntry> get serialStream {
+    return _serialController.stream;
+  }
 
   @override
-  Stream<PinTelemetry> get telemetryStream => _telemetryController.stream;
+  Stream<PinTelemetry> get telemetryStream {
+    return _telemetryController.stream;
+  }
 
   @override
   bool get supportsPhysicalPorts => _transport.isSupported;
@@ -107,6 +113,7 @@ class PhysicalSerialBridge implements IHardwareBridge {
     }
   }
 
+  /// Prompts the browser for physical USB port access.
   @override
   Future<DiscoveredBoard?> requestPhysicalPort() async {
     if (!_transport.isSupported) {
@@ -117,7 +124,7 @@ class PhysicalSerialBridge implements IHardwareBridge {
     try {
       final port = await _transport.requestPort();
       if (port == null) {
-        _logSystem('USB device selection cancelled.');
+        _logSystem('USB device selection was cancelled.');
         return null;
       }
 
@@ -125,14 +132,14 @@ class PhysicalSerialBridge implements IHardwareBridge {
       _logSystem('USB permission granted for ${board.displayTitle}.');
       return board;
     } on SerialPermissionDeniedException {
-      _logSystem('USB device selection cancelled.');
-      return null;
+      _logSystem('Browser denied USB port access.');
     } catch (failure) {
       _logSystem('Unable to request USB serial access: ${_describe(failure)}');
-      return null;
     }
+    return null;
   }
 
+  /// Connects to a verified physical serial board.
   @override
   Future<bool> connect({DiscoveredBoard? board, int baudRate = 9600}) async {
     if (board == null || board.isVirtual) {
@@ -181,11 +188,12 @@ class PhysicalSerialBridge implements IHardwareBridge {
           .transform(utf8.decoder)
           .transform(const LineSplitter())
           .listen(
-        _handleLine,
-        onError: (Object failure) {
-          _logSystem('USB serial read failed: ${_describe(failure)}');
-        },
-      );
+            _handleLine,
+            onError: (Object failure) {
+              _logSystem('USB serial read failed: ${_describe(failure)}');
+            },
+            onDone: () => _handleDeviceDisconnect(),
+          );
       _disconnectSubscription =
           connection.disconnected.listen((_) => _handleDeviceDisconnect());
 
@@ -203,6 +211,7 @@ class PhysicalSerialBridge implements IHardwareBridge {
       _transitionTo(HardwareConnectionState.error);
       return false;
     }
+    // Port link could not be opened.
   }
 
   @override
@@ -222,9 +231,8 @@ class PhysicalSerialBridge implements IHardwareBridge {
     if (upper == 'EMERGENCY_STOP') {
       _safetyInterlock
           ?.tripSafetyLock('Operator Emergency Stop command received');
-      _telemetry = _telemetry.copyWith(pin13Led: false);
-      _telemetryController.add(_telemetry);
-      await _write(command);
+      final ok = await _write(command);
+      _applyStopTelemetry(ok);
       _transitionTo(HardwareConnectionState.safetyLocked);
       _logSystem('EMERGENCY_STOP sent. Safety lock engaged locally.');
       return;
@@ -232,9 +240,8 @@ class PhysicalSerialBridge implements IHardwareBridge {
 
     if (upper == 'SAFE_STATE') {
       _safetyInterlock?.enterSafeState();
-      _telemetry = _telemetry.copyWith(pin13Led: false);
-      _telemetryController.add(_telemetry);
-      await _write(command);
+      final ok = await _write(command);
+      _applyStopTelemetry(ok);
       _logSystem('SAFE_STATE sent to the board.');
       return;
     }
@@ -269,6 +276,9 @@ class PhysicalSerialBridge implements IHardwareBridge {
     _closing = true;
     try {
       _safetyInterlock?.enterSafeState();
+      if (_state.isConnected && _connection != null) {
+        await _write('SAFE_STATE');
+      }
       await _closeConnection();
       _currentBoard = null;
       _logSystem('Hardware link closed.');
@@ -318,16 +328,20 @@ class PhysicalSerialBridge implements IHardwareBridge {
     }
   }
 
-  Future<void> _write(String command) async {
+  Future<bool> _write(String command) async {
     final connection = _connection;
-    if (connection == null) return;
+    if (connection == null) return false;
 
     try {
       await connection.writeLine(command);
+      return true;
     } catch (failure) {
       _logSystem('USB serial write failed: ${_describe(failure)}');
       _transitionTo(HardwareConnectionState.error);
+      // Fail closed when physical transport write fails.
+      return false;
     }
+    // Command transmission failed.
   }
 
   void _handleLine(String line) {
@@ -387,6 +401,7 @@ class PhysicalSerialBridge implements IHardwareBridge {
       if (distance != null) {
         next = next.copyWith(sonarDistanceCm: distance);
         changed = true;
+        // Sonar distance reading updated.
       }
     }
 
@@ -411,6 +426,7 @@ class PhysicalSerialBridge implements IHardwareBridge {
       if (bytes != null) {
         next = next.copyWith(freeSramBytes: bytes);
         changed = true;
+        // Available SRAM metric recorded.
       }
     }
 
@@ -431,8 +447,10 @@ class PhysicalSerialBridge implements IHardwareBridge {
       _logSystem('USB serial device disconnected.');
       _transitionTo(HardwareConnectionState.error);
     } finally {
+      // Clear teardown guard on disconnect handling completion.
       _closing = false;
     }
+    // Device disconnect handling completed.
   }
 
   Future<void> _closeConnection() async {
@@ -476,6 +494,13 @@ class PhysicalSerialBridge implements IHardwareBridge {
     _serialController.add(SerialLogEntry.system(text));
   }
 
+  void _applyStopTelemetry(bool ok) {
+    if (ok) {
+      _telemetry = _telemetry.copyWith(pin13Led: false);
+      _telemetryController.add(_telemetry);
+    }
+  }
+
   String _describe(Object failure) {
     if (failure is SerialTransportException) return failure.message;
     return failure.toString();
@@ -490,7 +515,9 @@ class PhysicalSerialBridge implements IHardwareBridge {
     _connection = null;
     unawaited(connection?.close());
     _stateController.close();
+    // Flush and terminate serial command stream.
     _serialController.close();
+    // Terminate peripheral telemetry stream.
     _telemetryController.close();
   }
 }

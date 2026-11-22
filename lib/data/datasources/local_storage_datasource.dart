@@ -45,62 +45,42 @@ class LocalStorageDataSource {
     _corruptionController.add(message);
   }
 
+  List<LearnerProfileModel>? _tryParseProfiles(String raw) {
+    return LearnerProfileModel.tryDecodeList(raw);
+  }
+
   List<LearnerProfileModel> getProfiles() {
     final raw = _storageService.getString(_profilesKey);
     if (raw == '[]') {
       return [];
     }
 
-    String? effectiveRaw = raw;
-    bool recoveredFromBackup = false;
-
-    if (effectiveRaw == null || effectiveRaw.isEmpty) {
-      final backupRaw = _storageService.getString(_profilesBackupKey);
-      if (backupRaw != null && backupRaw.isNotEmpty && backupRaw != '[]') {
-        effectiveRaw = backupRaw;
-        recoveredFromBackup = true;
-      } else {
-        return [];
+    if (raw != null && raw.isNotEmpty) {
+      final profiles = _tryParseProfiles(raw);
+      if (profiles != null) {
+        return profiles;
       }
     }
 
-    try {
-      final list = jsonDecode(effectiveRaw) as List;
-      final profiles = list
-          .map((item) =>
-              LearnerProfileModel.fromJson(item as Map<String, dynamic>))
-          .toList();
-      if (recoveredFromBackup) {
-        _storageService.setString(_profilesKey, effectiveRaw);
+    final backupRaw = _storageService.getString(_profilesBackupKey);
+    if (backupRaw != null && backupRaw.isNotEmpty && backupRaw != '[]') {
+      final recovered = _tryParseProfiles(backupRaw);
+      if (recovered != null) {
+        _storageService.setString(_profilesKey, backupRaw);
         _reportCorruption(
           'Learner profiles were recovered from a backup snapshot.',
         );
+        return recovered;
       }
-      return profiles;
-    } catch (_) {
-      if (!recoveredFromBackup) {
-        final backupRaw = _storageService.getString(_profilesBackupKey);
-        if (backupRaw != null && backupRaw.isNotEmpty && backupRaw != '[]') {
-          try {
-            final backupList = jsonDecode(backupRaw) as List;
-            final recovered = backupList
-                .map((item) =>
-                    LearnerProfileModel.fromJson(item as Map<String, dynamic>))
-                .toList();
-            _storageService.setString(_profilesKey, backupRaw);
-            _reportCorruption(
-              'Learner profiles were recovered from a backup snapshot.',
-            );
-            return recovered;
-          } catch (_) {}
-        }
-      }
+    }
+
+    if (raw != null && raw.isNotEmpty) {
       _reportCorruption(
         'Learner profiles could not be read. The local profile store may '
         'be corrupt; restore a backup or create a new profile.',
       );
-      return [];
     }
+    return [];
   }
 
   Future<void> saveProfiles(List<LearnerProfileModel> profiles) async {

@@ -81,21 +81,32 @@ class WebSerialTransport implements SerialTransport {
 
     try {
       final ports = await api.getPorts().toDart;
-      _handles.clear();
       final result = <SerialPortInfo>[];
       var index = 0;
       for (final port in ports.toDart) {
         index++;
-        final id = 'web-serial-$index-${_nextId++}';
-        _handles[id] = port;
+        String? id;
+        for (final entry in _handles.entries) {
+          if (entry.value == port) {
+            id = entry.key;
+            break;
+          }
+        }
+        if (id == null) {
+          id = 'web-serial-$index-${_nextId++}';
+          _handles[id] = port;
+        }
         result.add(_describe(port, id, index));
       }
       return result;
     } catch (error) {
-      _throwTransportError(error);
+      throw SerialTransportException(
+        'Failed to enumerate Web Serial ports: ${_errorMessage(error)}',
+      );
     }
   }
 
+  /// Prompts the user to grant Web Serial port access.
   @override
   Future<SerialPortInfo?> requestPort() async {
     final api = _serialApi();
@@ -111,20 +122,17 @@ class WebSerialTransport implements SerialTransport {
       _handles[id] = port;
       return _describe(port, id, _nextId);
     } catch (error) {
-      final message = _errorMessage(error);
-      if (message.toLowerCase().contains('no port selected')) {
-        throw const SerialPermissionDeniedException();
-      }
       _throwTransportError(error);
     }
   }
 
+  /// Establishes an active Web Serial connection stream.
   @override
   Future<SerialPortConnection> open(
-    SerialPortInfo port, {
+    SerialPortInfo selectedPort, {
     required int baudRate,
   }) async {
-    final handle = _handles[port.id];
+    final handle = _handles[selectedPort.id];
     if (handle == null) {
       throw const SerialTransportException(
         'That USB serial port is no longer available. Scan again and '
@@ -138,7 +146,9 @@ class WebSerialTransport implements SerialTransport {
       return connection;
     } catch (error) {
       await connection.close();
-      _throwTransportError(error);
+      throw SerialTransportException(
+        'Failed to open Web Serial connection: ${_errorMessage(error)}',
+      );
     }
   }
 
@@ -214,7 +224,9 @@ class _WebSerialConnection implements SerialPortConnection {
     try {
       await writer.write(bytes.toJS).toDart;
     } catch (error) {
-      _throwTransportError(error);
+      throw SerialTransportException(
+        'Failed to transmit serial data: ${_errorMessage(error)}',
+      );
     }
   }
 
@@ -263,7 +275,7 @@ class _WebSerialConnection implements SerialPortConnection {
     try {
       _reader?.releaseLock();
     } catch (_) {
-      // Lock is already released.
+      // Reader lock is already released.
     }
     try {
       await _writer?.close().toDart;
@@ -273,7 +285,7 @@ class _WebSerialConnection implements SerialPortConnection {
     try {
       _writer?.releaseLock();
     } catch (_) {
-      // Lock is already released.
+      // Writer lock is already freed.
     }
     try {
       await _port.close().toDart;
