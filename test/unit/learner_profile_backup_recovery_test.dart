@@ -107,4 +107,67 @@ void main() {
       expect(profiles, isEmpty);
     });
   });
+
+  group('resolveHasActiveProfile (router primary-vs-backup selection)', () {
+    final ava = jsonEncode([_createProfile('learner_ava', 'Ava').toJson()]);
+    final kai = jsonEncode([_createProfile('learner_kai', 'Kai').toJson()]);
+
+    test('valid primary missing the active ID ignores a stale backup', () {
+      expect(
+        resolveHasActiveProfile(
+          activeId: 'learner_ava',
+          profilesRaw: kai,
+          backupRaw: ava,
+        ),
+        isFalse,
+      );
+    });
+
+    test('valid primary containing the active ID is accepted', () {
+      expect(
+        resolveHasActiveProfile(
+          activeId: 'learner_kai',
+          profilesRaw: kai,
+          backupRaw: ava,
+        ),
+        isTrue,
+      );
+    });
+
+    test('missing, blank, or corrupt primary falls back to the backup', () {
+      for (final primary in [null, '', 'not-json']) {
+        expect(
+          resolveHasActiveProfile(
+            activeId: 'learner_ava',
+            profilesRaw: primary,
+            backupRaw: ava,
+          ),
+          isTrue,
+          reason: 'primary=$primary',
+        );
+      }
+    });
+
+    test('explicit empty primary list never restores the backup', () {
+      expect(
+        resolveHasActiveProfile(
+          activeId: 'learner_ava',
+          profilesRaw: '[]',
+          backupRaw: ava,
+        ),
+        isFalse,
+      );
+    });
+
+    test('blank active ID is never active', () {
+      expect(
+        resolveHasActiveProfile(
+          activeId: '  ',
+          profilesRaw: ava,
+          backupRaw: ava,
+        ),
+        isFalse,
+      );
+    });
+  });
 }

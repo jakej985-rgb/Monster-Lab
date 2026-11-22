@@ -83,26 +83,30 @@ String? routeAuthorizationGuard({
   return null;
 }
 
+/// Mirrors `LocalStorageDataSource.getProfiles`: a decodable primary list is
+/// authoritative; the backup is consulted only when the primary is absent,
+/// blank, or corrupt. An explicit `'[]'` means no profiles.
+bool resolveHasActiveProfile({
+  required String? activeId,
+  required String? profilesRaw,
+  required String? backupRaw,
+}) {
+  if (activeId == null || activeId.trim().isEmpty) return false;
+  if (profilesRaw == '[]') return false;
+  final source = _decodesProfiles(profilesRaw) ? profilesRaw : backupRaw;
+  return _containsLoadableProfile(source, activeId);
+}
+
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: RoutePaths.home,
   redirect: (BuildContext context, GoRouterState state) async {
     final prefs = await SharedPreferences.getInstance();
-    final activeId = prefs.getString('monster_lab_active_profile_id');
-    final profilesRaw = prefs.getString('monster_lab_profiles');
-
-    bool hasActiveProfile = false;
-    if (activeId != null && activeId.trim().isNotEmpty) {
-      if (profilesRaw != '[]') {
-        // Mirror LocalStorageDataSource.getProfiles: a decodable primary list
-        // is authoritative; the backup is consulted only when the primary is
-        // absent, blank, or corrupt.
-        final source = _decodesProfiles(profilesRaw)
-            ? profilesRaw
-            : prefs.getString('monster_lab_profiles_backup');
-        hasActiveProfile = _containsLoadableProfile(source, activeId);
-      }
-    }
+    final hasActiveProfile = resolveHasActiveProfile(
+      activeId: prefs.getString('monster_lab_active_profile_id'),
+      profilesRaw: prefs.getString('monster_lab_profiles'),
+      backupRaw: prefs.getString('monster_lab_profiles_backup'),
+    );
 
     return routeAuthorizationGuard(
       location: state.matchedLocation,
