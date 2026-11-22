@@ -218,7 +218,9 @@ class _GtkSidebarRowState extends State<_GtkSidebarRow> {
     return Semantics(
       button: true,
       selected: widget.isSelected,
+      focused: _isFocused,
       label: widget.label,
+      excludeSemantics: true,
       child: Tooltip(
         message: widget.label,
         waitDuration: const Duration(milliseconds: 600),
@@ -227,6 +229,18 @@ class _GtkSidebarRowState extends State<_GtkSidebarRow> {
           onFocusChange: (focused) {
             if (_isFocused != focused) {
               setState(() => _isFocused = focused);
+            }
+            if (focused) {
+              // Reveal the row if clipped, in either scroll direction.
+              Scrollable.ensureVisible(
+                context,
+                alignmentPolicy:
+                    ScrollPositionAlignmentPolicy.keepVisibleAtStart,
+              );
+              Scrollable.ensureVisible(
+                context,
+                alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtEnd,
+              );
             }
           },
           onShowHoverHighlight: (hovered) {
