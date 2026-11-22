@@ -254,6 +254,31 @@ void main() {
         final reloaded = ComponentRestrictionService(null, storage);
         expect(reloaded.isSafetyAuthorized('laser'), isTrue);
       });
+
+      test('persists component unlocks across service instances using storage',
+          () async {
+        SharedPreferences.setMockInitialValues({});
+        final storage = await StorageService.init();
+        final first = ComponentRestrictionService(null, storage);
+        sessionService.authenticate(duration: const Duration(minutes: 10));
+
+        expect(first.isUnlocked('comp_laser', 'learner_1'), isFalse);
+        await first.unlockComponent(
+          component: restrictedLaser,
+          learnerId: 'learner_1',
+          sessionService: sessionService,
+        );
+        expect(first.isUnlocked('comp_laser', 'learner_1'), isTrue);
+
+        final reloaded = ComponentRestrictionService(null, storage);
+        expect(reloaded.isUnlocked('comp_laser', 'learner_1'), isTrue);
+
+        await reloaded.revokeUnlock('comp_laser', 'learner_1');
+        expect(reloaded.isUnlocked('comp_laser', 'learner_1'), isFalse);
+
+        final afterRevoke = ComponentRestrictionService(null, storage);
+        expect(afterRevoke.isUnlocked('comp_laser', 'learner_1'), isFalse);
+      });
     });
 
     // --- Issue #33: Destructive Action Confirmation and Rollback Recovery ---

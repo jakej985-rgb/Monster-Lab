@@ -21,6 +21,7 @@ class LocalStorageDataSource {
   final StorageService _storageService;
 
   static const String _profilesKey = 'monster_lab_profiles';
+  static const String _profilesBackupKey = 'monster_lab_profiles_backup';
   static const String _activeProfileIdKey = 'monster_lab_active_profile_id';
   static const String _progressKeyPrefix = 'monster_lab_progress_';
   static const String _backupKeyPrefix = 'monster_lab_progress_backup_';
@@ -54,8 +55,25 @@ class LocalStorageDataSource {
               LearnerProfileModel.fromJson(item as Map<String, dynamic>))
           .toList();
     } catch (_) {
+      // Primary payload is corrupt. Attempt recovery from backup snapshot.
+      final backupRaw = _storageService.getString(_profilesBackupKey);
+      if (backupRaw != null && backupRaw.isNotEmpty) {
+        try {
+          final backupList = jsonDecode(backupRaw) as List;
+          final recovered = backupList
+              .map((item) =>
+                  LearnerProfileModel.fromJson(item as Map<String, dynamic>))
+              .toList();
+          _storageService.setString(_profilesKey, backupRaw);
+          _reportCorruption(
+            'Learner profiles were recovered from a backup snapshot.',
+          );
+          return recovered;
+        } catch (_) {}
+      }
       _reportCorruption(
-        'Learner profiles could not be read. The local profile store may be corrupt; restore a backup or create a new profile.',
+        'Learner profiles could not be read. The local profile store may '
+        'be corrupt; restore a backup or create a new profile.',
       );
       return [];
     }
@@ -64,6 +82,7 @@ class LocalStorageDataSource {
   Future<void> saveProfiles(List<LearnerProfileModel> profiles) async {
     final raw = jsonEncode(profiles.map((p) => p.toJson()).toList());
     await _storageService.setString(_profilesKey, raw);
+    await _storageService.setString(_profilesBackupKey, raw);
   }
 
   String? getActiveProfileId() {
@@ -128,7 +147,8 @@ class LocalStorageDataSource {
       }
 
       _reportCorruption(
-        'Progress for learner $learnerId could not be recovered. The corrupt payload was not overwritten; restore a backup if available.',
+        'Progress for learner $learnerId could not be recovered. The corrupt '
+        'payload was not overwritten; restore a backup if available.',
       );
       if (throwOnUnrecoverable) {
         throw corruptionException;

@@ -39,6 +39,8 @@ final progressCorruptionProvider = StreamProvider<String>((ref) {
   return ref.watch(localStorageDataSourceProvider).corruptionStream;
 });
 
+final storageCorruptionStreamProvider = progressCorruptionProvider;
+
 final assetCurriculumDataSourceProvider =
     Provider<AssetCurriculumDataSource>((ref) {
   return AssetCurriculumDataSource();

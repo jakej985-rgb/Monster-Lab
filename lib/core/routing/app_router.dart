@@ -69,8 +69,20 @@ final GoRouter appRouter = GoRouter(
           hasActiveProfile = list
               .any((item) => (item as Map<String, dynamic>)['id'] == activeId);
         } catch (_) {
-          // A malformed profile store must not be treated as an active learner.
-          hasActiveProfile = false;
+          // If primary store is corrupt, verify if backup snapshot can restore active profile
+          final backupRaw = prefs.getString('monster_lab_profiles_backup');
+          if (backupRaw != null && backupRaw.isNotEmpty) {
+            try {
+              final backupList = jsonDecode(backupRaw) as List;
+              hasActiveProfile = backupList.any(
+                (item) => (item as Map<String, dynamic>)['id'] == activeId,
+              );
+            } catch (_) {
+              hasActiveProfile = false;
+            }
+          } else {
+            hasActiveProfile = false;
+          }
         }
       } else {
         hasActiveProfile = false;

@@ -39,6 +39,21 @@ void main() {
       );
     }
 
+    Future<void> seedProfile(String id, [String nickname = 'Volt']) async {
+      final repo =
+          ProfileRepositoryImpl(LocalStorageDataSource(storageService));
+      final profile = LearnerProfileModel(
+        id: id,
+        nickname: nickname,
+        avatarId: 'monster_bolt',
+        ageBracket: AgeBracket.ages10_12,
+        createdAt: DateTime.now(),
+        lastActiveAt: DateTime.now(),
+      );
+      await repo.saveProfile(profile);
+      await repo.setActiveProfile(profile.id);
+    }
+
     testWidgets(
         'Undiscovered part hides pinout and details, shows teaser card and Discover button',
         (tester) async {
@@ -107,6 +122,27 @@ void main() {
       await tester.pumpWidget(
         createTestWidget(
           const PartDetailScreen(componentId: 'comp_16'),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('parent_safety_lock_card')), findsOneWidget);
+      expect(find.text('Parent Authorization Required'), findsOneWidget);
+      expect(find.byKey(const Key('discover_button')), findsNothing);
+      expect(find.text('Pin Connections & Wires'), findsNothing);
+    });
+
+    testWidgets('Laser diode comp_37 stays behind the laser authorization gate',
+        (tester) async {
+      tester.view.physicalSize = const Size(1200, 2400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await seedProfile('child_laser_gate');
+
+      await tester.pumpWidget(
+        createTestWidget(
+          const PartDetailScreen(componentId: 'comp_37'),
         ),
       );
       await tester.pumpAndSettle();

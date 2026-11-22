@@ -75,6 +75,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final selectedAvatar = MonsterAvatar.findById(_selectedAvatarId);
+    final String? corruptionMsg =
+        ref.watch(storageCorruptionStreamProvider).value ??
+            ref.watch(localStorageDataSourceProvider).lastCorruptionMessage;
 
     return Scaffold(
       appBar: AppBar(
@@ -87,6 +90,35 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              if (corruptionMsg != null) ...[
+                Container(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.amber.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: Colors.amber.withValues(alpha: 0.6),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.warning_amber_rounded,
+                          color: Colors.amber),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          corruptionMsg,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: colorScheme.onSurface,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
               // Hero Welcome Card
               MonsterCard(
                 color: selectedAvatar.backgroundColor.withValues(alpha: 0.9),

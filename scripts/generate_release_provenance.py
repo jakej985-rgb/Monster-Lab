@@ -63,14 +63,16 @@ def generate_checksums_and_provenance(artifact_paths: list, output_dir: str = No
             {"name": a["name"], "digest": {"sha256": a["sha256"]}}
             for a in artifacts_metadata
         ],
-        "builder": {
-            "id": "https://github.com/jakej985-rgb/Monster-Lab/.github/workflows/release.yml"
-        },
-        "metadata": {
-            "buildStartedOn": datetime.now(timezone.utc).isoformat(),
-            "releaseVersion": version,
-            "reproducible": True,
-            "artifacts": artifacts_metadata,
+        "predicate": {
+            "builder": {
+                "id": "https://github.com/jakej985-rgb/Monster-Lab/.github/workflows/release.yml"
+            },
+            "metadata": {
+                "buildStartedOn": datetime.now(timezone.utc).isoformat(),
+                "releaseVersion": version,
+                "reproducible": True,
+                "artifacts": artifacts_metadata,
+            }
         }
     }
 

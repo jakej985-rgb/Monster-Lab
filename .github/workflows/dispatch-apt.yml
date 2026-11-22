@@ -21,46 +21,53 @@ jobs:
     steps:
       - name: Validate Dispatch Token
         id: check-token
+        env:
+          TOKEN: >-
+            ${{ secrets.M3TAL_APT_DISPATCH_TOKEN || secrets.HUB_DISPATCH_TOKEN ||
+                secrets.M3TAL_HUB_TOKEN || secrets.GH_PAT }}
         run: |
-          TOKEN="${{ secrets.M3TAL_APT_DISPATCH_TOKEN || secrets.HUB_DISPATCH_TOKEN || secrets.M3TAL_HUB_TOKEN || secrets.GH_PAT }}"
           if [ -z "$TOKEN" ]; then
-            echo "::error ::No dispatch token configured (M3TAL_APT_DISPATCH_TOKEN, HUB_DISPATCH_TOKEN, M3TAL_HUB_TOKEN, or GH_PAT). Refusing to proceed with release dispatch."
+            echo "::error ::No dispatch token configured. Refusing to proceed with release dispatch."
             exit 1
           fi
-          echo "configured=true" >> $GITHUB_OUTPUT
+          echo "configured=true" >> "$GITHUB_OUTPUT"
 
       - name: Determine Target Release Version
         id: target
+        env:
+          INPUT_VERSION: ${{ github.event.inputs.version }}
         run: |
-          TAG="${{ github.event.inputs.version }}"
+          TAG="$INPUT_VERSION"
           CLEAN_VER="${TAG#v}"
-          echo "tag=${TAG}" >> $GITHUB_OUTPUT
-          echo "clean_version=${CLEAN_VER}" >> $GITHUB_OUTPUT
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "clean_version=${CLEAN_VER}" >> "$GITHUB_OUTPUT"
 
       - name: Locate Release Deb Asset URL & Compute SHA256
         id: locate-asset
         env:
           GH_TOKEN: ${{ github.token }}
+          INPUT_DEB_URL: ${{ github.event.inputs.deb_url }}
+          TAG: ${{ steps.target.outputs.tag }}
+          REPO: ${{ github.repository }}
         run: |
-          if [ -n "${{ github.event.inputs.deb_url }}" ]; then
-            DEB_URL="${{ github.event.inputs.deb_url }}"
+          if [ -n "$INPUT_DEB_URL" ]; then
+            DEB_URL="$INPUT_DEB_URL"
           else
-            TAG="${{ steps.target.outputs.tag }}"
-            REPO="${{ github.repository }}"
-            DEB_URL=$(gh release view "${TAG}" --repo "${REPO}" --json assets --jq '.assets[] | select(.name | endswith(".deb")) | .browser_download_url' 2>/dev/null | head -n 1 || true)
+            DEB_URL=$(gh release view "${TAG}" --repo "${REPO}" --json assets \
+              --jq '.assets[] | select(.name | endswith(".deb")) | .url' 2>/dev/null | head -n 1 || true)
             if [ -z "$DEB_URL" ]; then
               DEB_URL="https://github.com/${REPO}/releases/download/${TAG}/monster-lab-${TAG}-linux.deb"
             fi
           fi
           echo "Found deb asset URL: ${DEB_URL}"
-          echo "deb_url=${DEB_URL}" >> $GITHUB_OUTPUT
+          echo "deb_url=${DEB_URL}" >> "$GITHUB_OUTPUT"
 
           temp_deb="/tmp/incoming_deb_checksum.deb"
           curl -sL --fail --retry 5 --retry-delay 10 "$DEB_URL" -o "$temp_deb"
           SHA256=$(sha256sum "$temp_deb" | cut -d ' ' -f1)
           rm -f "$temp_deb"
           echo "Calculated deb asset SHA256: ${SHA256}"
-          echo "sha256=${SHA256}" >> $GITHUB_OUTPUT
+          echo "sha256=${SHA256}" >> "$GITHUB_OUTPUT"
 
       - name: Dispatch Release Event to Central APT Repository
         uses: peter-evans/repository-dispatch@v4

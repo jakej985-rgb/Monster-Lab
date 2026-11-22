@@ -269,7 +269,8 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'A grown-up must enable ${_safetyGateLabel(safetyKey)} in the Parent Dashboard before this component can be used.',
+                              'A grown-up must enable ${_safetyGateLabel(safetyKey)} '
+                              'in the Parent Dashboard before this component can be used.',
                               style: const TextStyle(fontSize: 13, height: 1.4),
                             ),
                           ],

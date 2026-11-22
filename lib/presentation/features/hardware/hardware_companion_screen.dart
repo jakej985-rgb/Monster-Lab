@@ -1,7 +1,6 @@
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../domain/models/hardware_board_model.dart';
@@ -199,8 +198,10 @@ class _HardwareCompanionScreenState
       decoration: BoxDecoration(
         color: AppColors.info.withValues(alpha: isDark ? 0.14 : 0.08),
         borderRadius: BorderRadius.circular(6),
-        border:
-            Border.all(color: AppColors.info.withValues(alpha: 0.3), width: 1),
+        border: Border.all(
+          color: AppColors.info.withValues(alpha: 0.3),
+          width: 1,
+        ),
       ),
       child: Row(
         children: [
@@ -211,7 +212,7 @@ class _HardwareCompanionScreenState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Linux Serial USB Permissions',
+                  'Simulation-Only Hardware Bridge',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 12,
@@ -220,32 +221,14 @@ class _HardwareCompanionScreenState
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'To connect directly to /dev/ttyACM* or /dev/ttyUSB*, your user must belong to the dialout group.',
+                  'Hardware scanning is currently simulated. No host serial port '
+                  'permissions (dialout) or physical USB connections are required.',
                   style: TextStyle(
-                      fontSize: 11, color: colorScheme.onSurfaceVariant),
+                    fontSize: 11,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          OutlinedButton.icon(
-            onPressed: () {
-              Clipboard.setData(const ClipboardData(
-                  text: 'sudo usermod -a -G dialout \$USER'));
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                      'Copied "sudo usermod -a -G dialout \$USER" to clipboard. Run it in terminal, then re-login.'),
-                  duration: Duration(seconds: 4),
-                ),
-              );
-            },
-            icon: const Icon(Icons.copy, size: 14),
-            label:
-                const Text('Copy Fix Command', style: TextStyle(fontSize: 11)),
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              minimumSize: const Size(60, 28),
             ),
           ),
         ],

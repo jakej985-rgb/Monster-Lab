@@ -53,13 +53,11 @@ class ComponentRestrictionService {
       return true;
     }
 
-    if (_prefs != null) {
-      final key = '$_storagePrefix$learnerId';
-      final list = _prefs.getStringList(key);
-      if (list != null && list.contains(componentId)) {
-        _inMemoryUnlocks.putIfAbsent(learnerId, () => {}).add(componentId);
-        return true;
-      }
+    final key = '$_storagePrefix$learnerId';
+    final list = _prefs?.getStringList(key) ?? _storage?.getStringList(key);
+    if (list != null && list.contains(componentId)) {
+      _inMemoryUnlocks.putIfAbsent(learnerId, () => {}).add(componentId);
+      return true;
     }
 
     return false;
@@ -82,9 +80,11 @@ class ComponentRestrictionService {
     set.add(component.id);
 
     // 3. Persist
+    final key = '$_storagePrefix$learnerId';
     if (_prefs != null) {
-      final key = '$_storagePrefix$learnerId';
       await _prefs.setStringList(key, set.toList());
+    } else if (_storage != null) {
+      await _storage.setStringList(key, set.toList());
     }
 
     return true;
@@ -92,18 +92,22 @@ class ComponentRestrictionService {
 
   Future<void> revokeUnlock(String componentId, String learnerId) async {
     _inMemoryUnlocks[learnerId]?.remove(componentId);
+    final key = '$_storagePrefix$learnerId';
+    final set = _inMemoryUnlocks[learnerId] ?? {};
     if (_prefs != null) {
-      final key = '$_storagePrefix$learnerId';
-      final set = _inMemoryUnlocks[learnerId] ?? {};
       await _prefs.setStringList(key, set.toList());
+    } else if (_storage != null) {
+      await _storage.setStringList(key, set.toList());
     }
   }
 
   Future<void> revokeAllUnlocks(String learnerId) async {
     _inMemoryUnlocks[learnerId]?.clear();
+    final key = '$_storagePrefix$learnerId';
     if (_prefs != null) {
-      final key = '$_storagePrefix$learnerId';
       await _prefs.remove(key);
+    } else if (_storage != null) {
+      await _storage.remove(key);
     }
   }
 }

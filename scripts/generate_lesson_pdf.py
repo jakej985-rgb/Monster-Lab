@@ -121,10 +121,11 @@ def render_lesson_to_html(lesson_data, output_html_path, mode="learner"):
                 warmup = render_latex_to_html(qc.get("warmupExplanation", ""))
 
                 if mode == "educator":
+                    correct_tag = ' <span class="correct-tag">[CORRECT ANSWER]</span>'
                     opt_items = "".join([
                         f"<li class='option {'correct' if opt_i == correct_idx else ''}'>"
                         f"<span class='radio-mark'>{'●' if opt_i == correct_idx else '○'}</span> {opt}"
-                        f"{' <span class=\"correct-tag\">[CORRECT ANSWER]</span>' if opt_i == correct_idx else ''}</li>"
+                        f"{correct_tag if opt_i == correct_idx else ''}</li>"
                         for opt_i, opt in enumerate(options)
                     ])
                     exp_section = f"""
@@ -220,10 +221,11 @@ def render_lesson_to_html(lesson_data, output_html_path, mode="learner"):
                 explanation = render_latex_to_html(q.get("explanation", ""))
 
                 if mode == "educator":
+                    correct_tag = ' <span class="correct-tag">[CORRECT ANSWER]</span>'
                     opt_items = "".join([
                         f"<li class='option {'correct' if opt_i == correct_idx else ''}'>"
                         f"<span class='radio-mark'>{'●' if opt_i == correct_idx else '○'}</span> {opt}"
-                        f"{' <span class=\"correct-tag\">[CORRECT ANSWER]</span>' if opt_i == correct_idx else ''}</li>"
+                        f"{correct_tag if opt_i == correct_idx else ''}</li>"
                         for opt_i, opt in enumerate(options)
                     ])
                     exp_section = f"<div class='qc-exp'><strong>Explanation:</strong> {explanation}</div>"
