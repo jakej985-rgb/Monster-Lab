@@ -36,9 +36,9 @@ Parents and educators can export this data at any time as a plaintext JSON file 
 
 ## 4. Hardware Permissions (USB & Serial)
 
-Monster Lab includes an optional **Hardware Companion** designed to interact with physical Arduino microcontrollers via USB cable or Web Serial:
-- **Scope**: Used solely to stream telemetry and commands (such as LED state, sensor readings, and motor speeds) directly between the device and the plugged-in microcontroller.
-- **Zero Network Transmission**: Hardware communication packets are never relayed to the internet or external servers.
+Monster Lab includes an optional **Hardware Companion**. In this release it runs a built-in virtual simulator on every platform, including the web build.
+- **No Device Access**: The app does not open USB or serial ports and requests no USB, OTG, or Web Serial permissions.
+- **Zero Network Transmission**: Simulated hardware data stays on the device and is never relayed to the internet or external servers.
 
 ---
 

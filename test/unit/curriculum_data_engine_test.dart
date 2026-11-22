@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:monster_lab/core/curriculum/curriculum_validator.dart';
+import 'package:monster_lab/data/datasources/asset_curriculum_datasource.dart';
 import 'package:monster_lab/data/datasources/curriculum_data_engine.dart';
 import 'package:monster_lab/domain/models/lesson_model.dart';
 import 'package:monster_lab/domain/models/project_model.dart';
@@ -196,6 +197,15 @@ void main() {
 
     setUp(() {
       engine = CurriculumDataEngine(assetBundle: LocalDiskAssetBundle());
+    });
+
+    test('loads the canonical manifest from the bundled asset path', () async {
+      final manifest = await AssetCurriculumDataSource(
+        LocalDiskAssetBundle(),
+      ).loadManifest();
+
+      expect(manifest, isNotNull);
+      expect(manifest!['lessons'], isNotEmpty);
     });
 
     test('loads and validates all 100% baseline JSON assets from disk',

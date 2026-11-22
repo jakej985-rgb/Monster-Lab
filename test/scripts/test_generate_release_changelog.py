@@ -171,12 +171,18 @@ class ReleaseApplyValidationTests(unittest.TestCase):
                 "subject": "fix(release): footer only body",
                 "body": "🤖 Generated with Codebuff\nCo-Authored-By: Codebuff <noreply@codebuff.com>",
             },
+            {
+                "sha": "aaa1111",
+                "subject": "fix(release): devin trailer",
+                "body": "Keep release notes clean.\n\nCo-Authored-By: Devin <devin@example.com>",
+            },
         ]
         with mock.patch.object(release, "get_commits_in_range", return_value=commits):
             draft = release.generate_draft("0.2.1+26", "v0.2.0")
 
         self.assertIn("Sync package metadata during every bump.", draft)
         self.assertNotIn("Codebuff", draft)
+        self.assertNotIn("Devin", draft)
         self.assertNotIn("Co-Authored-By", draft)
         self.assertNotIn("🤖", draft)
         self.assertIn("Implemented changes described in commit.", draft)

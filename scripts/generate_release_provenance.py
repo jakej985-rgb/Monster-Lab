@@ -5,6 +5,7 @@ Computes SHA-256 checksums and SLSA-compatible build provenance metadata
 for all release artifacts in build/ and dist/ directories.
 """
 
+import argparse
 import hashlib
 import json
 import os
@@ -62,14 +63,16 @@ def generate_checksums_and_provenance(artifact_paths: list, output_dir: str = No
             {"name": a["name"], "digest": {"sha256": a["sha256"]}}
             for a in artifacts_metadata
         ],
-        "builder": {
-            "id": "https://github.com/jakej985-rgb/Monster-Lab/.github/workflows/release.yml"
-        },
-        "metadata": {
-            "buildStartedOn": datetime.now(timezone.utc).isoformat(),
-            "releaseVersion": version,
-            "reproducible": True,
-            "artifacts": artifacts_metadata,
+        "predicate": {
+            "builder": {
+                "id": "https://github.com/jakej985-rgb/Monster-Lab/.github/workflows/release.yml"
+            },
+            "metadata": {
+                "buildStartedOn": datetime.now(timezone.utc).isoformat(),
+                "releaseVersion": version,
+                "reproducible": True,
+                "artifacts": artifacts_metadata,
+            }
         }
     }
 
@@ -103,10 +106,48 @@ def verify_checksums(checksums_file: str, base_dir: str = None) -> bool:
                 return False
     return True
 
-if __name__ == "__main__":
-    test_files = [os.path.join(ROOT_DIR, "version.json"), os.path.join(ROOT_DIR, "pubspec.yaml")]
-    c, p = generate_checksums_and_provenance(test_files)
-    print(f"[OK] Checksums written to: {c}")
-    print(f"[OK] Provenance written to: {p}")
-    valid = verify_checksums(c, ROOT_DIR)
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Generate and verify release artifact checksums and provenance"
+    )
+    parser.add_argument(
+        "artifacts",
+        nargs="*",
+        help="Release artifact paths. Defaults to version.json and pubspec.yaml.",
+    )
+    parser.add_argument(
+        "--output-dir",
+        default=os.path.join(ROOT_DIR, "build", "release"),
+        help="Directory for SHA256SUMS.txt and provenance.json",
+    )
+    parser.add_argument(
+        "--verify-dir",
+        default=None,
+        help="Directory containing the original artifacts for checksum verification",
+    )
+    args = parser.parse_args()
+
+    artifact_paths = args.artifacts or [
+        os.path.join(ROOT_DIR, "version.json"),
+        os.path.join(ROOT_DIR, "pubspec.yaml"),
+    ]
+    existing_artifacts = [path for path in artifact_paths if os.path.isfile(path)]
+    if not existing_artifacts:
+        print("[FAILURE] No release artifacts were found to checksum.")
+        return 1
+
+    checksums, provenance = generate_checksums_and_provenance(
+        existing_artifacts, args.output_dir
+    )
+    print(f"[OK] Checksums written to: {checksums}")
+    print(f"[OK] Provenance written to: {provenance}")
+
+    valid = verify_checksums(
+        checksums, args.verify_dir or os.path.dirname(checksums)
+    )
     print(f"[OK] Checksums verified: {valid}")
+    return 0 if valid else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

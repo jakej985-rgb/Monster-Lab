@@ -35,6 +35,10 @@ Monster Lab provides an official container image on GitHub Container Registry (G
 
 3. Open **`http://localhost:8080`** in any modern web browser.
 
+### Hardware Companion (Simulation Only)
+
+The Hardware Companion currently runs the built-in virtual simulator on every platform, including the web build. Real USB/Web Serial connections are not enabled in this release.
+
 ### Running Directly via Docker CLI
 
 ```bash
@@ -70,11 +74,7 @@ Monster Lab distributes official Android binaries for direct sideloading and Goo
 
 ### Hardware Companion Permissions (USB OTG)
 
-When connecting an Arduino Uno/Nano via USB OTG cable:
-1. Android will display a system prompt:
-   *"Allow Monster Lab to access this USB device?"*
-2. Tap **OK** (and check *"Always allow"*).
-3. The app will automatically connect and stream live telemetry in the Hardware Companion tab.
+The Android build exposes the Hardware Companion with simulated serial boards only. It does not open a physical USB OTG/serial transport, so Android will not show a USB-device authorization prompt. The simulator is useful for learning commands and telemetry without hardware. Real USB serial is not available on any platform in this release.
 
 ---
 
@@ -137,13 +137,9 @@ To install or receive automatic updates from the central M3tal APT repository:
    ./monster_lab
    ```
 
-### Hardware Serial Access (Linux Dialout Group)
+### Hardware Companion
 
-To allow Monster Lab to communicate with an Arduino over `/dev/ttyUSB*` or `/dev/ttyACM*`, add your user to the `dialout` group:
-```bash
-sudo usermod -a -G dialout $USER
-```
-*(Log out and log back in for changes to take effect).*
+The Linux desktop build uses the virtual simulator only; no serial-port permissions (such as the `dialout` group) are required.
 
 ---
 

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import '../../core/services/storage_service.dart';
 import '../../domain/models/learner_profile_model.dart';
@@ -20,22 +21,84 @@ class LocalStorageDataSource {
   final StorageService _storageService;
 
   static const String _profilesKey = 'monster_lab_profiles';
+  static const String _profilesBackupKey = 'monster_lab_profiles_backup';
   static const String _activeProfileIdKey = 'monster_lab_active_profile_id';
   static const String _progressKeyPrefix = 'monster_lab_progress_';
   static const String _backupKeyPrefix = 'monster_lab_progress_backup_';
 
   LocalStorageDataSource(this._storageService);
 
+  final StreamController<String> _corruptionController =
+      StreamController<String>.broadcast();
+  String? _lastCorruptionMessage;
+
+  String? get lastCorruptionMessage => _lastCorruptionMessage;
+
+  Stream<String> get corruptionStream async* {
+    final initial = _lastCorruptionMessage;
+    if (initial != null) yield initial;
+    yield* _corruptionController.stream;
+  }
+
+  void _reportCorruption(String message) {
+    _lastCorruptionMessage = message;
+    _corruptionController.add(message);
+  }
+
   List<LearnerProfileModel> getProfiles() {
     final raw = _storageService.getString(_profilesKey);
-    if (raw == null || raw.isEmpty) return [];
+    if (raw == '[]') {
+      return [];
+    }
+
+    String? effectiveRaw = raw;
+    bool recoveredFromBackup = false;
+
+    if (effectiveRaw == null || effectiveRaw.isEmpty) {
+      final backupRaw = _storageService.getString(_profilesBackupKey);
+      if (backupRaw != null && backupRaw.isNotEmpty && backupRaw != '[]') {
+        effectiveRaw = backupRaw;
+        recoveredFromBackup = true;
+      } else {
+        return [];
+      }
+    }
+
     try {
-      final list = jsonDecode(raw) as List;
-      return list
+      final list = jsonDecode(effectiveRaw) as List;
+      final profiles = list
           .map((item) =>
               LearnerProfileModel.fromJson(item as Map<String, dynamic>))
           .toList();
+      if (recoveredFromBackup) {
+        _storageService.setString(_profilesKey, effectiveRaw);
+        _reportCorruption(
+          'Learner profiles were recovered from a backup snapshot.',
+        );
+      }
+      return profiles;
     } catch (_) {
+      if (!recoveredFromBackup) {
+        final backupRaw = _storageService.getString(_profilesBackupKey);
+        if (backupRaw != null && backupRaw.isNotEmpty && backupRaw != '[]') {
+          try {
+            final backupList = jsonDecode(backupRaw) as List;
+            final recovered = backupList
+                .map((item) =>
+                    LearnerProfileModel.fromJson(item as Map<String, dynamic>))
+                .toList();
+            _storageService.setString(_profilesKey, backupRaw);
+            _reportCorruption(
+              'Learner profiles were recovered from a backup snapshot.',
+            );
+            return recovered;
+          } catch (_) {}
+        }
+      }
+      _reportCorruption(
+        'Learner profiles could not be read. The local profile store may '
+        'be corrupt; restore a backup or create a new profile.',
+      );
       return [];
     }
   }
@@ -43,6 +106,7 @@ class LocalStorageDataSource {
   Future<void> saveProfiles(List<LearnerProfileModel> profiles) async {
     final raw = jsonEncode(profiles.map((p) => p.toJson()).toList());
     await _storageService.setString(_profilesKey, raw);
+    await _storageService.setString(_profilesBackupKey, raw);
   }
 
   String? getActiveProfileId() {
@@ -99,10 +163,17 @@ class LocalStorageDataSource {
           final recovered = LearnerProgressModel.fromJson(backupMap);
           // Auto-repair primary slot with recovered backup
           _storageService.setString('$_progressKeyPrefix$learnerId', backupRaw);
+          _reportCorruption(
+            'Progress for learner $learnerId was recovered from a backup snapshot.',
+          );
           return recovered;
         } catch (_) {}
       }
 
+      _reportCorruption(
+        'Progress for learner $learnerId could not be recovered. The corrupt '
+        'payload was not overwritten; restore a backup if available.',
+      );
       if (throwOnUnrecoverable) {
         throw corruptionException;
       }

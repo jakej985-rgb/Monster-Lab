@@ -24,10 +24,41 @@ import '../../presentation/features/troubleshoot/troubleshooting_screen.dart';
 import '../../presentation/features/hardware/hardware_companion_screen.dart';
 import '../../presentation/features/lab/interactive_lab_screen.dart';
 import '../services/parent_session_service.dart';
+import '../../domain/models/learner_profile_model.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
-final ParentSessionService defaultParentSessionService = ParentSessionService();
+final ParentSessionService defaultParentSessionService =
+    appParentSessionService;
+
+/// True when [raw] is a non-empty JSON list whose every entry decodes.
+bool _decodesProfiles(String? raw) {
+  if (raw == null || raw.isEmpty) return false;
+  try {
+    for (final item in jsonDecode(raw) as List) {
+      LearnerProfileModel.fromJson(item as Map<String, dynamic>);
+    }
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
+/// Mirrors `LocalStorageDataSource.getProfiles`: the payload counts only if
+/// every entry decodes, so routing never accepts a profile the repository
+/// would reject.
+bool _containsLoadableProfile(String? raw, String activeId) {
+  if (raw == null || raw.isEmpty) return false;
+  try {
+    final profiles = (jsonDecode(raw) as List)
+        .map((item) =>
+            LearnerProfileModel.fromJson(item as Map<String, dynamic>))
+        .toList();
+    return profiles.any((profile) => profile.id == activeId);
+  } catch (_) {
+    return false;
+  }
+}
 
 String? routeAuthorizationGuard({
   required String location,
@@ -52,28 +83,30 @@ String? routeAuthorizationGuard({
   return null;
 }
 
+/// Mirrors `LocalStorageDataSource.getProfiles`: a decodable primary list is
+/// authoritative; the backup is consulted only when the primary is absent,
+/// blank, or corrupt. An explicit `'[]'` means no profiles.
+bool resolveHasActiveProfile({
+  required String? activeId,
+  required String? profilesRaw,
+  required String? backupRaw,
+}) {
+  if (activeId == null || activeId.trim().isEmpty) return false;
+  if (profilesRaw == '[]') return false;
+  final source = _decodesProfiles(profilesRaw) ? profilesRaw : backupRaw;
+  return _containsLoadableProfile(source, activeId);
+}
+
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: RoutePaths.home,
   redirect: (BuildContext context, GoRouterState state) async {
     final prefs = await SharedPreferences.getInstance();
-    final activeId = prefs.getString('monster_lab_active_profile_id');
-    final profilesRaw = prefs.getString('monster_lab_profiles');
-
-    bool hasActiveProfile = false;
-    if (activeId != null && activeId.trim().isNotEmpty) {
-      if (profilesRaw != null && profilesRaw.isNotEmpty) {
-        try {
-          final list = jsonDecode(profilesRaw) as List;
-          hasActiveProfile = list
-              .any((item) => (item as Map<String, dynamic>)['id'] == activeId);
-        } catch (_) {
-          hasActiveProfile = true;
-        }
-      } else {
-        hasActiveProfile = true;
-      }
-    }
+    final hasActiveProfile = resolveHasActiveProfile(
+      activeId: prefs.getString('monster_lab_active_profile_id'),
+      profilesRaw: prefs.getString('monster_lab_profiles'),
+      backupRaw: prefs.getString('monster_lab_profiles_backup'),
+    );
 
     return routeAuthorizationGuard(
       location: state.matchedLocation,

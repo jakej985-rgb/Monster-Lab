@@ -20,12 +20,12 @@
     }
   ],
   "safety": {
-    "level": "caution",
+    "level": "restrictedAdultSupervision",
     "hazards": [
       "Direct eye exposure to laser beam can cause retinal injury"
     ],
     "childSafeAlternative": "Never look directly into laser aperture; use target reflective paper only",
-    "requiresParentUnlock": false
+    "requiresParentUnlock": true
   },
   "projectIds": [
     "proj_11",

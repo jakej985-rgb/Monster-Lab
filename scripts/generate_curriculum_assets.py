@@ -185,7 +185,10 @@ COMPONENTS_RAW = [
 
     (37, "KY-008 Laser Diode", "KY-008", "actuator", "650nm Red Laser Diode Module", "Like a sci-fi targeting beam! Concentrated 650nm red optical laser diode for security tripwires.", "v5",
      [("Signal", "digitalOut", "Laser toggle (HIGH = On)"), ("-", "ground", "Ground")],
-     "Button.pdf", "caution", ["Direct eye exposure to laser beam can cause retinal injury"], "Never look directly into laser aperture; use target reflective paper only", False, ["proj_11", "proj_16"]),
+     "Button.pdf", "restrictedAdultSupervision",
+     ["Direct eye exposure to laser beam can cause retinal injury"],
+     "Never look directly into laser aperture; use target reflective paper only",
+     True, ["proj_11", "proj_16"]),
 
     (38, "Hall Effect Sensor", "3144", "sensor", "Magnetic Field Hall Effect Sensor", "Like a magnetic compass detector! Senses proximity of permanent magnetic fields (neodymium magnets).", "v5",
      [("VCC", "power", "Power (4.5V-24V)"), ("GND", "ground", "Ground"), ("OUT", "digitalIn", "Digital magnetic presence trigger")],

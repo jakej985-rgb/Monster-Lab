@@ -57,18 +57,35 @@ android {
 
     buildTypes {
         release {
-            val releaseConfig = signingConfigs.getByName("release")
-            signingConfig = if (releaseConfig.storeFile?.exists() == true) {
-                releaseConfig
-            } else {
-                signingConfigs.getByName("debug")
-            }
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+    }
+}
+
+tasks.whenTaskAdded {
+    if (name.contains("packageRelease", ignoreCase = true) ||
+        name.contains("bundleRelease", ignoreCase = true)) {
+        doFirst {
+            val releaseConfig = android.signingConfigs.getByName("release")
+            val keyStore = releaseConfig.storeFile
+            val keyPassword = releaseConfig.keyPassword
+            val storePassword = releaseConfig.storePassword
+            val keyAlias = releaseConfig.keyAlias
+            if (keyStore == null || !keyStore.exists() ||
+                keyPassword.isNullOrBlank() ||
+                storePassword.isNullOrBlank() ||
+                keyAlias.isNullOrBlank()) {
+                throw org.gradle.api.GradleException(
+                    "Release signing keystore and credentials are required for release builds. " +
+                    "Configure android/key.properties; building an unsigned release artifact is not permitted."
+                )
+            }
         }
     }
 }

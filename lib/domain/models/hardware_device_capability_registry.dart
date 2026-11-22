@@ -190,6 +190,25 @@ class HardwareDeviceCapabilityRegistry {
         DeviceFeature.hardwareInterrupts,
       },
     ),
+    // Unknown Web Serial devices get a conservative 3.3V profile so the
+    // interlock never assumes 5V tolerance without a known board ID.
+    'usb_serial': const DeviceCapabilities(
+      boardId: 'usb_serial',
+      boardName: 'USB Serial Device',
+      architecture: 'Unknown USB-UART bridge',
+      operatingVoltage: 3.3,
+      maxInputVoltage: 3.6,
+      maxDigitalPins: 14,
+      maxAnalogPins: 6,
+      maxPwmPins: 6,
+      supportedBaudRates: [9600, 19200, 38400, 57600, 115200],
+      supportedCommands: _universalCommands,
+      features: {
+        DeviceFeature.digitalIo,
+        DeviceFeature.analogRead,
+        DeviceFeature.uart,
+      },
+    ),
     'esp32': const DeviceCapabilities(
       boardId: 'esp32',
       boardName: 'ESP32 DevKit v1',

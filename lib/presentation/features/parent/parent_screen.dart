@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/routing/route_constants.dart';
 import '../../../core/services/parent_data_service.dart';
+import '../../../core/services/parent_session_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../domain/models/learner_profile_model.dart';
 import '../../../domain/models/learner_progress_model.dart';
@@ -19,15 +20,18 @@ class ParentScreen extends ConsumerStatefulWidget {
 }
 
 class _ParentScreenState extends ConsumerState<ParentScreen> {
-  bool _laserUnlocked = false;
-  bool _gasSensorUnlocked = false;
-
   @override
   Widget build(BuildContext context) {
     final activeProfile = ref.watch(activeProfileProvider);
     final activeProgress = ref.watch(activeProgressProvider);
     final allProfilesAsync = ref.watch(allProfilesProvider);
     final totals = ref.watch(curriculumTotalsProvider).valueOrNull;
+    final safetyAuthorizations = ref.watch(safetyAuthorizationsProvider);
+
+    ref.listen<AsyncValue<bool>>(parentSessionAuthStateProvider,
+        (previous, next) {
+      if (next.value == false) _handleSessionExpired();
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -92,7 +96,7 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 8),
-                _buildSafetyInterlocksCard(),
+                _buildSafetyInterlocksCard(safetyAuthorizations),
                 const SizedBox(height: 20),
 
                 // 7. Data Controls & Disaster Recovery
@@ -528,7 +532,7 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
     return '${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
   }
 
-  Widget _buildSafetyInterlocksCard() {
+  Widget _buildSafetyInterlocksCard(Map<String, bool> authorizations) {
     return MonsterCard(
       child: Column(
         children: [
@@ -537,8 +541,13 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
             title: const Text('Laser Module Authorization (Project 11)'),
             subtitle: const Text(
                 'Requires adult supervision. Protects eyes from KY-008 laser diode.'),
-            value: _laserUnlocked,
-            onChanged: (val) => setState(() => _laserUnlocked = val),
+            value: authorizations['laser'] ?? false,
+            onChanged: (val) {
+              if (val && !_ensureAuthorized()) return;
+              ref
+                  .read(safetyAuthorizationsProvider.notifier)
+                  .setAuthorized('laser', val);
+            },
           ),
           const Divider(),
           SwitchListTile(
@@ -546,12 +555,60 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
             title: const Text('Gas/Flame Sensor Heating Authorization'),
             subtitle: const Text(
                 'Ensures adult presence during MQ-9 internal heater burn-in.'),
-            value: _gasSensorUnlocked,
-            onChanged: (val) => setState(() => _gasSensorUnlocked = val),
+            value: authorizations['gas'] ?? false,
+            onChanged: (val) {
+              if (val && !_ensureAuthorized()) return;
+              ref
+                  .read(safetyAuthorizationsProvider.notifier)
+                  .setAuthorized('gas', val);
+            },
+          ),
+          const Divider(),
+          SwitchListTile(
+            key: const Key('relay_interlock_switch'),
+            title: const Text('High-Current Relay Authorization'),
+            subtitle: const Text(
+                'Required for the optocoupled relay module; never connect it to mains AC.'),
+            value: authorizations['relay'] ?? false,
+            onChanged: (val) {
+              if (val && !_ensureAuthorized()) return;
+              ref
+                  .read(safetyAuthorizationsProvider.notifier)
+                  .setAuthorized('relay', val);
+            },
           ),
         ],
       ),
     );
+  }
+
+  bool _ensureAuthorized() {
+    try {
+      ref.read(parentSessionServiceProvider).executeWithAuthorization(() {});
+      return true;
+    } on ParentUnauthorizedException {
+      if (mounted) {
+        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+          const SnackBar(
+            content:
+                Text('Parent authorization expired. Verify again to continue.'),
+          ),
+        );
+      }
+      return false;
+    }
+  }
+
+  void _handleSessionExpired() {
+    if (!mounted) return;
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+      const SnackBar(
+        content: Text('Parent session expired. Parent controls are locked.'),
+      ),
+    );
+    try {
+      context.go(RoutePaths.parentGate);
+    } catch (_) {}
   }
 
   Widget _buildDataControlsCard(
@@ -600,6 +657,7 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
 
   void _handleExportBackup(
       LearnerProfileModel profile, LearnerProgressModel progress) {
+    if (!_ensureAuthorized()) return;
     final jsonString = ParentDataService.exportBackupJson(profile, progress);
 
     showDialog<void>(
@@ -648,6 +706,7 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
             icon: const Icon(Icons.copy, size: 18),
             label: const Text('Copy to Clipboard'),
             onPressed: () async {
+              if (!_ensureAuthorized()) return;
               final messenger = ScaffoldMessenger.of(context);
               final nav = Navigator.of(ctx);
               try {
@@ -666,6 +725,7 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
   }
 
   void _handleImportBackup() {
+    if (!_ensureAuthorized()) return;
     final controller = TextEditingController();
     String? validationError;
 
@@ -708,6 +768,7 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
             ElevatedButton(
               key: const Key('confirm_restore_backup_button'),
               onPressed: () async {
+                if (!_ensureAuthorized()) return;
                 final messenger = ScaffoldMessenger.of(context);
                 final nav = Navigator.of(ctx);
                 final text = controller.text.trim();
@@ -752,6 +813,7 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
   }
 
   void _handleResetProgress(LearnerProfileModel profile) {
+    if (!_ensureAuthorized()) return;
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -779,19 +841,32 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
               foregroundColor: Colors.white,
             ),
             onPressed: () async {
+              if (!_ensureAuthorized()) return;
               final messenger = ScaffoldMessenger.of(context);
               final nav = Navigator.of(ctx);
-              await ref
-                  .read(progressRepositoryProvider)
-                  .resetProgress(profile.id);
-              await ref.read(activeProgressProvider.notifier).loadProgress();
-              nav.pop();
-              messenger.showSnackBar(
-                SnackBar(
-                  content: Text(
-                      'All progress for ${profile.nickname} has been reset.'),
-                ),
-              );
+              try {
+                await ParentDataService.executeDestructiveAction(
+                  storageDataSource: ref.read(localStorageDataSourceProvider),
+                  confirmationInput: 'CONFIRM',
+                  action: () => ref
+                      .read(progressRepositoryProvider)
+                      .resetProgress(profile.id),
+                );
+                await ref.read(activeProgressProvider.notifier).loadProgress();
+                nav.pop();
+                messenger.showSnackBar(
+                  SnackBar(
+                    content: Text(
+                        'All progress for ${profile.nickname} has been reset.'),
+                  ),
+                );
+              } catch (error) {
+                messenger.showSnackBar(
+                  SnackBar(
+                      content:
+                          Text('Reset failed; previous data restored: $error')),
+                );
+              }
             },
             child: const Text('Reset Everything'),
           ),

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:monster_lab/core/services/parent_data_service.dart';
+import 'package:monster_lab/core/services/parent_session_service.dart';
 import 'package:monster_lab/core/services/storage_service.dart';
 import 'package:monster_lab/data/datasources/asset_curriculum_datasource.dart';
 import 'package:monster_lab/data/datasources/curriculum_data_engine.dart';
@@ -77,6 +78,9 @@ void main() {
     setUp(() async {
       SharedPreferences.setMockInitialValues({});
       storageService = await StorageService.init();
+      appParentSessionService.authenticate(
+        duration: const Duration(minutes: 15),
+      );
       engine =
           CurriculumDataEngine(fallbackDataSource: AssetCurriculumDataSource());
       await engine.initialize();
@@ -188,6 +192,8 @@ void main() {
       await tester.enterText(find.byType(TextField), '56');
       await tester.tap(find.text('Verify & Enter'));
       await tester.pump();
+      // Cancel the shared 15-minute session timer before the fake clock teardown.
+      appParentSessionService.revokeSession();
       // Should attempt navigation without error
     });
 
@@ -261,6 +267,11 @@ void main() {
       final gasSwitch = find.byKey(const Key('gas_interlock_switch'));
       expect(gasSwitch, findsOneWidget);
       await tester.tap(gasSwitch);
+      await tester.pumpAndSettle();
+
+      final relaySwitch = find.byKey(const Key('relay_interlock_switch'));
+      expect(relaySwitch, findsOneWidget);
+      await tester.tap(relaySwitch);
       await tester.pumpAndSettle();
 
       // Data Controls Buttons

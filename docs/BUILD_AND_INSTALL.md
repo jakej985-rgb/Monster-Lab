@@ -64,7 +64,7 @@ sudo apt install -y clang cmake ninja-build pkg-config libgtk-3-dev libserialpor
    ```
 
 4. **Validate curriculum integrity**:
-   Verifies all 12 lessons, 38 components, 20 projects, 24 challenges, and 20 badges:
+   Verifies all 141 lessons, 54 components, 20 projects, 24 challenges, and 20 badges:
    ```bash
    python3 scripts/validate_curriculum.py
    ```
@@ -110,6 +110,8 @@ The web version is compiled to WebAssembly / CanvasKit PWA and containerized wit
    ```
    Open `http://localhost:8080`.
 
+The Hardware Companion in the web build uses the virtual simulator only. The Web Serial transport code exists but is not wired into the app in this release.
+
 ---
 
 ### B. Android (APK & AppBundle)
@@ -124,7 +126,7 @@ keyPassword=monsterlab2026
 keyAlias=monsterlab
 storeFile=monster-lab-release.jks
 ```
-If `android/key.properties` or the keystore file is absent, Gradle gracefully falls back to debug keys for local development.
+Release builds fail if `android/key.properties` or the keystore file is absent. Use `flutter build apk --debug` for local development; debug keys must never be published.
 
 #### 2. GitHub Actions CI/CD Signing Setup
 For automated GitHub Releases, the keystore is injected securely via GitHub Repository Secrets:
@@ -237,17 +239,8 @@ The smart bump synchronizes `version.json`, `pubspec.yaml`, `app_version.dart`, 
 ### Pre-Push Quality Verification
 Run the standard validation gates enforced by `.agents/rules/push-gatekeeper.md`:
 ```bash
-# 1. Code Formatting
-dart format --output=none --set-exit-if-changed .
-
-# 2. Static Analysis
-flutter analyze
-
-# 3. Test Suite
-flutter test
-
-# 4. Curriculum Validation
-python3 scripts/validate_curriculum.py
+# Full local quality gate
+bash scripts/quality_gate.sh
 ```
 
-All 4 checks must pass before pushing code.
+The quality gate runs formatting, static analysis, the full test suite with coverage, the secret scan, dependency scan, curriculum validation, version/artifact/changelog contracts, and the Python release-tool tests. All checks must pass before pushing code.

@@ -43,7 +43,7 @@ void main() {
       // Scan devices
       final devices = await bridge.scanDevices();
       expect(devices.isNotEmpty, isTrue);
-      expect(devices.any((d) => d.isVirtual), isTrue);
+      expect(devices.every((d) => d.isVirtual), isTrue);
 
       // Collect state changes and serial messages
       final states = <HardwareConnectionState>[];

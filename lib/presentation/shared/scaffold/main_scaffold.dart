@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/routing/route_constants.dart';
+import '../../../data/datasources/curriculum_data_engine.dart';
 import '../providers.dart';
 import '../widgets/desktop_status_bar.dart';
 import '../widgets/gtk_about_dialog.dart';
@@ -30,8 +31,42 @@ class MainScaffold extends ConsumerWidget {
     }
   }
 
+  void _showNotice(BuildContext context, String message) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+        SnackBar(content: Text(message), duration: const Duration(seconds: 6)),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen<AsyncValue<String>>(progressCorruptionProvider,
+        (previous, next) {
+      final message = next.value;
+      if (message != null && previous?.value != message) {
+        _showNotice(context, message);
+      }
+    });
+    ref.listen<AsyncValue<CurriculumEngineStatus>>(
+      curriculumHealthProvider,
+      (previous, next) {
+        if (next.hasError && previous?.hasError != true) {
+          _showNotice(
+            context,
+            'Curriculum assets could not be initialized: ${next.error}',
+          );
+        } else if (next.value == CurriculumEngineStatus.fallbackActive &&
+            previous?.value != CurriculumEngineStatus.fallbackActive) {
+          _showNotice(
+            context,
+            'Curriculum assets failed validation; Monster Lab is using the bundled offline baseline.',
+          );
+        }
+      },
+    );
+
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isDesktop = screenWidth >= desktopBreakpoint;
 

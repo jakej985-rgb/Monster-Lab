@@ -86,6 +86,7 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final progress = ref.watch(activeProgressProvider);
+    final safetyAuthorizations = ref.watch(safetyAuthorizationsProvider);
     final isDiscovered =
         progress?.discoveredComponentIds.contains(widget.componentId) ?? false;
 
@@ -110,6 +111,13 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
           }
 
           final miniExp = comp.miniExperiment;
+          final requiresParentAuthorization =
+              comp.safety.requiresParentUnlock ||
+                  comp.safety.level == SafetyLevel.restrictedAdultSupervision;
+          final safetyKey = _safetyGateKey(comp);
+          final isParentAuthorized = !requiresParentAuthorization ||
+              (safetyAuthorizations[safetyKey] ?? false);
+          final showDetails = isDiscovered && isParentAuthorized;
 
           return ListView(
             padding: const EdgeInsets.all(16.0),
@@ -239,6 +247,40 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
                 ),
               ),
 
+              if (requiresParentAuthorization && !isParentAuthorized) ...[
+                const SizedBox(height: 16),
+                MonsterCard(
+                  key: const Key('parent_safety_lock_card'),
+                  color: AppColors.danger.withValues(alpha: 0.08),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(Icons.shield_outlined,
+                          color: AppColors.danger, size: 24),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Parent Authorization Required',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'A grown-up must enable ${_safetyGateLabel(safetyKey)} '
+                              'in the Parent Dashboard before this component can be used.',
+                              style: const TextStyle(fontSize: 13, height: 1.4),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+
               const SizedBox(height: 16),
 
               // Component Visuals & Schematics Card
@@ -275,7 +317,7 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
                     ),
 
                     // Discovery Action - directly below primary hardware photo
-                    if (!isDiscovered) ...[
+                    if (!isDiscovered && isParentAuthorized) ...[
                       const SizedBox(height: 16),
                       SizedBox(
                         width: double.infinity,
@@ -347,7 +389,7 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
                         ),
                       ),
                     ],
-                    if (isDiscovered && comp.detailImages.isNotEmpty) ...[
+                    if (showDetails && comp.detailImages.isNotEmpty) ...[
                       const SizedBox(height: 16),
                       Row(
                         children: [
@@ -383,7 +425,7 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
               ),
 
               // Locked Teaser Card (When not yet discovered)
-              if (!isDiscovered) ...[
+              if (!isDiscovered && isParentAuthorized) ...[
                 const SizedBox(height: 16),
                 MonsterCard(
                   key: const Key('locked_teaser_card'),
@@ -431,8 +473,8 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
                 ),
               ],
 
-              // Full Encyclopedia Details (Unlocked upon discovery)
-              if (isDiscovered) ...[
+              // Full Encyclopedia Details (Unlocked upon discovery and safety authorization)
+              if (showDetails) ...[
                 const SizedBox(height: 16),
 
                 // Safety Classification Card
@@ -849,6 +891,31 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
         },
       ),
     );
+  }
+
+  String _safetyGateKey(ComponentModel component) {
+    final text =
+        '${component.name} ${component.partNumber} ${component.safety.hazards.join(' ')}'
+            .toLowerCase();
+    if (text.contains('laser') || text.contains('ky-008')) return 'laser';
+    if (text.contains('gas') ||
+        text.contains('mq-3') ||
+        text.contains('mq-9') ||
+        text.contains('combustible')) {
+      return 'gas';
+    }
+    return 'relay';
+  }
+
+  String _safetyGateLabel(String key) {
+    switch (key) {
+      case 'laser':
+        return 'laser authorization';
+      case 'gas':
+        return 'gas/flame sensor authorization';
+      default:
+        return 'high-current relay authorization';
+    }
   }
 
   Widget _buildSafetyCard(SafetyClassification safety) {

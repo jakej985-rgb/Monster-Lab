@@ -6,27 +6,16 @@ from commit bodies (e.g. "Generated with Codebuff", "Co-Authored-By: ...").
 """
 
 import os
-import re
 import sys
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+if SCRIPT_DIR not in sys.path:
+    sys.path.insert(0, SCRIPT_DIR)
+
+from release_attribution import find_attribution_footers  # noqa: E402
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CHANGELOG_PATH = os.path.join(ROOT_DIR, "CHANGELOG.md")
-
-ASSISTANT_NAMES = r"(?:codebuff|claude|copilot|chatgpt|cursor|aider|devin)"
-
-ATTRIBUTION_PATTERNS = (
-    re.compile(r"🤖"),
-    re.compile(rf"(?i)\bgenerated with\b[^\n]*\b{ASSISTANT_NAMES}\b"),
-    re.compile(rf"(?i)\bco-authored-by:\s*{ASSISTANT_NAMES}\b"),
-)
-
-
-def find_attribution_footers(lines):
-    findings = []
-    for number, line in enumerate(lines, 1):
-        if any(pattern.search(line) for pattern in ATTRIBUTION_PATTERNS):
-            findings.append((number, line.strip()))
-    return findings
 
 
 def main():

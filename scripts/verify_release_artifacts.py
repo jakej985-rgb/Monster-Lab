@@ -133,6 +133,12 @@ def verify_release_automation() -> list:
         if "m3tal-archive-keyring.gpg" not in release_content:
             errors.append("release.yml missing expected keyring asset publication step")
 
+        if "quality-gate:" not in release_content:
+            errors.append("release.yml missing required quality-gate preflight job")
+
+        if "generate_release_provenance.py" not in release_content:
+            errors.append("release.yml missing checksum/provenance generation")
+
     apt_dispatch = os.path.join(ROOT_DIR, ".github", "workflows", "dispatch-apt.yml")
     if not os.path.exists(apt_dispatch):
         errors.append(".github/workflows/dispatch-apt.yml missing")

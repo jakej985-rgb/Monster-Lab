@@ -12,6 +12,7 @@
 # 8. Canonical version manifest synchronization
 # 9. Release artifact specification checks (Android, Linux, Windows, Docker)
 # 10. Changelog footer hygiene (no assistant attribution trailers)
+# 11. Python release-tool unit tests
 # ==============================================================================
 
 set -euo pipefail
@@ -22,45 +23,52 @@ echo "================================================================="
 echo "                MONSTER LAB - QUALITY GATE RUNNER                "
 echo "================================================================="
 
-echo "[1/10] Checking Dart code formatting..."
+echo "[1/11] Checking Dart code formatting..."
 dart format --output=none --set-exit-if-changed .
 echo "  Format check: PASSED"
 
-echo "[2/10] Running static analyzer..."
+echo "[2/11] Running static analyzer..."
 flutter analyze
 echo "  Static analysis: PASSED"
 
-echo "[3/10] Executing automated test suite with coverage..."
+echo "[3/11] Executing automated test suite with coverage..."
 flutter test --coverage
 echo "  Test suite: PASSED"
 
-echo "[4/10] Verifying code coverage threshold..."
+echo "[4/11] Verifying code coverage threshold..."
 python3 scripts/verify_coverage.py --threshold 80.0
 echo "  Coverage gate: PASSED"
 
-echo "[5/10] Scanning for exposed secrets..."
+echo "[5/11] Scanning for exposed secrets..."
 python3 scripts/scan_secrets.py
 echo "  Secret scan: PASSED"
 
-echo "[6/10] Scanning dependencies for vulnerabilities..."
+echo "[6/11] Scanning dependencies for vulnerabilities..."
 python3 scripts/scan_dependencies.py
 echo "  Dependency scan: PASSED"
 
-echo "[7/10] Validating curriculum schema and asset integrity..."
+echo "[7/11] Validating curriculum schema and asset integrity..."
 python3 scripts/validate_curriculum.py
 echo "  Curriculum validation: PASSED"
 
-echo "[8/10] Verifying release version synchronization..."
+echo "[8/11] Verifying release version synchronization..."
 python3 scripts/verify_version_sync.py
 echo "  Version sync: PASSED"
 
-echo "[9/10] Verifying multi-platform release artifacts..."
+echo "[9/11] Verifying multi-platform release artifacts..."
 python3 scripts/verify_release_artifacts.py
 echo "  Release artifacts: PASSED"
 
-echo "[10/10] Verifying changelog footer hygiene..."
+echo "[10/11] Verifying changelog footer hygiene..."
 python3 scripts/verify_changelog_hygiene.py
 echo "  Changelog hygiene: PASSED"
+
+echo "[11/11] Running release-tool unit tests..."
+python3 -m unittest discover -s test/scripts -p 'test_generate_release_*.py'
+echo "  Release-tool tests: PASSED"
+# Lesson/worksheet rendering tests (test/scripts/test_generate_lesson_*.py and
+# similar) need extra rendering dependencies and are intentionally excluded
+# from this gate; run them locally with the full toolchain installed.
 
 echo "================================================================="
 echo "[SUCCESS] ALL QUALITY GATES PASSED! READY FOR RELEASE."

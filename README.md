@@ -69,12 +69,12 @@ Each component can include:
 - Related lessons.
 - Related projects.
 
-The initial curriculum covers the kit's 38 listed peripherals and supporting electronic components.
+The initial curriculum covers 54 component entries: the kit's 38 listed peripherals plus supporting electronic components.
 
 ### Build Lab
 Monster projects become guided builds instead of static instructions.
 
-Initial project families include:
+Representative project families include:
 - Monster Autopilot.
 - Smart Monster Door.
 - Monster Alarm Clock.
@@ -206,7 +206,7 @@ If it does not, it should not become core complexity in Monster Lab.
 
 Monster Lab officially targets Android, Linux, Windows, and Web (Docker):
 - **Android**:
-  - `monster-lab-android.apk`: Direct sideloading APK with USB OTG serial hardware companion.
+  - `monster-lab-android.apk`: Direct sideloading APK; the Hardware Companion is simulated in the current build.
   - `monster-lab-android.aab`: Google Play Store release bundle.
 - **Linux Desktop**:
   - `monster-lab-linux.deb`: Standard Debian package with desktop launcher, high-res icons, embedded canonical GPG keyring, and dependency resolution.
@@ -219,6 +219,7 @@ Monster Lab officially targets Android, Linux, Windows, and Web (Docker):
 - **Web (Docker & GHCR)**:
   - Container Registry: `ghcr.io/jakej985-rgb/monster-lab-web:latest`
   - `docker-compose.yml`: Pre-filled release compose configuration pulling directly from GHCR.
+  - Hardware Companion runs the virtual simulator; real Web Serial support is planned but not enabled in this release.
 
 > 📖 **Guides**:
 > - For downloading and running pre-built releases: **[Platform Installation Guide](docs/INSTALLATION.md)**
@@ -235,8 +236,10 @@ The workflow synchronizes `version.json`, `pubspec.yaml`, `app_version.dart`, In
 
 ## Building and Releasing
 
+Release Android builds require `android/key.properties` and the release keystore; use `flutter build apk --debug` for local development. Release builds fail closed when signing material is missing.
+
 ```bash
-# Android APK & AppBundle
+# Android APK & AppBundle (requires release signing configuration)
 flutter build apk --release && cp build/app/outputs/flutter-apk/app-release.apk monster-lab-android.apk
 flutter build appbundle --release && cp build/app/outputs/bundle/release/app-release.aab monster-lab-android.aab
 
@@ -261,7 +264,8 @@ docker push ghcr.io/jakej985-rgb/monster-lab-web:latest
 
 Monster Lab enforces automated multi-platform release verification via `.agents/agents/push-gatekeeper/agent.md`:
 - Static Analysis (`flutter analyze` — 0 issues)
-- Test Suite (`flutter test` — 102/102 automated tests)
+- Test Suite (`flutter test` — full automated suite)
+- Release Preflight (`scripts/quality_gate.sh` — formatting, analysis, tests, coverage, secret scan, curriculum, release contracts, and release-tool tests)
 - Curriculum Engine (`python3 scripts/validate_curriculum.py` — 100% integrity)
 - Multi-Platform Packaging (Android, Linux .deb, Windows .exe, Web Docker)
 - Automated Smart Version Bumping (`python3 scripts/bump_version.py --auto`)
