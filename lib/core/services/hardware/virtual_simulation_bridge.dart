@@ -36,6 +36,15 @@ class VirtualSimulationBridge implements IHardwareBridge {
   HardwareSafetyInterlock? get safetyInterlock => _safetyInterlock;
 
   @override
+  bool get supportsPhysicalPorts => false;
+
+  @override
+  String? get transportNotice => null;
+
+  @override
+  Future<DiscoveredBoard?> requestPhysicalPort() async => null;
+
+  @override
   HardwareConnectionState get currentState => _state;
 
   @override
@@ -81,8 +90,7 @@ class VirtualSimulationBridge implements IHardwareBridge {
         isVirtual: true,
       ),
     ];
-    _logSystem(
-        'No physical serial transport is enabled; returning simulated boards only.');
+    _logSystem('Virtual scan complete; returning simulated boards.');
 
     if (_currentBoard != null) {
       final activeState = _currentBoard!.isVirtual

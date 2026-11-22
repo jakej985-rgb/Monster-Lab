@@ -36,9 +36,10 @@ Parents and educators can export this data at any time as a plaintext JSON file 
 
 ## 4. Hardware Permissions (USB & Serial)
 
-Monster Lab includes an optional **Hardware Companion**. The current build exposes simulated serial boards and a virtual telemetry bridge; it does not open a physical USB or Web Serial transport.
-- **Scope**: Simulated telemetry and commands (such as LED state, sensor readings, and motor speeds) are processed locally for learning and testing.
-- **Zero Network Transmission**: Hardware-companion packets stay in the app and are never relayed to the internet or external servers.
+Monster Lab includes an optional **Hardware Companion**. The web build can open a real Arduino through the browser's **Web Serial** API after the learner explicitly selects a port in the browser permission picker.
+- **Explicit Permission**: No port is opened automatically. The browser shows which USB serial device is being shared, and access can be revoked from the site settings at any time.
+- **Scope**: Serial traffic is limited to the selected board and the commands or telemetry the learner is working with (LED state, sensor readings, motor commands). Native Android, Linux, and Windows builds currently use the virtual simulator.
+- **Zero Network Transmission**: Hardware-companion packets travel only between the local browser and the USB device; they are never relayed to the internet or external servers.
 
 ---
 

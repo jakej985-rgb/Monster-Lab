@@ -152,6 +152,22 @@ abstract class SupportedBoards {
         'High-performance IoT powerhouse with integrated 2.4GHz Wi-Fi and Bluetooth Low Energy (BLE).',
   );
 
+  /// Conservative fallback for a Web Serial device whose USB VID/PID is not
+  /// in the registry. Treated as 3.3V-safe so unknown boards are not sent
+  /// commands that assume 5V logic.
+  static const HardwareBoardModel unknownUsbSerial = HardwareBoardModel(
+    id: 'usb_serial',
+    name: 'USB Serial Device',
+    microcontroller: 'Unknown USB-UART bridge',
+    operatingVoltage: 'Unknown (3.3V-safe)',
+    digitalPins: 14,
+    analogPins: 6,
+    pwmPins: 6,
+    defaultBaudRate: 9600,
+    description:
+        'A serial device whose USB identifiers are not in the Monster Lab board registry. Plain-text serial output is supported; verify the board voltage before connecting sensors.',
+  );
+
   static const List<HardwareBoardModel> all = [
     virtualUno,
     unoR3,

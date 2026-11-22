@@ -110,6 +110,8 @@ The web version is compiled to WebAssembly / CanvasKit PWA and containerized wit
    ```
    Open `http://localhost:8080`.
 
+Web Serial hardware support requires Chrome or Edge on desktop and a secure context (HTTPS or localhost). The Docker Compose default `http://localhost:8080` qualifies; serving the PWA from a plain-HTTP LAN address disables real USB access and leaves the virtual simulator available.
+
 ---
 
 ### B. Android (APK & AppBundle)

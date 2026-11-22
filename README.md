@@ -219,6 +219,7 @@ Monster Lab officially targets Android, Linux, Windows, and Web (Docker):
 - **Web (Docker & GHCR)**:
   - Container Registry: `ghcr.io/jakej985-rgb/monster-lab-web:latest`
   - `docker-compose.yml`: Pre-filled release compose configuration pulling directly from GHCR.
+  - Web Serial hardware support for real Arduino boards in Chrome or Edge on desktop.
 
 > 📖 **Guides**:
 > - For downloading and running pre-built releases: **[Platform Installation Guide](docs/INSTALLATION.md)**

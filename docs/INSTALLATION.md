@@ -35,6 +35,10 @@ Monster Lab provides an official container image on GitHub Container Registry (G
 
 3. Open **`http://localhost:8080`** in any modern web browser.
 
+### Hardware Companion (Web Serial)
+
+Real Arduino support uses the browser's Web Serial API. It is available in Chrome or Edge on desktop when the page is served over HTTPS or from localhost (`http://localhost:8080` qualifies). In the Hardware Companion, click **Add USB Device**, choose the board in the browser picker, then click **Connect to Board**. Permission is remembered per origin and can be revoked from the browser's site settings. Firefox, Safari, mobile browsers, and plain-HTTP LAN addresses fall back to the virtual simulator.
+
 ### Running Directly via Docker CLI
 
 ```bash
@@ -70,7 +74,7 @@ Monster Lab distributes official Android binaries for direct sideloading and Goo
 
 ### Hardware Companion Permissions (USB OTG)
 
-The current build exposes the Hardware Companion with simulated serial boards only. It does not open a physical USB OTG/serial transport, so Android will not yet show a USB-device authorization prompt. The simulator is useful for learning commands and telemetry without hardware; real serial transport remains a future capability.
+The Android build exposes the Hardware Companion with simulated serial boards only. It does not open a physical USB OTG/serial transport, so Android will not show a USB-device authorization prompt. The simulator is useful for learning commands and telemetry without hardware. For real USB serial, use the web build in Chrome or Edge on a desktop operating system.
 
 ---
 
@@ -135,11 +139,11 @@ To install or receive automatic updates from the central M3tal APT repository:
 
 ### Hardware Serial Access (Linux Dialout Group)
 
-To allow Monster Lab to communicate with an Arduino over `/dev/ttyUSB*` or `/dev/ttyACM*`, add your user to the `dialout` group:
+When using the web build in Chrome or Edge on Linux, your user may need permission to access `/dev/ttyUSB*` or `/dev/ttyACM*` before Web Serial can open the board:
 ```bash
 sudo usermod -a -G dialout $USER
 ```
-*(Log out and log back in for changes to take effect).*
+*(Log out and log back in for changes to take effect).* The native Linux desktop build currently uses the virtual simulator.
 
 ---
 

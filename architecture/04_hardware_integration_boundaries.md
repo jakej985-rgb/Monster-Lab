@@ -23,7 +23,8 @@ flowchart TD
     end
 
     subgraph Implementations ["HAL Concrete Providers"]
-        PhysicalBridge["PhysicalSerialBridge (USB-UART / CH340 Driver)"]
+        PhysicalBridge["PhysicalSerialBridge (Protocol, Telemetry & Safety)"]
+        WebSerial["WebSerialTransport (navigator.serial via dart:js_interop)"]
         VirtualBridge["VirtualSimulationBridge (Synthetic Telemetry & Mock Arduino)"]
     end
 
@@ -33,6 +34,7 @@ flowchart TD
 
     IHardwareBridge <|.. PhysicalBridge
     IHardwareBridge <|.. VirtualBridge
+    PhysicalBridge --> WebSerial
 ```
 
 ---
@@ -81,7 +83,20 @@ abstract class IHardwareBridge {
 
 ---
 
-## 4. Virtual Simulation Mode (Zero-Hardware Fallback)
+## 4. Real Web Serial Transport
+
+The web build opens real Arduino boards through the browser's `navigator.serial` API behind the `SerialTransport` boundary:
+
+- `WebSerialTransport` is selected by a conditional import (`dart.library.js_interop`) and implemented with `dart:js_interop`. It lists previously authorized ports, opens the browser port picker, reads raw bytes, and writes newline-terminated commands.
+- `PhysicalSerialBridge` decodes UTF-8 lines, forwards device output to the serial monitor, parses common telemetry (`A0:`, `SONAR:`/`Distance:`, `Pin 13:`, `FREE_SRAM:`), and applies the same safety interlock as the simulator.
+- `CompositeHardwareBridge` keeps the virtual simulator first in the port picker and routes a selected physical board to the Web Serial bridge.
+- `UnsupportedSerialTransport` is used on native platforms and browsers without Web Serial; the simulator remains fully available.
+
+The Monster Lab handshake (`HELLO:MONSTER_LAB:v1.0`) is optional. Ordinary sketches that only call `Serial.println()` are logged and parsed without companion firmware.
+
+---
+
+## 5. Virtual Simulation Mode (Zero-Hardware Fallback)
 
 When no physical Arduino is detected:
 1. The app automatically enters **Virtual Simulation Mode**.

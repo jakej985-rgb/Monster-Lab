@@ -15,4 +15,14 @@ abstract class IHardwareBridge {
   Future<void> sendCommand(String command);
   Future<void> disconnect();
   void dispose();
+
+  /// Whether this bridge can open real USB serial hardware.
+  bool get supportsPhysicalPorts => false;
+
+  /// Explanation shown to the learner when physical ports are unavailable.
+  String? get transportNotice => null;
+
+  /// Shows the browser/OS port picker. Returns `null` when unavailable or the
+  /// user cancels.
+  Future<DiscoveredBoard?> requestPhysicalPort() async => null;
 }

@@ -1,7 +1,6 @@
-import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/services/hardware/hardware_bridge.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../domain/models/hardware_board_model.dart';
 import '../../../domain/models/hardware_connection_model.dart';
@@ -58,6 +57,45 @@ class _HardwareCompanionScreenState
     }
   }
 
+  Future<void> _addUsbDevice(IHardwareBridge bridge) async {
+    try {
+      final board = await bridge.requestPhysicalPort();
+      if (!mounted) return;
+
+      if (board == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'No USB device selected. Click Add USB Device to try again.',
+            ),
+          ),
+        );
+        return;
+      }
+
+      await _refreshDiscoveredBoards();
+      if (!mounted) return;
+
+      setState(() {
+        final selected = _availableBoards.firstWhere(
+          (candidate) => candidate.portName == board.portName,
+          orElse: () => board,
+        );
+        _selectedBoard = selected;
+        _selectedBaud = selected.boardModel.defaultBaudRate;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('USB device ready: ${board.boardModel.name}')),
+      );
+    } catch (failure) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not open the USB picker: $failure')),
+      );
+    }
+  }
+
   void _scrollToBottom() {
     if (_autoScroll && _scrollController.hasClients) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -103,8 +141,8 @@ class _HardwareCompanionScreenState
           _buildInfoBanner(),
           const SizedBox(height: 16),
 
-          // Linux Dialout Group Permission Helper
-          _buildLinuxDialoutInfoBar(),
+          // Web Serial availability / browser guidance
+          _buildTransportInfoBar(bridge),
 
           // 2. Hardware Connection Control Card
           _buildConnectionControlCard(bridge, state),
@@ -162,7 +200,7 @@ class _HardwareCompanionScreenState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Hardware Companion (Simulation)',
+                  'Learn With or Without Hardware',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 15,
@@ -171,7 +209,7 @@ class _HardwareCompanionScreenState
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Monster Lab includes a built-in Virtual Hardware Bridge. You can build projects, verify wiring, and test serial commands with zero physical hardware attached.',
+                  'Use the built-in virtual simulator anywhere, or connect a real Arduino over USB in Chrome or Edge on desktop. Hardware data never leaves this device.',
                   style: TextStyle(
                       fontSize: 13,
                       color: colorScheme.onSurfaceVariant,
@@ -185,34 +223,35 @@ class _HardwareCompanionScreenState
     );
   }
 
-  Widget _buildLinuxDialoutInfoBar() {
-    if (kIsWeb || !Platform.isLinux) return const SizedBox.shrink();
-
+  Widget _buildTransportInfoBar(IHardwareBridge bridge) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
+    final supported = bridge.supportsPhysicalPorts;
+    final accent = supported ? AppColors.success : AppColors.info;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: AppColors.info.withValues(alpha: isDark ? 0.14 : 0.08),
+        color: accent.withValues(alpha: isDark ? 0.14 : 0.08),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(
-          color: AppColors.info.withValues(alpha: 0.3),
-          width: 1,
-        ),
+        border: Border.all(color: accent.withValues(alpha: 0.3), width: 1),
       ),
       child: Row(
         children: [
-          const Icon(Icons.info_outline, color: AppColors.info, size: 20),
+          Icon(
+            supported ? Icons.usb : Icons.info_outline,
+            color: accent,
+            size: 20,
+          ),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Simulation-Only Hardware Bridge',
+                  supported ? 'Web Serial Ready' : 'Simulator Only Here',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 12,
@@ -221,8 +260,10 @@ class _HardwareCompanionScreenState
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Hardware scanning is currently simulated. No host serial port '
-                  'permissions (dialout) or physical USB connections are required.',
+                  supported
+                      ? 'Click Add USB Device to choose an Arduino. The browser asks permission before sharing a port, and data stays on this device.'
+                      : (bridge.transportNotice ??
+                          'Real USB serial is unavailable here. The virtual simulator remains fully usable.'),
                   style: TextStyle(
                     fontSize: 11,
                     color: colorScheme.onSurfaceVariant,
@@ -237,7 +278,7 @@ class _HardwareCompanionScreenState
   }
 
   Widget _buildConnectionControlCard(
-    dynamic bridge,
+    IHardwareBridge bridge,
     HardwareConnectionState state,
   ) {
     final isConnected = state.isConnected;
@@ -371,10 +412,20 @@ class _HardwareCompanionScreenState
                   onPressed: () async {
                     if (isConnected) {
                       await bridge.disconnect();
-                    } else {
-                      await bridge.connect(
-                        board: _selectedBoard,
-                        baudRate: _selectedBaud,
+                      return;
+                    }
+                    final connected = await bridge.connect(
+                      board: _selectedBoard,
+                      baudRate: _selectedBaud,
+                    );
+                    if (!connected && mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Could not connect to that board. Check the USB '
+                            'cable and try scanning again.',
+                          ),
+                        ),
                       );
                     }
                   },
@@ -389,13 +440,25 @@ class _HardwareCompanionScreenState
               ),
             ],
           ),
+          if (bridge.supportsPhysicalPorts) ...[
+            const SizedBox(height: 10),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                key: const Key('hardware_add_usb_device_button'),
+                icon: const Icon(Icons.usb, size: 18),
+                label: const Text('Add USB Device'),
+                onPressed: isConnected ? null : () => _addUsbDevice(bridge),
+              ),
+            ),
+          ],
         ],
       ),
     );
   }
 
   Widget _buildTelemetryScopeCard(
-    dynamic bridge,
+    IHardwareBridge bridge,
     HardwareConnectionState state,
     PinTelemetry telemetry,
   ) {
@@ -566,7 +629,7 @@ class _HardwareCompanionScreenState
   }
 
   Widget _buildSerialMonitorCard(
-    dynamic bridge,
+    IHardwareBridge bridge,
     HardwareConnectionState state,
     List<SerialLogEntry> logs,
   ) {
@@ -716,7 +779,7 @@ class _HardwareCompanionScreenState
     );
   }
 
-  Widget _buildCommandChip(dynamic bridge, String cmd) {
+  Widget _buildCommandChip(IHardwareBridge bridge, String cmd) {
     return ActionChip(
       label: Text(cmd,
           style: const TextStyle(fontFamily: 'monospace', fontSize: 12)),
@@ -726,7 +789,7 @@ class _HardwareCompanionScreenState
     );
   }
 
-  void _handleSendCommand(dynamic bridge) {
+  void _handleSendCommand(IHardwareBridge bridge) {
     final text = _commandController.text.trim();
     if (text.isNotEmpty) {
       bridge.sendCommand(text);

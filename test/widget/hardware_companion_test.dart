@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:monster_lab/core/services/hardware/hardware_bridge.dart';
 import 'package:monster_lab/core/services/hardware/virtual_simulation_bridge.dart';
+import 'package:monster_lab/domain/models/hardware_board_model.dart';
+import 'package:monster_lab/domain/models/hardware_connection_model.dart';
 import 'package:monster_lab/core/services/storage_service.dart';
 import 'package:monster_lab/data/datasources/asset_curriculum_datasource.dart';
 import 'package:monster_lab/data/datasources/curriculum_data_engine.dart';
@@ -54,7 +57,10 @@ void main() {
       bridge.dispose();
     });
 
-    Widget createTestWidget(Widget child) {
+    Widget createTestWidget(
+      Widget child, {
+      IHardwareBridge? bridgeOverride,
+    }) {
       return ProviderScope(
         overrides: [
           storageServiceProvider.overrideWithValue(storageService),
@@ -62,7 +68,7 @@ void main() {
               .overrideWithValue(CurriculumRepositoryImpl(engine)),
           profileRepositoryProvider.overrideWithValue(profileRepo),
           progressRepositoryProvider.overrideWithValue(progressRepo),
-          hardwareBridgeProvider.overrideWithValue(bridge),
+          hardwareBridgeProvider.overrideWithValue(bridgeOverride ?? bridge),
         ],
         child: MaterialApp(
           home: child,
@@ -108,7 +114,7 @@ void main() {
 
       // Verify title and banner
       expect(find.text('Hardware Companion'), findsOneWidget);
-      expect(find.text('Hardware Companion (Simulation)'), findsOneWidget);
+      expect(find.text('Learn With or Without Hardware'), findsOneWidget);
       expect(find.text('Connection Station'), findsOneWidget);
       expect(find.text('Disconnected'), findsOneWidget);
 
@@ -165,5 +171,60 @@ void main() {
       expect(find.text('Disconnected'), findsOneWidget);
       expect(find.text('Connect to Board'), findsOneWidget);
     });
+
+    testWidgets('Add USB Device requests a physical port and selects it',
+        (tester) async {
+      final capableBridge = _PhysicalCapableBridge();
+      addTearDown(capableBridge.dispose);
+
+      tester.view.physicalSize = const Size(1200, 3400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await tester.pumpWidget(
+        createTestWidget(
+          const HardwareCompanionScreen(),
+          bridgeOverride: capableBridge,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final addButton = find.byKey(const Key('hardware_add_usb_device_button'));
+      expect(addButton, findsOneWidget);
+
+      await tester.tap(addButton);
+      await tester.pumpAndSettle();
+
+      expect(capableBridge.requestCount, 1);
+      expect(find.textContaining('USB device ready'), findsOneWidget);
+    });
   });
+}
+
+class _PhysicalCapableBridge extends VirtualSimulationBridge {
+  _PhysicalCapableBridge() : super(enableTelemetryTimer: false);
+
+  static const _board = DiscoveredBoard(
+    portName: 'USB Serial #1',
+    boardModel: SupportedBoards.unoR3,
+    vendorId: 0x1A86,
+    productId: 0x7523,
+  );
+
+  int requestCount = 0;
+
+  @override
+  bool get supportsPhysicalPorts => true;
+
+  @override
+  Future<List<DiscoveredBoard>> scanDevices() async {
+    final boards = await super.scanDevices();
+    return [...boards, _board];
+  }
+
+  @override
+  Future<DiscoveredBoard?> requestPhysicalPort() async {
+    requestCount++;
+    return _board;
+  }
 }
