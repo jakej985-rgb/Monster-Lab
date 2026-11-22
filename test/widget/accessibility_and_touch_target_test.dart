@@ -7,6 +7,7 @@ import 'package:monster_lab/domain/models/circuit_wiring_model.dart';
 import 'package:monster_lab/presentation/features/hardware/widgets/hardware_status_badge.dart';
 import 'package:monster_lab/presentation/features/lab/widgets/interactive_breadboard_widget.dart';
 import 'package:monster_lab/presentation/features/learn/widgets/blink_simulator_widget.dart';
+import 'package:monster_lab/presentation/features/learn/widgets/library_manager_simulator_widget.dart';
 import 'package:monster_lab/presentation/features/learn/widgets/quiz_checkpoint_widget.dart';
 import 'package:monster_lab/presentation/shared/providers.dart';
 import 'package:monster_lab/presentation/shared/widgets/monster_button.dart';
@@ -260,6 +261,29 @@ void main() {
       // Verify wire color buttons are discoverable by screen reader
       expect(find.bySemanticsLabel('Red (+5V power) wire'), findsOneWidget);
       expect(find.bySemanticsLabel('Black (GND ground) wire'), findsOneWidget);
+
+      handle.dispose();
+    });
+
+    testWidgets('LibraryManagerSimulatorWidget labels its clear-search action',
+        (tester) async {
+      final handle = tester.ensureSemantics();
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: LibraryManagerSimulatorWidget(),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byTooltip('Clear search'), findsOneWidget);
+      final clearButton = find.widgetWithIcon(IconButton, Icons.clear);
+      expect(clearButton, findsOneWidget);
+      expect(tester.getSemantics(clearButton).tooltip, 'Clear search');
 
       handle.dispose();
     });

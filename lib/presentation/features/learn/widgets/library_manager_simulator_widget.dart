@@ -181,6 +181,7 @@ class _LibraryManagerSimulatorWidgetState
                         color: AppColors.accentCyan, size: 20),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
+                            tooltip: 'Clear search',
                             icon: const Icon(Icons.clear,
                                 color: Colors.white54, size: 18),
                             onPressed: () {
