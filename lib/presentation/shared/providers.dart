@@ -149,13 +149,14 @@ final allProfilesProvider =
 final activeProfileProvider =
     StateNotifierProvider<ActiveProfileNotifier, LearnerProfileModel?>((ref) {
   final profileRepo = ref.watch(profileRepositoryProvider);
-  return ActiveProfileNotifier(profileRepo);
+  return ActiveProfileNotifier(profileRepo, ref);
 });
 
 class ActiveProfileNotifier extends StateNotifier<LearnerProfileModel?> {
   final ProfileRepository _profileRepo;
+  final Ref _ref;
 
-  ActiveProfileNotifier(this._profileRepo) : super(null) {
+  ActiveProfileNotifier(this._profileRepo, this._ref) : super(null) {
     loadActiveProfile();
   }
 
@@ -173,9 +174,18 @@ class ActiveProfileNotifier extends StateNotifier<LearnerProfileModel?> {
   Future<void> saveProfile(LearnerProfileModel profile,
       {bool setActive = false}) async {
     await _profileRepo.saveProfile(profile);
+    _ref.invalidate(allProfilesProvider);
     if (setActive || state?.id == profile.id || state == null) {
       await _profileRepo.setActiveProfile(profile.id);
       state = profile;
+    }
+  }
+
+  Future<void> deleteProfile(String profileId) async {
+    await _profileRepo.deleteProfile(profileId);
+    _ref.invalidate(allProfilesProvider);
+    if (state?.id == profileId) {
+      await loadActiveProfile();
     }
   }
 }

@@ -1019,6 +1019,7 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
       await ref
           .read(activeProgressProvider.notifier)
           .discoverComponent(comp.id, 25);
+      if (!mounted) return;
       ref.read(soundEffectsProvider).success();
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1041,9 +1042,7 @@ class _PartDetailScreenState extends ConsumerState<PartDetailScreen> {
         );
       }
     } finally {
-      if (mounted) {
-        setState(() => _isDiscovering = false);
-      }
+      if (mounted) setState(() => _isDiscovering = false);
     }
   }
 }

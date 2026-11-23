@@ -140,6 +140,7 @@ class Lesson {
   final List<String> componentIds;
   final List<LessonStep> steps;
   final int xpReward;
+  final bool isPlaceholder;
 
   const Lesson({
     required this.id,
@@ -152,6 +153,7 @@ class Lesson {
     required this.estimatedMinutes,
     this.sortOrder = 0,
     this.isOptional = false,
+    this.isPlaceholder = false,
     required this.prerequisites,
     required this.componentIds,
     required this.steps,
@@ -173,6 +175,7 @@ class Lesson {
       estimatedMinutes: json['estimatedMinutes'] as int,
       sortOrder: json['sortOrder'] as int? ?? 0,
       isOptional: json['isOptional'] as bool? ?? false,
+      isPlaceholder: json['isPlaceholder'] as bool? ?? false,
       prerequisites: List<String>.from(json['prerequisites'] as List),
       componentIds: List<String>.from(json['componentIds'] as List),
       steps: (json['steps'] as List)
@@ -194,6 +197,7 @@ class Lesson {
         'estimatedMinutes': estimatedMinutes,
         'sortOrder': sortOrder,
         'isOptional': isOptional,
+        'isPlaceholder': isPlaceholder,
         'prerequisites': prerequisites,
         'componentIds': componentIds,
         'steps': steps.map((s) => s.toJson()).toList(),

@@ -70,4 +70,7 @@ class CurriculumRepositoryImpl implements CurriculumRepository {
   Future<ChallengeModel> getChallengeById(String id) {
     return _engine.getChallengeById(id);
   }
+
+  @override
+  bool get isFallbackActive => _engine.isFallbackActive;
 }

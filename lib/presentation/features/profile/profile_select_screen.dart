@@ -64,12 +64,8 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
             onPressed: () async {
               Navigator.of(dialogCtx).pop();
               await ref
-                  .read(profileRepositoryProvider)
-                  .deleteProfile(profile.id);
-              await ref
                   .read(activeProfileProvider.notifier)
-                  .loadActiveProfile();
-              if (mounted) setState(() {});
+                  .deleteProfile(profile.id);
             },
             child: const Text('Delete'),
           ),
@@ -81,16 +77,16 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final profileRepo = ref.watch(profileRepositoryProvider);
     final activeProfile = ref.watch(activeProfileProvider);
+    final allProfilesAsync = ref.watch(allProfilesProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Learner Profiles')),
-      body: FutureBuilder<List<LearnerProfileModel>>(
-        future: profileRepo.getAllProfiles(),
-        builder: (context, snapshot) {
-          final profiles = snapshot.data ?? [];
-
+      body: allProfilesAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (err, stack) =>
+            Center(child: Text('Error loading profiles: $err')),
+        data: (profiles) {
           return ListView(
             padding: const EdgeInsets.all(20.0),
             children: [

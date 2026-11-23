@@ -396,12 +396,15 @@ class LearnerProgressModel {
     return current;
   }
 
-  /// Replays an event ledger sequentially to construct a consistent state snapshot
+  /// Replays an event ledger sequentially to construct a consistent state snapshot.
+  /// If [baseSnapshot] is provided, replaying starts from that snapshot rather
+  /// than an empty model, preserving progress when ledgers are truncated.
   static LearnerProgressModel replayFromEvents(
     String learnerId,
-    List<LearnerProgressEvent> events,
-  ) {
-    var progress = LearnerProgressModel.empty(learnerId);
+    List<LearnerProgressEvent> events, {
+    LearnerProgressModel? baseSnapshot,
+  }) {
+    var progress = baseSnapshot ?? LearnerProgressModel.empty(learnerId);
     for (final event in events) {
       progress = progress.applyEvent(event);
     }

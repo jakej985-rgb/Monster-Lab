@@ -19,10 +19,6 @@ class HardwareCompanionScreen extends ConsumerStatefulWidget {
 
 class _HardwareCompanionScreenState
     extends ConsumerState<HardwareCompanionScreen> {
-  final TextEditingController _commandController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
-  bool _autoScroll = true;
-
   List<DiscoveredBoard> _availableBoards = [
     DiscoveredBoard.virtualSimulator(),
   ];
@@ -33,14 +29,13 @@ class _HardwareCompanionScreenState
   void initState() {
     super.initState();
     _selectedBoard = _availableBoards.first;
-    _refreshDiscoveredBoards();
-  }
-
-  @override
-  void dispose() {
-    _commandController.dispose();
-    _scrollController.dispose();
-    super.dispose();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        // Warm up the logs provider eagerly so connection output before scroll is captured
+        ref.read(hardwareSerialLogsProvider);
+        _refreshDiscoveredBoards();
+      }
+    });
   }
 
   Future<void> _refreshDiscoveredBoards() async {
@@ -96,20 +91,6 @@ class _HardwareCompanionScreenState
     }
   }
 
-  void _scrollToBottom() {
-    if (_autoScroll && _scrollController.hasClients) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (_scrollController.hasClients) {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeOut,
-          );
-        }
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final bridge = ref.watch(hardwareBridgeProvider);
@@ -117,9 +98,6 @@ class _HardwareCompanionScreenState
     final state = stateAsync.value ?? bridge.currentState;
     final telemetryAsync = ref.watch(hardwareTelemetryStreamProvider);
     final telemetry = telemetryAsync.value ?? bridge.currentTelemetry;
-    final logs = ref.watch(hardwareSerialLogsProvider);
-
-    _scrollToBottom();
 
     return Scaffold(
       appBar: AppBar(
@@ -163,7 +141,7 @@ class _HardwareCompanionScreenState
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          _buildSerialMonitorCard(bridge, state, logs),
+          _SerialTerminal(bridge: bridge, state: state),
           const SizedBox(height: 20),
 
           // 5. Supported Arduino Boards Guide
@@ -631,12 +609,134 @@ class _HardwareCompanionScreenState
     );
   }
 
-  Widget _buildSerialMonitorCard(
-    IHardwareBridge bridge,
-    HardwareConnectionState state,
-    List<SerialLogEntry> logs,
-  ) {
+  Widget _buildSupportedBoardsGuide() {
     final colorScheme = Theme.of(context).colorScheme;
+    return Column(
+      children: SupportedBoards.all.map((board) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: ExpansionTile(
+            title: Text(
+              board.name,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            ),
+            subtitle: Text(
+              '${board.microcontroller} • ${board.operatingVoltage}',
+              style:
+                  TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
+            ),
+            leading: Icon(
+              board.isVirtual ? Icons.developer_board : Icons.memory,
+              color: AppColors.primaryViolet,
+            ),
+            childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(board.description,
+                        style: const TextStyle(fontSize: 13, height: 1.3)),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Pins: ${board.digitalPins} Digital (${board.pwmPins} PWM) • ${board.analogPins} Analog Inputs',
+                      style: const TextStyle(
+                          fontSize: 12, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      'Default Serial Baud: ${board.defaultBaudRate} baud',
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                    if (board.supportedVidsPids.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        'Known Hardware USB Identifiers: ${board.supportedVidsPids.join(", ")}',
+                        style: TextStyle(
+                            fontSize: 11, color: colorScheme.onSurfaceVariant),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class _SerialTerminal extends ConsumerStatefulWidget {
+  final IHardwareBridge bridge;
+  final HardwareConnectionState state;
+
+  const _SerialTerminal({
+    required this.bridge,
+    required this.state,
+  });
+
+  @override
+  ConsumerState<_SerialTerminal> createState() => _SerialTerminalState();
+}
+
+class _SerialTerminalState extends ConsumerState<_SerialTerminal>
+    with AutomaticKeepAliveClientMixin {
+  final TextEditingController _commandController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  bool _autoScroll = true;
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void dispose() {
+    _commandController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToBottom() {
+    if (_autoScroll && _scrollController.hasClients) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+          );
+        }
+      });
+    }
+  }
+
+  void _handleSendCommand(IHardwareBridge bridge) {
+    final text = _commandController.text.trim();
+    if (text.isNotEmpty) {
+      bridge.sendCommand(text);
+      _commandController.clear();
+    }
+  }
+
+  Widget _buildCommandChip(IHardwareBridge bridge, String cmd) {
+    return ActionChip(
+      label: Text(cmd,
+          style: const TextStyle(fontFamily: 'monospace', fontSize: 12)),
+      onPressed: () => bridge.sendCommand(cmd),
+      materialTapTargetSize: MaterialTapTargetSize.padded,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    final logs = ref.watch(hardwareSerialLogsProvider);
+    final colorScheme = Theme.of(context).colorScheme;
+    final bridge = widget.bridge;
+
+    _scrollToBottom();
+
     return MonsterCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -779,81 +879,6 @@ class _HardwareCompanionScreenState
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildCommandChip(IHardwareBridge bridge, String cmd) {
-    return ActionChip(
-      label: Text(cmd,
-          style: const TextStyle(fontFamily: 'monospace', fontSize: 12)),
-      onPressed: () => bridge.sendCommand(cmd),
-      materialTapTargetSize: MaterialTapTargetSize.padded,
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-    );
-  }
-
-  void _handleSendCommand(IHardwareBridge bridge) {
-    final text = _commandController.text.trim();
-    if (text.isNotEmpty) {
-      bridge.sendCommand(text);
-      _commandController.clear();
-    }
-  }
-
-  Widget _buildSupportedBoardsGuide() {
-    final colorScheme = Theme.of(context).colorScheme;
-    return Column(
-      children: SupportedBoards.all.map((board) {
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 8.0),
-          child: ExpansionTile(
-            title: Text(
-              board.name,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-            ),
-            subtitle: Text(
-              '${board.microcontroller} • ${board.operatingVoltage}',
-              style:
-                  TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
-            ),
-            leading: Icon(
-              board.isVirtual ? Icons.developer_board : Icons.memory,
-              color: AppColors.primaryViolet,
-            ),
-            childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-            children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(board.description,
-                        style: const TextStyle(fontSize: 13, height: 1.3)),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Pins: ${board.digitalPins} Digital (${board.pwmPins} PWM) • ${board.analogPins} Analog Inputs',
-                      style: const TextStyle(
-                          fontSize: 12, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      'Default Serial Baud: ${board.defaultBaudRate} baud',
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                    if (board.supportedVidsPids.isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        'Known Hardware USB Identifiers: ${board.supportedVidsPids.join(", ")}',
-                        style: TextStyle(
-                            fontSize: 11, color: colorScheme.onSurfaceVariant),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      }).toList(),
     );
   }
 }

@@ -255,9 +255,11 @@ class AssetCurriculumDataSource {
   /// Initial curriculum foundation lessons (Lessons 1 through 12, expanded 12–14 steps)
   List<Lesson> getBaselineLessons() {
     return _cachedBaselineLessons ??=
-        (jsonDecode(_baselineLessonsJson) as List<dynamic>)
-            .map((e) => Lesson.fromJson(e as Map<String, dynamic>))
-            .toList();
+        (jsonDecode(_baselineLessonsJson) as List<dynamic>).map((e) {
+      final map = Map<String, dynamic>.from(e as Map<String, dynamic>);
+      map['isPlaceholder'] = true;
+      return Lesson.fromJson(map);
+    }).toList();
   }
 
   static const String _baselineLessonsJson = r'''[
