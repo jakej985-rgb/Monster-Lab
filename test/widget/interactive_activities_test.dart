@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:monster_lab/presentation/shared/widgets/monster_markdown.dart';
 import 'package:monster_lab/presentation/features/learn/widgets/visual_flow_diagram_widget.dart';

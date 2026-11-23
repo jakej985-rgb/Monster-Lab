@@ -17,6 +17,7 @@ DEFAULT_APT_REPO = os.path.expanduser("~/apps/m3tal-apt-key")
 # Canonical APT repository root (GitHub Pages site of the m3tal-apt-key repo).
 # This is deliberately independent of the app homepage in pubspec.yaml.
 APT_REPO_BASE_URL = "https://jakej985-rgb.github.io/m3tal-apt-key"
+APPLICATION_ID = "com.monsterlab.monster_lab"
 
 
 def parse_pubspec_version():
@@ -189,9 +190,8 @@ def create_deb_package(bundle_dir: str, output_deb: str, push_to_apt_repo: str =
     etc_keyrings_dir = os.path.join(staging_dir, "etc", "apt", "keyrings")
     apt_sources_dir = os.path.join(staging_dir, "etc", "apt", "sources.list.d")
     metainfo_dir = os.path.join(staging_dir, "usr", "share", "metainfo")
-    mime_dir = os.path.join(staging_dir, "usr", "share", "mime", "packages")
 
-    for d in [debian_dir, lib_dir, bin_dir, apps_dir, pixmaps_dir, icons_dir, usr_keyrings_dir, etc_keyrings_dir, apt_sources_dir, metainfo_dir, mime_dir]:
+    for d in [debian_dir, lib_dir, bin_dir, apps_dir, pixmaps_dir, icons_dir, usr_keyrings_dir, etc_keyrings_dir, apt_sources_dir, metainfo_dir]:
         os.makedirs(d, exist_ok=True)
     os.chmod(staging_dir, 0o755)
     os.chmod(debian_dir, 0o755)
@@ -217,56 +217,46 @@ def create_deb_package(bundle_dir: str, output_deb: str, push_to_apt_repo: str =
         f.write(f'exec /usr/lib/{package_name}/monster_lab "$@"\n')
     os.chmod(launcher_path, 0o755)
 
-    # 4. Create .desktop entry at /usr/share/applications/monster-lab.desktop
-    desktop_path = os.path.join(apps_dir, f"{package_name}.desktop")
+    # 4. Create a .desktop entry whose filename and WM class match the GTK
+    # application ID. File-open arguments are not implemented yet, so do not
+    # advertise %F or a MIME handler until they are.
+    desktop_filename = f"{APPLICATION_ID}.desktop"
+    desktop_path = os.path.join(apps_dir, desktop_filename)
     with open(desktop_path, "w", encoding="utf-8") as f:
         f.write("[Desktop Entry]\n")
         f.write("Name=Monster Lab\n")
         f.write("GenericName=Electronics Studio\n")
         f.write("Comment=Hands-on Arduino & Electronics Studio for Kids\n")
-        f.write(f"Exec={package_name} %F\n")
+        f.write(f"Exec={package_name}\n")
         f.write(f"Icon={package_name}\n")
         f.write("Terminal=false\n")
         f.write("Type=Application\n")
-        f.write("Categories=Education;Science;Electronics;Development;Engineering;\n")
+        f.write("Categories=Education;Electronics;\n")
         f.write("Keywords=arduino;electronics;robotics;stem;education;kids;\n")
-        f.write("MimeType=application/x-monsterlab-project;\n")
-        f.write("StartupWMClass=monster_lab\n")
+        f.write(f"StartupWMClass={APPLICATION_ID}\n")
     os.chmod(desktop_path, 0o644)
 
     # 4b. Create AppStream Metadata for Linux Mint Software Manager / GNOME Software
-    appdata_path = os.path.join(metainfo_dir, f"org.monsterlab.MonsterLab.appdata.xml")
+    appdata_path = os.path.join(metainfo_dir, f"{APPLICATION_ID}.metainfo.xml")
     with open(appdata_path, "w", encoding="utf-8") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
         f.write('<component type="desktop-application">\n')
-        f.write('  <id>org.monsterlab.MonsterLab</id>\n')
+        f.write(f'  <id>{APPLICATION_ID}</id>\n')
         f.write('  <metadata_license>CC0-1.0</metadata_license>\n')
         f.write('  <project_license>MIT</project_license>\n')
         f.write('  <name>Monster Lab</name>\n')
+        f.write('  <developer id="com.monsterlab">\n')
+        f.write('    <name>Monster Lab Team</name>\n')
+        f.write('  </developer>\n')
+        f.write('  <content_rating type="oars-1.1"/>\n')
         f.write('  <summary>Hands-on Arduino and electronics studio for kids</summary>\n')
         f.write('  <description>\n')
         f.write('    <p>Monster Lab is an interactive educational electronics and Arduino studio designed for young makers and students. It features guided breadboard building, simulated circuits, interactive challenges, and hardware companion bridges.</p>\n')
         f.write('  </description>\n')
-        f.write('  <launchable type="desktop-id">monster-lab.desktop</launchable>\n')
+        f.write(f'  <launchable type="desktop-id">{desktop_filename}</launchable>\n')
         f.write('  <url type="homepage">https://jakej985-rgb.github.io/M3tal-Hub/Monster-Lab/</url>\n')
-        f.write('  <provides>\n')
-        f.write('    <mediatype>application/x-monsterlab-project</mediatype>\n')
-        f.write('  </provides>\n')
         f.write('</component>\n')
     os.chmod(appdata_path, 0o644)
-
-    # 4c. Create MIME Type Definition for .mlab project files
-    mime_path = os.path.join(mime_dir, f"{package_name}.xml")
-    with open(mime_path, "w", encoding="utf-8") as f:
-        f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
-        f.write('<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">\n')
-        f.write('  <mime-type type="application/x-monsterlab-project">\n')
-        f.write('    <comment>Monster Lab Circuit Project</comment>\n')
-        f.write('    <glob pattern="*.mlab"/>\n')
-        f.write('    <glob pattern="*.monsterlab"/>\n')
-        f.write('  </mime-type>\n')
-        f.write('</mime-info>\n')
-    os.chmod(mime_path, 0o644)
 
     # Copy desktop icons
     icon_source = os.path.join(ROOT_DIR, "assets", "icons", "linux", f"{package_name}_256x256.png")

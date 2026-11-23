@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'full_screen_image_viewer.dart';
 
 class ExpandableLessonImage extends StatelessWidget {

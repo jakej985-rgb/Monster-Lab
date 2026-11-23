@@ -1,4 +1,8 @@
 class AppSettings {
+  /// The auto-zoom applied on desktop when the learner has not chosen a
+  /// manual scale. Keep this at 100% so text respects the desktop baseline.
+  static const double desktopAutoUiScale = 1.0;
+
   final bool immersiveLessonMode;
   final bool soundEnabled;
   final bool highContrast;

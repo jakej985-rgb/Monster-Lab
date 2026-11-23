@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/app_metadata.dart';
@@ -135,7 +135,7 @@ class SettingsScreen extends ConsumerWidget {
                         ),
                         _buildScaleChip(
                           context: context,
-                          label: '80% (Desktop Standard)',
+                          label: '80% (Compact)',
                           value: 0.80,
                           currentValue: settings.uiScale,
                           onSelected: () => notifier.setUiScale(0.80),

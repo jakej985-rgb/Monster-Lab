@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -88,6 +88,67 @@ void main() {
       expect(find.byType(MenuBar), findsOneWidget);
       expect(find.byType(DesktopStatusBar), findsOneWidget);
       expect(find.byType(NavigationBar), findsNothing);
+
+      // Global shortcuts must work while menus are closed.
+      await tester.sendKeyEvent(LogicalKeyboardKey.f1);
+      await tester.pumpAndSettle();
+      expect(find.byType(GtkAboutDialog), findsOneWidget);
+      await tester.tap(find.text('Close'));
+      await tester.pumpAndSettle();
+
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+      await tester.sendKeyEvent(LogicalKeyboardKey.digit2);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+      await tester.pumpAndSettle();
+      expect(find.text('Branch 2 Content'), findsOneWidget);
+    });
+
+    testWidgets(
+        'MainScaffold uses native menu mode without rendering the Flutter MenuBar',
+        (tester) async {
+      final router = GoRouter(
+        initialLocation: '/native-menu',
+        routes: [
+          StatefulShellRoute.indexedStack(
+            builder: (context, state, navigationShell) {
+              return MainScaffold(navigationShell: navigationShell);
+            },
+            branches: [
+              StatefulShellBranch(routes: [
+                GoRoute(
+                  path: '/native-menu',
+                  builder: (_, __) => const Text('Native menu content'),
+                ),
+              ]),
+            ],
+          ),
+        ],
+      );
+
+      SharedPreferences.setMockInitialValues({});
+      final storage = await StorageService.init();
+
+      tester.view.physicalSize = const Size(1280, 720);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            storageServiceProvider.overrideWithValue(storage),
+            nativeMenuBarAvailableProvider.overrideWithValue(true),
+          ],
+          child: MaterialApp.router(routerConfig: router),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(MenuBar), findsNothing);
+      expect(find.byType(GtkSidebar), findsOneWidget);
+      expect(find.text('Native menu content'), findsOneWidget);
     });
 
     testWidgets('UiScaleCanvas fills the viewport at 80% scale',
@@ -176,10 +237,10 @@ void main() {
 
       expect(find.text('Display & UI Scaling'), findsOneWidget);
       expect(find.text('Auto (Recommended)'), findsOneWidget);
-      expect(find.text('80% (Desktop Standard)'), findsOneWidget);
+      expect(find.text('80% (Compact)'), findsOneWidget);
 
-      // Select 80% (Desktop Standard)
-      await tester.tap(find.text('80% (Desktop Standard)'));
+      // Select 80% (Compact)
+      await tester.tap(find.text('80% (Compact)'));
       await tester.pumpAndSettle();
 
       final repo = SettingsRepositoryImpl(SettingsDataSource(storage));
@@ -322,6 +383,93 @@ void main() {
       await tester.sendKeyEvent(LogicalKeyboardKey.space);
       await tester.pumpAndSettle();
       expect(selectedIndex, equals(2));
+    });
+
+    testWidgets(
+        'DesktopStatusBar reports real hardware state and survives 200% text scaling',
+        (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final storage = await StorageService.init();
+
+      tester.view.physicalSize = const Size(800, 500);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            storageServiceProvider.overrideWithValue(storage),
+          ],
+          child: MaterialApp(
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                textScaler: const TextScaler.linear(2.0),
+              ),
+              child: child!,
+            ),
+            home: const Scaffold(body: DesktopStatusBar()),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Hardware Offline'), findsOneWidget);
+      expect(find.text('Hardware Ready'), findsNothing);
+      expect(find.text('Auto (100%)'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('125% UI zoom keeps desktop chrome on an 850px window',
+        (tester) async {
+      final router = GoRouter(
+        initialLocation: '/zoom',
+        routes: [
+          StatefulShellRoute.indexedStack(
+            builder: (context, state, navigationShell) {
+              return MainScaffold(navigationShell: navigationShell);
+            },
+            branches: [
+              StatefulShellBranch(routes: [
+                GoRoute(
+                  path: '/zoom',
+                  builder: (_, __) => const Text('Zoom Content'),
+                ),
+              ]),
+            ],
+          ),
+        ],
+      );
+
+      SharedPreferences.setMockInitialValues({});
+      final storage = await StorageService.init();
+
+      tester.view.physicalSize = const Size(850, 720);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            storageServiceProvider.overrideWithValue(storage),
+          ],
+          child: MaterialApp.router(
+            routerConfig: router,
+            builder: (context, child) =>
+                UiScaleCanvas(scale: 1.25, child: child!),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(GtkSidebar), findsOneWidget);
+      expect(find.byType(MenuBar), findsOneWidget);
+      expect(find.byType(NavigationBar), findsNothing);
     });
   });
 }

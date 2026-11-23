@@ -1,5 +1,7 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, kIsWeb;
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app.dart';
 import 'core/logging/app_logger.dart';
@@ -17,6 +19,9 @@ Future<void> main() async {
       ProviderScope(
         overrides: [
           storageServiceProvider.overrideWithValue(storageService),
+          nativeMenuBarAvailableProvider.overrideWithValue(
+            !kIsWeb && defaultTargetPlatform == TargetPlatform.linux,
+          ),
         ],
         child: const MonsterLabApp(),
       ),

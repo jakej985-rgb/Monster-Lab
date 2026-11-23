@@ -31,6 +31,10 @@ final storageServiceProvider = Provider<StorageService>((ref) {
       'storageServiceProvider must be initialized in main()');
 });
 
+/// Whether the Linux runner provides a native GTK menu bar. The in-app
+/// fallback remains active in widget tests and on other platforms.
+final nativeMenuBarAvailableProvider = Provider<bool>((ref) => false);
+
 final localStorageDataSourceProvider = Provider<LocalStorageDataSource>((ref) {
   final storageService = ref.watch(storageServiceProvider);
   return LocalStorageDataSource(storageService);
@@ -360,14 +364,16 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
   }
 
   Future<void> zoomIn() async {
-    final current = state.uiScale > 0.0 ? state.uiScale : 0.80;
-    final next = (current + 0.05).clamp(0.65, 1.25);
+    final current =
+        state.uiScale > 0.0 ? state.uiScale : AppSettings.desktopAutoUiScale;
+    final next = (current + 0.05).clamp(0.75, 1.25);
     await setUiScale(double.parse(next.toStringAsFixed(2)));
   }
 
   Future<void> zoomOut() async {
-    final current = state.uiScale > 0.0 ? state.uiScale : 0.80;
-    final next = (current - 0.05).clamp(0.65, 1.25);
+    final current =
+        state.uiScale > 0.0 ? state.uiScale : AppSettings.desktopAutoUiScale;
+    final next = (current - 0.05).clamp(0.75, 1.25);
     await setUiScale(double.parse(next.toStringAsFixed(2)));
   }
 

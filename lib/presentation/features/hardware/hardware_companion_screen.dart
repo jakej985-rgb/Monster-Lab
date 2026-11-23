@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/services/hardware/hardware_bridge.dart';
 import '../../../core/theme/app_colors.dart';
@@ -7,6 +7,7 @@ import '../../../domain/models/hardware_connection_model.dart';
 import '../../shared/providers.dart';
 import '../../shared/widgets/monster_button.dart';
 import '../../shared/widgets/monster_card.dart';
+import '../../shared/widgets/responsive_content_container.dart';
 import 'widgets/hardware_status_badge.dart';
 
 class HardwareCompanionScreen extends ConsumerStatefulWidget {
@@ -106,47 +107,50 @@ class _HardwareCompanionScreenState
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
-        children: [
-          // 1. Philosophy Banner: Hardware is Optional
-          _buildInfoBanner(),
-          const SizedBox(height: 16),
+      body: ResponsiveContentContainer(
+        maxWidth: 1100,
+        child: ListView(
+          padding: const EdgeInsets.all(16.0),
+          children: [
+            // 1. Philosophy Banner: Hardware is Optional
+            _buildInfoBanner(),
+            const SizedBox(height: 16),
 
-          // Web Serial availability / browser guidance
-          _buildTransportInfoBar(bridge),
+            // Web Serial availability / browser guidance
+            _buildTransportInfoBar(bridge),
 
-          // 2. Hardware Connection Control Card
-          _buildConnectionControlCard(bridge, state),
-          const SizedBox(height: 20),
+            // 2. Hardware Connection Control Card
+            _buildConnectionControlCard(bridge, state),
+            const SizedBox(height: 20),
 
-          // 3. Live Hardware Telemetry Scope
-          const Text(
-            'Live Hardware Telemetry Scope',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          _buildTelemetryScopeCard(bridge, state, telemetry),
-          const SizedBox(height: 20),
+            // 3. Live Hardware Telemetry Scope
+            const Text(
+              'Live Hardware Telemetry Scope',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            _buildTelemetryScopeCard(bridge, state, telemetry),
+            const SizedBox(height: 20),
 
-          // 4. Interactive Serial Monitor Terminal
-          const Text(
-            'Interactive Serial Monitor',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          _buildSerialMonitorCard(bridge),
-          const SizedBox(height: 20),
+            // 4. Interactive Serial Monitor Terminal
+            const Text(
+              'Interactive Serial Monitor',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            _buildSerialMonitorCard(bridge),
+            const SizedBox(height: 20),
 
-          // 5. Supported Arduino Boards Guide
-          const Text(
-            'Supported Microcontroller Boards',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          _buildSupportedBoardsGuide(),
-          const SizedBox(height: 32),
-        ],
+            // 5. Supported Arduino Boards Guide
+            const Text(
+              'Supported Microcontroller Boards',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            _buildSupportedBoardsGuide(),
+            const SizedBox(height: 32),
+          ],
+        ),
       ),
     );
   }
