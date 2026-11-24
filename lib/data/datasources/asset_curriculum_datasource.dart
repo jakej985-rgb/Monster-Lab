@@ -268,7 +268,8 @@ class AssetCurriculumDataSource {
           estimatedMinutes: 5,
           courseId: 'lesson_01',
           sortOrder: index,
-          prerequisites: index == 1 ? const [] : const ['l01_01'],
+          // Fallback notices award no credit, so they must not gate each other.
+          prerequisites: const [],
           componentIds: const ['comp_uno'],
           isPlaceholder: true,
           xpReward: 0,

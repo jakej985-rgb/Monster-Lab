@@ -42,6 +42,7 @@ class PhysicalSerialBridge implements IHardwareBridge {
   StreamSubscription<void>? _disconnectSubscription;
   bool _closing = false;
   bool _protocolNegotiated = false;
+  bool _stopPending = false;
 
   final StreamController<HardwareConnectionState> _stateController =
       StreamController<HardwareConnectionState>.broadcast(sync: true);
@@ -318,6 +319,7 @@ class PhysicalSerialBridge implements IHardwareBridge {
     await _closeConnection();
     _currentBoard = null;
     _protocolNegotiated = false;
+    _stopPending = false;
     _protocolController.add(false);
     _publishTelemetry(PinTelemetry.physicalEmpty());
   }
@@ -410,6 +412,7 @@ class PhysicalSerialBridge implements IHardwareBridge {
         trimmed.startsWith('ACK:STOP') ||
         trimmed == 'PIN13:LOW' ||
         trimmed == 'LED:0') {
+      _stopPending = false;
       _publishTelemetry(
           _telemetry.copyWith(pin13Led: false, stopConfirmed: true));
     }
@@ -459,9 +462,10 @@ class PhysicalSerialBridge implements IHardwareBridge {
     if (led != null) {
       final value = led.group(1)!.toUpperCase();
       final isHigh = value == 'HIGH' || value == 'ON' || value == '1';
+      // Ordinary LED reports never resolve an outstanding stop.
       next = next.copyWith(
         pin13Led: isHigh,
-        stopConfirmed: true,
+        stopConfirmed: !_stopPending,
       );
       changed = true;
     }
@@ -549,6 +553,7 @@ class PhysicalSerialBridge implements IHardwareBridge {
   }
 
   void _publishPendingStopTelemetry() {
+    _stopPending = true;
     _publishTelemetry(_telemetry.copyWith(stopConfirmed: false));
   }
 

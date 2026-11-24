@@ -63,10 +63,19 @@ bool resolveHasActiveProfile({
 }) {
   if (activeId == null || activeId.trim().isEmpty) return false;
   if (profilesRaw == '[]') return false;
-  final profiles = LearnerProfileModel.tryDecodeList(profilesRaw) ??
-      LearnerProfileModel.tryDecodeList(backupRaw);
-  return profiles != null && profiles.any((profile) => profile.id == activeId);
+  final key = (profilesRaw, backupRaw);
+  if (_profileIdCacheKey != key) {
+    final profiles = LearnerProfileModel.tryDecodeList(profilesRaw) ??
+        LearnerProfileModel.tryDecodeList(backupRaw);
+    _profileIdCache = profiles?.map((p) => p.id).toSet();
+    _profileIdCacheKey = key;
+  }
+  return _profileIdCache?.contains(activeId) ?? false;
 }
+
+// Redirects run on every navigation; skip re-decoding unchanged payloads.
+(String?, String?)? _profileIdCacheKey;
+Set<String>? _profileIdCache;
 
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
