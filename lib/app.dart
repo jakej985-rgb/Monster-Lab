@@ -1,5 +1,3 @@
-import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/localization/app_strings.dart';
@@ -48,14 +46,8 @@ class MonsterLabApp extends ConsumerWidget {
       builder: (context, child) {
         if (child == null) return const SizedBox.shrink();
 
-        final double effectiveScale;
-        if (settings.uiScale > 0.0) {
-          effectiveScale = settings.uiScale;
-        } else {
-          final isDesktop = !kIsWeb &&
-              (Platform.isLinux || Platform.isWindows || Platform.isMacOS);
-          effectiveScale = isDesktop ? 0.80 : 1.0;
-        }
+        final double effectiveScale =
+            settings.uiScale > 0.0 ? settings.uiScale : defaultUiScale();
 
         Widget appWidget = child;
         if (effectiveScale != 1.0) {
@@ -68,10 +60,14 @@ class MonsterLabApp extends ConsumerWidget {
         return CallbackShortcuts(
           bindings: <ShortcutActivator, VoidCallback>{
             const SingleActivator(LogicalKeyboardKey.equal, control: true): () {
-              ref.read(settingsNotifierProvider.notifier).zoomIn();
+              ref
+                  .read(settingsNotifierProvider.notifier)
+                  .zoomIn(baseScale: effectiveScale);
             },
             const SingleActivator(LogicalKeyboardKey.minus, control: true): () {
-              ref.read(settingsNotifierProvider.notifier).zoomOut();
+              ref
+                  .read(settingsNotifierProvider.notifier)
+                  .zoomOut(baseScale: effectiveScale);
             },
             const SingleActivator(LogicalKeyboardKey.digit0, control: true):
                 () {

@@ -74,6 +74,26 @@ class WebSerialTransport implements SerialTransport {
       'Web Serial is not available in this browser. Use Chrome or Edge on '
       'desktop, served over HTTPS or localhost.';
 
+  String _idForPort(_SerialPort port) {
+    for (final entry in _handles.entries) {
+      if (entry.value == port) {
+        return entry.key;
+      }
+    }
+    final id = 'web-serial-port-${_nextId++}';
+    _handles[id] = port;
+    return id;
+  }
+
+  int _indexForPort(String id) {
+    var index = 0;
+    for (final key in _handles.keys) {
+      index++;
+      if (key == id) return index;
+    }
+    return _handles.length;
+  }
+
   @override
   Future<List<SerialPortInfo>> listPorts() async {
     final api = _serialApi();
@@ -82,20 +102,9 @@ class WebSerialTransport implements SerialTransport {
     try {
       final ports = await api.getPorts().toDart;
       final result = <SerialPortInfo>[];
-      var index = 0;
       for (final port in ports.toDart) {
-        index++;
-        String? id;
-        for (final entry in _handles.entries) {
-          if (entry.value == port) {
-            id = entry.key;
-            break;
-          }
-        }
-        if (id == null) {
-          id = 'web-serial-$index-${_nextId++}';
-          _handles[id] = port;
-        }
+        final id = _idForPort(port);
+        final index = _indexForPort(id);
         result.add(_describe(port, id, index));
       }
       return result;
@@ -118,9 +127,9 @@ class WebSerialTransport implements SerialTransport {
 
     try {
       final port = await api.requestPort().toDart;
-      final id = 'web-serial-request-${_nextId++}';
-      _handles[id] = port;
-      return _describe(port, id, _nextId);
+      final id = _idForPort(port);
+      final index = _indexForPort(id);
+      return _describe(port, id, index);
     } catch (error) {
       _throwTransportError(error);
     }

@@ -245,19 +245,76 @@ void main() {
 
       expect(transport.permissionRequests, 1);
       expect(board, isNotNull);
-      expect(board!.portName, unoPort.label);
+      expect(board!.portName, unoPort.id);
+      expect(board.displayName, unoPort.label);
       expect(board.boardModel.id, 'uno_r3');
+    });
+
+    test(
+        'unconfirmed sketch stop keeps stopConfirmed false without forcing LED off',
+        () async {
+      final (transport, bridge) = createBridge(initialPort: unoPort);
+
+      final boards = await bridge.scanDevices();
+      await bridge.connect(board: boards.single);
+      final connection = transport.lastConnection!;
+
+      // Sketch reports LED HIGH once and keeps it HIGH
+      connection.emitLine('LED:HIGH');
+      await Future<void>.delayed(Duration.zero);
+      expect(bridge.currentTelemetry.pin13Led, isTrue);
+      expect(bridge.currentTelemetry.stopConfirmed, isTrue);
+
+      // Send emergency stop to unconfirmed sketch
+      await bridge.sendCommand('EMERGENCY_STOP');
+      expect(connection.written, contains('EMERGENCY_STOP'));
+      // Since no handshake or ACK received, stop status remains unconfirmed
+      expect(bridge.currentTelemetry.stopConfirmed, isFalse);
+      expect(bridge.currentTelemetry.pin13Led, isTrue);
+
+      // Now sketch acknowledges the safe state
+      connection.emitLine('ACK:SAFE_STATE');
+      await Future<void>.delayed(Duration.zero);
+      expect(bridge.currentTelemetry.stopConfirmed, isTrue);
+      expect(bridge.currentTelemetry.pin13Led, isFalse);
+    });
+
+    test(
+        'reselection of known port reuses stable ID and selection of second adapter assigns new ID',
+        () async {
+      final transport = FakeSerialTransport()..ports.add(unoPort);
+      final bridge = PhysicalSerialBridge(transport: transport);
+      addTearDown(bridge.dispose);
+
+      final initial = await bridge.scanDevices();
+      expect(initial.first.portName, unoPort.id);
+
+      // Reselect the same port
+      transport.requestedPort = unoPort;
+      final reselected = await bridge.requestPhysicalPort();
+      expect(reselected!.portName, unoPort.id);
+
+      // Select second adapter
+      transport.requestedPort = ch340Port;
+      final second = await bridge.requestPhysicalPort();
+      expect(second!.portName, ch340Port.id);
+      expect(second.portName, isNot(equals(reselected.portName)));
     });
   });
 
   group('CompositeHardwareBridge', () {
-    test('keeps the simulator and routes real devices to Web Serial', () async {
+    (FakeSerialTransport, CompositeHardwareBridge) createCompositeHarness() {
       final transport = FakeSerialTransport()..ports.add(unoPort);
       final composite = CompositeHardwareBridge(
         virtual: VirtualSimulationBridge(enableTelemetryTimer: false),
         physical: PhysicalSerialBridge(transport: transport),
       );
       addTearDown(composite.dispose);
+      return (transport, composite);
+    }
+
+    test('keeps the simulator and routes real devices to Web Serial', () async {
+      final (transport, composite) = createCompositeHarness();
 
       expect(composite.supportsPhysicalPorts, isTrue);
 
@@ -274,6 +331,32 @@ void main() {
       expect(await composite.connect(board: virtualBoard), isTrue);
       expect(composite.currentState, HardwareConnectionState.connectedVirtual);
       expect(transport.lastConnection!.closed, isTrue);
+    });
+
+    test('clears previous simulator telemetry upon switching to physical board',
+        () async {
+      final (transport, composite) = createCompositeHarness();
+
+      final boards = await composite.scanDevices();
+      final virtualBoard = boards.firstWhere((board) => board.isVirtual);
+      final physicalBoard = boards.firstWhere((board) => !board.isVirtual);
+
+      // Connect to virtual and simulate LED ON
+      await composite.connect(board: virtualBoard);
+      await composite.sendCommand('LED:ON');
+      expect(composite.currentTelemetry.pin13Led, isTrue);
+
+      // Track telemetry stream emissions
+      final emitted = <PinTelemetry>[];
+      final sub = composite.telemetryStream.listen(emitted.add);
+      addTearDown(sub.cancel);
+
+      // Connect to physical board
+      await composite.connect(board: physicalBoard);
+      // Stale simulator LED ON must NOT persist
+      expect(composite.currentTelemetry.pin13Led, isFalse);
+      expect(emitted, isNotEmpty);
+      expect(emitted.last.pin13Led, isFalse);
     });
   });
 }

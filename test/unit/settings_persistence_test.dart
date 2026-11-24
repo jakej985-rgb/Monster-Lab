@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:monster_lab/core/services/storage_service.dart';
 import 'package:monster_lab/data/datasources/settings_datasource.dart';
 import 'package:monster_lab/data/repositories/settings_repository_impl.dart';
+import 'package:monster_lab/presentation/shared/providers.dart';
 
 void main() {
   group('Settings Persistence Tests', () {
@@ -84,6 +85,35 @@ void main() {
       final repo2 = SettingsRepositoryImpl(ds2);
       expect(repo2.getSettings().themeMode, 'dark');
       expect(repo2.getSettings().themePreset, 'mint');
+    });
+
+    test('defaultUiScale returns 0.80 for desktop and 1.0 for web/mobile', () {
+      expect(defaultUiScale(isDesktopOverride: true), 0.80);
+      expect(defaultUiScale(isDesktopOverride: false), 1.0);
+    });
+
+    test('SettingsNotifier zoomIn and zoomOut respects baseScale from unset',
+        () async {
+      SharedPreferences.setMockInitialValues({});
+      final storage = await StorageService.init();
+      final ds = SettingsDataSource(storage);
+      final repo = SettingsRepositoryImpl(ds);
+      final notifier = SettingsNotifier(repo);
+
+      // On web/mobile where base scale is 1.0
+      await notifier.zoomIn(baseScale: 1.0);
+      expect(notifier.state.uiScale, 1.05);
+
+      await notifier.resetZoom();
+      expect(notifier.state.uiScale, 0.0);
+
+      await notifier.zoomOut(baseScale: 1.0);
+      expect(notifier.state.uiScale, 0.95);
+
+      // On desktop where base scale is 0.80
+      await notifier.resetZoom();
+      await notifier.zoomIn(baseScale: 0.80);
+      expect(notifier.state.uiScale, 0.85);
     });
   });
 }

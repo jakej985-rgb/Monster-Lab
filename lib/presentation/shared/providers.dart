@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/services/storage_service.dart';
 import '../../core/services/hardware/hardware_bridge.dart';
@@ -286,6 +288,15 @@ final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
   return SettingsRepositoryImpl(SettingsDataSource(storageService));
 });
 
+double defaultUiScale({bool? isDesktopOverride}) {
+  if (isDesktopOverride != null) {
+    return isDesktopOverride ? 0.80 : 1.0;
+  }
+  final isDesktop =
+      !kIsWeb && (Platform.isLinux || Platform.isWindows || Platform.isMacOS);
+  return isDesktop ? 0.80 : 1.0;
+}
+
 class SettingsNotifier extends StateNotifier<AppSettings> {
   final SettingsRepository _repository;
 
@@ -311,14 +322,16 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     state = _repository.getSettings();
   }
 
-  Future<void> zoomIn() async {
-    final current = state.uiScale > 0.0 ? state.uiScale : 0.80;
+  Future<void> zoomIn({double? baseScale}) async {
+    final current =
+        state.uiScale > 0.0 ? state.uiScale : (baseScale ?? defaultUiScale());
     final next = (current + 0.05).clamp(0.65, 1.25);
     await setUiScale(double.parse(next.toStringAsFixed(2)));
   }
 
-  Future<void> zoomOut() async {
-    final current = state.uiScale > 0.0 ? state.uiScale : 0.80;
+  Future<void> zoomOut({double? baseScale}) async {
+    final current =
+        state.uiScale > 0.0 ? state.uiScale : (baseScale ?? defaultUiScale());
     final next = (current - 0.05).clamp(0.65, 1.25);
     await setUiScale(double.parse(next.toStringAsFixed(2)));
   }

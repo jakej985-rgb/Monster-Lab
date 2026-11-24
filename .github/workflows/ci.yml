@@ -84,13 +84,13 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Set up Java
-        uses: actions/setup-java@8df10395026579edcb59046f6fb247713d29790c # v4.7.0
+        uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12 # v4.7.0
         with:
           distribution: 'temurin'
           java-version: '17'
 
       - name: Set up Flutter
-        uses: subosito/flutter-action@f2c4f66bb070824145240dfbf837072da6485b3e # v2.18.0
+        uses: subosito/flutter-action@f2c4f6686ca8e8d6e6d0f28410eeef506ed66aff # v2.18.0
         with:
           flutter-version: '3.47.3'
           channel: 'stable'

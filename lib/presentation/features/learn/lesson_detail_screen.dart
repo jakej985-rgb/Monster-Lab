@@ -353,9 +353,11 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                                 submoduleTitle: currentStep.title,
                                 questions: currentStep.quickCheck!,
                                 onCompleted: (res) {
-                                  ref
-                                      .read(activeProgressProvider.notifier)
-                                      .recordQuickCheckResult(res);
+                                  if (!_isPlaceholderLesson(lesson)) {
+                                    ref
+                                        .read(activeProgressProvider.notifier)
+                                        .recordQuickCheckResult(res);
+                                  }
                                 },
                               );
                             },
@@ -574,9 +576,12 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                                           ?.completedLessonIds
                                           .contains(widget.lessonId) ??
                                       false;
+                                  final isPlaceholder =
+                                      _isPlaceholderLesson(lesson);
                                   if (isCorrect &&
                                       activeProfile != null &&
                                       !isAlreadyCompleted &&
+                                      !isPlaceholder &&
                                       !_awardedCheckpointKeys
                                           .contains(checkpointKey)) {
                                     _awardedCheckpointKeys.add(checkpointKey);
@@ -708,6 +713,11 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
     );
   }
 
+  bool _isPlaceholderLesson(Lesson lesson) {
+    final curriculumRepo = ref.read(curriculumRepositoryProvider);
+    return lesson.isPlaceholder || curriculumRepo.isFallbackActive;
+  }
+
   Future<void> _executeLessonCompletion(
     Lesson lesson,
     LearnerProfileModel? activeProfile,
@@ -722,8 +732,7 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
       }
 
       final curriculumRepo = ref.read(curriculumRepositoryProvider);
-      final isPlaceholder =
-          lesson.isPlaceholder || curriculumRepo.isFallbackActive;
+      final isPlaceholder = _isPlaceholderLesson(lesson);
 
       bool isFirstCompletion = false;
       if (!isPlaceholder) {

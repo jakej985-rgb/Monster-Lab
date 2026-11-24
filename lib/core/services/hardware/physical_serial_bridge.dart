@@ -38,6 +38,7 @@ class PhysicalSerialBridge implements IHardwareBridge {
   StreamSubscription<String>? _lineSubscription;
   StreamSubscription<void>? _disconnectSubscription;
   bool _closing = false;
+  bool _protocolNegotiated = false;
 
   final StreamController<HardwareConnectionState> _stateController =
       StreamController<HardwareConnectionState>.broadcast(sync: true);
@@ -57,6 +58,9 @@ class PhysicalSerialBridge implements IHardwareBridge {
 
   @override
   PinTelemetry get currentTelemetry => _telemetry;
+
+  @override
+  bool get hasVerifiedProtocol => _protocolNegotiated;
 
   @override
   Stream<HardwareConnectionState> get stateStream {
@@ -279,13 +283,19 @@ class PhysicalSerialBridge implements IHardwareBridge {
       if (_state.isConnected && _connection != null) {
         await _write('SAFE_STATE');
       }
-      await _closeConnection();
-      _currentBoard = null;
+      await _resetDeviceState();
       _logSystem('Hardware link closed.');
       _transitionTo(HardwareConnectionState.disconnected);
     } finally {
       _closing = false;
     }
+  }
+
+  Future<void> _resetDeviceState() async {
+    await _closeConnection();
+    _currentBoard = null;
+    _protocolNegotiated = false;
+    _publishTelemetry(PinTelemetry.physicalEmpty());
   }
 
   Future<SerialPortInfo?> _lookupPort(DiscoveredBoard board) async {
@@ -300,6 +310,7 @@ class PhysicalSerialBridge implements IHardwareBridge {
   }
 
   DiscoveredBoard _toBoard(SerialPortInfo port) {
+    _knownPorts[port.id] = port;
     _knownPorts[port.label] = port;
     final model = SupportedBoards.matchUsb(
           port.vendorId ?? -1,
@@ -308,7 +319,8 @@ class PhysicalSerialBridge implements IHardwareBridge {
         SupportedBoards.unknownUsbSerial;
 
     return DiscoveredBoard(
-      portName: port.label,
+      portName: port.id,
+      displayName: port.label,
       boardModel: model,
       vendorId: port.vendorId,
       productId: port.productId,
@@ -353,9 +365,12 @@ class PhysicalSerialBridge implements IHardwareBridge {
 
     if (trimmed.startsWith('ACK:HANDSHAKE:') ||
         trimmed.startsWith('ERR:VERSION_MISMATCH:') ||
-        trimmed.startsWith('ERR:UNSUPPORTED_PROTOCOL:')) {
+        trimmed.startsWith('ERR:UNSUPPORTED_PROTOCOL:') ||
+        trimmed == 'PONG:MONSTER_UNO_V1' ||
+        trimmed.contains('Monster Lab Companion')) {
       try {
         final result = _negotiator.parseDeviceResponse(trimmed);
+        _protocolNegotiated = result.isSuccess;
         _logSystem(
           'Protocol ${result.negotiatedVersion} negotiated '
           '(board: ${result.boardId}).',
@@ -365,6 +380,13 @@ class PhysicalSerialBridge implements IHardwareBridge {
       } catch (failure) {
         _logSystem('Protocol handshake warning: ${_describe(failure)}');
       }
+    }
+
+    if (trimmed.startsWith('ACK:SAFE_STATE') ||
+        trimmed.startsWith('ACK:EMERGENCY_STOP') ||
+        trimmed.startsWith('ACK:STOP')) {
+      _publishTelemetry(
+          _telemetry.copyWith(pin13Led: false, stopConfirmed: true));
     }
   }
 
@@ -413,6 +435,7 @@ class PhysicalSerialBridge implements IHardwareBridge {
       final value = led.group(1)!.toUpperCase();
       next = next.copyWith(
         pin13Led: value == 'HIGH' || value == 'ON' || value == '1',
+        stopConfirmed: true,
       );
       changed = true;
     }
@@ -431,8 +454,7 @@ class PhysicalSerialBridge implements IHardwareBridge {
     }
 
     if (changed) {
-      _telemetry = next;
-      _telemetryController.add(next);
+      _publishTelemetry(next);
     }
   }
 
@@ -441,8 +463,7 @@ class PhysicalSerialBridge implements IHardwareBridge {
 
     _closing = true;
     try {
-      await _closeConnection();
-      _currentBoard = null;
+      await _resetDeviceState();
       _safetyInterlock?.enterSafeState();
       _logSystem('USB serial device disconnected.');
       _transitionTo(HardwareConnectionState.error);
@@ -494,17 +515,22 @@ class PhysicalSerialBridge implements IHardwareBridge {
     _serialController.add(SerialLogEntry.system(text));
   }
 
-  void _applyStopTelemetry(bool ok) {
-    if (ok) {
-      _telemetry = _telemetry.copyWith(pin13Led: false);
-      _telemetryController.add(_telemetry);
-    }
+  void _publishTelemetry(PinTelemetry next) {
+    _telemetry = next;
+    _telemetryController.add(next);
   }
 
-  String _describe(Object failure) {
-    if (failure is SerialTransportException) return failure.message;
-    return failure.toString();
+  void _applyStopTelemetry(bool ok) {
+    if (!ok) return;
+    final confirmed = _protocolNegotiated;
+    _publishTelemetry(_telemetry.copyWith(
+      pin13Led: confirmed ? false : _telemetry.pin13Led,
+      stopConfirmed: confirmed,
+    ));
   }
+
+  String _describe(Object failure) =>
+      failure is SerialTransportException ? failure.message : '$failure';
 
   @override
   void dispose() {

@@ -45,6 +45,9 @@ class VirtualSimulationBridge implements IHardwareBridge {
   Future<DiscoveredBoard?> requestPhysicalPort() async => null;
 
   @override
+  bool get hasVerifiedProtocol => true;
+
+  @override
   HardwareConnectionState get currentState => _state;
 
   @override

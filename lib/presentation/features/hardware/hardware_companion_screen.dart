@@ -322,7 +322,7 @@ class _HardwareCompanionScreenState
                 key: const Key('hardware_port_dropdown'),
                 isExpanded: true,
                 value: _availableBoards.contains(_selectedBoard)
-                    ? _selectedBoard
+                    ? _availableBoards.firstWhere((b) => b == _selectedBoard)
                     : _availableBoards.first,
                 items: _availableBoards.map((board) {
                   return DropdownMenuItem<DiscoveredBoard>(
@@ -471,7 +471,9 @@ class _HardwareCompanionScreenState
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'Pin 13 LED: ${telemetry.pin13Led ? "HIGH (ON)" : "LOW (OFF)"}',
+                        !telemetry.stopConfirmed
+                            ? 'Pin 13 LED: Stop Pending Confirmation'
+                            : 'Pin 13 LED: ${telemetry.pin13Led ? "HIGH (ON)" : "LOW (OFF)"}',
                         style: const TextStyle(
                             fontSize: 12, fontWeight: FontWeight.bold),
                       ),
@@ -483,15 +485,18 @@ class _HardwareCompanionScreenState
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 8),
                         ),
-                        onPressed: isConnected
+                        onPressed: (isConnected && bridge.hasVerifiedProtocol)
                             ? () {
                                 final cmd =
                                     telemetry.pin13Led ? 'LED:OFF' : 'LED:ON';
                                 bridge.sendCommand(cmd);
                               }
                             : null,
-                        child:
-                            Text(telemetry.pin13Led ? 'Turn OFF' : 'Turn ON'),
+                        child: Text(
+                          !bridge.hasVerifiedProtocol && isConnected
+                              ? 'Firmware Required'
+                              : (telemetry.pin13Led ? 'Turn OFF' : 'Turn ON'),
+                        ),
                       ),
                     ],
                   ),

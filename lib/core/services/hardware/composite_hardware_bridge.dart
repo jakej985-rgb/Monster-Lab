@@ -84,6 +84,9 @@ class CompositeHardwareBridge implements IHardwareBridge {
   String? get transportNotice => _physical.transportNotice;
 
   @override
+  bool get hasVerifiedProtocol => _active.hasVerifiedProtocol;
+
+  @override
   Future<List<DiscoveredBoard>> scanDevices() async {
     final boards = <DiscoveredBoard>[];
     final seen = <String>{};
@@ -132,14 +135,21 @@ class CompositeHardwareBridge implements IHardwareBridge {
       }
     }
 
-    return _active.connect(board: board, baudRate: baudRate);
+    final success = await _active.connect(board: board, baudRate: baudRate);
+    if (success) {
+      _telemetryController.add(_active.currentTelemetry);
+    }
+    return success;
   }
 
   @override
   Future<void> sendCommand(String command) => _active.sendCommand(command);
 
   @override
-  Future<void> disconnect() => _active.disconnect();
+  Future<void> disconnect() async {
+    await _active.disconnect();
+    _telemetryController.add(_active.currentTelemetry);
+  }
 
   @override
   void dispose() {
@@ -151,8 +161,12 @@ class CompositeHardwareBridge implements IHardwareBridge {
     _physicalSerialSubscription.cancel();
     _virtual.dispose();
     _physical.dispose();
-    _stateController.close();
-    _serialController.close();
-    _telemetryController.close();
+    for (final c in [
+      _stateController,
+      _serialController,
+      _telemetryController
+    ]) {
+      c.close();
+    }
   }
 }

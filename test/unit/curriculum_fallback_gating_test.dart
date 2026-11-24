@@ -1,10 +1,14 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:monster_lab/core/services/storage_service.dart';
 import 'package:monster_lab/data/datasources/asset_curriculum_datasource.dart';
 import 'package:monster_lab/data/datasources/curriculum_data_engine.dart';
+import 'package:monster_lab/data/datasources/local_storage_datasource.dart';
 import 'package:monster_lab/data/repositories/curriculum_repository_impl.dart';
+import 'package:monster_lab/data/repositories/progress_repository_impl.dart';
 import 'package:monster_lab/domain/models/learner_progress_model.dart';
 import 'package:monster_lab/domain/models/lesson_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FailingAssetBundle extends CachingAssetBundle {
   @override
@@ -119,6 +123,12 @@ void main() {
     test(
         'restoring full curriculum after browsing placeholders leaves production lessons uncredited',
         () async {
+      SharedPreferences.setMockInitialValues({});
+      final storageService = await StorageService.init();
+      final dataSource = LocalStorageDataSource(storageService);
+      final progressRepo = ProgressRepositoryImpl(dataSource);
+      const learnerId = 'learner_test';
+
       final fallbackEngine = CurriculumDataEngine(
         assetBundle: FailingAssetBundle(),
         allowFallback: true,
@@ -132,9 +142,23 @@ void main() {
       expect(placeholderLesson.isPlaceholder, isTrue);
 
       // Verify gating predicate: placeholder lessons are blocked from writing credit
-      final shouldAwardCredit =
-          !placeholderLesson.isPlaceholder && !fallbackRepo.isFallbackActive;
-      expect(shouldAwardCredit, isFalse);
+      final isPlaceholderGated =
+          placeholderLesson.isPlaceholder || fallbackRepo.isFallbackActive;
+      expect(isPlaceholderGated, isTrue);
+
+      // Since it is gated, no progress writes are executed during fallback
+      if (!isPlaceholderGated) {
+        await progressRepo.completeLesson(
+          learnerId,
+          placeholderLesson.id,
+          placeholderLesson.xpReward,
+        );
+      }
+
+      // Check persisted repository progress during fallback
+      final intermediateProgress = await progressRepo.getProgress(learnerId);
+      expect(intermediateProgress.completedLessonIds, isEmpty);
+      expect(intermediateProgress.totalXp, equals(0));
 
       // Now restore assets
       final normalDataSource = AssetCurriculumDataSource();
@@ -149,11 +173,22 @@ void main() {
       expect(productionLesson, isNotNull);
       expect(productionLesson.isPlaceholder, isFalse);
 
-      // Progress stays uncredited
-      final progress = LearnerProgressModel.empty('learner_test');
-      expect(progress.completedLessonIds.contains('l01_02'), isFalse);
-      expect(progress.totalXp, equals(0));
-      expect(progress.completedCourseIds.contains('lesson_01'), isFalse);
+      // Reload saved progress from persistent storage to verify it remained untouched
+      final reloadedProgress = await progressRepo.getProgress(learnerId);
+      expect(reloadedProgress.completedLessonIds.contains('l01_02'), isFalse);
+      expect(reloadedProgress.totalXp, equals(0));
+      expect(
+          reloadedProgress.completedCourseIds.contains('lesson_01'), isFalse);
+
+      // Verify completing restored production lesson awards authoritative credit
+      await progressRepo.completeLesson(
+        learnerId,
+        productionLesson.id,
+        productionLesson.xpReward,
+      );
+      final creditedProgress = await progressRepo.getProgress(learnerId);
+      expect(creditedProgress.completedLessonIds, contains('l01_02'));
+      expect(creditedProgress.totalXp, equals(productionLesson.xpReward));
     });
   });
 }

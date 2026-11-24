@@ -63,12 +63,10 @@ echo "[10/11] Verifying changelog footer hygiene..."
 python3 scripts/verify_changelog_hygiene.py
 echo "  Changelog hygiene: PASSED"
 
-echo "[11/11] Running release-tool unit tests..."
+echo "[11/11] Running release and lesson tool unit tests..."
 python3 -m unittest discover -s test/scripts -p 'test_generate_release_*.py'
-echo "  Release-tool tests: PASSED"
-# Lesson/worksheet rendering tests (test/scripts/test_generate_lesson_*.py and
-# similar) need extra rendering dependencies and are intentionally excluded
-# from this gate; run them locally with the full toolchain installed.
+python3 -m unittest discover -s test/scripts -p 'test_*lesson*.py'
+echo "  Release and lesson tool tests: PASSED"
 
 echo "================================================================="
 echo "[SUCCESS] ALL QUALITY GATES PASSED! READY FOR RELEASE."
