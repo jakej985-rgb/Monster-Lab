@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/localization/app_strings.dart';
 import 'core/routing/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'package:flutter/services.dart';
+import 'presentation/shared/widgets/gtk_about_dialog.dart';
 import 'presentation/shared/providers.dart';
 
 class MonsterLabApp extends ConsumerWidget {
@@ -55,13 +57,34 @@ class MonsterLabApp extends ConsumerWidget {
           effectiveScale = isDesktop ? 0.80 : 1.0;
         }
 
-        if (effectiveScale == 1.0) {
-          return child;
+        Widget appWidget = child;
+        if (effectiveScale != 1.0) {
+          appWidget = UiScaleCanvas(
+            scale: effectiveScale,
+            child: child,
+          );
         }
 
-        return UiScaleCanvas(
-          scale: effectiveScale,
-          child: child,
+        return CallbackShortcuts(
+          bindings: <ShortcutActivator, VoidCallback>{
+            const SingleActivator(LogicalKeyboardKey.equal, control: true): () {
+              ref.read(settingsNotifierProvider.notifier).zoomIn();
+            },
+            const SingleActivator(LogicalKeyboardKey.minus, control: true): () {
+              ref.read(settingsNotifierProvider.notifier).zoomOut();
+            },
+            const SingleActivator(LogicalKeyboardKey.digit0, control: true):
+                () {
+              ref.read(settingsNotifierProvider.notifier).resetZoom();
+            },
+            const SingleActivator(LogicalKeyboardKey.f1): () {
+              final navContext = rootNavigatorKey.currentContext;
+              if (navContext != null) {
+                GtkAboutDialog.show(navContext);
+              }
+            },
+          },
+          child: appWidget,
         );
       },
     );

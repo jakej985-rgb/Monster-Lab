@@ -26,6 +26,7 @@ import '../services/parent_session_service.dart';
 import '../../domain/models/learner_profile_model.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
+GlobalKey<NavigatorState> get rootNavigatorKey => _rootNavigatorKey;
 
 final ParentSessionService defaultParentSessionService =
     appParentSessionService;

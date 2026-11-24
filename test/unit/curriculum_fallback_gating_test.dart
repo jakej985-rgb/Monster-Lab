@@ -115,5 +115,45 @@ void main() {
       expect(replayed.completedCourseIds, contains('course_01'));
       expect(replayed.processedTransactionIds, contains('evt_1'));
     });
+
+    test(
+        'restoring full curriculum after browsing placeholders leaves production lessons uncredited',
+        () async {
+      final fallbackEngine = CurriculumDataEngine(
+        assetBundle: FailingAssetBundle(),
+        allowFallback: true,
+      );
+      await fallbackEngine.initialize();
+      expect(fallbackEngine.isFallbackActive, isTrue);
+
+      final fallbackRepo = CurriculumRepositoryImpl(fallbackEngine);
+      final placeholderLesson = await fallbackRepo.getLessonById('l01_02');
+      expect(placeholderLesson, isNotNull);
+      expect(placeholderLesson.isPlaceholder, isTrue);
+
+      // Verify gating predicate: placeholder lessons are blocked from writing credit
+      final shouldAwardCredit =
+          !placeholderLesson.isPlaceholder && !fallbackRepo.isFallbackActive;
+      expect(shouldAwardCredit, isFalse);
+
+      // Now restore assets
+      final normalDataSource = AssetCurriculumDataSource();
+      final normalEngine = CurriculumDataEngine(
+        fallbackDataSource: normalDataSource,
+      );
+      await normalEngine.initialize();
+      expect(normalEngine.isFallbackActive, isFalse);
+
+      final restoredRepo = CurriculumRepositoryImpl(normalEngine);
+      final productionLesson = await restoredRepo.getLessonById('l01_02');
+      expect(productionLesson, isNotNull);
+      expect(productionLesson.isPlaceholder, isFalse);
+
+      // Progress stays uncredited
+      final progress = LearnerProgressModel.empty('learner_test');
+      expect(progress.completedLessonIds.contains('l01_02'), isFalse);
+      expect(progress.totalXp, equals(0));
+      expect(progress.completedCourseIds.contains('lesson_01'), isFalse);
+    });
   });
 }

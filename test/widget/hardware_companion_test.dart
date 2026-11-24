@@ -76,6 +76,47 @@ void main() {
       );
     }
 
+    Future<void> pumpScreen(
+      WidgetTester tester, {
+      Size viewport = const Size(1000, 600),
+      IHardwareBridge? bridgeOverride,
+    }) async {
+      tester.view.physicalSize = viewport;
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      await tester.pumpWidget(
+        createTestWidget(
+          const HardwareCompanionScreen(),
+          bridgeOverride: bridgeOverride,
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    Future<void> pumpAndConnect(WidgetTester tester) async {
+      await pumpScreen(tester);
+
+      final connectBtn =
+          find.byKey(const Key('hardware_connect_toggle_button'));
+      await tester.ensureVisible(connectBtn);
+      await tester.tap(connectBtn);
+      await tester.pumpAndSettle();
+    }
+
+    Future<void> scrollTo(
+      WidgetTester tester,
+      Finder finder,
+      double delta,
+    ) =>
+        tester
+            .scrollUntilVisible(
+              finder,
+              delta,
+              scrollable: find.byType(Scrollable).first,
+            )
+            .then((_) => tester.pumpAndSettle());
+
     testWidgets(
         'HardwareStatusBadge displays current offline and online states',
         (tester) async {
@@ -177,17 +218,11 @@ void main() {
       final capableBridge = _PhysicalCapableBridge();
       addTearDown(capableBridge.dispose);
 
-      tester.view.physicalSize = const Size(1200, 3400);
-      tester.view.devicePixelRatio = 1.0;
-      addTearDown(tester.view.resetPhysicalSize);
-
-      await tester.pumpWidget(
-        createTestWidget(
-          const HardwareCompanionScreen(),
-          bridgeOverride: capableBridge,
-        ),
+      await pumpScreen(
+        tester,
+        viewport: const Size(1200, 3400),
+        bridgeOverride: capableBridge,
       );
-      await tester.pumpAndSettle();
 
       final addButton = find.byKey(const Key('hardware_add_usb_device_button'));
       expect(addButton, findsOneWidget);
@@ -197,6 +232,48 @@ void main() {
 
       expect(capableBridge.requestCount, 1);
       expect(find.textContaining('USB device ready'), findsOneWidget);
+    });
+
+    testWidgets(
+        'short viewport: connects before terminal mounts and retains output',
+        (tester) async {
+      await pumpAndConnect(tester);
+
+      // Scroll down until terminal is mounted and visible
+      final terminalFinder = find.byKey(const Key('serial_command_input'));
+      await scrollTo(tester, terminalFinder, 250);
+
+      expect(terminalFinder, findsOneWidget);
+      // Verify connection output is preserved in the terminal
+      expect(
+          find.textContaining('Ready for serial transmission'), findsOneWidget);
+    });
+
+    testWidgets(
+        'scrolling terminal out of viewport preserves autoscroll preference',
+        (tester) async {
+      await pumpAndConnect(tester);
+
+      // Scroll to reveal autoscroll button in terminal header
+      final autoscrollBtn = find.byTooltip('Autoscroll On');
+      await scrollTo(tester, autoscrollBtn, 200);
+
+      // Toggle autoscroll off
+      expect(autoscrollBtn, findsOneWidget);
+      await tester.tap(autoscrollBtn);
+      await tester.pumpAndSettle();
+      final pausedBtn = find.byTooltip('Autoscroll Paused');
+      expect(pausedBtn, findsOneWidget);
+
+      // Scroll down past terminal to boards guide
+      final boardsGuide = find.text('Supported Microcontroller Boards');
+      await scrollTo(tester, boardsGuide, 300);
+
+      // Scroll back up to terminal
+      await scrollTo(tester, pausedBtn, -300);
+
+      // Autoscroll preference is still paused
+      expect(pausedBtn, findsOneWidget);
     });
   });
 }

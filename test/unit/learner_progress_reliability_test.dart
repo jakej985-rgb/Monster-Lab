@@ -168,6 +168,51 @@ void main() {
         expect(
             replayed.solvedChallengeIds, equals(original.solvedChallengeIds));
       });
+
+      test(
+          'replays trimmed event ledger starting from base snapshot across eviction boundary',
+          () async {
+        const learnerId = 'learner_trimmed_replay';
+        await progressRepo.completeLesson(learnerId, 'l01_01', 25);
+        await progressRepo.completeCourse(learnerId, 'lesson_01', 100);
+
+        // Snapshot state before eviction
+        final snapshotBeforeEviction =
+            await progressRepo.getProgress(learnerId);
+
+        // More progress added after eviction point
+        await progressRepo.solveChallenge(learnerId, 'chal_01', 50);
+        await progressRepo.completeLesson(learnerId, 'l01_02', 30);
+
+        final fullProgress = await progressRepo.getProgress(learnerId);
+        expect(fullProgress.eventLedger.length, greaterThanOrEqualTo(4));
+
+        // Simulate an evicted ledger retaining only events after the snapshot
+        final trimmedLedger = fullProgress.eventLedger.sublist(3);
+
+        // Replaying trimmed ledger without base snapshot loses earlier progress
+        final incompleteReplay = LearnerProgressModel.replayFromEvents(
+          learnerId,
+          trimmedLedger,
+        );
+        expect(incompleteReplay.totalXp, isNot(equals(fullProgress.totalXp)));
+        expect(incompleteReplay.completedCourseIds,
+            isNot(equals(fullProgress.completedCourseIds)));
+
+        // Replaying trimmed ledger with base snapshot correctly reconstructs full progress
+        final completeReplay = LearnerProgressModel.replayFromEvents(
+          learnerId,
+          trimmedLedger,
+          baseSnapshot: snapshotBeforeEviction,
+        );
+        expect(completeReplay.totalXp, equals(fullProgress.totalXp));
+        expect(completeReplay.completedCourseIds,
+            equals(fullProgress.completedCourseIds));
+        expect(completeReplay.completedLessonIds,
+            equals(fullProgress.completedLessonIds));
+        expect(completeReplay.solvedChallengeIds,
+            equals(fullProgress.solvedChallengeIds));
+      });
     });
 
     // --- Issue #18: Prevent Duplicate XP / Rewards ---
