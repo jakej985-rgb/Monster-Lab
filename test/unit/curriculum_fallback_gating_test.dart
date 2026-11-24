@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:monster_lab/core/services/storage_service.dart';
 import 'package:monster_lab/data/datasources/asset_curriculum_datasource.dart';
 import 'package:monster_lab/data/datasources/curriculum_data_engine.dart';
@@ -12,6 +13,7 @@ import 'package:monster_lab/data/repositories/progress_repository_impl.dart';
 import 'package:monster_lab/domain/models/learner_profile_model.dart';
 import 'package:monster_lab/domain/models/learner_progress_model.dart';
 import 'package:monster_lab/domain/models/lesson_model.dart';
+import 'package:monster_lab/presentation/features/learn/learn_screen.dart';
 import 'package:monster_lab/presentation/features/learn/lesson_detail_screen.dart';
 import 'package:monster_lab/presentation/shared/providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -84,17 +86,29 @@ void main() {
       final lessons = await repo.getLessons();
       expect(lessons.length, greaterThan(1));
 
-      // Mirrors the Learn Lab lock check: no later notice may be locked.
-      final done = {
-        ...emptyProgress.completedLessonIds,
-        ...emptyProgress.completedCourseIds,
-      };
-      for (final lesson in lessons.skip(1)) {
-        final missing = lesson.prerequisites.where((r) => !done.contains(r));
-        expect(missing, isEmpty, reason: '${lesson.id} must be reachable');
-      }
+      tester.view.physicalSize = const Size(1200, 4000);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
 
-      final laterLesson = lessons[1];
+      // Real Learn Lab card navigation: the card itself decides lock state.
+      final router = GoRouter(
+        initialLocation: '/learn',
+        routes: [
+          GoRoute(
+            path: '/learn',
+            builder: (_, __) => const LearnScreen(),
+            routes: [
+              GoRoute(
+                path: ':id',
+                builder: (_, state) =>
+                    LessonDetailScreen(lessonId: state.pathParameters['id']!),
+              ),
+            ],
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -103,13 +117,20 @@ void main() {
             profileRepositoryProvider.overrideWithValue(profileRepo),
             progressRepositoryProvider.overrideWithValue(progressRepo),
           ],
-          child: MaterialApp(
-            home: LessonDetailScreen(lessonId: laterLesson.id),
-          ),
+          child: MaterialApp.router(routerConfig: router),
         ),
       );
       await tester.pumpAndSettle();
 
+      // The first incomplete course folder auto-expands; tap a later notice.
+      final laterCard = find.text(lessons[1].title);
+      expect(laterCard, findsOneWidget);
+      await tester.ensureVisible(laterCard);
+      await tester.tap(laterCard);
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('Complete prerequisite'), findsNothing);
+      expect(find.byType(LessonDetailScreen), findsOneWidget);
       expect(find.text('Complete Lesson (+0 XP)'), findsOneWidget);
     });
 
