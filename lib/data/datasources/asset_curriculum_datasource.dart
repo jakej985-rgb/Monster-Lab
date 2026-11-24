@@ -257,12 +257,32 @@ class AssetCurriculumDataSource {
   /// source of truth; this keeps Course 1 navigable without embedding a second
   /// 700 KB copy of the production content in the binary.
   List<Lesson> getBaselineLessons() {
-    return _cachedBaselineLessons ??=
-        (jsonDecode(_baselineLessonsJson) as List<dynamic>).map((e) {
-      final map = Map<String, dynamic>.from(e as Map<String, dynamic>);
-      map['isPlaceholder'] = true;
-      return Lesson.fromJson(map);
-    }).toList();
+    return _cachedBaselineLessons ??= [
+      for (var index = 1; index <= _baselineLessonTitles.length; index++)
+        Lesson(
+          id: 'l01_${index.toString().padLeft(2, '0')}',
+          title: _baselineLessonTitles[index - 1],
+          summary:
+              'Offline fallback lesson $index. Restore the curriculum assets for full content.',
+          tier: DifficultyTier.rookie,
+          estimatedMinutes: 5,
+          courseId: 'lesson_01',
+          sortOrder: index,
+          prerequisites: index == 1 ? const [] : const ['l01_01'],
+          componentIds: const ['comp_uno'],
+          isPlaceholder: true,
+          xpReward: 0,
+          steps: [
+            LessonStep(
+              stepId: 's1',
+              title: _baselineLessonTitles[index - 1],
+              type: StepType.story,
+              markdownContent: 'This is a compact offline fallback lesson. '
+                  'The full lesson content ships in the bundled curriculum assets.',
+            ),
+          ],
+        ),
+    ];
   }
 
   static const List<String> _baselineLessonTitles = [

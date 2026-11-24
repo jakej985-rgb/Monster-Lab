@@ -82,31 +82,6 @@ class CurriculumDataEngine {
     }
   }
 
-  /// Loads documents in bounded batches and yields between batches so other
-  /// pending async work can progress during curriculum initialization.
-  Future<void> _loadInBatches<T>({
-    required List<String> ids,
-    required String Function(String id) pathFor,
-    required T Function(Map<String, dynamic> json) parse,
-    required void Function(T entity) store,
-  }) async {
-    const batchSize = 8;
-    for (var start = 0; start < ids.length; start += batchSize) {
-      final end =
-          start + batchSize < ids.length ? start + batchSize : ids.length;
-      final raws = await Future.wait(<Future<String>>[
-        for (var index = start; index < end; index++)
-          _assetBundle.loadString(pathFor(ids[index])),
-      ]);
-      for (final raw in raws) {
-        store(parse(jsonDecode(raw) as Map<String, dynamic>));
-      }
-      // A microtask yield keeps widget tests (fake async) progressing without
-      // needing an explicit timer pump.
-      await Future<void>.value();
-    }
-  }
-
   /// Loads and validates all curriculum JSON files from assets
   Future<void> initialize() {
     if (_isInitialized || _isFallbackActive) return Future.value();
@@ -137,9 +112,10 @@ class CurriculumDataEngine {
         if (manifest['courses'] != null) {
           await _loadInBatches<CourseModel>(
             ids: List<String>.from(manifest['courses'] as List),
-            pathFor: (cid) => 'assets/curriculum/courses/$cid.json',
-            parse: CourseModel.fromJson,
-            store: (course) => _courses[course.id] = course,
+            loadString: (cid) =>
+                _assetBundle.loadString('assets/curriculum/courses/$cid.json'),
+            parser: CourseModel.fromJson,
+            onLoaded: (course) => _courses[course.id] = course,
           );
         }
       } catch (_) {

@@ -7,7 +7,6 @@ import '../../../domain/models/hardware_connection_model.dart';
 import '../../shared/providers.dart';
 import '../../shared/widgets/monster_button.dart';
 import '../../shared/widgets/monster_card.dart';
-import '../../shared/widgets/responsive_content_container.dart';
 import 'widgets/hardware_status_badge.dart';
 
 class HardwareCompanionScreen extends ConsumerStatefulWidget {
@@ -793,7 +792,7 @@ class _SerialTerminalState extends ConsumerState<_SerialTerminal>
                 tooltip: _autoScroll ? 'Autoscroll On' : 'Autoscroll Paused',
                 onPressed: () {
                   setState(() => _autoScroll = !_autoScroll);
-                  if (_autoScroll) _scheduleScrollToBottom();
+                  if (_autoScroll) _scrollToBottom();
                 },
               ),
             ],
@@ -888,7 +887,7 @@ class _SerialTerminalState extends ConsumerState<_SerialTerminal>
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   ),
-                  onSubmitted: (_) => _handleSendCommand(),
+                  onSubmitted: (_) => _handleSendCommand(bridge),
                 ),
               ),
               const SizedBox(width: 8),
@@ -896,7 +895,7 @@ class _SerialTerminalState extends ConsumerState<_SerialTerminal>
                 key: const Key('serial_send_button'),
                 icon: const Icon(Icons.send, size: 16),
                 label: const Text('Send'),
-                onPressed: _handleSendCommand,
+                onPressed: () => _handleSendCommand(bridge),
               ),
             ],
           ),

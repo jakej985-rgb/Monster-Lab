@@ -61,6 +61,12 @@ class _FakeHardwareBridge implements IHardwareBridge {
   Future<void> disconnect() async {}
 
   @override
+  bool get hasVerifiedProtocol => false;
+
+  @override
+  Stream<bool> get protocolVerificationStream => Stream.value(false);
+
+  @override
   void dispose() {
     _serialController.close();
     _stateController.close();

@@ -10,7 +10,6 @@ import '../parent/parent_gate_dialog.dart';
 import '../../shared/widgets/avatar_choice_tile.dart';
 import '../../shared/widgets/monster_button.dart';
 import '../../shared/widgets/monster_card.dart';
-import '../../shared/widgets/responsive_content_container.dart';
 
 class ProfileSelectScreen extends ConsumerStatefulWidget {
   const ProfileSelectScreen({super.key});
@@ -76,6 +75,21 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
     );
   }
 
+  void _navigateToHome() {
+    if (mounted) context.go(RoutePaths.home);
+  }
+
+  Future<void> _activateAndNavigate(String profileId) async {
+    await ref.read(activeProfileProvider.notifier).selectProfile(profileId);
+    _navigateToHome();
+  }
+
+  Future<void> _createAndNavigate(LearnerProfileModel profile) async {
+    await ref.read(activeProfileProvider.notifier).saveProfile(profile);
+    ref.invalidate(allProfilesProvider);
+    _navigateToHome();
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -102,180 +116,165 @@ class _ProfileSelectScreenState extends ConsumerState<ProfileSelectScreen> {
                   final avatar = MonsterAvatar.findById(p.avatarId);
                   final isCurrentActive = activeProfile?.id == p.id;
 
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12.0),
-                      child: MonsterCard(
-                        color: isCurrentActive
-                            ? avatar.backgroundColor.withValues(alpha: 0.8)
-                            : null,
-                        onTap: () async {
-                          await ref
-                              .read(activeProfileProvider.notifier)
-                              .selectProfile(p.id);
-                          if (context.mounted) {
-                            context.go(RoutePaths.home);
-                          }
-                        },
-                        child: Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 26,
-                              backgroundColor: avatar.accentColor,
-                              child: Icon(avatar.icon,
-                                  color: Colors.white, size: 28),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        p.nickname,
-                                        style: const TextStyle(
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12.0),
+                    child: MonsterCard(
+                      color: isCurrentActive
+                          ? avatar.backgroundColor.withValues(alpha: 0.8)
+                          : null,
+                      onTap: () => _activateAndNavigate(p.id),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 26,
+                            backgroundColor: avatar.accentColor,
+                            child: Icon(avatar.icon,
+                                color: Colors.white, size: 28),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      p.nickname,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 17),
+                                    ),
+                                    if (isCurrentActive) ...[
+                                      const SizedBox(width: 8),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 6, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color: AppColors.primaryViolet,
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                        ),
+                                        child: const Text(
+                                          'ACTIVE',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 10,
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 17),
-                                      ),
-                                      if (isCurrentActive) ...[
-                                        const SizedBox(width: 8),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 6, vertical: 2),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.primaryViolet,
-                                            borderRadius:
-                                                BorderRadius.circular(6),
-                                          ),
-                                          child: const Text(
-                                            'ACTIVE',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.bold,
-                                            ),
                                           ),
                                         ),
-                                      ],
+                                      ),
                                     ],
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    '${avatar.name} • ${p.ageBracket.name}',
-                                    style: TextStyle(
-                                        color: colorScheme.onSurfaceVariant,
-                                        fontSize: 12),
-                                  ),
-                                ],
-                              ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '${avatar.name} • ${p.ageBracket.name}',
+                                  style: TextStyle(
+                                      color: colorScheme.onSurfaceVariant,
+                                      fontSize: 12),
+                                ),
+                              ],
                             ),
-                            IconButton(
-                              icon: Icon(Icons.delete_outline,
-                                  color: colorScheme.onSurfaceVariant,
-                                  size: 20),
-                              tooltip: 'Delete Profile',
-                              onPressed: () =>
-                                  _showDeleteConfirmation(context, p),
-                            ),
-                            Icon(Icons.arrow_forward_ios,
-                                size: 16, color: colorScheme.onSurfaceVariant),
-                          ],
-                        ),
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete_outline,
+                                color: colorScheme.onSurfaceVariant, size: 20),
+                            tooltip: 'Delete Profile',
+                            onPressed: () =>
+                                _showDeleteConfirmation(context, p),
+                          ),
+                          Icon(Icons.arrow_forward_ios,
+                              size: 16, color: colorScheme.onSurfaceVariant),
+                        ],
                       ),
-                    );
-                  }),
-                  const Divider(height: 36),
-                ],
-                const Text(
-                  'Create New Learner Profile',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _nicknameController,
-                  decoration: InputDecoration(
-                    labelText: 'Monster Nickname',
-                    hintText: 'e.g. SparkyBot, RoboKid',
-                    border: const OutlineInputBorder(),
-                    errorText: _errorMessage,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Choose Your Robot Companion:',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-                ),
-                const SizedBox(height: 10),
-                // Robot Companion Avatars (Responsive Wrap - No side scrolling)
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: [
-                    for (final avatar in MonsterAvatar.all)
-                      AvatarChoiceTile(
-                        key: Key('profile_avatar_${avatar.id}'),
-                        avatar: avatar,
-                        isSelected: avatar.id == _selectedAvatarId,
-                        width: 72,
-                        onTap: () =>
-                            setState(() => _selectedAvatarId = avatar.id),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                DropdownButtonFormField<AgeBracket>(
-                  initialValue: _selectedBracket,
-                  decoration: const InputDecoration(
-                    labelText: 'Age Bracket',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: const [
-                    DropdownMenuItem(
-                        value: AgeBracket.ages7_9,
-                        child: Text('Ages 7–9 (Rookie)')),
-                    DropdownMenuItem(
-                        value: AgeBracket.ages10_12,
-                        child: Text('Ages 10–12 (Builder)')),
-                    DropdownMenuItem(
-                        value: AgeBracket.ages13Plus,
-                        child: Text('Ages 13+ (Engineer)')),
-                  ],
-                  onChanged: (val) {
-                    if (val != null) setState(() => _selectedBracket = val);
-                  },
-                ),
-                const SizedBox(height: 24),
-                MonsterButton(
-                  label: 'Create & Launch',
-                  icon: Icons.rocket_launch,
-                  onPressed: () async {
-                    final name = _nicknameController.text.trim();
-                    if (name.length < 2) {
-                      setState(() => _errorMessage =
-                          'Nickname must be at least 2 characters');
-                      return;
-                    }
-                    setState(() => _errorMessage = null);
-
-                    final newProfile = LearnerProfileModel(
-                      id: DateTime.now().millisecondsSinceEpoch.toString(),
-                      nickname: name,
-                      avatarId: _selectedAvatarId,
-                      ageBracket: _selectedBracket,
-                      createdAt: DateTime.now(),
-                      lastActiveAt: DateTime.now(),
-                    );
-                    await ref
-                        .read(activeProfileProvider.notifier)
-                        .saveProfile(newProfile);
-                    ref.invalidate(allProfilesProvider);
-                    if (context.mounted) {
-                      context.go(RoutePaths.home);
-                    }
-                  },
-                ),
+                    ),
+                  );
+                }),
+                const Divider(height: 36),
               ],
-            ),
+              const Text(
+                'Create New Learner Profile',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _nicknameController,
+                decoration: InputDecoration(
+                  labelText: 'Monster Nickname',
+                  hintText: 'e.g. SparkyBot, RoboKid',
+                  border: const OutlineInputBorder(),
+                  errorText: _errorMessage,
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Choose Your Robot Companion:',
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+              ),
+              const SizedBox(height: 10),
+              // Robot Companion Avatars (Responsive Wrap - No side scrolling)
+              Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: [
+                  for (final avatar in MonsterAvatar.all)
+                    AvatarChoiceTile(
+                      key: Key('profile_avatar_${avatar.id}'),
+                      avatar: avatar,
+                      isSelected: avatar.id == _selectedAvatarId,
+                      width: 72,
+                      onTap: () =>
+                          setState(() => _selectedAvatarId = avatar.id),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<AgeBracket>(
+                initialValue: _selectedBracket,
+                decoration: const InputDecoration(
+                  labelText: 'Age Bracket',
+                  border: OutlineInputBorder(),
+                ),
+                items: const [
+                  DropdownMenuItem(
+                      value: AgeBracket.ages7_9,
+                      child: Text('Ages 7–9 (Rookie)')),
+                  DropdownMenuItem(
+                      value: AgeBracket.ages10_12,
+                      child: Text('Ages 10–12 (Builder)')),
+                  DropdownMenuItem(
+                      value: AgeBracket.ages13Plus,
+                      child: Text('Ages 13+ (Engineer)')),
+                ],
+                onChanged: (val) {
+                  if (val != null) setState(() => _selectedBracket = val);
+                },
+              ),
+              const SizedBox(height: 24),
+              MonsterButton(
+                label: 'Create & Launch',
+                icon: Icons.rocket_launch,
+                onPressed: () async {
+                  final name = _nicknameController.text.trim();
+                  if (name.length < 2) {
+                    setState(() => _errorMessage =
+                        'Nickname must be at least 2 characters');
+                    return;
+                  }
+                  setState(() => _errorMessage = null);
+
+                  final newProfile = LearnerProfileModel(
+                    id: DateTime.now().millisecondsSinceEpoch.toString(),
+                    nickname: name,
+                    avatarId: _selectedAvatarId,
+                    ageBracket: _selectedBracket,
+                    createdAt: DateTime.now(),
+                    lastActiveAt: DateTime.now(),
+                  );
+                  await _createAndNavigate(newProfile);
+                },
+              ),
+            ],
           );
         },
       ),
