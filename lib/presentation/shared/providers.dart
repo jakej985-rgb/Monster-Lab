@@ -424,6 +424,11 @@ final hardwareTelemetryStreamProvider = StreamProvider<PinTelemetry>((ref) {
   return bridge.telemetryStream;
 });
 
+final hardwareProtocolStreamProvider = StreamProvider<bool>((ref) {
+  final bridge = ref.watch(hardwareBridgeProvider);
+  return bridge.protocolVerificationStream;
+});
+
 class HardwareSerialLogsNotifier extends StateNotifier<List<SerialLogEntry>> {
   final IHardwareBridge _bridge;
   StreamSubscription<SerialLogEntry>? _sub;

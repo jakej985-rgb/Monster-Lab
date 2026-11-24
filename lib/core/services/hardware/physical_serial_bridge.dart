@@ -46,6 +46,8 @@ class PhysicalSerialBridge implements IHardwareBridge {
       StreamController<SerialLogEntry>.broadcast(sync: true);
   final StreamController<PinTelemetry> _telemetryController =
       StreamController<PinTelemetry>.broadcast(sync: true);
+  final StreamController<bool> _protocolController =
+      StreamController<bool>.broadcast(sync: true);
 
   @override
   HardwareConnectionState get currentState => _state;
@@ -61,6 +63,9 @@ class PhysicalSerialBridge implements IHardwareBridge {
 
   @override
   bool get hasVerifiedProtocol => _protocolNegotiated;
+
+  @override
+  Stream<bool> get protocolVerificationStream => _protocolController.stream;
 
   @override
   Stream<HardwareConnectionState> get stateStream {
@@ -261,6 +266,18 @@ class PhysicalSerialBridge implements IHardwareBridge {
       return;
     }
 
+    final isOutputCommand = upper.startsWith('LED:') ||
+        upper.startsWith('PIN:') ||
+        upper.startsWith('DIGITAL:') ||
+        upper.startsWith('ANALOG:WRITE');
+    if (isOutputCommand && !_protocolNegotiated) {
+      _logSystem(
+        'Physical output control is reserved for firmware supporting a '
+        'verified protocol.',
+      );
+      return;
+    }
+
     try {
       _safetyInterlock?.validateCommand(command);
     } on SafetyViolationException catch (violation) {
@@ -295,6 +312,7 @@ class PhysicalSerialBridge implements IHardwareBridge {
     await _closeConnection();
     _currentBoard = null;
     _protocolNegotiated = false;
+    _protocolController.add(false);
     _publishTelemetry(PinTelemetry.physicalEmpty());
   }
 
@@ -371,6 +389,7 @@ class PhysicalSerialBridge implements IHardwareBridge {
       try {
         final result = _negotiator.parseDeviceResponse(trimmed);
         _protocolNegotiated = result.isSuccess;
+        _protocolController.add(result.isSuccess);
         _logSystem(
           'Protocol ${result.negotiatedVersion} negotiated '
           '(board: ${result.boardId}).',
@@ -384,7 +403,9 @@ class PhysicalSerialBridge implements IHardwareBridge {
 
     if (trimmed.startsWith('ACK:SAFE_STATE') ||
         trimmed.startsWith('ACK:EMERGENCY_STOP') ||
-        trimmed.startsWith('ACK:STOP')) {
+        trimmed.startsWith('ACK:STOP') ||
+        trimmed == 'PIN13:LOW' ||
+        trimmed == 'LED:0') {
       _publishTelemetry(
           _telemetry.copyWith(pin13Led: false, stopConfirmed: true));
     }
@@ -433,8 +454,9 @@ class PhysicalSerialBridge implements IHardwareBridge {
     ).firstMatch(line);
     if (led != null) {
       final value = led.group(1)!.toUpperCase();
+      final isHigh = value == 'HIGH' || value == 'ON' || value == '1';
       next = next.copyWith(
-        pin13Led: value == 'HIGH' || value == 'ON' || value == '1',
+        pin13Led: isHigh,
         stopConfirmed: true,
       );
       changed = true;
@@ -522,11 +544,8 @@ class PhysicalSerialBridge implements IHardwareBridge {
 
   void _applyStopTelemetry(bool ok) {
     if (!ok) return;
-    final confirmed = _protocolNegotiated;
-    _publishTelemetry(_telemetry.copyWith(
-      pin13Led: confirmed ? false : _telemetry.pin13Led,
-      stopConfirmed: confirmed,
-    ));
+    // Command transmitted, but stop is unconfirmed until the device acknowledges.
+    _publishTelemetry(_telemetry.copyWith(stopConfirmed: false));
   }
 
   String _describe(Object failure) =>
@@ -545,5 +564,6 @@ class PhysicalSerialBridge implements IHardwareBridge {
     _serialController.close();
     // Terminate peripheral telemetry stream.
     _telemetryController.close();
+    _protocolController.close();
   }
 }

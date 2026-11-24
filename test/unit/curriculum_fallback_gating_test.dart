@@ -1,13 +1,19 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:monster_lab/core/services/storage_service.dart';
 import 'package:monster_lab/data/datasources/asset_curriculum_datasource.dart';
 import 'package:monster_lab/data/datasources/curriculum_data_engine.dart';
 import 'package:monster_lab/data/datasources/local_storage_datasource.dart';
 import 'package:monster_lab/data/repositories/curriculum_repository_impl.dart';
+import 'package:monster_lab/data/repositories/profile_repository_impl.dart';
 import 'package:monster_lab/data/repositories/progress_repository_impl.dart';
+import 'package:monster_lab/domain/models/learner_profile_model.dart';
 import 'package:monster_lab/domain/models/learner_progress_model.dart';
 import 'package:monster_lab/domain/models/lesson_model.dart';
+import 'package:monster_lab/presentation/features/learn/lesson_detail_screen.dart';
+import 'package:monster_lab/presentation/shared/providers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FailingAssetBundle extends CachingAssetBundle {
@@ -120,14 +126,26 @@ void main() {
       expect(replayed.processedTransactionIds, contains('evt_1'));
     });
 
-    test(
+    testWidgets(
         'restoring full curriculum after browsing placeholders leaves production lessons uncredited',
-        () async {
+        (tester) async {
       SharedPreferences.setMockInitialValues({});
       final storageService = await StorageService.init();
       final dataSource = LocalStorageDataSource(storageService);
+      final profileRepo = ProfileRepositoryImpl(dataSource);
       final progressRepo = ProgressRepositoryImpl(dataSource);
-      const learnerId = 'learner_test';
+
+      final profile = LearnerProfileModel(
+        id: 'learner_test',
+        nickname: 'Explorer',
+        avatarId: 'avatar_default',
+        ageBracket: AgeBracket.ages10_12,
+        createdAt: DateTime.now(),
+        lastActiveAt: DateTime.now(),
+      );
+      await profileRepo.saveProfile(profile);
+      await profileRepo.setActiveProfile(profile.id);
+      await progressRepo.saveProgress(LearnerProgressModel.empty(profile.id));
 
       final fallbackEngine = CurriculumDataEngine(
         assetBundle: FailingAssetBundle(),
@@ -137,26 +155,53 @@ void main() {
       expect(fallbackEngine.isFallbackActive, isTrue);
 
       final fallbackRepo = CurriculumRepositoryImpl(fallbackEngine);
-      final placeholderLesson = await fallbackRepo.getLessonById('l01_02');
-      expect(placeholderLesson, isNotNull);
-      expect(placeholderLesson.isPlaceholder, isTrue);
 
-      // Verify gating predicate: placeholder lessons are blocked from writing credit
-      final isPlaceholderGated =
-          placeholderLesson.isPlaceholder || fallbackRepo.isFallbackActive;
-      expect(isPlaceholderGated, isTrue);
+      // Mount LessonDetailScreen on placeholder fallback lesson
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            storageServiceProvider.overrideWithValue(storageService),
+            curriculumRepositoryProvider.overrideWithValue(fallbackRepo),
+            profileRepositoryProvider.overrideWithValue(profileRepo),
+            progressRepositoryProvider.overrideWithValue(progressRepo),
+          ],
+          child: const MaterialApp(
+            home: LessonDetailScreen(lessonId: 'l01_01'),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
 
-      // Since it is gated, no progress writes are executed during fallback
-      if (!isPlaceholderGated) {
-        await progressRepo.completeLesson(
-          learnerId,
-          placeholderLesson.id,
-          placeholderLesson.xpReward,
-        );
+      // Advance through first 3 steps
+      for (int i = 0; i < 3; i++) {
+        await tester.ensureVisible(find.text('Next Step'));
+        await tester.tap(find.text('Next Step'));
+        await tester.pumpAndSettle();
       }
 
-      // Check persisted repository progress during fallback
-      final intermediateProgress = await progressRepo.getProgress(learnerId);
+      // Step 4 (Quiz): Answer quiz
+      final opt1 = find.text(
+          'It acts as the robot brain, reading sensors and commanding outputs');
+      expect(opt1, findsWidgets);
+      await tester.ensureVisible(opt1.first);
+      await tester.tap(opt1.first);
+      await tester.pumpAndSettle();
+
+      final submitBtn1 = find.text('Submit Answer');
+      expect(submitBtn1, findsOneWidget);
+      await tester.ensureVisible(submitBtn1);
+      await tester.tap(submitBtn1);
+      await tester.pumpAndSettle();
+
+      // Tap Complete Lesson
+      final completeButton = find.text('Complete Lesson (+10 XP)');
+      expect(completeButton, findsOneWidget);
+      await tester.ensureVisible(completeButton);
+      await tester.tap(completeButton);
+      await tester.pumpAndSettle();
+
+      // Verify progress persisted in repository remained untouched (0 XP, uncompleted)
+      final intermediateProgress = await progressRepo.getProgress(profile.id);
       expect(intermediateProgress.completedLessonIds, isEmpty);
       expect(intermediateProgress.totalXp, equals(0));
 
@@ -169,25 +214,25 @@ void main() {
       expect(normalEngine.isFallbackActive, isFalse);
 
       final restoredRepo = CurriculumRepositoryImpl(normalEngine);
-      final productionLesson = await restoredRepo.getLessonById('l01_02');
+      final productionLesson = await restoredRepo.getLessonById('l01_01');
       expect(productionLesson, isNotNull);
       expect(productionLesson.isPlaceholder, isFalse);
 
       // Reload saved progress from persistent storage to verify it remained untouched
-      final reloadedProgress = await progressRepo.getProgress(learnerId);
-      expect(reloadedProgress.completedLessonIds.contains('l01_02'), isFalse);
+      final reloadedProgress = await progressRepo.getProgress(profile.id);
+      expect(reloadedProgress.completedLessonIds.contains('l01_01'), isFalse);
       expect(reloadedProgress.totalXp, equals(0));
       expect(
           reloadedProgress.completedCourseIds.contains('lesson_01'), isFalse);
 
       // Verify completing restored production lesson awards authoritative credit
       await progressRepo.completeLesson(
-        learnerId,
+        profile.id,
         productionLesson.id,
         productionLesson.xpReward,
       );
-      final creditedProgress = await progressRepo.getProgress(learnerId);
-      expect(creditedProgress.completedLessonIds, contains('l01_02'));
+      final creditedProgress = await progressRepo.getProgress(profile.id);
+      expect(creditedProgress.completedLessonIds, contains('l01_01'));
       expect(creditedProgress.totalXp, equals(productionLesson.xpReward));
     });
   });

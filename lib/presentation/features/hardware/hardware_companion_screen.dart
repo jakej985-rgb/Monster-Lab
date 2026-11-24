@@ -43,8 +43,10 @@ class _HardwareCompanionScreenState
     final boards = await bridge.scanDevices();
     if (mounted) {
       setState(() {
-        _availableBoards =
-            boards.isNotEmpty ? boards : [DiscoveredBoard.virtualSimulator()];
+        _availableBoards = [
+          DiscoveredBoard.virtualSimulator(),
+          ...boards.where((b) => !b.isVirtual),
+        ];
         if (!_availableBoards.contains(_selectedBoard)) {
           _selectedBoard = _availableBoards.first;
         }
@@ -58,13 +60,7 @@ class _HardwareCompanionScreenState
       if (!mounted) return;
 
       if (board == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'No USB device selected. Click Add USB Device to try again.',
-            ),
-          ),
-        );
+        _notifyNoDeviceSelected();
         return;
       }
 
@@ -91,6 +87,16 @@ class _HardwareCompanionScreenState
     }
   }
 
+  void _notifyNoDeviceSelected() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'No USB device selected. Click Add USB Device to try again.',
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final bridge = ref.watch(hardwareBridgeProvider);
@@ -98,6 +104,9 @@ class _HardwareCompanionScreenState
     final state = stateAsync.value ?? bridge.currentState;
     final telemetryAsync = ref.watch(hardwareTelemetryStreamProvider);
     final telemetry = telemetryAsync.value ?? bridge.currentTelemetry;
+    final protocolAsync = ref.watch(hardwareProtocolStreamProvider);
+    final isProtocolVerified =
+        protocolAsync.value ?? bridge.hasVerifiedProtocol;
 
     return Scaffold(
       appBar: AppBar(
@@ -132,7 +141,8 @@ class _HardwareCompanionScreenState
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          _buildTelemetryScopeCard(bridge, state, telemetry),
+          _buildTelemetryScopeCard(
+              bridge, state, telemetry, isProtocolVerified),
           const SizedBox(height: 20),
 
           // 4. Interactive Serial Monitor Terminal
@@ -442,6 +452,7 @@ class _HardwareCompanionScreenState
     IHardwareBridge bridge,
     HardwareConnectionState state,
     PinTelemetry telemetry,
+    bool isProtocolVerified,
   ) {
     final isConnected = state.isConnected;
     final colorScheme = Theme.of(context).colorScheme;
@@ -485,7 +496,7 @@ class _HardwareCompanionScreenState
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 8),
                         ),
-                        onPressed: (isConnected && bridge.hasVerifiedProtocol)
+                        onPressed: (isConnected && isProtocolVerified)
                             ? () {
                                 final cmd =
                                     telemetry.pin13Led ? 'LED:OFF' : 'LED:ON';
@@ -493,7 +504,7 @@ class _HardwareCompanionScreenState
                               }
                             : null,
                         child: Text(
-                          !bridge.hasVerifiedProtocol && isConnected
+                          !isProtocolVerified && isConnected
                               ? 'Firmware Required'
                               : (telemetry.pin13Led ? 'Turn OFF' : 'Turn ON'),
                         ),
@@ -723,11 +734,17 @@ class _SerialTerminalState extends ConsumerState<_SerialTerminal>
     }
   }
 
-  Widget _buildCommandChip(IHardwareBridge bridge, String cmd) {
+  Widget _buildCommandChip(
+    IHardwareBridge bridge,
+    String cmd, {
+    bool isProtocolVerified = false,
+  }) {
+    final isOutput = cmd.startsWith('LED:') || cmd.startsWith('PIN:');
+    final enabled = !isOutput || isProtocolVerified;
     return ActionChip(
       label: Text(cmd,
           style: const TextStyle(fontFamily: 'monospace', fontSize: 12)),
-      onPressed: () => bridge.sendCommand(cmd),
+      onPressed: enabled ? () => bridge.sendCommand(cmd) : null,
       materialTapTargetSize: MaterialTapTargetSize.padded,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     );
@@ -739,6 +756,9 @@ class _SerialTerminalState extends ConsumerState<_SerialTerminal>
     final logs = ref.watch(hardwareSerialLogsProvider);
     final colorScheme = Theme.of(context).colorScheme;
     final bridge = widget.bridge;
+    final protocolAsync = ref.watch(hardwareProtocolStreamProvider);
+    final isProtocolVerified =
+        protocolAsync.value ?? bridge.hasVerifiedProtocol;
 
     _scrollToBottom();
 
@@ -847,8 +867,10 @@ class _SerialTerminalState extends ConsumerState<_SerialTerminal>
             children: [
               _buildCommandChip(bridge, 'PING'),
               _buildCommandChip(bridge, 'STATUS'),
-              _buildCommandChip(bridge, 'LED:ON'),
-              _buildCommandChip(bridge, 'LED:OFF'),
+              _buildCommandChip(bridge, 'LED:ON',
+                  isProtocolVerified: isProtocolVerified),
+              _buildCommandChip(bridge, 'LED:OFF',
+                  isProtocolVerified: isProtocolVerified),
               _buildCommandChip(bridge, 'ANALOG:READ'),
               _buildCommandChip(bridge, 'HELP'),
             ],

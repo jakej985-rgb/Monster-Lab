@@ -28,4 +28,8 @@ abstract class IHardwareBridge {
 
   /// Whether the connected hardware supports a verified safe-state protocol.
   bool get hasVerifiedProtocol => false;
+
+  /// Stream of protocol verification readiness changes.
+  Stream<bool> get protocolVerificationStream =>
+      Stream<bool>.value(hasVerifiedProtocol);
 }

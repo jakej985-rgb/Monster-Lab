@@ -75,12 +75,29 @@ class WebSerialTransport implements SerialTransport {
       'desktop, served over HTTPS or localhost.';
 
   String _idForPort(_SerialPort port) {
+    try {
+      final jsPort = port as JSObject;
+      final existing = jsPort.getProperty('__ml_port_id'.toJS);
+      if (existing != null && !existing.isUndefined && !existing.isNull) {
+        final existingId = (existing as JSString).toDart;
+        _handles[existingId] = port;
+        return existingId;
+      }
+    } catch (_) {
+      // Property access may fail on mock or non-browser test environments.
+    }
     for (final entry in _handles.entries) {
       if (entry.value == port) {
         return entry.key;
       }
     }
     final id = 'web-serial-port-${_nextId++}';
+    try {
+      final jsPort = port as JSObject;
+      jsPort.setProperty('__ml_port_id'.toJS, id.toJS);
+    } catch (_) {
+      // Setting custom JS properties may fail in strict or non-browser environments.
+    }
     _handles[id] = port;
     return id;
   }

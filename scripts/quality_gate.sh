@@ -21,7 +21,13 @@ export PATH="/opt/flutter/bin:$PATH"
 
 echo "================================================================="
 echo "                MONSTER LAB - QUALITY GATE RUNNER                "
-echo "================================================================="
+echo "[0/11] Checking required Python dependencies..."
+python3 -c "import yaml, jsonschema, PIL, markdown" 2>/dev/null || {
+  echo "ERROR: Missing required Python packages for quality gate."
+  echo "Run: pip install -r requirements-dev.txt"
+  exit 1
+}
+echo "  Python dependencies: PASSED"
 
 echo "[1/11] Checking Dart code formatting..."
 dart format --output=none --set-exit-if-changed .

@@ -271,7 +271,7 @@ class PinTelemetry {
 
   factory PinTelemetry.physicalEmpty() => const PinTelemetry(
         pin13Led: false,
-        stopConfirmed: true,
+        stopConfirmed: false,
         a0Voltage: 0.0,
         a0Raw: 0,
         sonarDistanceCm: 0.0,

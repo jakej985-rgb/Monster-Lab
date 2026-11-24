@@ -69,6 +69,9 @@ class VirtualSimulationBridge implements IHardwareBridge {
   Stream<PinTelemetry> get telemetryStream => _telemetryController.stream;
 
   @override
+  Stream<bool> get protocolVerificationStream => Stream<bool>.value(true);
+
+  @override
   Future<List<DiscoveredBoard>> scanDevices() async {
     _transitionTo(HardwareConnectionState.scanning);
     _logSystem('Scanning local USB serial ports and virtual adapters...');

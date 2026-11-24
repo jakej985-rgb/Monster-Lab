@@ -12,10 +12,11 @@ Before compiling, ensure the required SDKs and dependencies are installed for yo
 
 ### Universal Prerequisites
 - **Flutter SDK**: `3.47.3` (channel `stable`, bundled with Dart `3.13.3+`).
-- **Python**: `3.11+` or `3.12+` with `Pillow` library:
+- **Python**: `3.11+` or `3.12+` with development prerequisites:
   ```bash
-  pip install Pillow
+  pip install -r requirements-dev.txt
   ```
+  *(Installs `Pillow`, `markdown`, `pyyaml`, and `jsonschema` for curriculum validation and quality gates)*
 - **Git**: `2.x+`.
 
 ### Platform-Specific Prerequisites
