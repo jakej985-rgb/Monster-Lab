@@ -131,6 +131,10 @@ void main() {
 
       expect(find.textContaining('Complete prerequisite'), findsNothing);
       expect(find.byType(LessonDetailScreen), findsOneWidget);
+      final openedScreen =
+          tester.widget<LessonDetailScreen>(find.byType(LessonDetailScreen));
+      expect(openedScreen.lessonId, equals(lessons[1].id));
+      expect(find.text(lessons[1].title), findsWidgets);
       expect(find.text('Complete Lesson (+0 XP)'), findsOneWidget);
     });
 
@@ -247,7 +251,41 @@ void main() {
 
       final fallbackRepo = CurriculumRepositoryImpl(fallbackEngine);
 
-      // Mount LessonDetailScreen on placeholder fallback lesson
+      // Build browsing harness with navigation between fallback placeholder notices
+      final router = GoRouter(
+        initialLocation: '/learn',
+        routes: [
+          GoRoute(
+            path: '/learn',
+            builder: (context, state) => Scaffold(
+              body: ListView(
+                children: [
+                  ListTile(
+                    key: const Key('notice_l01_01'),
+                    title: const Text(
+                        'Offline fallback lesson 1: What Is Arduino?'),
+                    onTap: () => context.push('/learn/l01_01'),
+                  ),
+                  ListTile(
+                    key: const Key('notice_l01_02'),
+                    title: const Text(
+                        'Offline fallback lesson 2: Your First Circuit'),
+                    onTap: () => context.push('/learn/l01_02'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          GoRoute(
+            path: '/learn/:lessonId',
+            builder: (context, state) {
+              final lessonId = state.pathParameters['lessonId'] ?? 'l01_01';
+              return LessonDetailScreen(lessonId: lessonId);
+            },
+          ),
+        ],
+      );
+
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
@@ -256,35 +294,89 @@ void main() {
             profileRepositoryProvider.overrideWithValue(profileRepo),
             progressRepositoryProvider.overrideWithValue(progressRepo),
           ],
-          child: const MaterialApp(
-            home: LessonDetailScreen(lessonId: 'l01_01'),
+          child: MaterialApp.router(
+            routerConfig: router,
           ),
         ),
       );
       await tester.pumpAndSettle();
 
-      // Tap Complete Lesson on the single-step fallback notice
-      final completeButton = find.text('Complete Lesson (+0 XP)');
-      expect(completeButton, findsOneWidget);
-      await tester.ensureVisible(completeButton);
-      await tester.tap(completeButton);
+      // 1. Browse and inspect the first placeholder notice
+      final firstNoticeFinder = find.byKey(const Key('notice_l01_01'));
+      expect(firstNoticeFinder, findsOneWidget);
+      await tester.tap(firstNoticeFinder);
       await tester.pumpAndSettle();
 
-      // Verify that the fallback completion dialog path was explicitly reached
+      expect(find.byType(LessonDetailScreen), findsOneWidget);
+      final firstScreen =
+          tester.widget<LessonDetailScreen>(find.byType(LessonDetailScreen));
+      expect(firstScreen.lessonId, equals('l01_01'));
+      expect(find.text('What Is Arduino?'), findsWidgets);
+      expect(find.textContaining('This is a compact offline fallback lesson'),
+          findsOneWidget);
+
+      final firstCompleteButton = find.text('Complete Lesson (+0 XP)');
+      expect(firstCompleteButton, findsOneWidget);
+      await tester.ensureVisible(firstCompleteButton);
+      await tester.tap(firstCompleteButton);
+      await tester.pumpAndSettle();
+
       expect(find.text('Fallback Notice'), findsOneWidget);
+      expect(
+        find.text(
+            'Browsed fallback placeholder "What Is Arduino?". Production curriculum is loading.'),
+        findsOneWidget,
+      );
       expect(
         find.text('FALLBACK NOTICE (No XP or credit recorded)'),
         findsOneWidget,
       );
       await tester.tap(find.text('Back to Learn Lab'));
       await tester.pumpAndSettle();
+      expect(find.byType(LessonDetailScreen), findsNothing);
+
+      // 2. Browse to the second placeholder notice
+      final secondNoticeFinder = find.byKey(const Key('notice_l01_02'));
+      expect(secondNoticeFinder, findsOneWidget);
+      await tester.tap(secondNoticeFinder);
+      await tester.pumpAndSettle();
+
+      // Verify destination is specifically the second notice and not misrouted to the first
+      expect(find.byType(LessonDetailScreen), findsOneWidget);
+      final secondScreen =
+          tester.widget<LessonDetailScreen>(find.byType(LessonDetailScreen));
+      expect(secondScreen.lessonId, equals('l01_02'));
+      expect(find.text('Your First Circuit'), findsWidgets);
+      expect(find.textContaining('This is a compact offline fallback lesson'),
+          findsOneWidget);
+
+      // Verify completion button on second notice and tap
+      final secondCompleteButton = find.text('Complete Lesson (+0 XP)');
+      expect(secondCompleteButton, findsOneWidget);
+      await tester.ensureVisible(secondCompleteButton);
+      await tester.tap(secondCompleteButton);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Fallback Notice'), findsOneWidget);
+      expect(
+        find.text(
+            'Browsed fallback placeholder "Your First Circuit". Production curriculum is loading.'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('FALLBACK NOTICE (No XP or credit recorded)'),
+        findsOneWidget,
+      );
+      await tester.tap(find.text('Back to Learn Lab'));
+      await tester.pumpAndSettle();
+      expect(find.byType(LessonDetailScreen), findsNothing);
 
       // Verify progress persisted in repository remained untouched (0 XP, uncompleted)
       final intermediateProgress = await progressRepo.getProgress(profile.id);
       expect(intermediateProgress.completedLessonIds, isEmpty);
       expect(intermediateProgress.totalXp, equals(0));
 
-      // Now restore assets
+      // 3. Now restore full curriculum assets
       final normalDataSource = AssetCurriculumDataSource();
       final normalEngine = CurriculumDataEngine(
         fallbackDataSource: normalDataSource,
@@ -293,26 +385,30 @@ void main() {
       expect(normalEngine.isFallbackActive, isFalse);
 
       final restoredRepo = CurriculumRepositoryImpl(normalEngine);
-      final productionLesson = await restoredRepo.getLessonById('l01_01');
-      expect(productionLesson, isNotNull);
-      expect(productionLesson.isPlaceholder, isFalse);
+      final productionLesson1 = await restoredRepo.getLessonById('l01_01');
+      final productionLesson2 = await restoredRepo.getLessonById('l01_02');
+      expect(productionLesson1, isNotNull);
+      expect(productionLesson2, isNotNull);
+      expect(productionLesson1.isPlaceholder, isFalse);
+      expect(productionLesson2.isPlaceholder, isFalse);
 
       // Reload saved progress from persistent storage to verify it remained untouched
       final reloadedProgress = await progressRepo.getProgress(profile.id);
       expect(reloadedProgress.completedLessonIds.contains('l01_01'), isFalse);
+      expect(reloadedProgress.completedLessonIds.contains('l01_02'), isFalse);
       expect(reloadedProgress.totalXp, equals(0));
       expect(
           reloadedProgress.completedCourseIds.contains('lesson_01'), isFalse);
 
-      // Verify completing restored production lesson awards authoritative credit
+      // 4. Verify completing restored production lesson awards authoritative credit
       await progressRepo.completeLesson(
         profile.id,
-        productionLesson.id,
-        productionLesson.xpReward,
+        productionLesson2.id,
+        productionLesson2.xpReward,
       );
       final creditedProgress = await progressRepo.getProgress(profile.id);
-      expect(creditedProgress.completedLessonIds, contains('l01_01'));
-      expect(creditedProgress.totalXp, equals(productionLesson.xpReward));
+      expect(creditedProgress.completedLessonIds, contains('l01_02'));
+      expect(creditedProgress.totalXp, equals(productionLesson2.xpReward));
     });
   });
 }
