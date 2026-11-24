@@ -251,40 +251,29 @@ void main() {
 
       final fallbackRepo = CurriculumRepositoryImpl(fallbackEngine);
 
-      // Build browsing harness with navigation between fallback placeholder notices
+      tester.view.physicalSize = const Size(1200, 4000);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+
+      // Real Learn Lab card navigation: the card itself evaluates lock state.
       final router = GoRouter(
         initialLocation: '/learn',
         routes: [
           GoRoute(
             path: '/learn',
-            builder: (context, state) => Scaffold(
-              body: ListView(
-                children: [
-                  ListTile(
-                    key: const Key('notice_l01_01'),
-                    title: const Text(
-                        'Offline fallback lesson 1: What Is Arduino?'),
-                    onTap: () => context.push('/learn/l01_01'),
-                  ),
-                  ListTile(
-                    key: const Key('notice_l01_02'),
-                    title: const Text(
-                        'Offline fallback lesson 2: Your First Circuit'),
-                    onTap: () => context.push('/learn/l01_02'),
-                  ),
-                ],
+            builder: (_, __) => const LearnScreen(),
+            routes: [
+              GoRoute(
+                path: ':lessonId',
+                builder: (_, state) => LessonDetailScreen(
+                  lessonId: state.pathParameters['lessonId']!,
+                ),
               ),
-            ),
-          ),
-          GoRoute(
-            path: '/learn/:lessonId',
-            builder: (context, state) {
-              final lessonId = state.pathParameters['lessonId'] ?? 'l01_01';
-              return LessonDetailScreen(lessonId: lessonId);
-            },
+            ],
           ),
         ],
       );
+      addTearDown(router.dispose);
 
       await tester.pumpWidget(
         ProviderScope(
@@ -302,8 +291,9 @@ void main() {
       await tester.pumpAndSettle();
 
       // 1. Browse and inspect the first placeholder notice
-      final firstNoticeFinder = find.byKey(const Key('notice_l01_01'));
+      final firstNoticeFinder = find.text('What Is Arduino?');
       expect(firstNoticeFinder, findsOneWidget);
+      await tester.ensureVisible(firstNoticeFinder);
       await tester.tap(firstNoticeFinder);
       await tester.pumpAndSettle();
 
@@ -336,8 +326,9 @@ void main() {
       expect(find.byType(LessonDetailScreen), findsNothing);
 
       // 2. Browse to the second placeholder notice
-      final secondNoticeFinder = find.byKey(const Key('notice_l01_02'));
+      final secondNoticeFinder = find.text('Your First Circuit');
       expect(secondNoticeFinder, findsOneWidget);
+      await tester.ensureVisible(secondNoticeFinder);
       await tester.tap(secondNoticeFinder);
       await tester.pumpAndSettle();
 
@@ -391,6 +382,7 @@ void main() {
       expect(productionLesson2, isNotNull);
       expect(productionLesson1.isPlaceholder, isFalse);
       expect(productionLesson2.isPlaceholder, isFalse);
+      expect(productionLesson2.prerequisites, contains(productionLesson1.id));
 
       // Reload saved progress from persistent storage to verify it remained untouched
       final reloadedProgress = await progressRepo.getProgress(profile.id);
@@ -400,15 +392,79 @@ void main() {
       expect(
           reloadedProgress.completedCourseIds.contains('lesson_01'), isFalse);
 
-      // 4. Verify completing restored production lesson awards authoritative credit
-      await progressRepo.completeLesson(
-        profile.id,
-        productionLesson2.id,
-        productionLesson2.xpReward,
+      // Re-render Learn Lab with restored production curriculum
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            storageServiceProvider.overrideWithValue(storageService),
+            curriculumRepositoryProvider.overrideWithValue(restoredRepo),
+            profileRepositoryProvider.overrideWithValue(profileRepo),
+            progressRepositoryProvider.overrideWithValue(progressRepo),
+          ],
+          child: MaterialApp.router(
+            routerConfig: router,
+          ),
+        ),
       );
-      final creditedProgress = await progressRepo.getProgress(profile.id);
-      expect(creditedProgress.completedLessonIds, contains('l01_02'));
-      expect(creditedProgress.totalXp, equals(productionLesson2.xpReward));
+      await tester.pumpAndSettle();
+
+      // 4. Verify prerequisite gating blocks opening the restored second lesson
+      final lockedCard = find.text(productionLesson2.title);
+      expect(lockedCard, findsOneWidget);
+      await tester.ensureVisible(lockedCard);
+      await tester.tap(lockedCard);
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('Complete prerequisite (${productionLesson1.id}) first!'),
+        findsOneWidget,
+      );
+      expect(find.byType(LessonDetailScreen), findsNothing);
+
+      // 5. Complete prerequisite lesson 1 to unlock lesson 2
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(MaterialApp)),
+      );
+      await container.read(activeProgressProvider.notifier).completeLesson(
+            productionLesson1.id,
+            productionLesson1.xpReward,
+          );
+      await tester.pumpAndSettle();
+
+      final unlockedProgress = await progressRepo.getProgress(profile.id);
+      expect(
+          unlockedProgress.completedLessonIds, contains(productionLesson1.id));
+      expect(
+        unlockedProgress.completedLessonIds
+            .containsAll(productionLesson2.prerequisites),
+        isTrue,
+      );
+
+      // 6. Now tap the unlocked second lesson; navigation succeeds
+      await tester.tap(lockedCard);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(LessonDetailScreen), findsOneWidget);
+      final restoredDetail =
+          tester.widget<LessonDetailScreen>(find.byType(LessonDetailScreen));
+      expect(restoredDetail.lessonId, equals(productionLesson2.id));
+      expect(find.text(productionLesson2.title), findsWidgets);
+
+      // Complete production lesson 2 and verify authoritative credit for both
+      await container.read(activeProgressProvider.notifier).completeLesson(
+            productionLesson2.id,
+            productionLesson2.xpReward,
+          );
+      await tester.pumpAndSettle();
+      final finalProgress = await progressRepo.getProgress(profile.id);
+      expect(
+        finalProgress.completedLessonIds,
+        containsAll([productionLesson1.id, productionLesson2.id]),
+      );
+      expect(
+        finalProgress.totalXp,
+        equals(productionLesson1.xpReward + productionLesson2.xpReward),
+      );
     });
   });
 }
