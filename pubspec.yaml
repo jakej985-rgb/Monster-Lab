@@ -1,7 +1,7 @@
 name: monster_lab
 description: "Monster Lab - Kid-focused, hands-on robotics learning app built around the Monster Arduino kit."
 publish_to: "none"
-version: 0.7.0+37
+version: 0.8.0+38
 
 environment:
   sdk: ">=3.3.0 <4.0.0"

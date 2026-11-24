@@ -6,6 +6,75 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.8.0+38] - 2026-11-24
+
+### Overview & Release Highlights
+Release 0.8.0+38 introduces updates across 17 commits.
+
+### 🚀 New Features & Capabilities
+- **perf(router): cache decoded profile ids across redirects** (`2075088`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+
+### 🏗️ Architecture & Data Layer
+- **test(curriculum): verify destination uniqueness and lesson id when browsing fallback notices** (`b1a7191`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **test(curriculum): open later fallback notice through real Learn Lab card** (`75b7329`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **test(curriculum): cover opening a later fallback notice with empty progress** (`2f3b208`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+
+### 🎨 User Experience & Design System
+- **test(curriculum): verify prerequisite locking and unlocking on restored lessons** (`0c590e1`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **style: fix dart format failures and add LED observation widget coverage** (`45cbfbb`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **fix(audit): harden hardware telemetry and protocol streams, enforce fallback UI test gating, and add dependency preflights** (`c79a2cf`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+
+### 🐛 Bug Fixes & Stability
+- **fix(hardware): show unobserved physical LED as unknown** (`c67581d`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **fix(curriculum): align fallback lesson definitions, resolve batch loading duplicate, and restore test harness compatibility** (`78cfb85`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **fix(audit): preserve simulator options, safeguard stop acks, align auto zoom, and deduplicate profile decodes** (`5446887`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **fix(audit): pin action SHAs, verify stop telemetry, stabilize web serial, and gate fallback progress** (`dd35863`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **fix(parent): guard ref.read across async gap with mounted check** (`10120e1`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **fix(shortcuts,hardware,curriculum): hoist global shortcuts to root, batch asset loading, and preserve terminal state** (`fdfd74f`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **fix(audit): remediate fallback gating, profile invalidation, and async lifecycle gaps** (`c90a132`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **fix(audit): remediate PR #74 security findings and achieve Grade A review compliance** (`01baf70`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+
+### 📚 Documentation & Specifications
+- **Merge pull request #76 from jakej985-rgb/audit/remediation-r01-r13** (`17f7cc4`):
+  - *What Changed*: * fix(audit): remediate PR #74 security findings and achieve Grade A review compliance * fix(audit): remediate fallback gating, profile invalidation, and async lifecycle gaps * fix(shortcuts,hardware,curriculum): hoist global shortcuts to root, batch asset loading, and preserve terminal state * fix(parent): guard ref.read across async gap with mounted check * fix(audit): pin action SHAs, verify stop telemetry, stabilize web serial, and gate fallback progress * fix(audit): harden hardware telemetry and protocol streams, enforce fallback UI test gating, and add dependency preflights * fix(audit): preserve simulator options, safeguard stop acks, align auto zoom, and deduplicate profile decodes * fix(curriculum): align fallback lesson definitions, resolve batch loading duplicate, and restore test harness compatibility * perf(router): cache decoded profile ids across redirects * fix(hardware): show unobserved physical LED as unknown * test(curriculum): cover opening a later fallback notice with empty progress * style: fix dart format failures and add LED observation widget coverage * test(curriculum): open later fallback notice through real Learn Lab card * test(curriculum): verify destination uniqueness and lesson id when browsing fallback notices * test(curriculum): verify prerequisite locking and unlocking on restored lessons ---------
+  - *Why*: Technical necessity and user enhancement.
+- **Merge branch 'main' into audit/remediation-r01-r13** (`357abb1`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+
+
+---
+
 ## [0.7.0+37] - 2026-11-24
 
 ### Overview & Release Highlights
