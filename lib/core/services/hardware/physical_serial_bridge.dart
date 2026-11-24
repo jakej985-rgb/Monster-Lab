@@ -244,6 +244,7 @@ class PhysicalSerialBridge implements IHardwareBridge {
     if (upper == 'EMERGENCY_STOP') {
       _safetyInterlock
           ?.tripSafetyLock('Operator Emergency Stop command received');
+      _publishPendingStopTelemetry();
       final ok = await _write(command);
       _applyStopTelemetry(ok);
       _transitionTo(HardwareConnectionState.safetyLocked);
@@ -253,6 +254,7 @@ class PhysicalSerialBridge implements IHardwareBridge {
 
     if (upper == 'SAFE_STATE') {
       _safetyInterlock?.enterSafeState();
+      _publishPendingStopTelemetry();
       final ok = await _write(command);
       _applyStopTelemetry(ok);
       _logSystem('SAFE_STATE sent to the board.');
@@ -546,8 +548,12 @@ class PhysicalSerialBridge implements IHardwareBridge {
     _telemetryController.add(next);
   }
 
+  void _publishPendingStopTelemetry() {
+    _publishTelemetry(_telemetry.copyWith(stopConfirmed: false));
+  }
+
   void _applyStopTelemetry(bool ok) {
-    if (!ok) return;
+    if (!ok || _telemetry.stopConfirmed) return;
     // Command transmitted, but stop is unconfirmed until the device acknowledges.
     _publishTelemetry(_telemetry.copyWith(stopConfirmed: false));
   }

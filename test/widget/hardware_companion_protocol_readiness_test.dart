@@ -124,7 +124,7 @@ void main() {
     testWidgets(
         'delivering handshake response after connected frame enables LED toggle without telemetry event',
         (tester) async {
-      tester.view.physicalSize = const Size(1280, 1024);
+      tester.view.physicalSize = const Size(900, 1200);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() {
         tester.view.resetPhysicalSize();

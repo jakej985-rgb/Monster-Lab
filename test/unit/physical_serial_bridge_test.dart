@@ -65,8 +65,16 @@ class FakeSerialConnection implements SerialPortConnection {
   @override
   Stream<void> get disconnected => _disconnected.stream;
 
+  Completer<void>? writeCompleter;
+
   @override
-  Future<void> writeLine(String line) async => written.add(line);
+  Future<void> writeLine(String line) async {
+    written.add(line);
+    final completer = writeCompleter;
+    if (completer != null && !completer.isCompleted) {
+      await completer.future;
+    }
+  }
 
   @override
   Future<void> close() async {
@@ -275,6 +283,45 @@ void main() {
       // Now sketch acknowledges the safe state
       connection.emitLine('ACK:SAFE_STATE');
       await Future<void>.delayed(Duration.zero);
+      expect(bridge.currentTelemetry.stopConfirmed, isTrue);
+      expect(bridge.currentTelemetry.pin13Led, isFalse);
+    });
+
+    test(
+        'early stop acknowledgment while write future is unresolved preserves confirmed state',
+        () async {
+      final (transport, bridge) = createBridge(initialPort: unoPort);
+
+      final boards = await bridge.scanDevices();
+      await bridge.connect(board: boards.single);
+      final connection = transport.lastConnection!;
+
+      // Board is running with LED HIGH
+      connection.emitLine('LED:HIGH');
+      await Future<void>.delayed(Duration.zero);
+      expect(bridge.currentTelemetry.pin13Led, isTrue);
+      expect(bridge.currentTelemetry.stopConfirmed, isTrue);
+
+      // Pause the write future to simulate asynchronous in-flight transmission
+      final writeGate = Completer<void>();
+      connection.writeCompleter = writeGate;
+
+      final stopFuture = bridge.sendCommand('EMERGENCY_STOP');
+
+      // Stop status is immediately published as pending before write completes
+      expect(bridge.currentTelemetry.stopConfirmed, isFalse);
+
+      // Device acknowledges stop while write future is still unresolved
+      connection.emitLine('ACK:SAFE_STATE');
+      await Future<void>.delayed(Duration.zero);
+      expect(bridge.currentTelemetry.stopConfirmed, isTrue);
+      expect(bridge.currentTelemetry.pin13Led, isFalse);
+
+      // Now resolve the write future
+      writeGate.complete();
+      await stopFuture;
+
+      // Ensure write completion does not overwrite the confirmed stop status
       expect(bridge.currentTelemetry.stopConfirmed, isTrue);
       expect(bridge.currentTelemetry.pin13Led, isFalse);
     });

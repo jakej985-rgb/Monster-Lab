@@ -44,10 +44,8 @@ class _HardwareCompanionScreenState
     final boards = await bridge.scanDevices();
     if (mounted) {
       setState(() {
-        _availableBoards = [
-          DiscoveredBoard.virtualSimulator(),
-          ...boards.where((b) => !b.isVirtual),
-        ];
+        _availableBoards =
+            boards.isNotEmpty ? boards : [DiscoveredBoard.virtualSimulator()];
         if (!_availableBoards.contains(_selectedBoard)) {
           _selectedBoard = _availableBoards.first;
         }

@@ -352,11 +352,11 @@ final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
 
 double defaultUiScale({bool? isDesktopOverride}) {
   if (isDesktopOverride != null) {
-    return isDesktopOverride ? 0.80 : 1.0;
+    return isDesktopOverride ? AppSettings.desktopAutoUiScale : 1.0;
   }
   final isDesktop =
       !kIsWeb && (Platform.isLinux || Platform.isWindows || Platform.isMacOS);
-  return isDesktop ? 0.80 : 1.0;
+  return isDesktop ? AppSettings.desktopAutoUiScale : 1.0;
 }
 
 class SettingsNotifier extends StateNotifier<AppSettings> {

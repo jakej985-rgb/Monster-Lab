@@ -29,34 +29,8 @@ import '../../domain/models/learner_profile_model.dart';
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 GlobalKey<NavigatorState> get rootNavigatorKey => _rootNavigatorKey;
 
-/// Redirects run on every navigation, so keep a tiny cache of decoded
-/// profile-id sets instead of parsing the same JSON payload each time.
-final Map<String, Set<String>> _profileIdCache = {};
-const int _maxProfileIdCacheEntries = 4;
-
-Set<String>? _profileIdsFrom(String? raw) {
-  if (raw == null || raw.isEmpty) return null;
-  final cached = _profileIdCache[raw];
-  if (cached != null) return cached;
-
-/// True when [raw] is a non-empty JSON list whose every entry decodes.
-bool _decodesProfiles(String? raw) =>
-    LearnerProfileModel.tryDecodeList(raw) != null;
-
 final ParentSessionService defaultParentSessionService =
     appParentSessionService;
-
-/// True when [raw] is a non-empty JSON list whose every entry decodes.
-bool _decodesProfiles(String? raw) => _profileIdsFrom(raw) != null;
-
-/// Mirrors `LocalStorageDataSource.getProfiles`: the payload counts only if
-/// every entry decodes, so routing never accepts a profile the repository
-/// would reject.
-bool _containsLoadableProfile(String? raw, String activeId) {
-  final loaded = LearnerProfileModel.tryDecodeList(raw);
-  return loaded != null && loaded.any((profile) => profile.id == activeId);
-}
-
 String? routeAuthorizationGuard({
   required String location,
   required bool hasActiveProfile,
@@ -90,8 +64,9 @@ bool resolveHasActiveProfile({
 }) {
   if (activeId == null || activeId.trim().isEmpty) return false;
   if (profilesRaw == '[]') return false;
-  final source = _decodesProfiles(profilesRaw) ? profilesRaw : backupRaw;
-  return _containsLoadableProfile(source, activeId);
+  final profiles = LearnerProfileModel.tryDecodeList(profilesRaw) ??
+      LearnerProfileModel.tryDecodeList(backupRaw);
+  return profiles != null && profiles.any((profile) => profile.id == activeId);
 }
 
 final GoRouter appRouter = GoRouter(

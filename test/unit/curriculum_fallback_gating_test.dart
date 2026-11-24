@@ -200,6 +200,15 @@ void main() {
       await tester.tap(completeButton);
       await tester.pumpAndSettle();
 
+      // Verify that the fallback completion dialog path was explicitly reached
+      expect(find.text('Fallback Notice'), findsOneWidget);
+      expect(
+        find.text('FALLBACK NOTICE (No XP or credit recorded)'),
+        findsOneWidget,
+      );
+      await tester.tap(find.text('Back to Learn Lab'));
+      await tester.pumpAndSettle();
+
       // Verify progress persisted in repository remained untouched (0 XP, uncompleted)
       final intermediateProgress = await progressRepo.getProgress(profile.id);
       expect(intermediateProgress.completedLessonIds, isEmpty);
