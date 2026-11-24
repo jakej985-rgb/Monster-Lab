@@ -43,6 +43,16 @@ void main() {
       }
     });
 
+    test('Baseline fallback lessons have no prerequisites so all are reachable',
+        () {
+      final baseline = AssetCurriculumDataSource().getBaselineLessons();
+      expect(baseline.length, greaterThan(1));
+      for (final lesson in baseline) {
+        expect(lesson.prerequisites, isEmpty,
+            reason: 'Fallback ${lesson.id} must not gate on uncredited lessons');
+      }
+    });
+
     test('Lesson.fromJson parses isPlaceholder correctly and defaults to false',
         () {
       final normalJson = {

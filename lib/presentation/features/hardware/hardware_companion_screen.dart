@@ -482,7 +482,9 @@ class _HardwareCompanionScreenState
                       Text(
                         !telemetry.stopConfirmed
                             ? 'Pin 13 LED: Stop Pending Confirmation'
-                            : 'Pin 13 LED: ${telemetry.pin13Led ? "HIGH (ON)" : "LOW (OFF)"}',
+                            : !telemetry.pin13Observed
+                                ? 'Pin 13 LED: Unknown'
+                                : 'Pin 13 LED: ${telemetry.pin13Led ? "HIGH (ON)" : "LOW (OFF)"}',
                         style: const TextStyle(
                             fontSize: 12, fontWeight: FontWeight.bold),
                       ),
@@ -496,15 +498,19 @@ class _HardwareCompanionScreenState
                         ),
                         onPressed: (isConnected && isProtocolVerified)
                             ? () {
-                                final cmd =
-                                    telemetry.pin13Led ? 'LED:OFF' : 'LED:ON';
+                                final cmd = telemetry.pin13Observed &&
+                                        telemetry.pin13Led
+                                    ? 'LED:OFF'
+                                    : 'LED:ON';
                                 bridge.sendCommand(cmd);
                               }
                             : null,
                         child: Text(
                           !isProtocolVerified && isConnected
                               ? 'Firmware Required'
-                              : (telemetry.pin13Led ? 'Turn OFF' : 'Turn ON'),
+                              : (telemetry.pin13Observed && telemetry.pin13Led
+                                  ? 'Turn OFF'
+                                  : 'Turn ON'),
                         ),
                       ),
                     ],

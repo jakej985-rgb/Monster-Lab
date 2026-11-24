@@ -287,6 +287,46 @@ void main() {
       expect(bridge.currentTelemetry.pin13Led, isFalse);
     });
 
+    test('ordinary LED report during pending stop keeps stop unconfirmed',
+        () async {
+      final (transport, bridge) = createBridge(initialPort: unoPort);
+
+      final boards = await bridge.scanDevices();
+      await bridge.connect(board: boards.single);
+      final connection = transport.lastConnection!;
+
+      final writeGate = Completer<void>();
+      connection.writeCompleter = writeGate;
+      final stopFuture = bridge.sendCommand('EMERGENCY_STOP');
+      expect(bridge.currentTelemetry.stopConfirmed, isFalse);
+
+      // Unrelated LED report while the stop write is in flight
+      connection.emitLine('LED:HIGH');
+      await Future<void>.delayed(Duration.zero);
+      expect(bridge.currentTelemetry.stopConfirmed, isFalse);
+
+      writeGate.complete();
+      await stopFuture;
+      expect(bridge.currentTelemetry.stopConfirmed, isFalse);
+
+      connection.emitLine('ACK:SAFE_STATE');
+      await Future<void>.delayed(Duration.zero);
+      expect(bridge.currentTelemetry.stopConfirmed, isTrue);
+      expect(bridge.currentTelemetry.pin13Led, isFalse);
+    });
+
+    test('fresh physical connection reports LED as unobserved', () async {
+      final (transport, bridge) = createBridge(initialPort: unoPort);
+
+      final boards = await bridge.scanDevices();
+      await bridge.connect(board: boards.single);
+      expect(bridge.currentTelemetry.pin13Observed, isFalse);
+
+      transport.lastConnection!.emitLine('LED:LOW');
+      await Future<void>.delayed(Duration.zero);
+      expect(bridge.currentTelemetry.pin13Observed, isTrue);
+    });
+
     test(
         'early stop acknowledgment while write future is unresolved preserves confirmed state',
         () async {

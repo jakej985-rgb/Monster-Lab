@@ -414,7 +414,11 @@ class PhysicalSerialBridge implements IHardwareBridge {
         trimmed == 'LED:0') {
       _stopPending = false;
       _publishTelemetry(
-          _telemetry.copyWith(pin13Led: false, stopConfirmed: true));
+          _telemetry.copyWith(
+            pin13Led: false,
+            stopConfirmed: true,
+            pin13Observed: true,
+          ));
     }
   }
 
@@ -466,6 +470,7 @@ class PhysicalSerialBridge implements IHardwareBridge {
       next = next.copyWith(
         pin13Led: isHigh,
         stopConfirmed: !_stopPending,
+        pin13Observed: true,
       );
       changed = true;
     }
