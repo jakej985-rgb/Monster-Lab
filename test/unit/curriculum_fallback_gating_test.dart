@@ -53,6 +53,64 @@ void main() {
       }
     });
 
+    testWidgets(
+        'later fallback notice is unlocked and opens with no completed lessons',
+        (tester) async {
+      SharedPreferences.setMockInitialValues({});
+      final storageService = await StorageService.init();
+      final dataSource = LocalStorageDataSource(storageService);
+      final profileRepo = ProfileRepositoryImpl(dataSource);
+      final progressRepo = ProgressRepositoryImpl(dataSource);
+
+      final profile = LearnerProfileModel(
+        id: 'learner_nav',
+        nickname: 'Navigator',
+        avatarId: 'avatar_default',
+        ageBracket: AgeBracket.ages10_12,
+        createdAt: DateTime.now(),
+        lastActiveAt: DateTime.now(),
+      );
+      await profileRepo.saveProfile(profile);
+      await profileRepo.setActiveProfile(profile.id);
+      final emptyProgress = LearnerProgressModel.empty(profile.id);
+      await progressRepo.saveProgress(emptyProgress);
+
+      final engine = CurriculumDataEngine(
+        assetBundle: FailingAssetBundle(),
+        allowFallback: true,
+      );
+      await engine.initialize();
+      final repo = CurriculumRepositoryImpl(engine);
+      final lessons = await repo.getLessons();
+      expect(lessons.length, greaterThan(1));
+
+      // Mirrors the Learn Lab lock check: no later notice may be locked.
+      for (final lesson in lessons.skip(1)) {
+        final missing = lesson.prerequisites.where((req) =>
+            !emptyProgress.completedLessonIds.contains(req) &&
+            !emptyProgress.completedCourseIds.contains(req));
+        expect(missing, isEmpty, reason: '${lesson.id} must be reachable');
+      }
+
+      final laterLesson = lessons[1];
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            storageServiceProvider.overrideWithValue(storageService),
+            curriculumRepositoryProvider.overrideWithValue(repo),
+            profileRepositoryProvider.overrideWithValue(profileRepo),
+            progressRepositoryProvider.overrideWithValue(progressRepo),
+          ],
+          child: MaterialApp(
+            home: LessonDetailScreen(lessonId: laterLesson.id),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Complete Lesson (+0 XP)'), findsOneWidget);
+    });
+
     test('Lesson.fromJson parses isPlaceholder correctly and defaults to false',
         () {
       final normalJson = {
