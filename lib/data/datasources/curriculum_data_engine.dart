@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 import '../../core/curriculum/curriculum_validator.dart';
 import '../../domain/models/lesson_model.dart';
@@ -80,31 +82,6 @@ class CurriculumDataEngine {
     }
   }
 
-  /// Loads documents in bounded batches and yields between batches so other
-  /// pending async work can progress during curriculum initialization.
-  Future<void> _loadInBatches<T>({
-    required List<String> ids,
-    required String Function(String id) pathFor,
-    required T Function(Map<String, dynamic> json) parse,
-    required void Function(T entity) store,
-  }) async {
-    const batchSize = 8;
-    for (var start = 0; start < ids.length; start += batchSize) {
-      final end =
-          start + batchSize < ids.length ? start + batchSize : ids.length;
-      final raws = await Future.wait(<Future<String>>[
-        for (var index = start; index < end; index++)
-          _assetBundle.loadString(pathFor(ids[index])),
-      ]);
-      for (final raw in raws) {
-        store(parse(jsonDecode(raw) as Map<String, dynamic>));
-      }
-      // A microtask yield keeps widget tests (fake async) progressing without
-      // needing an explicit timer pump.
-      await Future<void>.value();
-    }
-  }
-
   /// Loads and validates all curriculum JSON files from assets
   Future<void> initialize() {
     if (_isInitialized || _isFallbackActive) return Future.value();
@@ -135,49 +112,55 @@ class CurriculumDataEngine {
         if (manifest['courses'] != null) {
           await _loadInBatches<CourseModel>(
             ids: List<String>.from(manifest['courses'] as List),
-            pathFor: (cid) => 'assets/curriculum/courses/$cid.json',
-            parse: CourseModel.fromJson,
-            store: (course) => _courses[course.id] = course,
+            loadString: (cid) =>
+                _assetBundle.loadString('assets/curriculum/courses/$cid.json'),
+            parser: CourseModel.fromJson,
+            onLoaded: (course) => _courses[course.id] = course,
           );
         }
       } catch (_) {
         // Courses optional during tests
       }
 
-      // 2. Load Components
+      // 2. Load Components in batches yielding to the event queue
+      final compIds = List<String>.from(manifest['components'] as List);
       await _loadInBatches<ComponentModel>(
-        ids: List<String>.from(manifest['components'] as List),
-        pathFor: (cid) => 'assets/curriculum/components/$cid.json',
-        parse: ComponentModel.fromJson,
-        store: (comp) => _components[comp.id] = comp,
+        ids: compIds,
+        loadString: (cid) =>
+            _assetBundle.loadString('assets/curriculum/components/$cid.json'),
+        parser: ComponentModel.fromJson,
+        onLoaded: (comp) => _components[comp.id] = comp,
       );
 
-      // 3. Load Lessons
+      // 3. Load Lessons in batches yielding to the event queue
+      final lessonIds = List<String>.from(manifest['lessons'] as List);
       await _loadInBatches<Lesson>(
-        ids: List<String>.from(manifest['lessons'] as List),
-        pathFor: (lid) => 'assets/curriculum/lessons/$lid.json',
-        parse: Lesson.fromJson,
-        store: (lesson) => _lessons[lesson.id] = lesson,
+        ids: lessonIds,
+        loadString: (lid) =>
+            _assetBundle.loadString('assets/curriculum/lessons/$lid.json'),
+        parser: Lesson.fromJson,
+        onLoaded: (lesson) => _lessons[lesson.id] = lesson,
       );
 
-      // 4. Load Projects
+      // 4. Load Projects in batches yielding to the event queue
+      final projectIds = List<String>.from(manifest['projects'] as List);
       await _loadInBatches<ProjectModel>(
-        ids: List<String>.from(manifest['projects'] as List),
-        pathFor: (pid) => 'assets/curriculum/projects/$pid.json',
-        parse: ProjectModel.fromJson,
-        store: (project) => _projects[project.id] = project,
+        ids: projectIds,
+        loadString: (pid) =>
+            _assetBundle.loadString('assets/curriculum/projects/$pid.json'),
+        parser: ProjectModel.fromJson,
+        onLoaded: (project) => _projects[project.id] = project,
       );
 
-      // 5. Load Challenges
+      // 5. Load Challenges in batches yielding to the event queue
+      final challengeIds = List<String>.from(manifest['challenges'] as List);
       await _loadInBatches<ChallengeModel>(
-        ids: List<String>.from(manifest['challenges'] as List),
-        pathFor: (chid) => 'assets/curriculum/challenges/$chid.json',
-        parse: ChallengeModel.fromJson,
-        store: (challenge) => _challenges[challenge.id] = challenge,
+        ids: challengeIds,
+        loadString: (chid) =>
+            _assetBundle.loadString('assets/curriculum/challenges/$chid.json'),
+        parser: ChallengeModel.fromJson,
+        onLoaded: (challenge) => _challenges[challenge.id] = challenge,
       );
-
-      // Yield before the full integrity pass.
-      await Future<void>.value();
 
       // 6. Validate Curriculum Integrity
       CurriculumValidator.validateCurriculumIntegrity(
@@ -205,6 +188,31 @@ class CurriculumDataEngine {
           'Failed to load production curriculum assets: $e',
           cause: e,
         );
+      }
+    }
+  }
+
+  Future<void> _loadInBatches<T>({
+    required List<String> ids,
+    required Future<String> Function(String id) loadString,
+    required T Function(Map<String, dynamic> json) parser,
+    required void Function(T item) onLoaded,
+    int batchSize = 15,
+  }) async {
+    for (int i = 0; i < ids.length; i += batchSize) {
+      final end = (i + batchSize < ids.length) ? i + batchSize : ids.length;
+      final batchIds = ids.sublist(i, end);
+      final batchJsons = await Future.wait(batchIds.map(loadString));
+      for (final jsonStr in batchJsons) {
+        final map = jsonDecode(jsonStr) as Map<String, dynamic>;
+        onLoaded(parser(map));
+      }
+      if (end < ids.length) {
+        final isTest =
+            !kIsWeb && Platform.environment.containsKey('FLUTTER_TEST');
+        if (!isTest) {
+          await Future<void>.delayed(Duration.zero);
+        }
       }
     }
   }

@@ -30,7 +30,7 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
 
     ref.listen<AsyncValue<bool>>(parentSessionAuthStateProvider,
         (previous, next) {
-      if (next.value == false) _handleSessionExpired();
+      if (!(next.value ?? true)) _handleSessionExpired();
     });
 
     return Scaffold(
@@ -529,53 +529,64 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
   }
 
   String _formatDate(DateTime dt) {
-    return '${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+    final y = dt.year;
+    final m = dt.month.toString().padLeft(2, '0');
+    final d = dt.day.toString().padLeft(2, '0');
+    final hh = dt.hour.toString().padLeft(2, '0');
+    final mm = dt.minute.toString().padLeft(2, '0');
+    return '$y-$m-$d $hh:$mm';
+  }
+
+  Widget _buildInterlockTile({
+    required Key key,
+    required String title,
+    required String subtitle,
+    required String authKey,
+    required bool isAuthorized,
+  }) {
+    return SwitchListTile(
+      key: key,
+      title: Text(title),
+      subtitle: Text(subtitle),
+      value: isAuthorized,
+      onChanged: (val) {
+        if (val && !_ensureAuthorized()) return;
+        ref
+            .read(safetyAuthorizationsProvider.notifier)
+            .setAuthorized(authKey, val);
+      },
+    );
   }
 
   Widget _buildSafetyInterlocksCard(Map<String, bool> authorizations) {
     return MonsterCard(
       child: Column(
         children: [
-          SwitchListTile(
+          _buildInterlockTile(
             key: const Key('laser_interlock_switch'),
-            title: const Text('Laser Module Authorization (Project 11)'),
-            subtitle: const Text(
-                'Requires adult supervision. Protects eyes from KY-008 laser diode.'),
-            value: authorizations['laser'] ?? false,
-            onChanged: (val) {
-              if (val && !_ensureAuthorized()) return;
-              ref
-                  .read(safetyAuthorizationsProvider.notifier)
-                  .setAuthorized('laser', val);
-            },
+            title: 'Laser Module Authorization (Project 11)',
+            subtitle:
+                'Requires adult supervision. Protects eyes from KY-008 laser diode.',
+            authKey: 'laser',
+            isAuthorized: authorizations['laser'] ?? false,
           ),
           const Divider(),
-          SwitchListTile(
+          _buildInterlockTile(
             key: const Key('gas_interlock_switch'),
-            title: const Text('Gas/Flame Sensor Heating Authorization'),
-            subtitle: const Text(
-                'Ensures adult presence during MQ-9 internal heater burn-in.'),
-            value: authorizations['gas'] ?? false,
-            onChanged: (val) {
-              if (val && !_ensureAuthorized()) return;
-              ref
-                  .read(safetyAuthorizationsProvider.notifier)
-                  .setAuthorized('gas', val);
-            },
+            title: 'Gas/Flame Sensor Heating Authorization',
+            subtitle:
+                'Ensures adult presence during MQ-9 internal heater burn-in.',
+            authKey: 'gas',
+            isAuthorized: authorizations['gas'] ?? false,
           ),
           const Divider(),
-          SwitchListTile(
+          _buildInterlockTile(
             key: const Key('relay_interlock_switch'),
-            title: const Text('High-Current Relay Authorization'),
-            subtitle: const Text(
-                'Required for the optocoupled relay module; never connect it to mains AC.'),
-            value: authorizations['relay'] ?? false,
-            onChanged: (val) {
-              if (val && !_ensureAuthorized()) return;
-              ref
-                  .read(safetyAuthorizationsProvider.notifier)
-                  .setAuthorized('relay', val);
-            },
+            title: 'High-Current Relay Authorization',
+            subtitle:
+                'Required for the optocoupled relay module; never connect it to mains AC.',
+            authKey: 'relay',
+            isAuthorized: authorizations['relay'] ?? false,
           ),
         ],
       ),
@@ -595,8 +606,9 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
           ),
         );
       }
-      return false;
     }
+    // Action cannot proceed without active parent authorization.
+    return false;
   }
 
   void _handleSessionExpired() {
@@ -608,7 +620,9 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
     );
     try {
       context.go(RoutePaths.parentGate);
-    } catch (_) {}
+    } catch (_) {
+      // Ignored if navigator context is already unmounted or transitioning.
+    }
   }
 
   Widget _buildDataControlsCard(
@@ -852,6 +866,7 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
                       .read(progressRepositoryProvider)
                       .resetProgress(profile.id),
                 );
+                if (!mounted) return;
                 await ref.read(activeProgressProvider.notifier).loadProgress();
                 nav.pop();
                 messenger.showSnackBar(

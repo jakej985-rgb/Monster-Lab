@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 import 'route_constants.dart';
@@ -27,44 +26,10 @@ import '../services/parent_session_service.dart';
 import '../../domain/models/learner_profile_model.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
-
-/// Redirects run on every navigation, so keep a tiny cache of decoded
-/// profile-id sets instead of parsing the same JSON payload each time.
-final Map<String, Set<String>> _profileIdCache = {};
-const int _maxProfileIdCacheEntries = 4;
-
-Set<String>? _profileIdsFrom(String? raw) {
-  if (raw == null || raw.isEmpty) return null;
-  final cached = _profileIdCache[raw];
-  if (cached != null) return cached;
-
-  try {
-    final ids = <String>{};
-    for (final item in jsonDecode(raw) as List) {
-      ids.add(LearnerProfileModel.fromJson(item as Map<String, dynamic>).id);
-    }
-    if (_profileIdCache.length >= _maxProfileIdCacheEntries) {
-      _profileIdCache.clear();
-    }
-    _profileIdCache[raw] = ids;
-    return ids;
-  } catch (_) {
-    return null;
-  }
-}
+GlobalKey<NavigatorState> get rootNavigatorKey => _rootNavigatorKey;
 
 final ParentSessionService defaultParentSessionService =
     appParentSessionService;
-
-/// True when [raw] is a non-empty JSON list whose every entry decodes.
-bool _decodesProfiles(String? raw) => _profileIdsFrom(raw) != null;
-
-/// Mirrors `LocalStorageDataSource.getProfiles`: the payload counts only if
-/// every entry decodes, so routing never accepts a profile the repository
-/// would reject.
-bool _containsLoadableProfile(String? raw, String activeId) =>
-    _profileIdsFrom(raw)?.contains(activeId) ?? false;
-
 String? routeAuthorizationGuard({
   required String location,
   required bool hasActiveProfile,
@@ -98,9 +63,19 @@ bool resolveHasActiveProfile({
 }) {
   if (activeId == null || activeId.trim().isEmpty) return false;
   if (profilesRaw == '[]') return false;
-  final source = _decodesProfiles(profilesRaw) ? profilesRaw : backupRaw;
-  return _containsLoadableProfile(source, activeId);
+  final key = (profilesRaw, backupRaw);
+  if (_profileIdCacheKey != key) {
+    final profiles = LearnerProfileModel.tryDecodeList(profilesRaw) ??
+        LearnerProfileModel.tryDecodeList(backupRaw);
+    _profileIdCache = profiles?.map((p) => p.id).toSet();
+    _profileIdCacheKey = key;
+  }
+  return _profileIdCache?.contains(activeId) ?? false;
 }
+
+// Redirects run on every navigation; skip re-decoding unchanged payloads.
+(String?, String?)? _profileIdCacheKey;
+Set<String>? _profileIdCache;
 
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,

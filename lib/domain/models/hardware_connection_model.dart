@@ -178,6 +178,7 @@ class HardwareConnectionStateMachine {
 
 class DiscoveredBoard {
   final String portName;
+  final String? displayName;
   final HardwareBoardModel boardModel;
   final int? vendorId;
   final int? productId;
@@ -186,6 +187,7 @@ class DiscoveredBoard {
 
   const DiscoveredBoard({
     required this.portName,
+    this.displayName,
     required this.boardModel,
     this.vendorId,
     this.productId,
@@ -193,7 +195,17 @@ class DiscoveredBoard {
     this.isVirtual = false,
   });
 
-  String get displayTitle => '${boardModel.name} on $portName';
+  String get displayTitle => '${boardModel.name} on ${displayName ?? portName}';
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DiscoveredBoard &&
+          runtimeType == other.runtimeType &&
+          portName == other.portName;
+
+  @override
+  int get hashCode => portName.hashCode;
 
   static DiscoveredBoard virtualSimulator() {
     return const DiscoveredBoard(
@@ -242,6 +254,10 @@ class SerialLogEntry {
 
 class PinTelemetry {
   final bool pin13Led;
+  final bool stopConfirmed;
+
+  /// Whether [pin13Led] reflects a device observation rather than a default.
+  final bool pin13Observed;
   final double a0Voltage;
   final int a0Raw;
   final double sonarDistanceCm;
@@ -249,14 +265,28 @@ class PinTelemetry {
 
   const PinTelemetry({
     this.pin13Led = false,
+    this.stopConfirmed = true,
+    this.pin13Observed = true,
     this.a0Voltage = 2.5,
     this.a0Raw = 512,
     this.sonarDistanceCm = 24.0,
     this.freeSramBytes = 1524,
   });
 
+  factory PinTelemetry.physicalEmpty() => const PinTelemetry(
+        pin13Led: false,
+        stopConfirmed: true,
+        pin13Observed: false,
+        a0Voltage: 0.0,
+        a0Raw: 0,
+        sonarDistanceCm: 0.0,
+        freeSramBytes: 0,
+      );
+
   PinTelemetry copyWith({
     bool? pin13Led,
+    bool? stopConfirmed,
+    bool? pin13Observed,
     double? a0Voltage,
     int? a0Raw,
     double? sonarDistanceCm,
@@ -264,6 +294,8 @@ class PinTelemetry {
   }) {
     return PinTelemetry(
       pin13Led: pin13Led ?? this.pin13Led,
+      stopConfirmed: stopConfirmed ?? this.stopConfirmed,
+      pin13Observed: pin13Observed ?? this.pin13Observed,
       a0Voltage: a0Voltage ?? this.a0Voltage,
       a0Raw: a0Raw ?? this.a0Raw,
       sonarDistanceCm: sonarDistanceCm ?? this.sonarDistanceCm,
@@ -273,6 +305,8 @@ class PinTelemetry {
 
   Map<String, dynamic> toMap() => {
         'pin13Led': pin13Led,
+        'stopConfirmed': stopConfirmed,
+        'pin13Observed': pin13Observed,
         'a0Voltage': a0Voltage,
         'a0Raw': a0Raw,
         'sonarDistanceCm': sonarDistanceCm,

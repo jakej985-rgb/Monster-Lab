@@ -7,7 +7,6 @@ import '../../../domain/models/hardware_connection_model.dart';
 import '../../shared/providers.dart';
 import '../../shared/widgets/monster_button.dart';
 import '../../shared/widgets/monster_card.dart';
-import '../../shared/widgets/responsive_content_container.dart';
 import 'widgets/hardware_status_badge.dart';
 
 class HardwareCompanionScreen extends ConsumerStatefulWidget {
@@ -30,7 +29,13 @@ class _HardwareCompanionScreenState
   void initState() {
     super.initState();
     _selectedBoard = _availableBoards.first;
-    _refreshDiscoveredBoards();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        // Warm up the logs provider eagerly so connection output before scroll is captured
+        ref.read(hardwareSerialLogsProvider);
+        _refreshDiscoveredBoards();
+      }
+    });
   }
 
   Future<void> _refreshDiscoveredBoards() async {
@@ -53,13 +58,7 @@ class _HardwareCompanionScreenState
       if (!mounted) return;
 
       if (board == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'No USB device selected. Click Add USB Device to try again.',
-            ),
-          ),
-        );
+        _notifyNoDeviceSelected();
         return;
       }
 
@@ -86,6 +85,16 @@ class _HardwareCompanionScreenState
     }
   }
 
+  void _notifyNoDeviceSelected() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'No USB device selected. Click Add USB Device to try again.',
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final bridge = ref.watch(hardwareBridgeProvider);
@@ -93,6 +102,9 @@ class _HardwareCompanionScreenState
     final state = stateAsync.value ?? bridge.currentState;
     final telemetryAsync = ref.watch(hardwareTelemetryStreamProvider);
     final telemetry = telemetryAsync.value ?? bridge.currentTelemetry;
+    final protocolAsync = ref.watch(hardwareProtocolStreamProvider);
+    final isProtocolVerified =
+        protocolAsync.value ?? bridge.hasVerifiedProtocol;
 
     return Scaffold(
       appBar: AppBar(
@@ -107,50 +119,48 @@ class _HardwareCompanionScreenState
           ),
         ],
       ),
-      body: ResponsiveContentContainer(
-        maxWidth: 1100,
-        child: ListView(
-          padding: const EdgeInsets.all(16.0),
-          children: [
-            // 1. Philosophy Banner: Hardware is Optional
-            _buildInfoBanner(),
-            const SizedBox(height: 16),
+      body: ListView(
+        padding: const EdgeInsets.all(16.0),
+        children: [
+          // 1. Philosophy Banner: Hardware is Optional
+          _buildInfoBanner(),
+          const SizedBox(height: 16),
 
-            // Web Serial availability / browser guidance
-            _buildTransportInfoBar(bridge),
+          // Web Serial availability / browser guidance
+          _buildTransportInfoBar(bridge),
 
-            // 2. Hardware Connection Control Card
-            _buildConnectionControlCard(bridge, state),
-            const SizedBox(height: 20),
+          // 2. Hardware Connection Control Card
+          _buildConnectionControlCard(bridge, state),
+          const SizedBox(height: 20),
 
-            // 3. Live Hardware Telemetry Scope
-            const Text(
-              'Live Hardware Telemetry Scope',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            _buildTelemetryScopeCard(bridge, state, telemetry),
-            const SizedBox(height: 20),
+          // 3. Live Hardware Telemetry Scope
+          const Text(
+            'Live Hardware Telemetry Scope',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          _buildTelemetryScopeCard(
+              bridge, state, telemetry, isProtocolVerified),
+          const SizedBox(height: 20),
 
-            // 4. Interactive Serial Monitor Terminal
-            const Text(
-              'Interactive Serial Monitor',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            _buildSerialMonitorCard(bridge),
-            const SizedBox(height: 20),
+          // 4. Interactive Serial Monitor Terminal
+          const Text(
+            'Interactive Serial Monitor',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          _SerialTerminal(bridge: bridge, state: state),
+          const SizedBox(height: 20),
 
-            // 5. Supported Arduino Boards Guide
-            const Text(
-              'Supported Microcontroller Boards',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            _buildSupportedBoardsGuide(),
-            const SizedBox(height: 32),
-          ],
-        ),
+          // 5. Supported Arduino Boards Guide
+          const Text(
+            'Supported Microcontroller Boards',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          _buildSupportedBoardsGuide(),
+          const SizedBox(height: 32),
+        ],
       ),
     );
   }
@@ -185,7 +195,9 @@ class _HardwareCompanionScreenState
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Use the built-in virtual simulator to practice wiring, commands, and telemetry. Real USB hardware connections are not enabled in this release.',
+                  'Use the built-in virtual simulator anywhere, or connect a '
+                  'real Arduino over USB in Chrome or Edge on desktop. Hardware '
+                  'data never leaves this device.',
                   style: TextStyle(
                       fontSize: 13,
                       color: colorScheme.onSurfaceVariant,
@@ -237,7 +249,8 @@ class _HardwareCompanionScreenState
                 const SizedBox(height: 2),
                 Text(
                   supported
-                      ? 'Click Add USB Device to choose an Arduino. The browser asks permission before sharing a port, and data stays on this device.'
+                      ? 'Click Add USB Device to choose an Arduino. The browser asks permission '
+                          'before sharing a port, and data stays on this device.'
                       : (bridge.transportNotice ??
                           'Real USB serial is unavailable here. The virtual simulator remains fully usable.'),
                   style: TextStyle(
@@ -317,7 +330,7 @@ class _HardwareCompanionScreenState
                 key: const Key('hardware_port_dropdown'),
                 isExpanded: true,
                 value: _availableBoards.contains(_selectedBoard)
-                    ? _selectedBoard
+                    ? _availableBoards.firstWhere((b) => b == _selectedBoard)
                     : _availableBoards.first,
                 items: _availableBoards.map((board) {
                   return DropdownMenuItem<DiscoveredBoard>(
@@ -437,6 +450,7 @@ class _HardwareCompanionScreenState
     IHardwareBridge bridge,
     HardwareConnectionState state,
     PinTelemetry telemetry,
+    bool isProtocolVerified,
   ) {
     final isConnected = state.isConnected;
     final colorScheme = Theme.of(context).colorScheme;
@@ -466,7 +480,11 @@ class _HardwareCompanionScreenState
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'Pin 13 LED: ${telemetry.pin13Led ? "HIGH (ON)" : "LOW (OFF)"}',
+                        !telemetry.stopConfirmed
+                            ? 'Pin 13 LED: Stop Pending Confirmation'
+                            : !telemetry.pin13Observed
+                                ? 'Pin 13 LED: Unknown'
+                                : 'Pin 13 LED: ${telemetry.pin13Led ? "HIGH (ON)" : "LOW (OFF)"}',
                         style: const TextStyle(
                             fontSize: 12, fontWeight: FontWeight.bold),
                       ),
@@ -478,15 +496,22 @@ class _HardwareCompanionScreenState
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 8),
                         ),
-                        onPressed: isConnected
+                        onPressed: (isConnected && isProtocolVerified)
                             ? () {
-                                final cmd =
-                                    telemetry.pin13Led ? 'LED:OFF' : 'LED:ON';
+                                final cmd = telemetry.pin13Observed &&
+                                        telemetry.pin13Led
+                                    ? 'LED:OFF'
+                                    : 'LED:ON';
                                 bridge.sendCommand(cmd);
                               }
                             : null,
-                        child:
-                            Text(telemetry.pin13Led ? 'Turn OFF' : 'Turn ON'),
+                        child: Text(
+                          !isProtocolVerified && isConnected
+                              ? 'Firmware Required'
+                              : (telemetry.pin13Observed && telemetry.pin13Led
+                                  ? 'Turn OFF'
+                                  : 'Turn ON'),
+                        ),
                       ),
                     ],
                   ),
@@ -604,10 +629,6 @@ class _HardwareCompanionScreenState
     );
   }
 
-  Widget _buildSerialMonitorCard(IHardwareBridge bridge) {
-    return _SerialTerminal(bridge: bridge);
-  }
-
   Widget _buildSupportedBoardsGuide() {
     final colorScheme = Theme.of(context).colorScheme;
     return Column(
@@ -668,17 +689,25 @@ class _HardwareCompanionScreenState
 
 class _SerialTerminal extends ConsumerStatefulWidget {
   final IHardwareBridge bridge;
+  final HardwareConnectionState state;
 
-  const _SerialTerminal({required this.bridge});
+  const _SerialTerminal({
+    required this.bridge,
+    required this.state,
+  });
 
   @override
   ConsumerState<_SerialTerminal> createState() => _SerialTerminalState();
 }
 
-class _SerialTerminalState extends ConsumerState<_SerialTerminal> {
+class _SerialTerminalState extends ConsumerState<_SerialTerminal>
+    with AutomaticKeepAliveClientMixin {
   final TextEditingController _commandController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   bool _autoScroll = true;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void dispose() {
@@ -687,30 +716,39 @@ class _SerialTerminalState extends ConsumerState<_SerialTerminal> {
     super.dispose();
   }
 
-  void _scheduleScrollToBottom() {
-    if (!_autoScroll) return;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || !_scrollController.hasClients) return;
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeOut,
-      );
-    });
+  void _scrollToBottom() {
+    if (_autoScroll && _scrollController.hasClients) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+          );
+        }
+      });
+    }
   }
 
-  void _handleSendCommand() {
+  void _handleSendCommand(IHardwareBridge bridge) {
     final text = _commandController.text.trim();
-    if (text.isEmpty) return;
-    widget.bridge.sendCommand(text);
-    _commandController.clear();
+    if (text.isNotEmpty) {
+      bridge.sendCommand(text);
+      _commandController.clear();
+    }
   }
 
-  Widget _buildCommandChip(String cmd) {
+  Widget _buildCommandChip(
+    IHardwareBridge bridge,
+    String cmd, {
+    bool isProtocolVerified = false,
+  }) {
+    final isOutput = cmd.startsWith('LED:') || cmd.startsWith('PIN:');
+    final enabled = !isOutput || isProtocolVerified;
     return ActionChip(
       label: Text(cmd,
           style: const TextStyle(fontFamily: 'monospace', fontSize: 12)),
-      onPressed: () => widget.bridge.sendCommand(cmd),
+      onPressed: enabled ? () => bridge.sendCommand(cmd) : null,
       materialTapTargetSize: MaterialTapTargetSize.padded,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     );
@@ -718,12 +756,15 @@ class _SerialTerminalState extends ConsumerState<_SerialTerminal> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    super.build(context);
     final logs = ref.watch(hardwareSerialLogsProvider);
+    final colorScheme = Theme.of(context).colorScheme;
+    final bridge = widget.bridge;
+    final protocolAsync = ref.watch(hardwareProtocolStreamProvider);
+    final isProtocolVerified =
+        protocolAsync.value ?? bridge.hasVerifiedProtocol;
 
-    ref.listen<List<SerialLogEntry>>(hardwareSerialLogsProvider, (_, __) {
-      _scheduleScrollToBottom();
-    });
+    _scrollToBottom();
 
     return MonsterCard(
       child: Column(
@@ -757,7 +798,7 @@ class _SerialTerminalState extends ConsumerState<_SerialTerminal> {
                 tooltip: _autoScroll ? 'Autoscroll On' : 'Autoscroll Paused',
                 onPressed: () {
                   setState(() => _autoScroll = !_autoScroll);
-                  if (_autoScroll) _scheduleScrollToBottom();
+                  if (_autoScroll) _scrollToBottom();
                 },
               ),
             ],
@@ -827,12 +868,14 @@ class _SerialTerminalState extends ConsumerState<_SerialTerminal> {
             spacing: 6,
             runSpacing: 6,
             children: [
-              _buildCommandChip('PING'),
-              _buildCommandChip('STATUS'),
-              _buildCommandChip('LED:ON'),
-              _buildCommandChip('LED:OFF'),
-              _buildCommandChip('ANALOG:READ'),
-              _buildCommandChip('HELP'),
+              _buildCommandChip(bridge, 'PING'),
+              _buildCommandChip(bridge, 'STATUS'),
+              _buildCommandChip(bridge, 'LED:ON',
+                  isProtocolVerified: isProtocolVerified),
+              _buildCommandChip(bridge, 'LED:OFF',
+                  isProtocolVerified: isProtocolVerified),
+              _buildCommandChip(bridge, 'ANALOG:READ'),
+              _buildCommandChip(bridge, 'HELP'),
             ],
           ),
           const SizedBox(height: 10),
@@ -850,7 +893,7 @@ class _SerialTerminalState extends ConsumerState<_SerialTerminal> {
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   ),
-                  onSubmitted: (_) => _handleSendCommand(),
+                  onSubmitted: (_) => _handleSendCommand(bridge),
                 ),
               ),
               const SizedBox(width: 8),
@@ -858,7 +901,7 @@ class _SerialTerminalState extends ConsumerState<_SerialTerminal> {
                 key: const Key('serial_send_button'),
                 icon: const Icon(Icons.send, size: 16),
                 label: const Text('Send'),
-                onPressed: _handleSendCommand,
+                onPressed: () => _handleSendCommand(bridge),
               ),
             ],
           ),

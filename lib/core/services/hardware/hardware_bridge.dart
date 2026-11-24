@@ -25,4 +25,11 @@ abstract class IHardwareBridge {
   /// Shows the browser/OS port picker. Returns `null` when unavailable or the
   /// user cancels.
   Future<DiscoveredBoard?> requestPhysicalPort() async => null;
+
+  /// Whether the connected hardware supports a verified safe-state protocol.
+  bool get hasVerifiedProtocol => false;
+
+  /// Stream of protocol verification readiness changes.
+  Stream<bool> get protocolVerificationStream =>
+      Stream<bool>.value(hasVerifiedProtocol);
 }

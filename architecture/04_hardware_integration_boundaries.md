@@ -83,18 +83,25 @@ abstract class IHardwareBridge {
 
 ---
 
-## 4. Web Serial Transport (Implemented, Not Wired)
+## 4. Web Serial Transport (Implemented)
 
-> **Status:** `HardwareBridgeService.createDefaultBridge` returns only `VirtualSimulationBridge` in this release. The components below exist and are unit-tested with fake transports, but are not reachable from the app until device-confirmed safe-state, stable port identity, and unambiguous board matching land.
+The web build opens real Arduino boards through the browser's `navigator.serial`
+API behind the `SerialTransport` boundary:
 
-When enabled, the web build will open real Arduino boards through the browser's `navigator.serial` API behind the `SerialTransport` boundary:
 
-- `WebSerialTransport` is selected by a conditional import (`dart.library.js_interop`) and implemented with `dart:js_interop`. It lists previously authorized ports, opens the browser port picker, reads raw bytes, and writes newline-terminated commands.
-- `PhysicalSerialBridge` decodes UTF-8 lines, forwards device output to the serial monitor, parses common telemetry (`A0:`, `SONAR:`/`Distance:`, `Pin 13:`, `FREE_SRAM:`), and applies the same safety interlock as the simulator.
-- `CompositeHardwareBridge` keeps the virtual simulator first in the port picker and routes a selected physical board to the Web Serial bridge.
-- `UnsupportedSerialTransport` is used on native platforms and browsers without Web Serial; the simulator remains fully available.
+- `WebSerialTransport` is selected by a conditional import (`dart.library.js_interop`)
+  and implemented with `dart:js_interop`. It lists previously authorized ports, opens
+  the browser port picker, reads raw bytes, and writes newline-terminated commands.
+- `PhysicalSerialBridge` decodes UTF-8 lines, forwards device output to the serial monitor,
+  parses common telemetry (`A0:`, `SONAR:`/`Distance:`, `Pin 13:`, `FREE_SRAM:`), and applies
+  the same safety interlock as the simulator.
+- `CompositeHardwareBridge` keeps the virtual simulator first in the port picker and routes
+  a selected physical board to the Web Serial bridge.
+- `UnsupportedSerialTransport` is used on native platforms and browsers without Web Serial;
+  the simulator remains fully available.
 
-The Monster Lab handshake (`HELLO:MONSTER_LAB:v1.0`) is optional. Ordinary sketches that only call `Serial.println()` are logged and parsed without companion firmware.
+The Monster Lab handshake (`HELLO:MONSTER_LAB:v1.0`) is optional. Ordinary sketches
+that only call `Serial.println()` are logged and parsed without companion firmware.
 
 ---
 

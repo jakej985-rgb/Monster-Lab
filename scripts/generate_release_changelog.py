@@ -18,7 +18,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 if SCRIPT_DIR not in sys.path:
     sys.path.insert(0, SCRIPT_DIR)
 
-from release_attribution import strip_commit_trailers  # noqa: E402
+from release_attribution import strip_commit_trailers
 
 
 def run_git(args):

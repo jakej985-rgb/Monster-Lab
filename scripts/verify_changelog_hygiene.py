@@ -12,7 +12,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 if SCRIPT_DIR not in sys.path:
     sys.path.insert(0, SCRIPT_DIR)
 
-from release_attribution import find_attribution_footers  # noqa: E402
+from release_attribution import find_attribution_footers
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CHANGELOG_PATH = os.path.join(ROOT_DIR, "CHANGELOG.md")

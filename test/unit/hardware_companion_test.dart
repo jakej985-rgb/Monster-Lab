@@ -28,7 +28,7 @@ void main() {
       expect(officialUnoMatch?.id, 'uno_r3');
 
       final ch340Match = SupportedBoards.matchUsb(0x1A86, 0x7523);
-      expect(ch340Match?.id, 'uno_r3');
+      expect(ch340Match?.id, 'usb_serial');
 
       final unknownMatch = SupportedBoards.matchUsb(0xFFFF, 0xFFFF);
       expect(unknownMatch, isNull);

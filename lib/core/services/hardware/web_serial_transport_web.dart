@@ -74,6 +74,43 @@ class WebSerialTransport implements SerialTransport {
       'Web Serial is not available in this browser. Use Chrome or Edge on '
       'desktop, served over HTTPS or localhost.';
 
+  String _idForPort(_SerialPort port) {
+    try {
+      final jsPort = port as JSObject;
+      final existing = jsPort.getProperty('__ml_port_id'.toJS);
+      if (existing != null && !existing.isUndefined && !existing.isNull) {
+        final existingId = (existing as JSString).toDart;
+        _handles[existingId] = port;
+        return existingId;
+      }
+    } catch (_) {
+      // Property access may fail on mock or non-browser test environments.
+    }
+    for (final entry in _handles.entries) {
+      if (entry.value == port) {
+        return entry.key;
+      }
+    }
+    final id = 'web-serial-port-${_nextId++}';
+    try {
+      final jsPort = port as JSObject;
+      jsPort.setProperty('__ml_port_id'.toJS, id.toJS);
+    } catch (_) {
+      // Setting custom JS properties may fail in strict or non-browser environments.
+    }
+    _handles[id] = port;
+    return id;
+  }
+
+  int _indexForPort(String id) {
+    var index = 0;
+    for (final key in _handles.keys) {
+      index++;
+      if (key == id) return index;
+    }
+    return _handles.length;
+  }
+
   @override
   Future<List<SerialPortInfo>> listPorts() async {
     final api = _serialApi();
@@ -81,21 +118,21 @@ class WebSerialTransport implements SerialTransport {
 
     try {
       final ports = await api.getPorts().toDart;
-      _handles.clear();
       final result = <SerialPortInfo>[];
-      var index = 0;
       for (final port in ports.toDart) {
-        index++;
-        final id = 'web-serial-$index-${_nextId++}';
-        _handles[id] = port;
+        final id = _idForPort(port);
+        final index = _indexForPort(id);
         result.add(_describe(port, id, index));
       }
       return result;
     } catch (error) {
-      _throwTransportError(error);
+      throw SerialTransportException(
+        'Failed to enumerate Web Serial ports: ${_errorMessage(error)}',
+      );
     }
   }
 
+  /// Prompts the user to grant Web Serial port access.
   @override
   Future<SerialPortInfo?> requestPort() async {
     final api = _serialApi();
@@ -107,24 +144,21 @@ class WebSerialTransport implements SerialTransport {
 
     try {
       final port = await api.requestPort().toDart;
-      final id = 'web-serial-request-${_nextId++}';
-      _handles[id] = port;
-      return _describe(port, id, _nextId);
+      final id = _idForPort(port);
+      final index = _indexForPort(id);
+      return _describe(port, id, index);
     } catch (error) {
-      final message = _errorMessage(error);
-      if (message.toLowerCase().contains('no port selected')) {
-        throw const SerialPermissionDeniedException();
-      }
       _throwTransportError(error);
     }
   }
 
+  /// Establishes an active Web Serial connection stream.
   @override
   Future<SerialPortConnection> open(
-    SerialPortInfo port, {
+    SerialPortInfo selectedPort, {
     required int baudRate,
   }) async {
-    final handle = _handles[port.id];
+    final handle = _handles[selectedPort.id];
     if (handle == null) {
       throw const SerialTransportException(
         'That USB serial port is no longer available. Scan again and '
@@ -138,7 +172,9 @@ class WebSerialTransport implements SerialTransport {
       return connection;
     } catch (error) {
       await connection.close();
-      _throwTransportError(error);
+      throw SerialTransportException(
+        'Failed to open Web Serial connection: ${_errorMessage(error)}',
+      );
     }
   }
 
@@ -214,7 +250,9 @@ class _WebSerialConnection implements SerialPortConnection {
     try {
       await writer.write(bytes.toJS).toDart;
     } catch (error) {
-      _throwTransportError(error);
+      throw SerialTransportException(
+        'Failed to transmit serial data: ${_errorMessage(error)}',
+      );
     }
   }
 
@@ -263,7 +301,7 @@ class _WebSerialConnection implements SerialPortConnection {
     try {
       _reader?.releaseLock();
     } catch (_) {
-      // Lock is already released.
+      // Reader lock is already released.
     }
     try {
       await _writer?.close().toDart;
@@ -273,7 +311,7 @@ class _WebSerialConnection implements SerialPortConnection {
     try {
       _writer?.releaseLock();
     } catch (_) {
-      // Lock is already released.
+      // Writer lock is already freed.
     }
     try {
       await _port.close().toDart;

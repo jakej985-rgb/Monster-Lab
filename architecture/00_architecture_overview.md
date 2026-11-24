@@ -2,7 +2,9 @@
 
 ## 1. System Vision & Purpose
 
-**Monster Lab** is an offline-first, kid-focused robotics learning platform engineered to transform the kit's 54 component entries and 20 projects into an interactive, pedagogical discovery journey.
+**Monster Lab** is an offline-first, kid-focused robotics learning platform
+engineered to transform the kit's 54 component entries and 20 projects into an
+interactive, pedagogical discovery journey.
 
 Rather than replicating a static textbook or manual, Monster Lab implements an active experiential cycle:
 $$\text{Learn} \longrightarrow \text{Build} \longrightarrow \text{Test} \longrightarrow \text{Change} \longrightarrow \text{Explain}$$

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 enum AgeBracket { ages7_9, ages10_12, ages13Plus }
 
 class ProfileSettings {
@@ -89,5 +91,20 @@ class LearnerProfileModel {
       lastActiveAt: lastActiveAt ?? this.lastActiveAt,
       settings: settings ?? this.settings,
     );
+  }
+
+  /// Safely attempts to decode a list of learner profiles from raw JSON string.
+  /// Returns null if the JSON is malformed, not a list, or any item fails validation.
+  static List<LearnerProfileModel>? tryDecodeList(String? raw) {
+    if (raw == null || raw.trim().isEmpty) return null;
+    try {
+      final list = jsonDecode(raw) as List;
+      return list
+          .map((item) =>
+              LearnerProfileModel.fromJson(item as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      return null;
+    }
   }
 }

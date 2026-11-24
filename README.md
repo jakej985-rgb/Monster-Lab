@@ -69,7 +69,8 @@ Each component can include:
 - Related lessons.
 - Related projects.
 
-The initial curriculum covers 54 component entries: the kit's 38 listed peripherals plus supporting electronic components.
+The initial curriculum covers 54 component entries: the kit's 38 listed
+peripherals plus supporting electronic components.
 
 ### Build Lab
 Monster projects become guided builds instead of static instructions.
@@ -236,7 +237,9 @@ The workflow synchronizes `version.json`, `pubspec.yaml`, `app_version.dart`, In
 
 ## Building and Releasing
 
-Release Android builds require `android/key.properties` and the release keystore; use `flutter build apk --debug` for local development. Release builds fail closed when signing material is missing.
+Release Android builds require `android/key.properties` and the release keystore;
+use `flutter build apk --debug` for local development. Release builds fail closed
+when signing material is missing.
 
 ```bash
 # Android APK & AppBundle (requires release signing configuration)
@@ -265,7 +268,8 @@ docker push ghcr.io/jakej985-rgb/monster-lab-web:latest
 Monster Lab enforces automated multi-platform release verification via `.agents/agents/push-gatekeeper/agent.md`:
 - Static Analysis (`flutter analyze` — 0 issues)
 - Test Suite (`flutter test` — full automated suite)
-- Release Preflight (`scripts/quality_gate.sh` — formatting, analysis, tests, coverage, secret scan, curriculum, release contracts, and release-tool tests)
+- Release Preflight (`scripts/quality_gate.sh` — formatting, analysis, tests,
+  coverage, secret scan, curriculum, release contracts, and release-tool tests)
 - Curriculum Engine (`python3 scripts/validate_curriculum.py` — 100% integrity)
 - Multi-Platform Packaging (Android, Linux .deb, Windows .exe, Web Docker)
 - Automated Smart Version Bumping (`python3 scripts/bump_version.py --auto`)

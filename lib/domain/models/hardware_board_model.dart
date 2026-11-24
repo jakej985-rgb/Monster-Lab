@@ -165,7 +165,9 @@ abstract class SupportedBoards {
     pwmPins: 6,
     defaultBaudRate: 9600,
     description:
-        'A serial device whose USB identifiers are not in the Monster Lab board registry. Plain-text serial output is supported; verify the board voltage before connecting sensors.',
+        'A serial device whose USB identifiers are not in the Monster Lab '
+        'board registry. Plain-text serial output is supported; verify the '
+        'board voltage before connecting sensors.',
   );
 
   static const List<HardwareBoardModel> all = [
@@ -185,11 +187,15 @@ abstract class SupportedBoards {
   }
 
   static HardwareBoardModel? matchUsb(int vid, int pid) {
-    for (final board in all) {
-      if (board.supportedVidsPids
-          .any((u) => u.vendorId == vid && u.productId == pid)) {
-        return board;
-      }
+    final matches = all
+        .where((b) => b.supportedVidsPids
+            .any((u) => u.vendorId == vid && u.productId == pid))
+        .toList();
+    if (matches.length > 1) {
+      return unknownUsbSerial;
+    }
+    if (matches.length == 1) {
+      return matches.first;
     }
     return null;
   }

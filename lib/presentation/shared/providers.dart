@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/services/storage_service.dart';
 import '../../core/services/hardware/hardware_bridge.dart';
@@ -211,13 +213,14 @@ final allProfilesProvider =
 final activeProfileProvider =
     StateNotifierProvider<ActiveProfileNotifier, LearnerProfileModel?>((ref) {
   final profileRepo = ref.watch(profileRepositoryProvider);
-  return ActiveProfileNotifier(profileRepo);
+  return ActiveProfileNotifier(profileRepo, ref);
 });
 
 class ActiveProfileNotifier extends StateNotifier<LearnerProfileModel?> {
   final ProfileRepository _profileRepo;
+  final Ref _ref;
 
-  ActiveProfileNotifier(this._profileRepo) : super(null) {
+  ActiveProfileNotifier(this._profileRepo, this._ref) : super(null) {
     loadActiveProfile();
   }
 
@@ -235,9 +238,18 @@ class ActiveProfileNotifier extends StateNotifier<LearnerProfileModel?> {
   Future<void> saveProfile(LearnerProfileModel profile,
       {bool setActive = false}) async {
     await _profileRepo.saveProfile(profile);
+    _ref.invalidate(allProfilesProvider);
     if (setActive || state?.id == profile.id || state == null) {
       await _profileRepo.setActiveProfile(profile.id);
       state = profile;
+    }
+  }
+
+  Future<void> deleteProfile(String profileId) async {
+    await _profileRepo.deleteProfile(profileId);
+    _ref.invalidate(allProfilesProvider);
+    if (state?.id == profileId) {
+      await loadActiveProfile();
     }
   }
 }
@@ -338,6 +350,15 @@ final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
   return SettingsRepositoryImpl(SettingsDataSource(storageService));
 });
 
+double defaultUiScale({bool? isDesktopOverride}) {
+  if (isDesktopOverride != null) {
+    return isDesktopOverride ? AppSettings.desktopAutoUiScale : 1.0;
+  }
+  final isDesktop =
+      !kIsWeb && (Platform.isLinux || Platform.isWindows || Platform.isMacOS);
+  return isDesktop ? AppSettings.desktopAutoUiScale : 1.0;
+}
+
 class SettingsNotifier extends StateNotifier<AppSettings> {
   final SettingsRepository _repository;
 
@@ -363,17 +384,17 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
     state = _repository.getSettings();
   }
 
-  Future<void> zoomIn() async {
+  Future<void> zoomIn({double? baseScale}) async {
     final current =
-        state.uiScale > 0.0 ? state.uiScale : AppSettings.desktopAutoUiScale;
-    final next = (current + 0.05).clamp(0.75, 1.25);
+        state.uiScale > 0.0 ? state.uiScale : (baseScale ?? defaultUiScale());
+    final next = (current + 0.05).clamp(0.65, 1.25);
     await setUiScale(double.parse(next.toStringAsFixed(2)));
   }
 
-  Future<void> zoomOut() async {
+  Future<void> zoomOut({double? baseScale}) async {
     final current =
-        state.uiScale > 0.0 ? state.uiScale : AppSettings.desktopAutoUiScale;
-    final next = (current - 0.05).clamp(0.75, 1.25);
+        state.uiScale > 0.0 ? state.uiScale : (baseScale ?? defaultUiScale());
+    final next = (current - 0.05).clamp(0.65, 1.25);
     await setUiScale(double.parse(next.toStringAsFixed(2)));
   }
 
@@ -463,6 +484,11 @@ final hardwareStateStreamProvider =
 final hardwareTelemetryStreamProvider = StreamProvider<PinTelemetry>((ref) {
   final bridge = ref.watch(hardwareBridgeProvider);
   return bridge.telemetryStream;
+});
+
+final hardwareProtocolStreamProvider = StreamProvider<bool>((ref) {
+  final bridge = ref.watch(hardwareBridgeProvider);
+  return bridge.protocolVerificationStream;
 });
 
 class HardwareSerialLogsNotifier extends StateNotifier<List<SerialLogEntry>> {

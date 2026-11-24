@@ -268,18 +268,20 @@ class AssetCurriculumDataSource {
           estimatedMinutes: 5,
           courseId: 'lesson_01',
           sortOrder: index,
-          prerequisites: index == 1 ? const [] : const ['l01_01'],
+          // Fallback notices award no credit, so they must not gate each other.
+          prerequisites: const [],
           componentIds: const ['comp_uno'],
+          isPlaceholder: true,
+          xpReward: 0,
           steps: [
             LessonStep(
               stepId: 's1',
               title: _baselineLessonTitles[index - 1],
               type: StepType.story,
-              markdownContent:
-                  'This is a compact offline fallback lesson. The full lesson content ships in the bundled curriculum assets.',
+              markdownContent: 'This is a compact offline fallback lesson. '
+                  'The full lesson content ships in the bundled curriculum assets.',
             ),
           ],
-          xpReward: 25,
         ),
     ];
   }

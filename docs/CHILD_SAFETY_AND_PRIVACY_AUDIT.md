@@ -42,7 +42,11 @@ Monster Lab is engineered with a **Zero-Network, Local-First, Privacy-by-Design*
 3. **Local-Only Data Residency:** All profile nicknames, avatars, XP points, progress ledgers, and unlock statuses reside exclusively on the user's local physical device disk.
 4. **No Child PII Collection:** The app never collects real names, email addresses, phone numbers, geolocation coordinates, audio recordings, camera photos, or biometric markers.
 
-> **Encryption-at-rest status:** Monster Lab currently stores profiles and progress as plaintext in the platform's private `SharedPreferences` store and exports plaintext JSON backups. The app relies on the operating-system app sandbox and device-level storage encryption; it does not yet provide application-level encryption. Protect exported backup files accordingly.
+> **Encryption-at-rest status:** Monster Lab currently stores profiles and progress
+> as plaintext in the platform's private `SharedPreferences` store and exports
+> plaintext JSON backups. The app relies on the operating-system app sandbox and
+> device-level storage encryption; it does not yet provide application-level encryption.
+> Protect exported backup files accordingly.
 
 ---
 
@@ -68,7 +72,8 @@ Monster Lab is engineered with a **Zero-Network, Local-First, Privacy-by-Design*
 | **Internet / Network** | `android.permission.INTERNET` (Disabled/Not Requested) | N/A — App is completely offline | Zero network traffic permitted; network calls fail fast. |
 | **Camera** | `android.permission.CAMERA` (Not Requested) | N/A — No camera functionality | Not requested or declared in manifests. |
 | **Microphone / Audio** | None declared in app manifest | None — Simulated sound sensor uses mathematical noise model | Zero physical microphone recording or eavesdropping. |
-| **USB / Serial** | None requested; all builds use the virtual simulator | Not used in this release | Real serial transport is not wired in; no device access occurs. |
+| **USB / Serial** | Web Serial API (web only) | Arduino connection | User-prompted port picker; local UART only. |
+
 | **Storage / Files** | Scoped app sandbox | Local JSON backup export/import | Confined strictly to application private documents directory. |
 
 ---

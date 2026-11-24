@@ -27,6 +27,14 @@ class CompositeHardwareBridge implements IHardwareBridge {
     _physicalTelemetrySubscription = _physical.telemetryStream.listen((value) {
       if (_usePhysical) _telemetryController.add(value);
     });
+    _virtualProtocolSubscription =
+        _virtual.protocolVerificationStream.listen((value) {
+      if (!_usePhysical) _protocolController.add(value);
+    });
+    _physicalProtocolSubscription =
+        _physical.protocolVerificationStream.listen((value) {
+      if (_usePhysical) _protocolController.add(value);
+    });
     _virtualSerialSubscription =
         _virtual.serialStream.listen(_serialController.add);
     _physicalSerialSubscription =
@@ -42,6 +50,8 @@ class CompositeHardwareBridge implements IHardwareBridge {
       _physicalStateSubscription;
   late final StreamSubscription<PinTelemetry> _virtualTelemetrySubscription;
   late final StreamSubscription<PinTelemetry> _physicalTelemetrySubscription;
+  late final StreamSubscription<bool> _virtualProtocolSubscription;
+  late final StreamSubscription<bool> _physicalProtocolSubscription;
   late final StreamSubscription<SerialLogEntry> _virtualSerialSubscription;
   late final StreamSubscription<SerialLogEntry> _physicalSerialSubscription;
 
@@ -51,6 +61,7 @@ class CompositeHardwareBridge implements IHardwareBridge {
       StreamController<SerialLogEntry>.broadcast(sync: true);
   final _telemetryController =
       StreamController<PinTelemetry>.broadcast(sync: true);
+  final _protocolController = StreamController<bool>.broadcast(sync: true);
 
   bool _usePhysical = false;
 
@@ -82,6 +93,14 @@ class CompositeHardwareBridge implements IHardwareBridge {
 
   @override
   String? get transportNotice => _physical.transportNotice;
+
+  @override
+  bool get hasVerifiedProtocol => _active.hasVerifiedProtocol;
+
+  @override
+  Stream<bool> get protocolVerificationStream {
+    return _protocolController.stream;
+  }
 
   @override
   Future<List<DiscoveredBoard>> scanDevices() async {
@@ -132,14 +151,23 @@ class CompositeHardwareBridge implements IHardwareBridge {
       }
     }
 
-    return _active.connect(board: board, baudRate: baudRate);
+    final success = await _active.connect(board: board, baudRate: baudRate);
+    if (success) {
+      _telemetryController.add(_active.currentTelemetry);
+      _protocolController.add(_active.hasVerifiedProtocol);
+    }
+    return success;
   }
 
   @override
   Future<void> sendCommand(String command) => _active.sendCommand(command);
 
   @override
-  Future<void> disconnect() => _active.disconnect();
+  Future<void> disconnect() async {
+    await _active.disconnect();
+    _telemetryController.add(_active.currentTelemetry);
+    _protocolController.add(_active.hasVerifiedProtocol);
+  }
 
   @override
   void dispose() {
@@ -147,12 +175,19 @@ class CompositeHardwareBridge implements IHardwareBridge {
     _physicalStateSubscription.cancel();
     _virtualTelemetrySubscription.cancel();
     _physicalTelemetrySubscription.cancel();
+    _virtualProtocolSubscription.cancel();
+    _physicalProtocolSubscription.cancel();
     _virtualSerialSubscription.cancel();
     _physicalSerialSubscription.cancel();
     _virtual.dispose();
     _physical.dispose();
-    _stateController.close();
-    _serialController.close();
-    _telemetryController.close();
+    for (final c in [
+      _stateController,
+      _serialController,
+      _telemetryController,
+      _protocolController,
+    ]) {
+      c.close();
+    }
   }
 }

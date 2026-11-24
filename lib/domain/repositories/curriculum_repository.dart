@@ -17,4 +17,5 @@ abstract class CurriculumRepository {
   Future<ProjectModel> getProjectById(String id);
   Future<List<ChallengeModel>> getChallenges({DifficultyTier? tier});
   Future<ChallengeModel> getChallengeById(String id);
+  bool get isFallbackActive;
 }

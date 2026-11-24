@@ -1,13 +1,11 @@
-import 'dart:io' show Platform;
-
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/localization/app_strings.dart';
 import 'core/routing/app_router.dart';
 import 'core/theme/app_theme.dart';
-import 'domain/models/app_settings.dart';
+import 'package:flutter/services.dart';
+import 'presentation/shared/widgets/gtk_about_dialog.dart';
 import 'presentation/shared/providers.dart';
 
 class MonsterLabApp extends ConsumerWidget {
@@ -49,20 +47,42 @@ class MonsterLabApp extends ConsumerWidget {
       builder: (context, child) {
         if (child == null) return const SizedBox.shrink();
 
-        final double effectiveScale;
-        if (settings.uiScale > 0.0) {
-          effectiveScale = settings.uiScale;
-        } else {
-          final isDesktop = !kIsWeb &&
-              (Platform.isLinux || Platform.isWindows || Platform.isMacOS);
-          effectiveScale = isDesktop ? AppSettings.desktopAutoUiScale : 1.0;
+        final double effectiveScale =
+            settings.uiScale > 0.0 ? settings.uiScale : defaultUiScale();
+
+        Widget appWidget = child;
+        if (effectiveScale != 1.0) {
+          appWidget = UiScaleCanvas(
+            scale: effectiveScale,
+            child: child,
+          );
         }
 
-        if (effectiveScale == 1.0) {
-          return child;
-        }
-
-        return UiScaleCanvas(scale: effectiveScale, child: child);
+        return CallbackShortcuts(
+          bindings: <ShortcutActivator, VoidCallback>{
+            const SingleActivator(LogicalKeyboardKey.equal, control: true): () {
+              ref
+                  .read(settingsNotifierProvider.notifier)
+                  .zoomIn(baseScale: effectiveScale);
+            },
+            const SingleActivator(LogicalKeyboardKey.minus, control: true): () {
+              ref
+                  .read(settingsNotifierProvider.notifier)
+                  .zoomOut(baseScale: effectiveScale);
+            },
+            const SingleActivator(LogicalKeyboardKey.digit0, control: true):
+                () {
+              ref.read(settingsNotifierProvider.notifier).resetZoom();
+            },
+            const SingleActivator(LogicalKeyboardKey.f1): () {
+              final navContext = rootNavigatorKey.currentContext;
+              if (navContext != null) {
+                GtkAboutDialog.show(navContext);
+              }
+            },
+          },
+          child: appWidget,
+        );
       },
     );
   }

@@ -16,6 +16,7 @@ import 'widgets/board_inspector_widget.dart';
 import 'widgets/quiz_checkpoint_widget.dart';
 import 'widgets/quick_check_modal.dart';
 import '../../../domain/models/learner_progress_model.dart';
+import '../../../domain/models/learner_profile_model.dart';
 import '../../../domain/repositories/curriculum_repository.dart';
 import '../../shared/widgets/expandable_lesson_image.dart';
 
@@ -52,17 +53,21 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
     _lessonFuture = repository.getLessonById(widget.lessonId);
   }
 
+  void _resetScrollPosition() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _scrollController.hasClients) {
+        _scrollController.jumpTo(0);
+      }
+    });
+  }
+
   void _resetLessonState() {
     _currentStepIndex = 0;
     _checkedPhysicalTasks.clear();
     _awardedCheckpointKeys.clear();
     _completedQuizSteps.clear();
     _isCompleting = false;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted && _scrollController.hasClients) {
-        _scrollController.jumpTo(0);
-      }
-    });
+    _resetScrollPosition();
   }
 
   @override
@@ -81,23 +86,29 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
   }
 
   void _showCompletionDialog(BuildContext context, Lesson lesson,
-      {required bool isFirstCompletion}) {
+      {required bool isFirstCompletion, bool isPlaceholder = false}) {
     showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (dialogCtx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Column(
+        title: Column(
           children: [
             CircleAvatar(
               radius: 36,
-              backgroundColor: AppColors.energyAmber,
-              child: Icon(Icons.emoji_events, color: Colors.white, size: 44),
+              backgroundColor: isPlaceholder
+                  ? AppColors.primaryViolet
+                  : AppColors.energyAmber,
+              child: Icon(
+                isPlaceholder ? Icons.info_outline : Icons.emoji_events,
+                color: Colors.white,
+                size: 44,
+              ),
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Text(
-              'Mission Complete!',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+              isPlaceholder ? 'Fallback Notice' : 'Mission Complete!',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
             ),
           ],
         ),
@@ -105,7 +116,9 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'You successfully completed "${lesson.title}"!',
+              isPlaceholder
+                  ? 'Browsed fallback placeholder "${lesson.title}". Production curriculum is loading.'
+                  : 'You successfully completed "${lesson.title}"!',
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 15),
             ),
@@ -113,20 +126,28 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: isFirstCompletion
-                    ? AppColors.energyAmber.withValues(alpha: 0.15)
-                    : Theme.of(dialogCtx).colorScheme.surfaceContainerHighest,
+                color: isPlaceholder
+                    ? Theme.of(dialogCtx).colorScheme.surfaceContainerHighest
+                    : isFirstCompletion
+                        ? AppColors.energyAmber.withValues(alpha: 0.15)
+                        : Theme.of(dialogCtx)
+                            .colorScheme
+                            .surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                isFirstCompletion
-                    ? '+${lesson.xpReward} XP EARNED'
-                    : 'LESSON COMPLETED (XP already earned)',
+                isPlaceholder
+                    ? 'FALLBACK NOTICE (No XP or credit recorded)'
+                    : isFirstCompletion
+                        ? '+${lesson.xpReward} XP EARNED'
+                        : 'LESSON COMPLETED (XP already earned)',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: isFirstCompletion
-                      ? const Color(0xFFD48806)
-                      : Theme.of(dialogCtx).colorScheme.onSurfaceVariant,
+                  color: isPlaceholder
+                      ? Theme.of(dialogCtx).colorScheme.onSurfaceVariant
+                      : isFirstCompletion
+                          ? const Color(0xFFD48806)
+                          : Theme.of(dialogCtx).colorScheme.onSurfaceVariant,
                   fontWeight: FontWeight.bold,
                   fontSize: isFirstCompletion ? 16 : 14,
                 ),
@@ -332,9 +353,11 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                                 submoduleTitle: currentStep.title,
                                 questions: currentStep.quickCheck!,
                                 onCompleted: (res) {
-                                  ref
-                                      .read(activeProgressProvider.notifier)
-                                      .recordQuickCheckResult(res);
+                                  if (!_isPlaceholderLesson(lesson)) {
+                                    ref
+                                        .read(activeProgressProvider.notifier)
+                                        .recordQuickCheckResult(res);
+                                  }
                                 },
                               );
                             },
@@ -553,9 +576,12 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                                           ?.completedLessonIds
                                           .contains(widget.lessonId) ??
                                       false;
+                                  final isPlaceholder =
+                                      _isPlaceholderLesson(lesson);
                                   if (isCorrect &&
                                       activeProfile != null &&
                                       !isAlreadyCompleted &&
+                                      !isPlaceholder &&
                                       !_awardedCheckpointKeys
                                           .contains(checkpointKey)) {
                                     _awardedCheckpointKeys.add(checkpointKey);
@@ -599,103 +625,13 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                           : Icons.celebration,
                       onPressed: _isCompleting
                           ? null
-                          : () async {
-                              if (!_isCurrentStepComplete(currentStep)) {
-                                if (currentStep.type ==
-                                    StepType.quizCheckpoint) {
-                                  _scrollToIncompleteActivity(
-                                      'Please complete the checkpoint quiz before moving forward!');
-                                } else if (currentStep.type ==
-                                    StepType.physicalTask) {
-                                  _scrollToIncompleteActivity(
-                                      'Please check off the physical hardware task before continuing!');
-                                } else {
-                                  _scrollToIncompleteActivity(
-                                      'Please complete the activity on this step first!');
-                                }
-                                return;
-                              }
-
-                              if (_currentStepIndex < steps.length - 1) {
-                                setState(() {
-                                  _currentStepIndex++;
-                                });
-                                WidgetsBinding.instance
-                                    .addPostFrameCallback((_) {
-                                  if (_scrollController.hasClients) {
-                                    _scrollController.jumpTo(0);
-                                  }
-                                });
-                              } else {
-                                if (_isCompleting) return;
-                                setState(() => _isCompleting = true);
-                                try {
-                                  if (activeProfile == null) {
-                                    if (context.mounted) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                              'Please select an active learner profile to record progress.'),
-                                          backgroundColor: AppColors.danger,
-                                        ),
-                                      );
-                                    }
-                                    return;
-                                  }
-                                  final isFirstCompletion = await ref
-                                      .read(activeProgressProvider.notifier)
-                                      .completeLesson(
-                                          lesson.id, lesson.xpReward);
-                                  ref.read(soundEffectsProvider).success();
-
-                                  if (lesson.courseId != null) {
-                                    try {
-                                      final curriculumRepo = ref
-                                          .read(curriculumRepositoryProvider);
-                                      final siblings = await curriculumRepo
-                                          .getCourseLessons(lesson.courseId!);
-                                      final updatedProgress =
-                                          ref.read(activeProgressProvider);
-                                      final allDone = siblings.isNotEmpty &&
-                                          siblings.every((Lesson s) =>
-                                              (updatedProgress
-                                                      ?.completedLessonIds
-                                                      .contains(s.id) ??
-                                                  false) ||
-                                              s.id == lesson.id);
-                                      if (allDone) {
-                                        final course = await curriculumRepo
-                                            .getCourseById(lesson.courseId!);
-                                        await ref
-                                            .read(
-                                                activeProgressProvider.notifier)
-                                            .completeCourse(
-                                                course.id, course.xpReward);
-                                      }
-                                    } catch (_) {}
-                                  }
-
-                                  if (context.mounted) {
-                                    _showCompletionDialog(context, lesson,
-                                        isFirstCompletion: isFirstCompletion);
-                                  }
-                                } catch (e) {
-                                  if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                            'Failed to save lesson progress: $e'),
-                                        backgroundColor: AppColors.danger,
-                                      ),
-                                    );
-                                  }
-                                } finally {
-                                  if (mounted) {
-                                    setState(() => _isCompleting = false);
-                                  }
-                                }
-                              }
+                          : () {
+                              _handleStepNavigation(
+                                currentStep,
+                                steps,
+                                lesson,
+                                activeProfile,
+                              );
                             },
                     ),
                   ],
@@ -704,6 +640,42 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
             );
           },
         ),
+      ),
+    );
+  }
+
+  void _handleStepNavigation(
+    LessonStep currentStep,
+    List<LessonStep> steps,
+    Lesson lesson,
+    LearnerProfileModel? activeProfile,
+  ) {
+    if (!_isCurrentStepComplete(currentStep)) {
+      final prompt = switch (currentStep.type) {
+        StepType.quizCheckpoint =>
+          'Please complete the checkpoint quiz before moving forward!',
+        StepType.physicalTask =>
+          'Please check off the physical hardware task before continuing!',
+        _ => 'Please complete the activity on this step first!',
+      };
+      _scrollToIncompleteActivity(prompt);
+      return;
+    }
+
+    if (_currentStepIndex < steps.length - 1) {
+      setState(() => _currentStepIndex++);
+      _resetScrollPosition();
+      return;
+    }
+    _executeLessonCompletion(lesson, activeProfile);
+  }
+
+  void _showError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: AppColors.danger,
       ),
     );
   }
@@ -739,5 +711,79 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
         ],
       ),
     );
+  }
+
+  bool _isPlaceholderLesson(Lesson lesson) {
+    final curriculumRepo = ref.read(curriculumRepositoryProvider);
+    return lesson.isPlaceholder || curriculumRepo.isFallbackActive;
+  }
+
+  Future<void> _executeLessonCompletion(
+    Lesson lesson,
+    LearnerProfileModel? activeProfile,
+  ) async {
+    if (_isCompleting) return;
+    setState(() => _isCompleting = true);
+    try {
+      if (activeProfile == null) {
+        _showError(
+            'Please select an active learner profile to record progress.');
+        return;
+      }
+
+      final curriculumRepo = ref.read(curriculumRepositoryProvider);
+      final isPlaceholder = _isPlaceholderLesson(lesson);
+
+      bool isFirstCompletion = false;
+      if (!isPlaceholder) {
+        isFirstCompletion = await ref
+            .read(activeProgressProvider.notifier)
+            .completeLesson(lesson.id, lesson.xpReward);
+        if (!mounted) return;
+        ref.read(soundEffectsProvider).success();
+
+        await _checkAndCompleteCourse(curriculumRepo, lesson);
+        if (!mounted) return;
+      } else {
+        ref.read(soundEffectsProvider).success();
+      }
+
+      if (context.mounted) {
+        _showCompletionDialog(
+          context,
+          lesson,
+          isFirstCompletion: isFirstCompletion,
+          isPlaceholder: isPlaceholder,
+        );
+      }
+    } catch (e) {
+      _showError('Failed to save lesson progress: $e');
+    } finally {
+      if (mounted) setState(() => _isCompleting = false);
+    }
+  }
+
+  Future<void> _checkAndCompleteCourse(
+    CurriculumRepository curriculumRepo,
+    Lesson lesson,
+  ) async {
+    final courseId = lesson.courseId;
+    if (courseId == null) return;
+    try {
+      final course = await curriculumRepo.getCourseById(courseId);
+      if (!mounted) return;
+      final progress = ref.read(activeProgressProvider);
+      final allDone = course.lessonIds.isNotEmpty &&
+          course.lessonIds.every((lid) =>
+              (progress?.completedLessonIds.contains(lid) ?? false) ||
+              lid == lesson.id);
+      if (allDone) {
+        await ref
+            .read(activeProgressProvider.notifier)
+            .completeCourse(course.id, course.xpReward);
+      }
+    } catch (_) {
+      // Course lookup or completion optional in fallback mode
+    }
   }
 }

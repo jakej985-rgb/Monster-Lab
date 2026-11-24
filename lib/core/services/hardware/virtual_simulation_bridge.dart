@@ -45,6 +45,9 @@ class VirtualSimulationBridge implements IHardwareBridge {
   Future<DiscoveredBoard?> requestPhysicalPort() async => null;
 
   @override
+  bool get hasVerifiedProtocol => true;
+
+  @override
   HardwareConnectionState get currentState => _state;
 
   @override
@@ -64,6 +67,9 @@ class VirtualSimulationBridge implements IHardwareBridge {
 
   @override
   Stream<PinTelemetry> get telemetryStream => _telemetryController.stream;
+
+  @override
+  Stream<bool> get protocolVerificationStream => Stream<bool>.value(true);
 
   @override
   Future<List<DiscoveredBoard>> scanDevices() async {
