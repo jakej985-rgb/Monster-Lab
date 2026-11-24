@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A layout container that bounds content width on desktop and tablet screens,
 /// centering it cleanly and preventing oversized edge-to-edge stretching.

@@ -1,7 +1,7 @@
 name: monster_lab
 description: "Monster Lab - Kid-focused, hands-on robotics learning app built around the Monster Arduino kit."
 publish_to: "none"
-version: 0.5.2+35
+version: 0.7.0+37
 
 environment:
   sdk: ">=3.3.0 <4.0.0"
@@ -13,9 +13,9 @@ dependencies:
   flutter_riverpod: ^2.5.1
   go_router: ^14.2.0
   shared_preferences: ^2.2.3
-  intl: ^0.19.0
+  intl: ^0.20.3
   flutter_markdown_plus: ^1.0.12
-
+  material_ui: ^1.11.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

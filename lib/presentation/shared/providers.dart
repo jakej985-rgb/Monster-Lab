@@ -22,6 +22,7 @@ import '../../domain/repositories/settings_repository.dart';
 import '../../data/datasources/settings_datasource.dart';
 import '../../data/repositories/settings_repository_impl.dart';
 import '../../domain/models/course_model.dart';
+import '../../domain/models/challenge_model.dart';
 import '../../data/datasources/curriculum_data_engine.dart';
 import '../../core/services/parent_session_service.dart';
 import '../../core/services/component_restriction_service.dart';
@@ -31,6 +32,10 @@ final storageServiceProvider = Provider<StorageService>((ref) {
   throw UnimplementedError(
       'storageServiceProvider must be initialized in main()');
 });
+
+/// Whether the Linux runner provides a native GTK menu bar. The in-app
+/// fallback remains active in widget tests and on other platforms.
+final nativeMenuBarAvailableProvider = Provider<bool>((ref) => false);
 
 final localStorageDataSourceProvider = Provider<LocalStorageDataSource>((ref) {
   final storageService = ref.watch(storageServiceProvider);
@@ -73,6 +78,63 @@ final progressRepositoryProvider = Provider<ProgressRepository>((ref) {
 final curriculumRepositoryProvider = Provider<CurriculumRepository>((ref) {
   final engine = ref.watch(curriculumDataEngineProvider);
   return CurriculumRepositoryImpl(engine);
+});
+
+/// Precomputed view model for Learn Lab. Grouping and sorting happen once per
+/// tier instead of on every widget rebuild.
+class LearnCatalog {
+  final List<CourseModel> courses;
+  final Map<String, List<Lesson>> lessonsByCourse;
+  final List<Lesson> standaloneLessons;
+
+  const LearnCatalog({
+    required this.courses,
+    required this.lessonsByCourse,
+    required this.standaloneLessons,
+  });
+
+  bool get isEmpty => courses.isEmpty && standaloneLessons.isEmpty;
+}
+
+final learnCatalogProvider =
+    FutureProvider.family<LearnCatalog, DifficultyTier?>((ref, tier) async {
+  final repository = ref.watch(curriculumRepositoryProvider);
+  final courses = await ref.watch(repositoryCoursesProvider.future);
+  final lessons = await repository.getLessons(tier: tier);
+
+  final byCourse = <String, List<Lesson>>{};
+  final standalone = <Lesson>[];
+  for (final lesson in lessons) {
+    final courseId = lesson.courseId;
+    if (courseId == null) {
+      standalone.add(lesson);
+    } else {
+      byCourse.putIfAbsent(courseId, () => <Lesson>[]).add(lesson);
+    }
+  }
+  for (final courseLessons in byCourse.values) {
+    courseLessons.sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
+  }
+  standalone.sort((a, b) => a.id.compareTo(b.id));
+
+  return LearnCatalog(
+    courses: [
+      for (final course in courses)
+        if (byCourse.containsKey(course.id)) course,
+    ],
+    lessonsByCourse: byCourse,
+    standaloneLessons: standalone,
+  );
+});
+
+final repositoryCoursesProvider = FutureProvider<List<CourseModel>>((ref) {
+  return ref.watch(curriculumRepositoryProvider).getCourses();
+});
+
+final challengesByTierProvider =
+    FutureProvider.family<List<ChallengeModel>, DifficultyTier?>((ref, tier) {
+  final repository = ref.watch(curriculumRepositoryProvider);
+  return repository.getChallenges(tier: tier);
 });
 
 final parentSessionServiceProvider = Provider<ParentSessionService>((ref) {
@@ -430,24 +492,46 @@ final hardwareProtocolStreamProvider = StreamProvider<bool>((ref) {
 });
 
 class HardwareSerialLogsNotifier extends StateNotifier<List<SerialLogEntry>> {
+  /// Maximum number of lines kept for the terminal UI.
+  static const int maxLogEntries = 300;
+
+  /// Coalesce high-rate serial lines into at most one state update per frame.
+  static const Duration flushInterval = Duration(milliseconds: 16);
+
   final IHardwareBridge _bridge;
   StreamSubscription<SerialLogEntry>? _sub;
+  final List<SerialLogEntry> _pending = [];
+  Timer? _flushTimer;
 
   HardwareSerialLogsNotifier(this._bridge) : super(const []) {
-    _sub = _bridge.serialStream.listen((entry) {
-      state = [...state, entry];
-      if (state.length > 300) {
-        state = state.sublist(state.length - 300);
-      }
-    });
+    _sub = _bridge.serialStream.listen(_enqueue);
+  }
+
+  void _enqueue(SerialLogEntry entry) {
+    _pending.add(entry);
+    _flushTimer ??= Timer(flushInterval, _flush);
+  }
+
+  void _flush() {
+    _flushTimer = null;
+    if (_pending.isEmpty) return;
+    final merged = [...state, ..._pending];
+    _pending.clear();
+    state = merged.length > maxLogEntries
+        ? merged.sublist(merged.length - maxLogEntries)
+        : merged;
   }
 
   void clearLogs() {
+    _pending.clear();
+    _flushTimer?.cancel();
+    _flushTimer = null;
     state = const [];
   }
 
   @override
   void dispose() {
+    _flushTimer?.cancel();
     _sub?.cancel();
     super.dispose();
   }

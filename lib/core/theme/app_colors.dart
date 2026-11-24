@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Centralized color palette for Monster Lab derived from design_system/theme_tokens.json
 abstract final class AppColors {

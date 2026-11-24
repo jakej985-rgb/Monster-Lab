@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
+
 import '../../../../domain/models/hardware_board_model.dart';
 
 abstract class ISerialPortAdapter {
@@ -116,23 +118,21 @@ class WebSerialUnsupportedException implements Exception {
 }
 
 class WebSerialAdapter implements ISerialPortAdapter {
-  final String _portName;
+  @override
+  final String portName;
   bool _isOpen = false;
   final _lineController = StreamController<String>.broadcast(sync: true);
   final bool Function()? isSupportedChecker;
 
   WebSerialAdapter({
-    String portName = 'WebSerial://Port_0',
+    this.portName = 'WebSerial://Port_0',
     this.isSupportedChecker,
-  }) : _portName = portName;
+  });
 
   bool get isSupported {
     if (isSupportedChecker != null) return isSupportedChecker!();
     return kIsWeb;
   }
-
-  @override
-  String get portName => _portName;
 
   @override
   bool get isOpen => _isOpen;

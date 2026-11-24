@@ -15,11 +15,14 @@ import 'serial_transport.dart';
 /// firmware negotiate a protocol version, while ordinary sketches that simply
 /// print serial data are logged and parsed for telemetry.
 class PhysicalSerialBridge implements IHardwareBridge {
-  PhysicalSerialBridge({
+  factory PhysicalSerialBridge({
     required SerialTransport transport,
     HardwareProtocolNegotiator negotiator = const HardwareProtocolNegotiator(),
-  })  : _transport = transport,
-        _negotiator = negotiator {
+  }) {
+    return PhysicalSerialBridge._(transport, negotiator);
+  }
+
+  PhysicalSerialBridge._(this._transport, this._negotiator) {
     _stateMachine = HardwareConnectionStateMachine(_state);
   }
 
@@ -166,8 +169,9 @@ class PhysicalSerialBridge implements IHardwareBridge {
     _baudRate = baudRate;
     _currentBoard = board;
 
-    final capabilities =
-        HardwareDeviceCapabilityRegistry.findForBoard(board.boardModel);
+    final capabilities = HardwareDeviceCapabilityRegistry.findForBoard(
+      board.boardModel,
+    );
     if (!capabilities.isBaudRateSupported(baudRate)) {
       _logSystem(
         'Warning: Baud rate $baudRate is not standard for '
@@ -330,11 +334,9 @@ class PhysicalSerialBridge implements IHardwareBridge {
   DiscoveredBoard _toBoard(SerialPortInfo port) {
     _knownPorts[port.id] = port;
     _knownPorts[port.label] = port;
-    final model = SupportedBoards.matchUsb(
-          port.vendorId ?? -1,
-          port.productId ?? -1,
-        ) ??
-        SupportedBoards.unknownUsbSerial;
+    final model =
+        SupportedBoards.matchUsb(port.vendorId ?? -1, port.productId ?? -1) ??
+            SupportedBoards.unknownUsbSerial;
 
     return DiscoveredBoard(
       portName: port.id,
@@ -515,9 +517,11 @@ class PhysicalSerialBridge implements IHardwareBridge {
       _transitionTo(HardwareConnectionState.disconnected);
       return;
     }
-    _transitionTo(board.isVirtual
-        ? HardwareConnectionState.connectedVirtual
-        : HardwareConnectionState.connectedPhysical);
+    _transitionTo(
+      board.isVirtual
+          ? HardwareConnectionState.connectedVirtual
+          : HardwareConnectionState.connectedPhysical,
+    );
   }
 
   void _transitionTo(HardwareConnectionState newState) {

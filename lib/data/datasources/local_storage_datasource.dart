@@ -32,6 +32,9 @@ class LocalStorageDataSource {
       StreamController<String>.broadcast();
   String? _lastCorruptionMessage;
 
+  /// Avoids re-decoding the same progress payload after every save/read cycle.
+  final Map<String, _CachedProgress> _progressCache = {};
+
   String? get lastCorruptionMessage => _lastCorruptionMessage;
 
   Stream<String> get corruptionStream async* {
@@ -110,6 +113,7 @@ class LocalStorageDataSource {
   }
 
   Future<void> saveRawProgress(String learnerId, String rawJson) async {
+    _progressCache.remove(learnerId);
     await _storageService.setString('$_progressKeyPrefix$learnerId', rawJson);
   }
 
@@ -123,12 +127,20 @@ class LocalStorageDataSource {
   LearnerProgressModel getProgress(String learnerId,
       {bool throwOnUnrecoverable = false}) {
     final raw = _storageService.getString('$_progressKeyPrefix$learnerId');
+    final cached = _progressCache[learnerId];
+    if (cached != null && cached.raw == raw) {
+      return cached.model;
+    }
     if (raw == null || raw.isEmpty) {
-      return LearnerProgressModel.empty(learnerId);
+      final empty = LearnerProgressModel.empty(learnerId);
+      _progressCache[learnerId] = _CachedProgress(raw, empty);
+      return empty;
     }
     try {
       final map = jsonDecode(raw) as Map<String, dynamic>;
-      return LearnerProgressModel.fromJson(map);
+      final parsed = LearnerProgressModel.fromJson(map);
+      _progressCache[learnerId] = _CachedProgress(raw, parsed);
+      return parsed;
     } catch (err) {
       final corruptionException =
           ProgressCorruptionException(learnerId, raw, err);
@@ -143,6 +155,7 @@ class LocalStorageDataSource {
           final recovered = LearnerProgressModel.fromJson(backupMap);
           // Auto-repair primary slot with recovered backup
           _storageService.setString('$_progressKeyPrefix$learnerId', backupRaw);
+          _progressCache[learnerId] = _CachedProgress(backupRaw, recovered);
           _reportCorruption(
             'Progress for learner $learnerId was recovered from a backup snapshot.',
           );
@@ -168,10 +181,19 @@ class LocalStorageDataSource {
     // Maintain a verified backup snapshot
     await _storageService.setString(
         '$_backupKeyPrefix${progress.learnerId}', raw);
+    _progressCache[progress.learnerId] = _CachedProgress(raw, progress);
   }
 
   Future<void> deleteProgress(String learnerId) async {
+    _progressCache.remove(learnerId);
     await _storageService.remove('$_progressKeyPrefix$learnerId');
     await _storageService.remove('$_backupKeyPrefix$learnerId');
   }
+}
+
+class _CachedProgress {
+  final String? raw;
+  final LearnerProgressModel model;
+
+  const _CachedProgress(this.raw, this.model);
 }

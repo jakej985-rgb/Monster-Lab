@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/services/hardware/hardware_bridge.dart';
 import '../../../core/theme/app_colors.dart';
@@ -7,6 +7,7 @@ import '../../../domain/models/hardware_connection_model.dart';
 import '../../shared/providers.dart';
 import '../../shared/widgets/monster_button.dart';
 import '../../shared/widgets/monster_card.dart';
+import '../../shared/widgets/responsive_content_container.dart';
 import 'widgets/hardware_status_badge.dart';
 
 class HardwareCompanionScreen extends ConsumerStatefulWidget {
@@ -792,13 +793,14 @@ class _SerialTerminalState extends ConsumerState<_SerialTerminal>
                       : colorScheme.onSurfaceVariant,
                 ),
                 tooltip: _autoScroll ? 'Autoscroll On' : 'Autoscroll Paused',
-                onPressed: () => setState(() => _autoScroll = !_autoScroll),
+                onPressed: () {
+                  setState(() => _autoScroll = !_autoScroll);
+                  if (_autoScroll) _scheduleScrollToBottom();
+                },
               ),
             ],
           ),
           const SizedBox(height: 8),
-
-          // Terminal Output Window
           Container(
             height: 220,
             padding: const EdgeInsets.all(10),
@@ -828,15 +830,15 @@ class _SerialTerminalState extends ConsumerState<_SerialTerminal>
 
                       switch (log.direction) {
                         case SerialLogDirection.rx:
-                          textColor = const Color(0xFF55EFC4); // green
+                          textColor = const Color(0xFF55EFC4);
                           prefix = '← ';
                           break;
                         case SerialLogDirection.tx:
-                          textColor = const Color(0xFF00CEC9); // cyan
+                          textColor = const Color(0xFF00CEC9);
                           prefix = '→ ';
                           break;
                         case SerialLogDirection.system:
-                          textColor = const Color(0xFFFDCB6E); // amber
+                          textColor = const Color(0xFFFDCB6E);
                           prefix = 'ℹ ';
                           break;
                       }
@@ -859,8 +861,6 @@ class _SerialTerminalState extends ConsumerState<_SerialTerminal>
                   ),
           ),
           const SizedBox(height: 10),
-
-          // Quick Command Action Chips
           Wrap(
             spacing: 6,
             runSpacing: 6,
@@ -876,8 +876,6 @@ class _SerialTerminalState extends ConsumerState<_SerialTerminal>
             ],
           ),
           const SizedBox(height: 10),
-
-          // Interactive Command Input Line
           Row(
             children: [
               Expanded(
@@ -892,7 +890,7 @@ class _SerialTerminalState extends ConsumerState<_SerialTerminal>
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   ),
-                  onSubmitted: (cmd) => _handleSendCommand(bridge),
+                  onSubmitted: (_) => _handleSendCommand(),
                 ),
               ),
               const SizedBox(width: 8),
@@ -900,7 +898,7 @@ class _SerialTerminalState extends ConsumerState<_SerialTerminal>
                 key: const Key('serial_send_button'),
                 icon: const Icon(Icons.send, size: 16),
                 label: const Text('Send'),
-                onPressed: () => _handleSendCommand(bridge),
+                onPressed: _handleSendCommand,
               ),
             ],
           ),

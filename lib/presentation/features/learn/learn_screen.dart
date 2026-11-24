@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
@@ -25,9 +25,8 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final curriculumRepo = ref.watch(curriculumRepositoryProvider);
     final activeProgress = ref.watch(activeProgressProvider);
-    final coursesAsync = ref.watch(coursesProvider);
+    final catalogAsync = ref.watch(learnCatalogProvider(_selectedTier));
 
     return Scaffold(
       appBar: AppBar(
@@ -66,49 +65,22 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
 
             // Lesson List with Course Folders
             Expanded(
-              child: FutureBuilder<List<Lesson>>(
-                future: curriculumRepo.getLessons(tier: _selectedTier),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  }
-                  if (!snapshot.hasData) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  final lessons = snapshot.data!;
-
-                  if (lessons.isEmpty) {
+              child: catalogAsync.when(
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, _) => Center(child: Text('Error: $error')),
+                data: (catalog) {
+                  if (catalog.isEmpty) {
                     return const Center(
                       child: Text('No lessons found in this tier yet.'),
                     );
                   }
 
-                  // Group lessons into courses and standalone missions
-                  final courseLessonsMap = <String, List<Lesson>>{};
-                  final standaloneLessons = <Lesson>[];
-
-                  for (final lesson in lessons) {
-                    if (lesson.courseId != null) {
-                      courseLessonsMap
-                          .putIfAbsent(lesson.courseId!, () => [])
-                          .add(lesson);
-                    } else {
-                      standaloneLessons.add(lesson);
-                    }
-                  }
-
-                  for (final list in courseLessonsMap.values) {
-                    list.sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
-                  }
-
-                  standaloneLessons.sort((a, b) => a.id.compareTo(b.id));
-
-                  final courses = coursesAsync.value ?? const [];
-
-                  // Initialize default expansion: expand active or incomplete courses
-                  if (!_initializedExpanded && courses.isNotEmpty) {
-                    for (final course in courses) {
-                      final cLessons = courseLessonsMap[course.id] ?? [];
+                  // Initialize default expansion: expand the first incomplete
+                  // course. Grouping/sorting was already done in the provider.
+                  if (!_initializedExpanded && catalog.courses.isNotEmpty) {
+                    for (final course in catalog.courses) {
+                      final cLessons =
+                          catalog.lessonsByCourse[course.id] ?? const [];
                       final isComplete = cLessons.isNotEmpty &&
                           cLessons.every((l) =>
                               activeProgress?.completedLessonIds
@@ -120,34 +92,37 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
                       }
                     }
                     // If all complete or none found, expand first course
-                    if (_expandedCourseIds.isEmpty && courses.isNotEmpty) {
-                      _expandedCourseIds.add(courses.first.id);
+                    if (_expandedCourseIds.isEmpty) {
+                      _expandedCourseIds.add(catalog.courses.first.id);
                     }
                     _initializedExpanded = true;
                   }
 
-                  // Build organized items list
-                  return ListView(
+                  return ListView.builder(
                     padding: const EdgeInsets.all(16.0),
-                    children: [
-                      // All 10 Course Folders
-                      for (final course in courses) ...[
-                        if (courseLessonsMap.containsKey(course.id)) ...[
-                          _buildCourseFolderCard(
+                    itemCount: catalog.courses.length +
+                        catalog.standaloneLessons.length,
+                    itemBuilder: (context, index) {
+                      if (index < catalog.courses.length) {
+                        final course = catalog.courses[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: _buildCourseFolderCard(
                             course: course,
-                            lessons: courseLessonsMap[course.id]!,
+                            lessons:
+                                catalog.lessonsByCourse[course.id] ?? const [],
                             activeProgress: activeProgress,
                           ),
-                          const SizedBox(height: 12),
-                        ],
-                      ],
+                        );
+                      }
 
-                      // Standalone Lessons 9 to 12
-                      for (final l in standaloneLessons) ...[
-                        _buildLessonCard(l, activeProgress),
-                        const SizedBox(height: 12),
-                      ],
-                    ],
+                      final lesson = catalog
+                          .standaloneLessons[index - catalog.courses.length];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: _buildLessonCard(lesson, activeProgress),
+                      );
+                    },
                   );
                 },
               ),
@@ -510,7 +485,11 @@ class _LearnScreenState extends ConsumerState<LearnScreen> {
           color: isSelected
               ? colorScheme.onPrimary
               : colorScheme.onSurfaceVariant),
-      onSelected: (_) => setState(() => _selectedTier = tier),
+      onSelected: (_) => setState(() {
+        _selectedTier = tier;
+        _initializedExpanded = false;
+        _expandedCourseIds.clear();
+      }),
     );
   }
 

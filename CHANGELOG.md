@@ -6,6 +6,171 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.7.0+37] - 2026-11-24
+
+### Overview & Release Highlights
+Release 0.7.0+37 introduces updates across 3 commits.
+
+### 🏗️ Architecture & Data Layer
+- **perf: cache curriculum reads and bound runtime work** (`ad58c82`):
+  - *What Changed*: - Cache Learn catalog, course, and challenge futures so widget rebuilds do not re-query the curriculum repository; render the catalog with ListView.builder. - Load curriculum documents in bounded batches instead of all at once. - Replace the 697 KB inline fallback with a compact 12-lesson baseline. - Bound persisted progress ledgers and transaction IDs, cache decoded progress by payload, and batch serial-log state updates. - Downsample images at decode time and avoid repeated regex/profile parsing during rebuilds and redirects. - Add regression coverage for fetch counts, image decode sizing, batching, and ledger caps.
+  - *Why*: Technical necessity and user enhancement.
+
+### 🎨 User Experience & Design System
+- **fix(linux): expose native accessible menu and harden desktop UX** (`a9d3049`):
+  - *What Changed*: Replace the Flutter-rendered Linux menu with a native GTK menu bar so AT-SPI sees real menu-bar and menu-item roles, while keeping the Flutter menu as a fallback on other platforms. Wire menu actions through the window and menu channels and only parent the bar while the desktop shell is active. Restore readable desktop scaling and layout behavior, improve keyboard and text-scale accessibility across onboarding, profile selection, the status bar, and About dialog, and migrate Material imports to material_ui to clear analyzer diagnostics. Align the Debian desktop entry, AppStream metadata, and launcher with the GTK application ID, and add regression coverage for the native menu and desktop layout paths.
+  - *Why*: Technical necessity and user enhancement.
+
+### 📚 Documentation & Specifications
+- **Merge pull request #75 from jakej985-rgb/perf/audit-performance-remediation** (`2bd74f8`):
+  - *What Changed*: * perf: cache curriculum reads and bound runtime work - Cache Learn catalog, course, and challenge futures so widget rebuilds do not re-query the curriculum repository; render the catalog with ListView.builder. - Load curriculum documents in bounded batches instead of all at once. - Replace the 697 KB inline fallback with a compact 12-lesson baseline. - Bound persisted progress ledgers and transaction IDs, cache decoded progress by payload, and batch serial-log state updates. - Downsample images at decode time and avoid repeated regex/profile parsing during rebuilds and redirects. - Add regression coverage for fetch counts, image decode sizing, batching, and ledger caps. * fix(linux): expose native accessible menu and harden desktop UX Replace the Flutter-rendered Linux menu with a native GTK menu bar so AT-SPI sees real menu-bar and menu-item roles, while keeping the Flutter menu as a fallback on other platforms. Wire menu actions through the window and menu channels and only parent the bar while the desktop shell is active. Restore readable desktop scaling and layout behavior, improve keyboard and text-scale accessibility across onboarding, profile selection, the status bar, and About dialog, and migrate Material imports to material_ui to clear analyzer diagnostics. Align the Debian desktop entry, AppStream metadata, and launcher with the GTK application ID, and add regression coverage for the native menu and desktop layout paths. ---------
+  - *Why*: Technical necessity and user enhancement.
+
+
+---
+
+## [0.6.0+36] - 2026-11-22
+
+### Overview & Release Highlights
+Release 0.6.0+36 introduces updates across 40 commits.
+
+### 🚀 New Features & Capabilities
+- **Extract router profile resolution and add regression tests** (`b54b342`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **Router: prefer valid primary profile list over backup** (`c28fe3f`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **Add real Web Serial transport to the Hardware Companion** (`4962a2c`):
+  - *What Changed*: Route the default hardware bridge through a conditional Web Serial transport, keep the virtual simulator available, parse real board telemetry, and expose an Add USB Device picker in the companion UI.
+  - *Why*: Technical necessity and user enhancement.
+- **Harden release integrity, safety gates, and recovery paths** (`a44e291`):
+  - *What Changed*: Implement the reconciled audit findings: strip bot attribution from release notes, gate releases on quality checks and fail-closed signing, publish checksums/provenance, persist laser/gas/relay authorization behind one shared parent session, surface storage corruption and curriculum fallback, label hardware scanning as simulation-only, and correct the release and documentation tooling.
+  - *Why*: Technical necessity and user enhancement.
+- **Expose semantic tap action on GtkSidebar rows** (`e19f45d`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **Reveal focused sidebar rows and dedupe semantics labels** (`0c4ad1c`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **Merge pull request #68 from jakej985-rgb/agents/scout-unlimited-findings** (`cb1e6d9`):
+  - *What Changed*: * Clarify Scout standalone exhaustive audit behavior * Clarify Scout standalone scope and specialist delegation ---------
+  - *Why*: Technical necessity and user enhancement.
+- **Merge pull request #66 from jakej985-rgb/agents/m3tal-scout** (`633d654`):
+  - *What Changed*: * docs: add Monster Lab repository agent guidance * docs: add M3tal Scout whole-repo audit agent * Let Scout delegate to read-only specialists; make repair handoff diagnosis-only * Scout: remove mutating delegates and clarify repair handoff ---------
+  - *Why*: Technical necessity and user enhancement.
+
+### ⚠️ Breaking Changes & Migrations
+- **Scout: remove mutating delegates and clarify repair handoff** (`e67ce83`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+
+### 🏗️ Architecture & Data Layer
+- **Merge pull request #69 from jakej985-rgb/palette/library-search-clear-tooltip** (`7f95a9a`):
+  - *What Changed*: Add a tooltip to the library manager's icon-only clear-search button so screen-reader and pointer users can identify the action. Cover the tooltip semantics with a focused accessibility widget test.
+  - *Why*: Technical necessity and user enhancement.
+- **Merge pull request #64 from jakej985-rgb/perf/bolt-lesson-future** (`6885ff0`):
+  - *What Changed*: * perf(learn): reuse lesson future across rebuilds Keep LessonDetailScreen's repository future in State so step and quiz interactions do not refetch the lesson or reset through a loading frame. * fix(learn): reset lesson state when the lesson changes Reset step, checklist, quiz, completion, and scroll state when a new lesson ID is supplied, and reload the cached future only when the lesson or repository provider changes. Add regression coverage for lesson switches and provider replacement. * Correct bolt.md: fix reduced fetches, not loading frames * Fix initState comment: rebuilds caused redundant fetches, not loading frames ---------
+  - *Why*: Technical necessity and user enhancement.
+- **docs: add M3tal Scout whole-repo audit agent** (`9034329`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+
+### 🎨 User Experience & Design System
+- **Merge pull request #73 from jakej985-rgb/linux-ux/sidebar-keyboard-focus-and-a11y** (`1e3d54b`):
+  - *What Changed*: 🐧 Linux-UX: Make GTK sidebar keyboard-navigable with focus rings, shortcuts, and tooltips
+  - *Why*: Technical necessity and user enhancement.
+- **fix(linux): make GTK sidebar keyboard-navigable with focus rings, shortcuts, and tooltips** (`9c26ec2`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **Merge pull request #71 from jakej985-rgb/agents/linux-ux-specialist** (`c18817a`):
+  - *What Changed*: 🐧 Linux-UX: Add Linux desktop UX specialist
+  - *Why*: Technical necessity and user enhancement.
+- **Merge pull request #70 from jakej985-rgb/agents/android-ux-specialist** (`46394fe`):
+  - *What Changed*: 📱 Android-UX: Add Android platform UX specialist
+  - *Why*: Technical necessity and user enhancement.
+- **Add .agents/agents/linux-ux/agent.md agent instructions** (`dd44770`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **Add .agents/agents/android-ux/agent.md agent instructions** (`dc6f5a2`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **Merge pull request #67 from jakej985-rgb/agents/palette-ux** (`e751ba4`):
+  - *What Changed*: 🎨 Palette: Add micro-UX specialist agent
+  - *Why*: Technical necessity and user enhancement.
+- **docs: add Palette micro-UX agent** (`fec5e06`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **Fix initState comment: rebuilds caused redundant fetches, not loading frames** (`6063267`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **Merge pull request #65 from jakej985-rgb/ui/home-dashboard** (`6d14578`):
+  - *What Changed*: * feat(ui): add compact home dashboard and branded app icon Use the bundled app icon in the desktop sidebar and Linux window, and move achievements, notifications, and quick actions into a side rail so the home dashboard fits common desktop viewports without scrolling. * fix(ui): fit home dashboard inside desktop chrome Use a denser home layout when the desktop shell leaves less than 700px of body height, and run the no-scroll regression through MainScaffold so the menu bar, sidebar, and status bar are included in the available height. * fix(ui): enforce 48dp minimum tap targets on home dashboard * fix(home): keep 48dp tap target for Achievements "View all" on desktop ---------
+  - *Why*: Technical necessity and user enhancement.
+- **docs: add Monster Lab repository agent guidance** (`59fa0a2`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **fix(ui): enforce 48dp minimum tap targets on home dashboard** (`84e964d`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **fix(ui): fit home dashboard inside desktop chrome** (`a9d05cf`):
+  - *What Changed*: Use a denser home layout when the desktop shell leaves less than 700px of body height, and run the no-scroll regression through MainScaffold so the menu bar, sidebar, and status bar are included in the available height.
+  - *Why*: Technical necessity and user enhancement.
+- **feat(ui): add compact home dashboard and branded app icon** (`c61a7ca`):
+  - *What Changed*: Use the bundled app icon in the desktop sidebar and Linux window, and move achievements, notifications, and quick actions into a side rail so the home dashboard fits common desktop viewports without scrolling.
+  - *Why*: Technical necessity and user enhancement.
+- **perf(learn): reuse lesson future across rebuilds** (`2320fb3`):
+  - *What Changed*: Keep LessonDetailScreen's repository future in State so step and quiz interactions do not refetch the lesson or reset through a loading frame.
+  - *Why*: Technical necessity and user enhancement.
+
+### 🐛 Bug Fixes & Stability
+- **fix(audit): resolve backup snapshot bypass, bundle signing, and release test scoping** (`90e7d34`):
+  - *What Changed*: - Recover learner profiles from backup snapshot when primary key is missing or blank - Enforce execution-time signing checks on release bundle and APK packaging tasks - Scope release-tool test discovery to isolate lesson rendering suites - Eagerly trigger cold-start profile store validation in onboarding - Add cold-start backup snapshot recovery test suite
+  - *Why*: Technical necessity and user enhancement.
+- **fix(audit): resolve laser gating, storage persistence, and release integrity defects** (`d361efd`):
+  - *What Changed*: - Gate comp_37 laser diode behind parent authorization and correct hazard classification - Add storage fallback in ComponentRestrictionService and backup recovery in LocalStorageDataSource - Enforce release signing configuration without debug fallback in android build - Wrap SLSA Provenance v0.2 in predicate object and resolve Python 3.11 f-string syntax - Prevent release rebase race conditions and sanitize dispatch-apt workflow inputs - Clarify hardware simulation stance and surface profile corruption banner during onboarding
+  - *Why*: Technical necessity and user enhancement.
+- **Merge pull request #72 from jakej985-rgb/agents/release-fixer-specialist** (`a7621a1`):
+  - *What Changed*: 🚦 Release-Fixer: Add release-system audit and repair specialist
+  - *Why*: Technical necessity and user enhancement.
+- **Add .agents/agents/release-fixer/agent.md agent instructions** (`f04c478`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **fix(a11y): label library search clear action** (`458eb85`):
+  - *What Changed*: Add a tooltip to the library manager's icon-only clear-search button so screen-reader and pointer users can identify the action. Cover the tooltip semantics with a focused accessibility widget test.
+  - *Why*: Technical necessity and user enhancement.
+- **Let Scout delegate to read-only specialists; make repair handoff diagnosis-only** (`59eecba`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **Correct bolt.md: fix reduced fetches, not loading frames** (`df45688`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **fix(learn): reset lesson state when the lesson changes** (`0b548f1`):
+  - *What Changed*: Reset step, checklist, quiz, completion, and scroll state when a new lesson ID is supplied, and reload the cached future only when the lesson or repository provider changes. Add regression coverage for lesson switches and provider replacement.
+  - *Why*: Technical necessity and user enhancement.
+- **fix(home): keep 48dp tap target for Achievements "View all" on desktop** (`c17c243`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+
+### 🛠️ Developer Toolchains & CI/CD
+- **Clarify Scout standalone scope and specialist delegation** (`f4818f0`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+
+### 📚 Documentation & Specifications
+- **Merge pull request #74 from jakej985-rgb/audit/remediation-r01-r13** (`3f01571`):
+  - *What Changed*: * Harden release integrity, safety gates, and recovery paths Implement the reconciled audit findings: strip bot attribution from release notes, gate releases on quality checks and fail-closed signing, publish checksums/provenance, persist laser/gas/relay authorization behind one shared parent session, surface storage corruption and curriculum fallback, label hardware scanning as simulation-only, and correct the release and documentation tooling. * fix(audit): resolve laser gating, storage persistence, and release integrity defects - Gate comp_37 laser diode behind parent authorization and correct hazard classification - Add storage fallback in ComponentRestrictionService and backup recovery in LocalStorageDataSource - Enforce release signing configuration without debug fallback in android build - Wrap SLSA Provenance v0.2 in predicate object and resolve Python 3.11 f-string syntax - Prevent release rebase race conditions and sanitize dispatch-apt workflow inputs - Clarify hardware simulation stance and surface profile corruption banner during onboarding * Add real Web Serial transport to the Hardware Companion Route the default hardware bridge through a conditional Web Serial transport, keep the virtual simulator available, parse real board telemetry, and expose an Add USB Device picker in the companion UI. * fix(audit): resolve backup snapshot bypass, bundle signing, and release test scoping - Recover learner profiles from backup snapshot when primary key is missing or blank - Enforce execution-time signing checks on release bundle and APK packaging tasks - Scope release-tool test discovery to isolate lesson rendering suites - Eagerly trigger cold-start profile store validation in onboarding - Add cold-start backup snapshot recovery test suite * Document hardware companion as simulation-only * Router: prefer valid primary profile list over backup * Extract router profile resolution and add regression tests ---------
+  - *Why*: Technical necessity and user enhancement.
+- **Document hardware companion as simulation-only** (`dd30eee`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+- **Clarify Scout standalone exhaustive audit behavior** (`ef14335`):
+  - *What Changed*: Implemented changes described in commit.
+  - *Why*: Technical necessity and user enhancement.
+
+
+---
+
 ## [0.5.2+35] - 2026-11-21
 
 ### Overview & Release Highlights
