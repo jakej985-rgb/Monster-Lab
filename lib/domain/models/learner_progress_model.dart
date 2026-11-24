@@ -169,6 +169,11 @@ class LearnerProgressEvent {
 class LearnerProgressModel {
   static const int currentSchemaVersion = 2;
 
+  /// The completion sets and XP totals are authoritative; the ledger is a
+  /// bounded audit trail so long-lived profiles cannot grow without limit.
+  static const int maxEventLedgerEntries = 1000;
+  static const int maxProcessedTransactionIds = 2000;
+
   final int schemaVersion;
   final String learnerId;
   final int totalXp;
@@ -408,16 +413,29 @@ class LearnerProgressModel {
     return progress;
   }
 
+  static Set<String> _boundedTransactionIds(Set<String> ids) {
+    if (ids.length <= maxProcessedTransactionIds) return ids;
+    return ids.skip(ids.length - maxProcessedTransactionIds).toSet();
+  }
+
+  static List<LearnerProgressEvent> _boundedLedger(
+      List<LearnerProgressEvent> events) {
+    if (events.length <= maxEventLedgerEntries) return events;
+    return events.sublist(events.length - maxEventLedgerEntries);
+  }
+
   /// Applies a single event deterministically and idempotently
   LearnerProgressModel applyEvent(LearnerProgressEvent event) {
     if (processedTransactionIds.contains(event.eventId)) {
       return this; // Idempotent: already applied
     }
 
-    final updatedTx = Set<String>.from(processedTransactionIds)
-      ..add(event.eventId);
-    final updatedLedger = List<LearnerProgressEvent>.from(eventLedger)
-      ..add(event);
+    final updatedTx = _boundedTransactionIds(
+      Set<String>.from(processedTransactionIds)..add(event.eventId),
+    );
+    final updatedLedger = _boundedLedger(
+      List<LearnerProgressEvent>.from(eventLedger)..add(event),
+    );
 
     switch (event.eventType) {
       case ProgressEventType.courseCompleted:

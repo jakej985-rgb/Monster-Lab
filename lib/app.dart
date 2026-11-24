@@ -1,10 +1,13 @@
 import 'dart:io' show Platform;
+
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'core/localization/app_strings.dart';
 import 'core/routing/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'domain/models/app_settings.dart';
 import 'presentation/shared/providers.dart';
 
 class MonsterLabApp extends ConsumerWidget {
@@ -52,17 +55,14 @@ class MonsterLabApp extends ConsumerWidget {
         } else {
           final isDesktop = !kIsWeb &&
               (Platform.isLinux || Platform.isWindows || Platform.isMacOS);
-          effectiveScale = isDesktop ? 0.80 : 1.0;
+          effectiveScale = isDesktop ? AppSettings.desktopAutoUiScale : 1.0;
         }
 
         if (effectiveScale == 1.0) {
           return child;
         }
 
-        return UiScaleCanvas(
-          scale: effectiveScale,
-          child: child,
-        );
+        return UiScaleCanvas(scale: effectiveScale, child: child);
       },
     );
   }
@@ -73,11 +73,7 @@ class UiScaleCanvas extends StatelessWidget {
   final double scale;
   final Widget child;
 
-  const UiScaleCanvas({
-    super.key,
-    required this.scale,
-    required this.child,
-  });
+  const UiScaleCanvas({super.key, required this.scale, required this.child});
 
   @override
   Widget build(BuildContext context) {

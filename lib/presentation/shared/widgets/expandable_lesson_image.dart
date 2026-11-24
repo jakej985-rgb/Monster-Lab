@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'full_screen_image_viewer.dart';
 
 class ExpandableLessonImage extends StatelessWidget {
@@ -17,8 +17,14 @@ class ExpandableLessonImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
     return LayoutBuilder(
       builder: (context, constraints) {
+        final cacheWidth = constraints.hasBoundedWidth &&
+                constraints.maxWidth.isFinite &&
+                constraints.maxWidth > 0
+            ? (constraints.maxWidth * devicePixelRatio).round()
+            : null;
         Widget content = Stack(
           children: [
             ConstrainedBox(
@@ -27,6 +33,7 @@ class ExpandableLessonImage extends StatelessWidget {
                 assetPath,
                 fit: BoxFit.fitWidth,
                 width: constraints.maxWidth,
+                cacheWidth: cacheWidth,
                 errorBuilder: (context, error, stackTrace) => Container(
                   height: 160,
                   width: constraints.maxWidth,

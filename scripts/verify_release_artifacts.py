@@ -76,7 +76,7 @@ def verify_linux() -> list:
 
     # The Debian builder now generates the desktop entry, keyring asset handling,
     # and APT source entry during packaging, so do not require a standalone
-    # linux/monster-lab.desktop file in the source tree.
+    # desktop entry in the source tree.
 
     keyring_gpg = os.path.join(ROOT_DIR, "linux", "keyring", "m3tal-archive-keyring.gpg")
     if not os.path.exists(keyring_gpg):

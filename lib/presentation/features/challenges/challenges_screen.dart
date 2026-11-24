@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
@@ -54,27 +54,20 @@ class _ChallengesScreenState extends ConsumerState<ChallengesScreen> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final curriculumRepo = ref.watch(curriculumRepositoryProvider);
     final activeProgress = ref.watch(activeProgressProvider);
+    final challengesAsync = ref.watch(challengesByTierProvider(_selectedTier));
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Challenge Arena',
             style: TextStyle(fontWeight: FontWeight.bold)),
       ),
-      body: FutureBuilder<List<ChallengeModel>>(
-        future: curriculumRepo.getChallenges(tier: _selectedTier),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError || !snapshot.hasData) {
-            return Center(
-              child: Text('Failed to load challenges: ${snapshot.error}'),
-            );
-          }
-
-          final challenges = snapshot.data!;
+      body: challengesAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, _) => Center(
+          child: Text('Failed to load challenges: $error'),
+        ),
+        data: (challenges) {
           final solvedCount = challenges
               .where(
                 (c) =>

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'app_colors.dart';
 
 /// Typography hierarchy for Monster Lab matching theme_tokens.json

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import '../../../core/theme/app_colors.dart';
 
 class ComponentImageView extends StatelessWidget {
@@ -86,6 +86,13 @@ class ComponentImageView extends StatelessWidget {
     final effectiveRadius = borderRadius ?? BorderRadius.circular(12);
     final effectiveBg = backgroundColor ??
         Theme.of(context).colorScheme.surfaceContainerHighest;
+    final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
+    final cacheWidth = width != null && width!.isFinite && width! > 0
+        ? (width! * devicePixelRatio).round()
+        : null;
+    final cacheHeight = height != null && height!.isFinite && height! > 0
+        ? (height! * devicePixelRatio).round()
+        : null;
 
     Widget content;
     final path = imagePath;
@@ -94,6 +101,8 @@ class ComponentImageView extends StatelessWidget {
         path,
         width: width,
         height: height,
+        cacheWidth: cacheWidth,
+        cacheHeight: cacheHeight,
         fit: fit,
         excludeFromSemantics: true,
         errorBuilder: (context, error, stackTrace) => _buildFallback(context),

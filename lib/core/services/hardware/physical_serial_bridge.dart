@@ -15,11 +15,14 @@ import 'serial_transport.dart';
 /// firmware negotiate a protocol version, while ordinary sketches that simply
 /// print serial data are logged and parsed for telemetry.
 class PhysicalSerialBridge implements IHardwareBridge {
-  PhysicalSerialBridge({
+  factory PhysicalSerialBridge({
     required SerialTransport transport,
     HardwareProtocolNegotiator negotiator = const HardwareProtocolNegotiator(),
-  })  : _transport = transport,
-        _negotiator = negotiator {
+  }) {
+    return PhysicalSerialBridge._(transport, negotiator);
+  }
+
+  PhysicalSerialBridge._(this._transport, this._negotiator) {
     _stateMachine = HardwareConnectionStateMachine(_state);
   }
 
@@ -39,12 +42,15 @@ class PhysicalSerialBridge implements IHardwareBridge {
   StreamSubscription<void>? _disconnectSubscription;
   bool _closing = false;
 
-  final _stateController =
-      StreamController<HardwareConnectionState>.broadcast(sync: true);
-  final _serialController =
-      StreamController<SerialLogEntry>.broadcast(sync: true);
-  final _telemetryController =
-      StreamController<PinTelemetry>.broadcast(sync: true);
+  final _stateController = StreamController<HardwareConnectionState>.broadcast(
+    sync: true,
+  );
+  final _serialController = StreamController<SerialLogEntry>.broadcast(
+    sync: true,
+  );
+  final _telemetryController = StreamController<PinTelemetry>.broadcast(
+    sync: true,
+  );
 
   @override
   HardwareConnectionState get currentState => _state;
@@ -150,8 +156,9 @@ class PhysicalSerialBridge implements IHardwareBridge {
     _baudRate = baudRate;
     _currentBoard = board;
 
-    final capabilities =
-        HardwareDeviceCapabilityRegistry.findForBoard(board.boardModel);
+    final capabilities = HardwareDeviceCapabilityRegistry.findForBoard(
+      board.boardModel,
+    );
     if (!capabilities.isBaudRateSupported(baudRate)) {
       _logSystem(
         'Warning: Baud rate $baudRate is not standard for '
@@ -186,8 +193,9 @@ class PhysicalSerialBridge implements IHardwareBridge {
           _logSystem('USB serial read failed: ${_describe(failure)}');
         },
       );
-      _disconnectSubscription =
-          connection.disconnected.listen((_) => _handleDeviceDisconnect());
+      _disconnectSubscription = connection.disconnected.listen(
+        (_) => _handleDeviceDisconnect(),
+      );
 
       _safetyInterlock = HardwareSafetyInterlock(board: board.boardModel);
       _transitionTo(HardwareConnectionState.connectedPhysical);
@@ -220,8 +228,9 @@ class PhysicalSerialBridge implements IHardwareBridge {
     final upper = command.toUpperCase();
 
     if (upper == 'EMERGENCY_STOP') {
-      _safetyInterlock
-          ?.tripSafetyLock('Operator Emergency Stop command received');
+      _safetyInterlock?.tripSafetyLock(
+        'Operator Emergency Stop command received',
+      );
       _telemetry = _telemetry.copyWith(pin13Led: false);
       _telemetryController.add(_telemetry);
       await _write(command);
@@ -291,11 +300,9 @@ class PhysicalSerialBridge implements IHardwareBridge {
 
   DiscoveredBoard _toBoard(SerialPortInfo port) {
     _knownPorts[port.label] = port;
-    final model = SupportedBoards.matchUsb(
-          port.vendorId ?? -1,
-          port.productId ?? -1,
-        ) ??
-        SupportedBoards.unknownUsbSerial;
+    final model =
+        SupportedBoards.matchUsb(port.vendorId ?? -1, port.productId ?? -1) ??
+            SupportedBoards.unknownUsbSerial;
 
     return DiscoveredBoard(
       portName: port.label,
@@ -454,9 +461,11 @@ class PhysicalSerialBridge implements IHardwareBridge {
       _transitionTo(HardwareConnectionState.disconnected);
       return;
     }
-    _transitionTo(board.isVirtual
-        ? HardwareConnectionState.connectedVirtual
-        : HardwareConnectionState.connectedPhysical);
+    _transitionTo(
+      board.isVirtual
+          ? HardwareConnectionState.connectedVirtual
+          : HardwareConnectionState.connectedPhysical,
+    );
   }
 
   void _transitionTo(HardwareConnectionState newState) {

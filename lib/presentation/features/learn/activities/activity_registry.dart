@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import '../widgets/visual_flow_diagram_widget.dart';
 import '../widgets/input_output_classification_widget.dart';
 import '../widgets/interactive_board_inspector_widget.dart';
