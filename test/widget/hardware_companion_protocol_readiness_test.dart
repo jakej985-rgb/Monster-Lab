@@ -167,6 +167,9 @@ void main() {
       expect(find.text('Firmware Required'), findsOneWidget);
       final initialButton = tester.widget<ElevatedButton>(buttonFinder);
       expect(initialButton.onPressed, isNull);
+      // No LED report yet: the pin state is unknown, not LOW.
+      expect(find.text('Pin 13 LED: Unknown'), findsOneWidget);
+      expect(find.text('Pin 13 LED: LOW (OFF)'), findsNothing);
 
       // Deliver protocol handshake acknowledgment from firmware without any telemetry event
       transport.activeConnection?.deliverLine(
@@ -179,6 +182,13 @@ void main() {
       expect(find.text('Turn ON'), findsOneWidget);
       final enabledButton = tester.widget<ElevatedButton>(buttonFinder);
       expect(enabledButton.onPressed, isNotNull);
+
+      // First LED report switches the display from Unknown to observed.
+      transport.activeConnection?.deliverLine('LED:HIGH');
+      await tester.pump();
+      expect(find.text('Pin 13 LED: Unknown'), findsNothing);
+      expect(find.text('Pin 13 LED: HIGH (ON)'), findsOneWidget);
+      expect(find.text('Turn OFF'), findsOneWidget);
     });
   });
 }

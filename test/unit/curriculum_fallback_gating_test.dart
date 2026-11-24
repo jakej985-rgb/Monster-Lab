@@ -49,7 +49,7 @@ void main() {
       expect(baseline.length, greaterThan(1));
       for (final lesson in baseline) {
         expect(lesson.prerequisites, isEmpty,
-            reason: 'Fallback ${lesson.id} must not gate on uncredited lessons');
+            reason: 'Fallback ${lesson.id} must not be gated');
       }
     });
 
@@ -85,10 +85,12 @@ void main() {
       expect(lessons.length, greaterThan(1));
 
       // Mirrors the Learn Lab lock check: no later notice may be locked.
+      final done = {
+        ...emptyProgress.completedLessonIds,
+        ...emptyProgress.completedCourseIds,
+      };
       for (final lesson in lessons.skip(1)) {
-        final missing = lesson.prerequisites.where((req) =>
-            !emptyProgress.completedLessonIds.contains(req) &&
-            !emptyProgress.completedCourseIds.contains(req));
+        final missing = lesson.prerequisites.where((r) => !done.contains(r));
         expect(missing, isEmpty, reason: '${lesson.id} must be reachable');
       }
 

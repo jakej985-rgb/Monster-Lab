@@ -413,12 +413,12 @@ class PhysicalSerialBridge implements IHardwareBridge {
         trimmed == 'PIN13:LOW' ||
         trimmed == 'LED:0') {
       _stopPending = false;
-      _publishTelemetry(
-          _telemetry.copyWith(
-            pin13Led: false,
-            stopConfirmed: true,
-            pin13Observed: true,
-          ));
+      final confirmed = _telemetry.copyWith(
+        pin13Led: false,
+        stopConfirmed: true,
+        pin13Observed: true,
+      );
+      _publishTelemetry(confirmed);
     }
   }
 
