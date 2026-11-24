@@ -866,7 +866,7 @@ class _ParentScreenState extends ConsumerState<ParentScreen> {
                       .read(progressRepositoryProvider)
                       .resetProgress(profile.id),
                 );
-                if (!context.mounted) return;
+                if (!mounted) return;
                 await ref.read(activeProgressProvider.notifier).loadProgress();
                 nav.pop();
                 messenger.showSnackBar(
