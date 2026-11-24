@@ -6,6 +6,29 @@ The project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ---
 
+## [0.7.0+37] - 2026-11-24
+
+### Overview & Release Highlights
+Release 0.7.0+37 introduces updates across 3 commits.
+
+### 🏗️ Architecture & Data Layer
+- **perf: cache curriculum reads and bound runtime work** (`ad58c82`):
+  - *What Changed*: - Cache Learn catalog, course, and challenge futures so widget rebuilds do not re-query the curriculum repository; render the catalog with ListView.builder. - Load curriculum documents in bounded batches instead of all at once. - Replace the 697 KB inline fallback with a compact 12-lesson baseline. - Bound persisted progress ledgers and transaction IDs, cache decoded progress by payload, and batch serial-log state updates. - Downsample images at decode time and avoid repeated regex/profile parsing during rebuilds and redirects. - Add regression coverage for fetch counts, image decode sizing, batching, and ledger caps.
+  - *Why*: Technical necessity and user enhancement.
+
+### 🎨 User Experience & Design System
+- **fix(linux): expose native accessible menu and harden desktop UX** (`a9d3049`):
+  - *What Changed*: Replace the Flutter-rendered Linux menu with a native GTK menu bar so AT-SPI sees real menu-bar and menu-item roles, while keeping the Flutter menu as a fallback on other platforms. Wire menu actions through the window and menu channels and only parent the bar while the desktop shell is active. Restore readable desktop scaling and layout behavior, improve keyboard and text-scale accessibility across onboarding, profile selection, the status bar, and About dialog, and migrate Material imports to material_ui to clear analyzer diagnostics. Align the Debian desktop entry, AppStream metadata, and launcher with the GTK application ID, and add regression coverage for the native menu and desktop layout paths.
+  - *Why*: Technical necessity and user enhancement.
+
+### 📚 Documentation & Specifications
+- **Merge pull request #75 from jakej985-rgb/perf/audit-performance-remediation** (`2bd74f8`):
+  - *What Changed*: * perf: cache curriculum reads and bound runtime work - Cache Learn catalog, course, and challenge futures so widget rebuilds do not re-query the curriculum repository; render the catalog with ListView.builder. - Load curriculum documents in bounded batches instead of all at once. - Replace the 697 KB inline fallback with a compact 12-lesson baseline. - Bound persisted progress ledgers and transaction IDs, cache decoded progress by payload, and batch serial-log state updates. - Downsample images at decode time and avoid repeated regex/profile parsing during rebuilds and redirects. - Add regression coverage for fetch counts, image decode sizing, batching, and ledger caps. * fix(linux): expose native accessible menu and harden desktop UX Replace the Flutter-rendered Linux menu with a native GTK menu bar so AT-SPI sees real menu-bar and menu-item roles, while keeping the Flutter menu as a fallback on other platforms. Wire menu actions through the window and menu channels and only parent the bar while the desktop shell is active. Restore readable desktop scaling and layout behavior, improve keyboard and text-scale accessibility across onboarding, profile selection, the status bar, and About dialog, and migrate Material imports to material_ui to clear analyzer diagnostics. Align the Debian desktop entry, AppStream metadata, and launcher with the GTK application ID, and add regression coverage for the native menu and desktop layout paths. ---------
+  - *Why*: Technical necessity and user enhancement.
+
+
+---
+
 ## [0.6.0+36] - 2026-11-22
 
 ### Overview & Release Highlights
